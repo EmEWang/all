@@ -1,0 +1,5 @@
+LDFLAGS+='-fprofile-arcs'
+CFLAGS+='-fprofile-arcs -ftest-coverage'
+CXXFLAGS+='-fprofile-arcs -ftest-coverage'
+CPPFLAGS+='-fprofile-arcs -ftest-coverage'
+./configure --without-system-libs --without-system-headers LIBS=-lgcov

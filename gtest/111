@@ -1,0 +1,3745 @@
+# GNU Make 4.2.1
+# 为 x86_64-pc-linux-gnu 编译
+# Copyright (C) 1988-2016 Free Software Foundation, Inc.
+# 许可证：GPLv3+：GNU 通用公共许可证第 3 版或更新版本<http://gnu.org/licenses/gpl.html>。
+# 本软件是自由软件：您可以自由修改和重新发布它。
+# 在法律允许的范围内没有其他保证。
+
+# make 数据基础，打印在 Mon Apr  3 17:14:22 2023
+
+# 变量
+
+# 自动
+<D = $(patsubst %/,%,$(dir $<))
+# 自动
+?F = $(notdir $?)
+# 默认
+.SHELLFLAGS := -c
+# 环境
+XDG_SESSION_CLASS = user
+# 环境
+XDG_SESSION_TYPE = tty
+# 默认
+CWEAVE = cweave
+# 自动
+?D = $(patsubst %/,%,$(dir $?))
+# makefile (从“Makefile”，行 135)
+CPPFLAGS = -I./
+# 自动
+@D = $(patsubst %/,%,$(dir $@))
+# 自动
+@F = $(notdir $@)
+# 默认
+MAKE_VERSION := 4.2.1
+# makefile
+CURDIR := /home/lixiang/code/gtest
+# makefile
+SHELL = /bin/sh
+# 默认
+RM = rm -f
+# 默认
+CO = co
+# 默认
+COMPILE.mod = $(M2C) $(M2FLAGS) $(MODFLAGS) $(TARGET_ARCH)
+# 环境
+_ = /usr/bin/make
+# 默认
+PREPROCESS.F = $(FC) $(FFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -F
+# 默认
+LINK.m = $(OBJC) $(OBJCFLAGS) $(CPPFLAGS) $(LDFLAGS) $(TARGET_ARCH)
+# 默认
+LINK.o = $(CC) $(LDFLAGS) $(TARGET_ARCH)
+# 默认
+OUTPUT_OPTION = -o $@
+# 默认
+COMPILE.cpp = $(COMPILE.cc)
+# makefile (从“Makefile”，行 1)
+MAKEFILE_LIST :=  Makefile
+# “override”指令
+GNUMAKEFLAGS :=
+# 默认
+LINK.p = $(PC) $(PFLAGS) $(CPPFLAGS) $(LDFLAGS) $(TARGET_ARCH)
+# 环境
+XDG_DATA_DIRS = /usr/local/share:/usr/share:/var/lib/snapd/desktop
+# makefile (从“Makefile”，行 43)
+notusedfile := testall.cpp testalldemo.cpp gmock1_ gmock1.cpp
+# 环境
+DBUS_SESSION_BUS_ADDRESS = unix:path=/run/user/1000/bus
+# 默认
+CC = cc
+# 默认
+CHECKOUT,v = +$(if $(wildcard $@),,$(CO) $(COFLAGS) $< $@)
+# 环境
+LESSOPEN = | /usr/bin/lesspipe %s
+# 默认
+CPP = $(CC) -E
+# 默认
+LINK.cc = $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(LDFLAGS) $(TARGET_ARCH)
+# 环境
+SSH_CONNECTION = 10.248.14.42 50181 10.248.14.215 22
+# 环境
+PATH = /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+# 默认
+LD = ld
+# 默认
+TEXI2DVI = texi2dvi
+# 默认
+YACC = yacc
+# makefile (从“Makefile”，行 158)
+gmock1_tar := gmock1_
+# makefile (从“Makefile”，行 183)
+allsrc = $(wildcard *.cpp)
+# 环境
+SSH_TTY = /dev/pts/103
+# 环境
+XDG_RUNTIME_DIR = /run/user/1000
+# 默认
+ARFLAGS = rv
+# 默认
+LINK.r = $(FC) $(FFLAGS) $(RFLAGS) $(LDFLAGS) $(TARGET_ARCH)
+# makefile (从“Makefile”，行 39)
+dirto = dirto/
+# 默认
+LINT = lint
+# 默认
+COMPILE.f = $(FC) $(FFLAGS) $(TARGET_ARCH) -c
+# 默认
+LINT.c = $(LINT) $(LINTFLAGS) $(CPPFLAGS) $(TARGET_ARCH)
+# 默认
+YACC.m = $(YACC) $(YFLAGS)
+# 默认
+YACC.y = $(YACC) $(YFLAGS)
+# 默认
+AR = ar
+# 默认
+.FEATURES := target-specific order-only second-expansion else-if shortest-stem undefine oneshell archives jobserver output-sync check-symlink load
+# 默认
+TANGLE = tangle
+# makefile (从“Makefile”，行 46)
+objc := dirto/samplemy1_c.o
+# 环境
+LS_COLORS = rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:
+# 默认
+GET = get
+# 自动
+%F = $(notdir $%)
+# 环境
+DISPLAY = localhost:15.0
+# 默认
+COMPILE.F = $(FC) $(FFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c
+# 默认
+CTANGLE = ctangle
+# makefile (从“Makefile”，行 144)
+alldfile = $(patsubst %.c,$(dirto)%.d,$(allcfile)) $(patsubst %.cpp,$(dirto)%.d,$(notdir $(usedcppfile)))
+# 默认
+.LIBPATTERNS = lib%.so lib%.a
+# 默认
+LINK.C = $(LINK.cc)
+# 环境
+PWD = /home/lixiang/code/gtest
+# 默认
+.LOADED :=
+# 默认
+LINK.S = $(CC) $(ASFLAGS) $(CPPFLAGS) $(LDFLAGS) $(TARGET_MACH)
+# 默认
+PREPROCESS.r = $(FC) $(FFLAGS) $(RFLAGS) $(TARGET_ARCH) -F
+# 自动
+*D = $(patsubst %/,%,$(dir $*))
+# 默认
+LINK.c = $(CC) $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) $(TARGET_ARCH)
+# 默认
+LINK.s = $(CC) $(ASFLAGS) $(LDFLAGS) $(TARGET_MACH)
+# 环境
+HOME = /home/lixiang
+# makefile (从“Makefile”，行 185)
+allo2 = $(patsubst %.cpp,%.o,$(allsrc))
+# 环境
+LESSCLOSE = /usr/bin/lesspipe %s %s
+# 环境
+LOGNAME = lixiang
+# makefile (从“Makefile”，行 41)
+allcfile := samplemy1_c.c
+# makefile (从“Makefile”，行 42)
+allcppfile := testall.cpp samplemy2.cpp samplemy3.cpp testalldemo.cpp gmock1.cpp gtestsrc/gtestParams.cpp gtestsrc/gtestmain.cpp gtestsrc/samplemy1_c_gtest.cpp gtestsrc/gtestFixtures.cpp gtestsrc/samplemy2_gtest.cpp gtestsrc/samplemy3_gtest.cpp gtestsrc/samplemy2_gtest2.cpp
+# 自动
+^D = $(patsubst %/,%,$(dir $^))
+# makefile (从“Makefile”，行 44)
+usedcppfile := samplemy2.cpp samplemy3.cpp gtestsrc/gtestParams.cpp gtestsrc/gtestmain.cpp gtestsrc/samplemy1_c_gtest.cpp gtestsrc/gtestFixtures.cpp gtestsrc/samplemy2_gtest.cpp gtestsrc/samplemy3_gtest.cpp gtestsrc/samplemy2_gtest2.cpp
+# 环境
+MAKELEVEL := 0
+# 默认
+COMPILE.m = $(OBJC) $(OBJCFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c
+# 默认
+MAKE = $(MAKE_COMMAND)
+# 环境
+SHLVL = 1
+# makefile (从“Makefile”，行 49)
+objcpp := dirto/samplemy2.o dirto/samplemy3.o dirto/gtestParams.o dirto/gtestmain.o dirto/samplemy1_c_gtest.o dirto/gtestFixtures.o dirto/samplemy2_gtest.o dirto/samplemy3_gtest.o dirto/samplemy2_gtest2.o
+# 默认
+AS = as
+# 默认
+PREPROCESS.S = $(CC) -E $(CPPFLAGS)
+# 默认
+COMPILE.p = $(PC) $(PFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c
+# 环境
+XDG_SESSION_ID = 1743
+# 环境
+USER = lixiang
+# 默认
+FC = f77
+# makefile
+.DEFAULT_GOAL := all
+# 自动
+%D = $(patsubst %/,%,$(dir $%))
+# 默认
+WEAVE = weave
+# 默认
+MAKE_COMMAND := make
+# 默认
+LINK.cpp = $(LINK.cc)
+# 默认
+F77 = $(FC)
+# 环境
+OLDPWD = /home/lixiang/code/maketest
+# 默认
+.VARIABLES :=
+# 默认
+PC = pc
+# 自动
+*F = $(notdir $*)
+# 环境
+LANGUAGE = zh_CN:zh
+# 默认
+COMPILE.def = $(M2C) $(M2FLAGS) $(DEFFLAGS) $(TARGET_ARCH)
+# 默认
+LEX = lex
+# makefile
+MAKEFLAGS = p
+# 环境
+MFLAGS = -p
+# 环境
+SSH_CLIENT = 10.248.14.42 50181 22
+# 默认
+LEX.l = $(LEX) $(LFLAGS) -t
+# 默认
+LEX.m = $(LEX) $(LFLAGS) -t
+# makefile (从“Makefile”，行 40)
+dirsrc = gtestsrc/
+# 自动
++D = $(patsubst %/,%,$(dir $+))
+# 默认
+COMPILE.r = $(FC) $(FFLAGS) $(RFLAGS) $(TARGET_ARCH) -c
+# 自动
++F = $(notdir $+)
+# 默认
+M2C = m2c
+# makefile (从“Makefile”，行 50)
+target = $(dirto)main
+# 默认
+MAKEFILES :=
+# 默认
+COMPILE.cc = $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c
+# 自动
+<F = $(notdir $<)
+# 默认
+CXX = g++
+# 默认
+COFLAGS =
+# 默认
+COMPILE.C = $(COMPILE.cc)
+# 自动
+^F = $(notdir $^)
+# 默认
+COMPILE.S = $(CC) $(ASFLAGS) $(CPPFLAGS) $(TARGET_MACH) -c
+# 默认
+LINK.F = $(FC) $(FFLAGS) $(CPPFLAGS) $(LDFLAGS) $(TARGET_ARCH)
+# 默认
+SUFFIXES := .out .a .ln .o .c .cc .C .cpp .p .f .F .m .r .y .l .ym .yl .s .S .mod .sym .def .h .info .dvi .tex .texinfo .texi .txinfo .w .ch .web .sh .elc .el
+# 默认
+COMPILE.c = $(CC) $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c
+# makefile (从“Makefile”，行 184)
+allo = $(subst .cpp,.o,$(allsrc))
+# 默认
+COMPILE.s = $(AS) $(ASFLAGS) $(TARGET_MACH)
+# 默认
+.INCLUDE_DIRS = /usr/include /usr/local/include /usr/include
+# 默认
+.RECIPEPREFIX :=
+# 默认
+MAKEINFO = makeinfo
+# 默认
+MAKE_TERMERR := /dev/pts/103
+# 默认
+OBJC = cc
+# 默认
+MAKE_HOST := x86_64-pc-linux-gnu
+# 默认
+TEX = tex
+# 环境
+LANG = zh_CN.UTF-8
+# 环境
+TERM = xterm
+# 默认
+F77FLAGS = $(FFLAGS)
+# 默认
+LINK.f = $(FC) $(FFLAGS) $(LDFLAGS) $(TARGET_ARCH)
+# 环境
+MOTD_SHOWN = pam
+# 变量的杂凑表状态:
+# 负载=138/1024=13%, 重新杂凑=0, 碰撞=15/236=6%
+
+# Pattern-specific 变量值
+
+# 没有 pattern-specific 变量的值。
+
+# 目录
+
+# SCCS：无法对其进行 stat 操作。
+# . (设备 66306，i-节点 1575621)： 22 文件， 22 不可能.
+# gtestsrc/RCS：无法对其进行 stat 操作。
+# gtestsrc (设备 66306，i-节点 1575729)： 9 文件， 无 不可能.
+# gtestsrc/SCCS：无法对其进行 stat 操作。
+# RCS：无法对其进行 stat 操作。
+
+# 31 文件， 22 不可能在 6 目录中。
+
+# 隐含规则
+
+dirto/%.d: %.c
+#  要执行的配方 (从“Makefile”，行 129)：
+	@set -e; rm -f $@; \
+	gcc -MM $(CPPFLAGS) $< > $@.$$$$; \
+	sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
+	rm -f $@.$$$$
+
+dirto/%.d: %.cpp
+#  要执行的配方 (从“Makefile”，行 137)：
+	@set -e; rm -f $@; \
+	g++ -MM $(CPPFLAGS) $< > $@.$$$$; \
+	sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
+	rm -f $@.$$$$
+
+%.out:
+
+%.a:
+
+%.ln:
+
+%.o:
+
+%: %.o
+#  要执行的配方 (内置)：
+	$(LINK.o) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+%.c:
+
+%: %.c
+#  要执行的配方 (内置)：
+	$(LINK.c) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+%.ln: %.c
+#  要执行的配方 (内置)：
+	$(LINT.c) -C$* $<
+
+%.o: %.c
+#  要执行的配方 (内置)：
+	$(COMPILE.c) $(OUTPUT_OPTION) $<
+
+%.cc:
+
+%: %.cc
+#  要执行的配方 (内置)：
+	$(LINK.cc) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+%.o: %.cc
+#  要执行的配方 (内置)：
+	$(COMPILE.cc) $(OUTPUT_OPTION) $<
+
+%.C:
+
+%: %.C
+#  要执行的配方 (内置)：
+	$(LINK.C) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+%.o: %.C
+#  要执行的配方 (内置)：
+	$(COMPILE.C) $(OUTPUT_OPTION) $<
+
+%.cpp:
+
+%: %.cpp
+#  要执行的配方 (内置)：
+	$(LINK.cpp) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+%.o: %.cpp
+#  要执行的配方 (内置)：
+	$(COMPILE.cpp) $(OUTPUT_OPTION) $<
+
+%.p:
+
+%: %.p
+#  要执行的配方 (内置)：
+	$(LINK.p) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+%.o: %.p
+#  要执行的配方 (内置)：
+	$(COMPILE.p) $(OUTPUT_OPTION) $<
+
+%.f:
+
+%: %.f
+#  要执行的配方 (内置)：
+	$(LINK.f) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+%.o: %.f
+#  要执行的配方 (内置)：
+	$(COMPILE.f) $(OUTPUT_OPTION) $<
+
+%.F:
+
+%: %.F
+#  要执行的配方 (内置)：
+	$(LINK.F) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+%.o: %.F
+#  要执行的配方 (内置)：
+	$(COMPILE.F) $(OUTPUT_OPTION) $<
+
+%.f: %.F
+#  要执行的配方 (内置)：
+	$(PREPROCESS.F) $(OUTPUT_OPTION) $<
+
+%.m:
+
+%: %.m
+#  要执行的配方 (内置)：
+	$(LINK.m) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+%.o: %.m
+#  要执行的配方 (内置)：
+	$(COMPILE.m) $(OUTPUT_OPTION) $<
+
+%.r:
+
+%: %.r
+#  要执行的配方 (内置)：
+	$(LINK.r) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+%.o: %.r
+#  要执行的配方 (内置)：
+	$(COMPILE.r) $(OUTPUT_OPTION) $<
+
+%.f: %.r
+#  要执行的配方 (内置)：
+	$(PREPROCESS.r) $(OUTPUT_OPTION) $<
+
+%.y:
+
+%.ln: %.y
+#  要执行的配方 (内置)：
+	$(YACC.y) $<
+	 $(LINT.c) -C$* y.tab.c
+	 $(RM) y.tab.c
+
+%.c: %.y
+#  要执行的配方 (内置)：
+	$(YACC.y) $<
+	 mv -f y.tab.c $@
+
+%.l:
+
+%.ln: %.l
+#  要执行的配方 (内置)：
+	@$(RM) $*.c
+	 $(LEX.l) $< > $*.c
+	$(LINT.c) -i $*.c -o $@
+	 $(RM) $*.c
+
+%.c: %.l
+#  要执行的配方 (内置)：
+	@$(RM) $@
+	 $(LEX.l) $< > $@
+
+%.r: %.l
+#  要执行的配方 (内置)：
+	$(LEX.l) $< > $@
+	 mv -f lex.yy.r $@
+
+%.ym:
+
+%.m: %.ym
+#  要执行的配方 (内置)：
+	$(YACC.m) $<
+	 mv -f y.tab.c $@
+
+%.yl:
+
+%.s:
+
+%: %.s
+#  要执行的配方 (内置)：
+	$(LINK.s) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+%.o: %.s
+#  要执行的配方 (内置)：
+	$(COMPILE.s) -o $@ $<
+
+%.S:
+
+%: %.S
+#  要执行的配方 (内置)：
+	$(LINK.S) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+%.o: %.S
+#  要执行的配方 (内置)：
+	$(COMPILE.S) -o $@ $<
+
+%.s: %.S
+#  要执行的配方 (内置)：
+	$(PREPROCESS.S) $< > $@
+
+%.mod:
+
+%: %.mod
+#  要执行的配方 (内置)：
+	$(COMPILE.mod) -o $@ -e $@ $^
+
+%.o: %.mod
+#  要执行的配方 (内置)：
+	$(COMPILE.mod) -o $@ $<
+
+%.sym:
+
+%.def:
+
+%.sym: %.def
+#  要执行的配方 (内置)：
+	$(COMPILE.def) -o $@ $<
+
+%.h:
+
+%.info:
+
+%.dvi:
+
+%.tex:
+
+%.dvi: %.tex
+#  要执行的配方 (内置)：
+	$(TEX) $<
+
+%.texinfo:
+
+%.info: %.texinfo
+#  要执行的配方 (内置)：
+	$(MAKEINFO) $(MAKEINFO_FLAGS) $< -o $@
+
+%.dvi: %.texinfo
+#  要执行的配方 (内置)：
+	$(TEXI2DVI) $(TEXI2DVI_FLAGS) $<
+
+%.texi:
+
+%.info: %.texi
+#  要执行的配方 (内置)：
+	$(MAKEINFO) $(MAKEINFO_FLAGS) $< -o $@
+
+%.dvi: %.texi
+#  要执行的配方 (内置)：
+	$(TEXI2DVI) $(TEXI2DVI_FLAGS) $<
+
+%.txinfo:
+
+%.info: %.txinfo
+#  要执行的配方 (内置)：
+	$(MAKEINFO) $(MAKEINFO_FLAGS) $< -o $@
+
+%.dvi: %.txinfo
+#  要执行的配方 (内置)：
+	$(TEXI2DVI) $(TEXI2DVI_FLAGS) $<
+
+%.w:
+
+%.c: %.w
+#  要执行的配方 (内置)：
+	$(CTANGLE) $< - $@
+
+%.tex: %.w
+#  要执行的配方 (内置)：
+	$(CWEAVE) $< - $@
+
+%.ch:
+
+%.web:
+
+%.p: %.web
+#  要执行的配方 (内置)：
+	$(TANGLE) $<
+
+%.tex: %.web
+#  要执行的配方 (内置)：
+	$(WEAVE) $<
+
+%.sh:
+
+%: %.sh
+#  要执行的配方 (内置)：
+	cat $< >$@
+	 chmod a+x $@
+
+%.elc:
+
+%.el:
+
+(%): %
+#  要执行的配方 (内置)：
+	$(AR) $(ARFLAGS) $@ $<
+
+%.out: %
+#  要执行的配方 (内置)：
+	@rm -f $@
+	 cp $< $@
+
+%.c: %.w %.ch
+#  要执行的配方 (内置)：
+	$(CTANGLE) $^ $@
+
+%.tex: %.w %.ch
+#  要执行的配方 (内置)：
+	$(CWEAVE) $^ $@
+
+%:: %,v
+#  要执行的配方 (内置)：
+	$(CHECKOUT,v)
+
+%:: RCS/%,v
+#  要执行的配方 (内置)：
+	$(CHECKOUT,v)
+
+%:: RCS/%
+#  要执行的配方 (内置)：
+	$(CHECKOUT,v)
+
+%:: s.%
+#  要执行的配方 (内置)：
+	$(GET) $(GFLAGS) $(SCCS_OUTPUT_OPTION) $<
+
+%:: SCCS/s.%
+#  要执行的配方 (内置)：
+	$(GET) $(GFLAGS) $(SCCS_OUTPUT_OPTION) $<
+
+# 94 条隐含规则，5 (5.3%) 终端。
+
+# 文件
+
+dirto/main: dirto/samplemy2.o dirto/samplemy3.o dirto/gtestParams.o dirto/gtestmain.o dirto/samplemy1_c_gtest.o dirto/gtestFixtures.o dirto/samplemy2_gtest.o dirto/samplemy3_gtest.o dirto/samplemy2_gtest2.o dirto/samplemy1_c.o
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (从“Makefile”，行 102)：
+	g++ -o $@ $^ -lgtest -pthread
+
+# 不是一个目标：
+.web.p:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(TANGLE) $<
+
+dirto/samplemy2_gtest.o: gtestsrc/samplemy2_gtest.cpp
+#  对隐含规则的搜索尚未完成。
+#  隐含/静态模式主干：“samplemy2_gtest”
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (从“Makefile”，行 154)：
+	g++ -o $@ -I./ -c $<
+
+# 不是一个目标：
+.l.r:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(LEX.l) $< > $@
+	 mv -f lex.yy.r $@
+
+dirto/samplemy2.d: samplemy2.cpp
+#  对隐含规则的搜索已完成。
+#  隐含/静态模式主干：“samplemy2”
+#  最近更新 2023-04-03 17:14:22.157509758
+#  文件已经被更新。
+#  更新成功。
+# 自动
+# @ := dirto/samplemy2.d
+# 自动
+# % :=
+# 自动
+# * := samplemy2
+# 自动
+# + := samplemy2.cpp
+# 自动
+# | :=
+# 自动
+# < := samplemy2.cpp
+# 自动
+# ^ := samplemy2.cpp
+# 自动
+# ? := samplemy2.cpp
+# 变量的杂凑表状态:
+# 负载=8/32=25%, 重新杂凑=0, 碰撞=1/20=5%
+#  要执行的配方 (从“Makefile”，行 137)：
+	@set -e; rm -f $@; \
+	g++ -MM $(CPPFLAGS) $< > $@.$$$$; \
+	sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
+	rm -f $@.$$$$
+
+.PHONEY:
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+
+# 不是一个目标：
+.dvi:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+
+# 不是一个目标：
+.ym:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+
+# 不是一个目标：
+.f.o:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(COMPILE.f) $(OUTPUT_OPTION) $<
+
+# 不是一个目标：
+.l:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+
+# 不是一个目标：
+.m:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(LINK.m) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+# 不是一个目标：
+.ln:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+
+# 不是一个目标：
+.o:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(LINK.o) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+# 不是一个目标：
+.y:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+
+# 不是一个目标：
+.def.sym:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(COMPILE.def) -o $@ $<
+
+gmock1: gmock1_
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (从“Makefile”，行 161)：
+	./$(gmock1_tar)
+
+.PHONY: main2 test
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+
+gmock1clean:
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (从“Makefile”，行 166)：
+	rm $(gmock1_tar)
+
+# 不是一个目标：
+gtestsrc/gtestmain.cpp:
+#  对隐含规则的搜索已完成。
+#  最近更新 2023-03-27 15:20:20.962862493
+#  文件已经被更新。
+#  更新成功。
+
+# 不是一个目标：
+.p.o:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(COMPILE.p) $(OUTPUT_OPTION) $<
+
+# 不是一个目标：
+.p:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(LINK.p) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+# 不是一个目标：
+.txinfo.dvi:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(TEXI2DVI) $(TEXI2DVI_FLAGS) $<
+
+# 不是一个目标：
+gtestsrc/gtestParams.cpp:
+#  对隐含规则的搜索已完成。
+#  最近更新 2023-03-27 18:39:36.389609872
+#  文件已经被更新。
+#  更新成功。
+
+gmock1_: gmock1.cpp
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (从“Makefile”，行 163)：
+	g++ gmock1.cpp -o $(gmock1_tar) -lgtest -lgmock -pthread
+
+# 不是一个目标：
+.a:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+
+main2:
+#  假目标 (.PHONY的前提)。
+#  对隐含规则的搜索尚未完成。
+#  文件不存在。
+#  文件尚未被更新。
+#  要执行的配方 (从“Makefile”，行 170)：
+	gcc -o cfunc.o -c cfunc.c
+	g++ -o src.o -c src.cpp
+	g++ -o testsrc.o -c testsrc.cpp
+	g++ -o testsrc2.o -c testsrc2.cpp
+	g++ -o testcfunc.o -c testcfunc.cpp
+	g++ -o testFixtures.o -c testFixtures.cpp
+	g++ -o testmain.o -c testmain.cpp
+	g++ -o main *.o  -lgtest -pthread
+
+# 不是一个目标：
+.yl:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+
+# 不是一个目标：
+.l.ln:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	@$(RM) $*.c
+	 $(LEX.l) $< > $*.c
+	$(LINT.c) -i $*.c -o $@
+	 $(RM) $*.c
+
+# 不是一个目标：
+.F.o:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(COMPILE.F) $(OUTPUT_OPTION) $<
+
+dirto/samplemy2_gtest2.d: gtestsrc/samplemy2_gtest2.cpp
+#  对隐含规则的搜索已完成。
+#  隐含/静态模式主干：“samplemy2_gtest2”
+#  最近更新 2023-04-03 17:14:21.941510275
+#  文件已经被更新。
+#  更新成功。
+# 自动
+# @ := dirto/samplemy2_gtest2.d
+# 自动
+# % :=
+# 自动
+# * := samplemy2_gtest2
+# 自动
+# + := gtestsrc/samplemy2_gtest2.cpp
+# 自动
+# | :=
+# 自动
+# < := gtestsrc/samplemy2_gtest2.cpp
+# 自动
+# ^ := gtestsrc/samplemy2_gtest2.cpp
+# 自动
+# ? := gtestsrc/samplemy2_gtest2.cpp
+# 变量的杂凑表状态:
+# 负载=8/32=25%, 重新杂凑=0, 碰撞=1/20=5%
+#  要执行的配方 (从“Makefile”，行 137)：
+	@set -e; rm -f $@; \
+	g++ -MM $(CPPFLAGS) $< > $@.$$$$; \
+	sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
+	rm -f $@.$$$$
+
+# 不是一个目标：
+.texi.info:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(MAKEINFO) $(MAKEINFO_FLAGS) $< -o $@
+
+# 不是一个目标：
+.w.c:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(CTANGLE) $< - $@
+
+# 不是一个目标：
+.texi.dvi:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(TEXI2DVI) $(TEXI2DVI_FLAGS) $<
+
+# 不是一个目标：
+.ch:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+
+# 不是一个目标：
+.m.o:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(COMPILE.m) $(OUTPUT_OPTION) $<
+
+dirto/samplemy3_gtest.d: gtestsrc/samplemy3_gtest.cpp
+#  对隐含规则的搜索已完成。
+#  隐含/静态模式主干：“samplemy3_gtest”
+#  最近更新 2023-04-03 17:14:21.977510188
+#  文件已经被更新。
+#  更新成功。
+# 自动
+# @ := dirto/samplemy3_gtest.d
+# 自动
+# % :=
+# 自动
+# * := samplemy3_gtest
+# 自动
+# + := gtestsrc/samplemy3_gtest.cpp
+# 自动
+# | :=
+# 自动
+# < := gtestsrc/samplemy3_gtest.cpp
+# 自动
+# ^ := gtestsrc/samplemy3_gtest.cpp
+# 自动
+# ? := gtestsrc/samplemy3_gtest.cpp
+# 变量的杂凑表状态:
+# 负载=8/32=25%, 重新杂凑=0, 碰撞=1/20=5%
+#  要执行的配方 (从“Makefile”，行 137)：
+	@set -e; rm -f $@; \
+	g++ -MM $(CPPFLAGS) $< > $@.$$$$; \
+	sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
+	rm -f $@.$$$$
+
+# 不是一个目标：
+.cc:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(LINK.cc) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+# 不是一个目标：
+.cc.o:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(COMPILE.cc) $(OUTPUT_OPTION) $<
+
+# 不是一个目标：
+gtestsrc/gtestFixtures.cpp:
+#  对隐含规则的搜索已完成。
+#  最近更新 2023-03-27 11:10:24.368248589
+#  文件已经被更新。
+#  更新成功。
+
+dirto/samplemy1_c_gtest.d: gtestsrc/samplemy1_c_gtest.cpp
+#  对隐含规则的搜索已完成。
+#  隐含/静态模式主干：“samplemy1_c_gtest”
+#  最近更新 2023-04-03 17:14:22.081509939
+#  文件已经被更新。
+#  更新成功。
+# 自动
+# @ := dirto/samplemy1_c_gtest.d
+# 自动
+# % :=
+# 自动
+# * := samplemy1_c_gtest
+# 自动
+# + := gtestsrc/samplemy1_c_gtest.cpp
+# 自动
+# | :=
+# 自动
+# < := gtestsrc/samplemy1_c_gtest.cpp
+# 自动
+# ^ := gtestsrc/samplemy1_c_gtest.cpp
+# 自动
+# ? := gtestsrc/samplemy1_c_gtest.cpp
+# 变量的杂凑表状态:
+# 负载=8/32=25%, 重新杂凑=0, 碰撞=1/20=5%
+#  要执行的配方 (从“Makefile”，行 137)：
+	@set -e; rm -f $@; \
+	g++ -MM $(CPPFLAGS) $< > $@.$$$$; \
+	sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
+	rm -f $@.$$$$
+
+# 不是一个目标：
+.def:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+
+# 不是一个目标：
+.SUFFIXES: .out .a .ln .o .c .cc .C .cpp .p .f .F .m .r .y .l .ym .yl .s .S .mod .sym .def .h .info .dvi .tex .texinfo .texi .txinfo .w .ch .web .sh .elc .el
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+
+# 不是一个目标：
+.c.o:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(COMPILE.c) $(OUTPUT_OPTION) $<
+
+# 不是一个目标：
+Makefile:
+#  对隐含规则的搜索已完成。
+#  最近更新 2023-04-03 17:07:41.059623134
+#  文件已经被更新。
+#  更新成功。
+
+# 不是一个目标：
+.r.o:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(COMPILE.r) $(OUTPUT_OPTION) $<
+
+# 不是一个目标：
+.r:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(LINK.r) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+test:
+#  假目标 (.PHONY的前提)。
+#  对隐含规则的搜索尚未完成。
+#  文件不存在。
+#  文件尚未被更新。
+#  要执行的配方 (从“Makefile”，行 190)：
+	$(warning $(CC))
+	$(info $(CC))
+	echo $(CC)
+
+# 不是一个目标：
+.ym.m:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(YACC.m) $<
+	 mv -f y.tab.c $@
+
+# 不是一个目标：
+.y.ln:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(YACC.y) $<
+	 $(LINT.c) -C$* y.tab.c
+	 $(RM) y.tab.c
+
+dirto/samplemy2.o: samplemy2.cpp
+#  对隐含规则的搜索尚未完成。
+#  隐含/静态模式主干：“samplemy2”
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (从“Makefile”，行 154)：
+	g++ -o $@ -I./ -c $<
+
+# 不是一个目标：
+samplemy2.cpp:
+#  对隐含规则的搜索已完成。
+#  最近更新 2023-03-27 10:18:22.716292161
+#  文件已经被更新。
+#  更新成功。
+
+# 不是一个目标：
+.elc:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+
+# 不是一个目标：
+.l.c:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	@$(RM) $@
+	 $(LEX.l) $< > $@
+
+# 不是一个目标：
+.out:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+
+all: dirto/main
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (从“Makefile”，行 96)：
+	mkdir -p $(dirto)
+
+dirto/gtestmain.d: gtestsrc/gtestmain.cpp
+#  对隐含规则的搜索已完成。
+#  隐含/静态模式主干：“gtestmain”
+#  最近更新 2023-04-03 17:14:22.117509854
+#  文件已经被更新。
+#  更新成功。
+# 自动
+# @ := dirto/gtestmain.d
+# 自动
+# % :=
+# 自动
+# * := gtestmain
+# 自动
+# + := gtestsrc/gtestmain.cpp
+# 自动
+# | :=
+# 自动
+# < := gtestsrc/gtestmain.cpp
+# 自动
+# ^ := gtestsrc/gtestmain.cpp
+# 自动
+# ? := gtestsrc/gtestmain.cpp
+# 变量的杂凑表状态:
+# 负载=8/32=25%, 重新杂凑=0, 碰撞=1/20=5%
+#  要执行的配方 (从“Makefile”，行 137)：
+	@set -e; rm -f $@; \
+	g++ -MM $(CPPFLAGS) $< > $@.$$$$; \
+	sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
+	rm -f $@.$$$$
+
+# 不是一个目标：
+.C:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(LINK.C) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+dirto/gtestParams.d: gtestsrc/gtestParams.cpp
+#  对隐含规则的搜索已完成。
+#  隐含/静态模式主干：“gtestParams”
+#  最近更新 2023-04-03 17:14:22.149509777
+#  文件已经被更新。
+#  更新成功。
+# 自动
+# @ := dirto/gtestParams.d
+# 自动
+# % :=
+# 自动
+# * := gtestParams
+# 自动
+# + := gtestsrc/gtestParams.cpp
+# 自动
+# | :=
+# 自动
+# < := gtestsrc/gtestParams.cpp
+# 自动
+# ^ := gtestsrc/gtestParams.cpp
+# 自动
+# ? := gtestsrc/gtestParams.cpp
+# 变量的杂凑表状态:
+# 负载=8/32=25%, 重新杂凑=0, 碰撞=1/20=5%
+#  要执行的配方 (从“Makefile”，行 137)：
+	@set -e; rm -f $@; \
+	g++ -MM $(CPPFLAGS) $< > $@.$$$$; \
+	sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
+	rm -f $@.$$$$
+
+# 不是一个目标：
+.r.f:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(PREPROCESS.r) $(OUTPUT_OPTION) $<
+
+# 不是一个目标：
+.S:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(LINK.S) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+# 不是一个目标：
+.texinfo.info:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(MAKEINFO) $(MAKEINFO_FLAGS) $< -o $@
+
+# 不是一个目标：
+.c:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(LINK.c) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+# 不是一个目标：
+.w.tex:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(CWEAVE) $< - $@
+
+# 不是一个目标：
+.c.ln:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(LINT.c) -C$* $<
+
+# 不是一个目标：
+.s.o:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(COMPILE.s) -o $@ $<
+
+# 不是一个目标：
+.s:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(LINK.s) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+# 不是一个目标：
+gtestsrc/samplemy2_gtest.cpp:
+#  对隐含规则的搜索已完成。
+#  最近更新 2023-03-27 10:28:15.169565047
+#  文件已经被更新。
+#  更新成功。
+
+dirto/samplemy2_gtest2.o: gtestsrc/samplemy2_gtest2.cpp
+#  对隐含规则的搜索尚未完成。
+#  隐含/静态模式主干：“samplemy2_gtest2”
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (从“Makefile”，行 154)：
+	g++ -o $@ -I./ -c $<
+
+dirto/gtestFixtures.d: gtestsrc/gtestFixtures.cpp
+#  对隐含规则的搜索已完成。
+#  隐含/静态模式主干：“gtestFixtures”
+#  最近更新 2023-04-03 17:14:22.045510025
+#  文件已经被更新。
+#  更新成功。
+# 自动
+# @ := dirto/gtestFixtures.d
+# 自动
+# % :=
+# 自动
+# * := gtestFixtures
+# 自动
+# + := gtestsrc/gtestFixtures.cpp
+# 自动
+# | :=
+# 自动
+# < := gtestsrc/gtestFixtures.cpp
+# 自动
+# ^ := gtestsrc/gtestFixtures.cpp
+# 自动
+# ? := gtestsrc/gtestFixtures.cpp
+# 变量的杂凑表状态:
+# 负载=8/32=25%, 重新杂凑=0, 碰撞=1/20=5%
+#  要执行的配方 (从“Makefile”，行 137)：
+	@set -e; rm -f $@; \
+	g++ -MM $(CPPFLAGS) $< > $@.$$$$; \
+	sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
+	rm -f $@.$$$$
+
+dirto/samplemy3_gtest.o: gtestsrc/samplemy3_gtest.cpp
+#  对隐含规则的搜索尚未完成。
+#  隐含/静态模式主干：“samplemy3_gtest”
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (从“Makefile”，行 154)：
+	g++ -o $@ -I./ -c $<
+
+dirto/samplemy3.d: samplemy3.cpp
+#  对隐含规则的搜索已完成。
+#  隐含/静态模式主干：“samplemy3”
+#  最近更新 2023-04-03 17:14:22.153509767
+#  文件已经被更新。
+#  更新成功。
+# 自动
+# @ := dirto/samplemy3.d
+# 自动
+# % :=
+# 自动
+# * := samplemy3
+# 自动
+# + := samplemy3.cpp
+# 自动
+# | :=
+# 自动
+# < := samplemy3.cpp
+# 自动
+# ^ := samplemy3.cpp
+# 自动
+# ? := samplemy3.cpp
+# 变量的杂凑表状态:
+# 负载=8/32=25%, 重新杂凑=0, 碰撞=1/20=5%
+#  要执行的配方 (从“Makefile”，行 137)：
+	@set -e; rm -f $@; \
+	g++ -MM $(CPPFLAGS) $< > $@.$$$$; \
+	sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
+	rm -f $@.$$$$
+
+# 不是一个目标：
+.texinfo.dvi:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(TEXI2DVI) $(TEXI2DVI_FLAGS) $<
+
+# 不是一个目标：
+.el:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+
+dirto/samplemy1_c_gtest.o: gtestsrc/samplemy1_c_gtest.cpp
+#  对隐含规则的搜索尚未完成。
+#  隐含/静态模式主干：“samplemy1_c_gtest”
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (从“Makefile”，行 154)：
+	g++ -o $@ -I./ -c $<
+
+# 不是一个目标：
+.lm.m:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	@$(RM) $@
+	 $(LEX.m) $< > $@
+
+dirto/samplemy1_c.d: samplemy1_c.c
+#  对隐含规则的搜索已完成。
+#  隐含/静态模式主干：“samplemy1_c”
+#  最近更新 2023-04-03 17:14:22.165509738
+#  文件已经被更新。
+#  更新成功。
+# 自动
+# @ := dirto/samplemy1_c.d
+# 自动
+# % :=
+# 自动
+# * := samplemy1_c
+# 自动
+# + := samplemy1_c.c
+# 自动
+# | :=
+# 自动
+# < := samplemy1_c.c
+# 自动
+# ^ := samplemy1_c.c
+# 自动
+# ? := samplemy1_c.c
+# 变量的杂凑表状态:
+# 负载=8/32=25%, 重新杂凑=0, 碰撞=1/20=5%
+#  要执行的配方 (从“Makefile”，行 129)：
+	@set -e; rm -f $@; \
+	gcc -MM $(CPPFLAGS) $< > $@.$$$$; \
+	sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
+	rm -f $@.$$$$
+
+# 不是一个目标：
+.y.c:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(YACC.y) $<
+	 mv -f y.tab.c $@
+
+# 不是一个目标：
+.web.tex:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(WEAVE) $<
+
+# 不是一个目标：
+.texinfo:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+
+# 不是一个目标：
+.DEFAULT:
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+
+# 不是一个目标：
+.h:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+
+# 不是一个目标：
+samplemy1_c.c:
+#  对隐含规则的搜索已完成。
+#  最近更新 2023-03-27 09:30:40.755920637
+#  文件已经被更新。
+#  更新成功。
+
+# 不是一个目标：
+.tex.dvi:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(TEX) $<
+
+# 不是一个目标：
+.cpp.o:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(COMPILE.cpp) $(OUTPUT_OPTION) $<
+
+# 不是一个目标：
+.cpp:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(LINK.cpp) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+clean:
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (从“Makefile”，行 180)：
+	-rm $(objcpp) $(objc) $(target) $(alldfile)
+
+# 不是一个目标：
+.C.o:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(COMPILE.C) $(OUTPUT_OPTION) $<
+
+# 不是一个目标：
+.texi:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+
+# 不是一个目标：
+.txinfo:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+
+dirto/gtestmain.o: gtestsrc/gtestmain.cpp
+#  对隐含规则的搜索尚未完成。
+#  隐含/静态模式主干：“gtestmain”
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (从“Makefile”，行 154)：
+	g++ -o $@ -I./ -c $<
+
+# 不是一个目标：
+.tex:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+
+dirto/gtestParams.o: gtestsrc/gtestParams.cpp
+#  对隐含规则的搜索尚未完成。
+#  隐含/静态模式主干：“gtestParams”
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (从“Makefile”，行 154)：
+	g++ -o $@ -I./ -c $<
+
+# 不是一个目标：
+.txinfo.info:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(MAKEINFO) $(MAKEINFO_FLAGS) $< -o $@
+
+dirto/samplemy2_gtest.d: gtestsrc/samplemy2_gtest.cpp
+#  对隐含规则的搜索已完成。
+#  隐含/静态模式主干：“samplemy2_gtest”
+#  最近更新 2023-04-03 17:14:22.013510102
+#  文件已经被更新。
+#  更新成功。
+# 自动
+# @ := dirto/samplemy2_gtest.d
+# 自动
+# % :=
+# 自动
+# * := samplemy2_gtest
+# 自动
+# + := gtestsrc/samplemy2_gtest.cpp
+# 自动
+# | :=
+# 自动
+# < := gtestsrc/samplemy2_gtest.cpp
+# 自动
+# ^ := gtestsrc/samplemy2_gtest.cpp
+# 自动
+# ? := gtestsrc/samplemy2_gtest.cpp
+# 变量的杂凑表状态:
+# 负载=8/32=25%, 重新杂凑=0, 碰撞=1/20=5%
+#  要执行的配方 (从“Makefile”，行 137)：
+	@set -e; rm -f $@; \
+	g++ -MM $(CPPFLAGS) $< > $@.$$$$; \
+	sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
+	rm -f $@.$$$$
+
+# 不是一个目标：
+gmock1.cpp:
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+
+# 不是一个目标：
+.sh:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	cat $< >$@
+	 chmod a+x $@
+
+dirto/gtestFixtures.o: gtestsrc/gtestFixtures.cpp
+#  对隐含规则的搜索尚未完成。
+#  隐含/静态模式主干：“gtestFixtures”
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (从“Makefile”，行 154)：
+	g++ -o $@ -I./ -c $<
+
+dirto/samplemy3.o: samplemy3.cpp
+#  对隐含规则的搜索尚未完成。
+#  隐含/静态模式主干：“samplemy3”
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (从“Makefile”，行 154)：
+	g++ -o $@ -I./ -c $<
+
+# 不是一个目标：
+samplemy3.cpp:
+#  对隐含规则的搜索已完成。
+#  最近更新 2023-03-27 10:09:08.492256143
+#  文件已经被更新。
+#  更新成功。
+
+# 不是一个目标：
+.S.s:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(PREPROCESS.S) $< > $@
+
+# 不是一个目标：
+.mod:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(COMPILE.mod) -o $@ -e $@ $^
+
+# 不是一个目标：
+.mod.o:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(COMPILE.mod) -o $@ $<
+
+# 不是一个目标：
+.F.f:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(PREPROCESS.F) $(OUTPUT_OPTION) $<
+
+dirto/samplemy1_c.o: samplemy1_c.c
+#  对隐含规则的搜索尚未完成。
+#  隐含/静态模式主干：“samplemy1_c”
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (从“Makefile”，行 151)：
+	gcc -o $@ -c $<
+
+# 不是一个目标：
+.w:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+
+# 不是一个目标：
+.S.o:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(COMPILE.S) -o $@ $<
+
+# 不是一个目标：
+gtestsrc/samplemy2_gtest2.cpp:
+#  对隐含规则的搜索已完成。
+#  最近更新 2023-03-27 15:11:52.119975273
+#  文件已经被更新。
+#  更新成功。
+
+# 不是一个目标：
+.F:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(LINK.F) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+# 不是一个目标：
+gtestsrc/samplemy3_gtest.cpp:
+#  对隐含规则的搜索已完成。
+#  最近更新 2023-03-27 14:27:39.170408918
+#  文件已经被更新。
+#  更新成功。
+
+# 不是一个目标：
+.web:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+
+# 不是一个目标：
+.sym:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+
+# 不是一个目标：
+.f:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(LINK.f) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+# 不是一个目标：
+.info:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+
+# 不是一个目标：
+gtestsrc/samplemy1_c_gtest.cpp:
+#  对隐含规则的搜索已完成。
+#  最近更新 2023-03-27 09:31:02.520205606
+#  文件已经被更新。
+#  更新成功。
+
+# 文件杂凑表状态:
+# 负载=114/1024=11%, 重新杂凑=0, 碰撞=483/1772=27%
+# VPATH 搜索路径
+
+vpath %.cpp gtestsrc
+
+# 1 “vpath”搜索路径。
+
+# 没有通用搜索路径(“VPATH”变量)。
+
+# strcache 缓冲: 1 (0) / 字串 = 391 / 空间 = 5174 B / 平均 = 13 B
+# 目前缓冲: 尺寸 = 8162 B / 已用 = 5174 B / 数量 = 391 / 平均 = 13 B
+
+# strcache 性能：查找 = 688 / 命中率 = 43%
+# 杂凑表统计数据:
+# 负载=391/8192=5%, 重新杂凑=0, 碰撞=186/688=27%
+# 在 Mon Apr  3 17:14:22 2023
+ 上完成 make 数据基础
+g++ -o dirto/samplemy2.o -I./ -c samplemy2.cpp
+g++ -o dirto/samplemy3.o -I./ -c samplemy3.cpp
+g++ -o dirto/gtestParams.o -I./ -c gtestsrc/gtestParams.cpp
+g++ -o dirto/gtestmain.o -I./ -c gtestsrc/gtestmain.cpp
+g++ -o dirto/samplemy1_c_gtest.o -I./ -c gtestsrc/samplemy1_c_gtest.cpp
+g++ -o dirto/gtestFixtures.o -I./ -c gtestsrc/gtestFixtures.cpp
+g++ -o dirto/samplemy2_gtest.o -I./ -c gtestsrc/samplemy2_gtest.cpp
+g++ -o dirto/samplemy3_gtest.o -I./ -c gtestsrc/samplemy3_gtest.cpp
+g++ -o dirto/samplemy2_gtest2.o -I./ -c gtestsrc/samplemy2_gtest2.cpp
+gcc -o dirto/samplemy1_c.o -c samplemy1_c.c
+g++ -o dirto/main dirto/samplemy2.o dirto/samplemy3.o dirto/gtestParams.o dirto/gtestmain.o dirto/samplemy1_c_gtest.o dirto/gtestFixtures.o dirto/samplemy2_gtest.o dirto/samplemy3_gtest.o dirto/samplemy2_gtest2.o dirto/samplemy1_c.o -lgtest -pthread
+mkdir -p dirto/
+# GNU Make 4.2.1
+# 为 x86_64-pc-linux-gnu 编译
+# Copyright (C) 1988-2016 Free Software Foundation, Inc.
+# 许可证：GPLv3+：GNU 通用公共许可证第 3 版或更新版本<http://gnu.org/licenses/gpl.html>。
+# 本软件是自由软件：您可以自由修改和重新发布它。
+# 在法律允许的范围内没有其他保证。
+
+# make 数据基础，打印在 Mon Apr  3 17:14:26 2023
+
+# 变量
+
+# 自动
+<D = $(patsubst %/,%,$(dir $<))
+# 自动
+?F = $(notdir $?)
+# 默认
+.SHELLFLAGS := -c
+# 环境
+XDG_SESSION_CLASS = user
+# 环境
+XDG_SESSION_TYPE = tty
+# 默认
+CWEAVE = cweave
+# 自动
+?D = $(patsubst %/,%,$(dir $?))
+# makefile (从“Makefile”，行 135)
+CPPFLAGS = -I./
+# 自动
+@D = $(patsubst %/,%,$(dir $@))
+# 自动
+@F = $(notdir $@)
+# 默认
+MAKE_VERSION := 4.2.1
+# makefile
+CURDIR := /home/lixiang/code/gtest
+# makefile
+SHELL = /bin/sh
+# 默认
+RM = rm -f
+# 默认
+CO = co
+# 默认
+COMPILE.mod = $(M2C) $(M2FLAGS) $(MODFLAGS) $(TARGET_ARCH)
+# 环境
+_ = /usr/bin/make
+# 默认
+PREPROCESS.F = $(FC) $(FFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -F
+# 默认
+LINK.m = $(OBJC) $(OBJCFLAGS) $(CPPFLAGS) $(LDFLAGS) $(TARGET_ARCH)
+# 默认
+LINK.o = $(CC) $(LDFLAGS) $(TARGET_ARCH)
+# 默认
+OUTPUT_OPTION = -o $@
+# 默认
+COMPILE.cpp = $(COMPILE.cc)
+# makefile (从“dirto/samplemy2_gtest2.d”，行 1)
+MAKEFILE_LIST :=  Makefile dirto/samplemy1_c.d dirto/samplemy2.d dirto/samplemy3.d dirto/gtestParams.d dirto/gtestmain.d dirto/samplemy1_c_gtest.d dirto/gtestFixtures.d dirto/samplemy2_gtest.d dirto/samplemy3_gtest.d dirto/samplemy2_gtest2.d
+# “override”指令
+GNUMAKEFLAGS :=
+# 默认
+LINK.p = $(PC) $(PFLAGS) $(CPPFLAGS) $(LDFLAGS) $(TARGET_ARCH)
+# 环境
+XDG_DATA_DIRS = /usr/local/share:/usr/share:/var/lib/snapd/desktop
+# makefile (从“Makefile”，行 43)
+notusedfile := testall.cpp testalldemo.cpp gmock1_ gmock1.cpp
+# 环境
+DBUS_SESSION_BUS_ADDRESS = unix:path=/run/user/1000/bus
+# 默认
+CC = cc
+# 默认
+CHECKOUT,v = +$(if $(wildcard $@),,$(CO) $(COFLAGS) $< $@)
+# 环境
+LESSOPEN = | /usr/bin/lesspipe %s
+# 默认
+CPP = $(CC) -E
+# 默认
+LINK.cc = $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(LDFLAGS) $(TARGET_ARCH)
+# 环境
+SSH_CONNECTION = 10.248.14.42 50181 10.248.14.215 22
+# 环境
+PATH = /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+# 默认
+LD = ld
+# 默认
+TEXI2DVI = texi2dvi
+# 默认
+YACC = yacc
+# makefile (从“Makefile”，行 158)
+gmock1_tar := gmock1_
+# makefile (从“Makefile”，行 183)
+allsrc = $(wildcard *.cpp)
+# 环境
+SSH_TTY = /dev/pts/103
+# 环境
+XDG_RUNTIME_DIR = /run/user/1000
+# 默认
+ARFLAGS = rv
+# 默认
+LINK.r = $(FC) $(FFLAGS) $(RFLAGS) $(LDFLAGS) $(TARGET_ARCH)
+# makefile (从“Makefile”，行 39)
+dirto = dirto/
+# 默认
+LINT = lint
+# 默认
+COMPILE.f = $(FC) $(FFLAGS) $(TARGET_ARCH) -c
+# 默认
+LINT.c = $(LINT) $(LINTFLAGS) $(CPPFLAGS) $(TARGET_ARCH)
+# 默认
+YACC.m = $(YACC) $(YFLAGS)
+# 默认
+YACC.y = $(YACC) $(YFLAGS)
+# 默认
+AR = ar
+# 默认
+.FEATURES := target-specific order-only second-expansion else-if shortest-stem undefine oneshell archives jobserver output-sync check-symlink load
+# 默认
+TANGLE = tangle
+# makefile (从“Makefile”，行 46)
+objc := dirto/samplemy1_c.o
+# 环境
+LS_COLORS = rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:
+# 默认
+GET = get
+# 自动
+%F = $(notdir $%)
+# 环境
+DISPLAY = localhost:15.0
+# 默认
+COMPILE.F = $(FC) $(FFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c
+# 默认
+CTANGLE = ctangle
+# makefile (从“Makefile”，行 144)
+alldfile = $(patsubst %.c,$(dirto)%.d,$(allcfile)) $(patsubst %.cpp,$(dirto)%.d,$(notdir $(usedcppfile)))
+# 默认
+.LIBPATTERNS = lib%.so lib%.a
+# 默认
+LINK.C = $(LINK.cc)
+# 环境
+PWD = /home/lixiang/code/gtest
+# 默认
+.LOADED :=
+# 默认
+LINK.S = $(CC) $(ASFLAGS) $(CPPFLAGS) $(LDFLAGS) $(TARGET_MACH)
+# 默认
+PREPROCESS.r = $(FC) $(FFLAGS) $(RFLAGS) $(TARGET_ARCH) -F
+# 自动
+*D = $(patsubst %/,%,$(dir $*))
+# 默认
+LINK.c = $(CC) $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) $(TARGET_ARCH)
+# 默认
+LINK.s = $(CC) $(ASFLAGS) $(LDFLAGS) $(TARGET_MACH)
+# 环境
+HOME = /home/lixiang
+# makefile (从“Makefile”，行 185)
+allo2 = $(patsubst %.cpp,%.o,$(allsrc))
+# 环境
+LESSCLOSE = /usr/bin/lesspipe %s %s
+# 环境
+LOGNAME = lixiang
+# makefile (从“Makefile”，行 41)
+allcfile := samplemy1_c.c
+# makefile (从“Makefile”，行 42)
+allcppfile := testall.cpp samplemy2.cpp samplemy3.cpp testalldemo.cpp gmock1.cpp gtestsrc/gtestParams.cpp gtestsrc/gtestmain.cpp gtestsrc/samplemy1_c_gtest.cpp gtestsrc/gtestFixtures.cpp gtestsrc/samplemy2_gtest.cpp gtestsrc/samplemy3_gtest.cpp gtestsrc/samplemy2_gtest2.cpp
+# 自动
+^D = $(patsubst %/,%,$(dir $^))
+# makefile (从“Makefile”，行 44)
+usedcppfile := samplemy2.cpp samplemy3.cpp gtestsrc/gtestParams.cpp gtestsrc/gtestmain.cpp gtestsrc/samplemy1_c_gtest.cpp gtestsrc/gtestFixtures.cpp gtestsrc/samplemy2_gtest.cpp gtestsrc/samplemy3_gtest.cpp gtestsrc/samplemy2_gtest2.cpp
+# 环境
+MAKELEVEL := 0
+# 默认
+COMPILE.m = $(OBJC) $(OBJCFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c
+# 默认
+MAKE = $(MAKE_COMMAND)
+# 环境
+SHLVL = 1
+# makefile (从“Makefile”，行 49)
+objcpp := dirto/samplemy2.o dirto/samplemy3.o dirto/gtestParams.o dirto/gtestmain.o dirto/samplemy1_c_gtest.o dirto/gtestFixtures.o dirto/samplemy2_gtest.o dirto/samplemy3_gtest.o dirto/samplemy2_gtest2.o
+# 默认
+AS = as
+# 默认
+PREPROCESS.S = $(CC) -E $(CPPFLAGS)
+# 默认
+COMPILE.p = $(PC) $(PFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c
+# 环境
+XDG_SESSION_ID = 1743
+# 环境
+USER = lixiang
+# 默认
+FC = f77
+# makefile
+.DEFAULT_GOAL := all
+# 自动
+%D = $(patsubst %/,%,$(dir $%))
+# 默认
+WEAVE = weave
+# 默认
+MAKE_COMMAND := make
+# 默认
+LINK.cpp = $(LINK.cc)
+# 默认
+F77 = $(FC)
+# 环境
+OLDPWD = /home/lixiang/code/maketest
+# 默认
+.VARIABLES :=
+# 默认
+PC = pc
+# 自动
+*F = $(notdir $*)
+# 环境
+LANGUAGE = zh_CN:zh
+# 环境
+MAKE_RESTARTS = 1
+# 默认
+COMPILE.def = $(M2C) $(M2FLAGS) $(DEFFLAGS) $(TARGET_ARCH)
+# 默认
+LEX = lex
+# makefile
+MAKEFLAGS = p
+# 环境
+MFLAGS = -p
+# 环境
+SSH_CLIENT = 10.248.14.42 50181 22
+# 默认
+LEX.l = $(LEX) $(LFLAGS) -t
+# 默认
+LEX.m = $(LEX) $(LFLAGS) -t
+# makefile (从“Makefile”，行 40)
+dirsrc = gtestsrc/
+# 自动
++D = $(patsubst %/,%,$(dir $+))
+# 默认
+COMPILE.r = $(FC) $(FFLAGS) $(RFLAGS) $(TARGET_ARCH) -c
+# 自动
++F = $(notdir $+)
+# 默认
+M2C = m2c
+# makefile (从“Makefile”，行 50)
+target = $(dirto)main
+# 默认
+MAKEFILES :=
+# 默认
+COMPILE.cc = $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c
+# 自动
+<F = $(notdir $<)
+# 默认
+CXX = g++
+# 默认
+COFLAGS =
+# 默认
+COMPILE.C = $(COMPILE.cc)
+# 自动
+^F = $(notdir $^)
+# 默认
+COMPILE.S = $(CC) $(ASFLAGS) $(CPPFLAGS) $(TARGET_MACH) -c
+# 默认
+LINK.F = $(FC) $(FFLAGS) $(CPPFLAGS) $(LDFLAGS) $(TARGET_ARCH)
+# 默认
+SUFFIXES := .out .a .ln .o .c .cc .C .cpp .p .f .F .m .r .y .l .ym .yl .s .S .mod .sym .def .h .info .dvi .tex .texinfo .texi .txinfo .w .ch .web .sh .elc .el
+# 默认
+COMPILE.c = $(CC) $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c
+# makefile (从“Makefile”，行 184)
+allo = $(subst .cpp,.o,$(allsrc))
+# 默认
+COMPILE.s = $(AS) $(ASFLAGS) $(TARGET_MACH)
+# 默认
+.INCLUDE_DIRS = /usr/include /usr/local/include /usr/include
+# 默认
+.RECIPEPREFIX :=
+# 默认
+MAKEINFO = makeinfo
+# 默认
+MAKE_TERMERR := /dev/pts/103
+# 默认
+OBJC = cc
+# 默认
+MAKE_HOST := x86_64-pc-linux-gnu
+# 默认
+TEX = tex
+# 环境
+LANG = zh_CN.UTF-8
+# 环境
+TERM = xterm
+# 默认
+F77FLAGS = $(FFLAGS)
+# 默认
+LINK.f = $(FC) $(FFLAGS) $(LDFLAGS) $(TARGET_ARCH)
+# 环境
+MOTD_SHOWN = pam
+# 变量的杂凑表状态:
+# 负载=139/1024=14%, 重新杂凑=0, 碰撞=15/256=6%
+
+# Pattern-specific 变量值
+
+# 没有 pattern-specific 变量的值。
+
+# 目录
+
+# SCCS：无法对其进行 stat 操作。
+# . (设备 66306，i-节点 1575621)： 22 文件， 22 不可能.
+# gtestsrc/gtestsrc：无法对其进行 stat 操作。
+# gtestsrc/RCS：无法对其进行 stat 操作。
+# gtestsrc/gtestsrc/SCCS：无法对其进行 stat 操作。
+# gtestsrc (设备 66306，i-节点 1575729)： 9 文件， 无 不可能.
+# gtestsrc/gtestsrc/RCS：无法对其进行 stat 操作。
+# gtestsrc/SCCS：无法对其进行 stat 操作。
+# RCS：无法对其进行 stat 操作。
+
+# 31 文件， 22 不可能在 9 目录中。
+
+# 隐含规则
+
+dirto/%.d: %.c
+#  要执行的配方 (从“Makefile”，行 129)：
+	@set -e; rm -f $@; \
+	gcc -MM $(CPPFLAGS) $< > $@.$$$$; \
+	sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
+	rm -f $@.$$$$
+
+dirto/%.d: %.cpp
+#  要执行的配方 (从“Makefile”，行 137)：
+	@set -e; rm -f $@; \
+	g++ -MM $(CPPFLAGS) $< > $@.$$$$; \
+	sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
+	rm -f $@.$$$$
+
+%.out:
+
+%.a:
+
+%.ln:
+
+%.o:
+
+%: %.o
+#  要执行的配方 (内置)：
+	$(LINK.o) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+%.c:
+
+%: %.c
+#  要执行的配方 (内置)：
+	$(LINK.c) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+%.ln: %.c
+#  要执行的配方 (内置)：
+	$(LINT.c) -C$* $<
+
+%.o: %.c
+#  要执行的配方 (内置)：
+	$(COMPILE.c) $(OUTPUT_OPTION) $<
+
+%.cc:
+
+%: %.cc
+#  要执行的配方 (内置)：
+	$(LINK.cc) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+%.o: %.cc
+#  要执行的配方 (内置)：
+	$(COMPILE.cc) $(OUTPUT_OPTION) $<
+
+%.C:
+
+%: %.C
+#  要执行的配方 (内置)：
+	$(LINK.C) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+%.o: %.C
+#  要执行的配方 (内置)：
+	$(COMPILE.C) $(OUTPUT_OPTION) $<
+
+%.cpp:
+
+%: %.cpp
+#  要执行的配方 (内置)：
+	$(LINK.cpp) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+%.o: %.cpp
+#  要执行的配方 (内置)：
+	$(COMPILE.cpp) $(OUTPUT_OPTION) $<
+
+%.p:
+
+%: %.p
+#  要执行的配方 (内置)：
+	$(LINK.p) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+%.o: %.p
+#  要执行的配方 (内置)：
+	$(COMPILE.p) $(OUTPUT_OPTION) $<
+
+%.f:
+
+%: %.f
+#  要执行的配方 (内置)：
+	$(LINK.f) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+%.o: %.f
+#  要执行的配方 (内置)：
+	$(COMPILE.f) $(OUTPUT_OPTION) $<
+
+%.F:
+
+%: %.F
+#  要执行的配方 (内置)：
+	$(LINK.F) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+%.o: %.F
+#  要执行的配方 (内置)：
+	$(COMPILE.F) $(OUTPUT_OPTION) $<
+
+%.f: %.F
+#  要执行的配方 (内置)：
+	$(PREPROCESS.F) $(OUTPUT_OPTION) $<
+
+%.m:
+
+%: %.m
+#  要执行的配方 (内置)：
+	$(LINK.m) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+%.o: %.m
+#  要执行的配方 (内置)：
+	$(COMPILE.m) $(OUTPUT_OPTION) $<
+
+%.r:
+
+%: %.r
+#  要执行的配方 (内置)：
+	$(LINK.r) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+%.o: %.r
+#  要执行的配方 (内置)：
+	$(COMPILE.r) $(OUTPUT_OPTION) $<
+
+%.f: %.r
+#  要执行的配方 (内置)：
+	$(PREPROCESS.r) $(OUTPUT_OPTION) $<
+
+%.y:
+
+%.ln: %.y
+#  要执行的配方 (内置)：
+	$(YACC.y) $<
+	 $(LINT.c) -C$* y.tab.c
+	 $(RM) y.tab.c
+
+%.c: %.y
+#  要执行的配方 (内置)：
+	$(YACC.y) $<
+	 mv -f y.tab.c $@
+
+%.l:
+
+%.ln: %.l
+#  要执行的配方 (内置)：
+	@$(RM) $*.c
+	 $(LEX.l) $< > $*.c
+	$(LINT.c) -i $*.c -o $@
+	 $(RM) $*.c
+
+%.c: %.l
+#  要执行的配方 (内置)：
+	@$(RM) $@
+	 $(LEX.l) $< > $@
+
+%.r: %.l
+#  要执行的配方 (内置)：
+	$(LEX.l) $< > $@
+	 mv -f lex.yy.r $@
+
+%.ym:
+
+%.m: %.ym
+#  要执行的配方 (内置)：
+	$(YACC.m) $<
+	 mv -f y.tab.c $@
+
+%.yl:
+
+%.s:
+
+%: %.s
+#  要执行的配方 (内置)：
+	$(LINK.s) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+%.o: %.s
+#  要执行的配方 (内置)：
+	$(COMPILE.s) -o $@ $<
+
+%.S:
+
+%: %.S
+#  要执行的配方 (内置)：
+	$(LINK.S) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+%.o: %.S
+#  要执行的配方 (内置)：
+	$(COMPILE.S) -o $@ $<
+
+%.s: %.S
+#  要执行的配方 (内置)：
+	$(PREPROCESS.S) $< > $@
+
+%.mod:
+
+%: %.mod
+#  要执行的配方 (内置)：
+	$(COMPILE.mod) -o $@ -e $@ $^
+
+%.o: %.mod
+#  要执行的配方 (内置)：
+	$(COMPILE.mod) -o $@ $<
+
+%.sym:
+
+%.def:
+
+%.sym: %.def
+#  要执行的配方 (内置)：
+	$(COMPILE.def) -o $@ $<
+
+%.h:
+
+%.info:
+
+%.dvi:
+
+%.tex:
+
+%.dvi: %.tex
+#  要执行的配方 (内置)：
+	$(TEX) $<
+
+%.texinfo:
+
+%.info: %.texinfo
+#  要执行的配方 (内置)：
+	$(MAKEINFO) $(MAKEINFO_FLAGS) $< -o $@
+
+%.dvi: %.texinfo
+#  要执行的配方 (内置)：
+	$(TEXI2DVI) $(TEXI2DVI_FLAGS) $<
+
+%.texi:
+
+%.info: %.texi
+#  要执行的配方 (内置)：
+	$(MAKEINFO) $(MAKEINFO_FLAGS) $< -o $@
+
+%.dvi: %.texi
+#  要执行的配方 (内置)：
+	$(TEXI2DVI) $(TEXI2DVI_FLAGS) $<
+
+%.txinfo:
+
+%.info: %.txinfo
+#  要执行的配方 (内置)：
+	$(MAKEINFO) $(MAKEINFO_FLAGS) $< -o $@
+
+%.dvi: %.txinfo
+#  要执行的配方 (内置)：
+	$(TEXI2DVI) $(TEXI2DVI_FLAGS) $<
+
+%.w:
+
+%.c: %.w
+#  要执行的配方 (内置)：
+	$(CTANGLE) $< - $@
+
+%.tex: %.w
+#  要执行的配方 (内置)：
+	$(CWEAVE) $< - $@
+
+%.ch:
+
+%.web:
+
+%.p: %.web
+#  要执行的配方 (内置)：
+	$(TANGLE) $<
+
+%.tex: %.web
+#  要执行的配方 (内置)：
+	$(WEAVE) $<
+
+%.sh:
+
+%: %.sh
+#  要执行的配方 (内置)：
+	cat $< >$@
+	 chmod a+x $@
+
+%.elc:
+
+%.el:
+
+(%): %
+#  要执行的配方 (内置)：
+	$(AR) $(ARFLAGS) $@ $<
+
+%.out: %
+#  要执行的配方 (内置)：
+	@rm -f $@
+	 cp $< $@
+
+%.c: %.w %.ch
+#  要执行的配方 (内置)：
+	$(CTANGLE) $^ $@
+
+%.tex: %.w %.ch
+#  要执行的配方 (内置)：
+	$(CWEAVE) $^ $@
+
+%:: %,v
+#  要执行的配方 (内置)：
+	$(CHECKOUT,v)
+
+%:: RCS/%,v
+#  要执行的配方 (内置)：
+	$(CHECKOUT,v)
+
+%:: RCS/%
+#  要执行的配方 (内置)：
+	$(CHECKOUT,v)
+
+%:: s.%
+#  要执行的配方 (内置)：
+	$(GET) $(GFLAGS) $(SCCS_OUTPUT_OPTION) $<
+
+%:: SCCS/s.%
+#  要执行的配方 (内置)：
+	$(GET) $(GFLAGS) $(SCCS_OUTPUT_OPTION) $<
+
+# 94 条隐含规则，5 (5.3%) 终端。
+
+# 文件
+
+dirto/main: dirto/samplemy2.o dirto/samplemy3.o dirto/gtestParams.o dirto/gtestmain.o dirto/samplemy1_c_gtest.o dirto/gtestFixtures.o dirto/samplemy2_gtest.o dirto/samplemy3_gtest.o dirto/samplemy2_gtest2.o dirto/samplemy1_c.o
+#  对隐含规则的搜索尚未完成。
+#  隐含/静态模式主干：“”
+#  最近更新 2023-04-03 17:14:26.869498578
+#  文件已经被更新。
+#  更新成功。
+# 自动
+# @ := dirto/main
+# 自动
+# % :=
+# 自动
+# * :=
+# 自动
+# + := dirto/samplemy2.o dirto/samplemy3.o dirto/gtestParams.o dirto/gtestmain.o dirto/samplemy1_c_gtest.o dirto/gtestFixtures.o dirto/samplemy2_gtest.o dirto/samplemy3_gtest.o dirto/samplemy2_gtest2.o dirto/samplemy1_c.o
+# 自动
+# | :=
+# 自动
+# < := dirto/samplemy2.o
+# 自动
+# ^ := dirto/samplemy2.o dirto/samplemy3.o dirto/gtestParams.o dirto/gtestmain.o dirto/samplemy1_c_gtest.o dirto/gtestFixtures.o dirto/samplemy2_gtest.o dirto/samplemy3_gtest.o dirto/samplemy2_gtest2.o dirto/samplemy1_c.o
+# 自动
+# ? := dirto/samplemy2.o dirto/samplemy3.o dirto/gtestParams.o dirto/gtestmain.o dirto/samplemy1_c_gtest.o dirto/gtestFixtures.o dirto/samplemy2_gtest.o dirto/samplemy3_gtest.o dirto/samplemy2_gtest2.o dirto/samplemy1_c.o
+# 变量的杂凑表状态:
+# 负载=8/32=25%, 重新杂凑=0, 碰撞=1/43=2%
+#  要执行的配方 (从“Makefile”，行 102)：
+	g++ -o $@ $^ -lgtest -pthread
+
+# 不是一个目标：
+.web.p:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(TANGLE) $<
+
+dirto/samplemy2_gtest.o: gtestsrc/samplemy2_gtest.cpp
+#  对隐含规则的搜索尚未完成。
+#  隐含/静态模式主干：“samplemy2_gtest”
+#  最近更新 2023-04-03 17:14:25.577501621
+#  文件已经被更新。
+#  更新成功。
+# 自动
+# @ := dirto/samplemy2_gtest.o
+# 自动
+# % :=
+# 自动
+# * := samplemy2_gtest
+# 自动
+# + := gtestsrc/samplemy2_gtest.cpp
+# 自动
+# | :=
+# 自动
+# < := gtestsrc/samplemy2_gtest.cpp
+# 自动
+# ^ := gtestsrc/samplemy2_gtest.cpp
+# 自动
+# ? := gtestsrc/samplemy2_gtest.cpp
+# 变量的杂凑表状态:
+# 负载=8/32=25%, 重新杂凑=0, 碰撞=1/13=8%
+#  要执行的配方 (从“Makefile”，行 154)：
+	g++ -o $@ -I./ -c $<
+
+# 不是一个目标：
+.l.r:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(LEX.l) $< > $@
+	 mv -f lex.yy.r $@
+
+dirto/samplemy2.d: samplemy2.cpp samplemy2.cpp samplemy2.h
+#  对隐含规则的搜索已完成。
+#  隐含/静态模式主干：“samplemy2”
+#  最近更新 2023-04-03 17:14:22.157509758
+#  文件已经被更新。
+#  更新成功。
+#  要执行的配方 (从“Makefile”，行 137)：
+	@set -e; rm -f $@; \
+	g++ -MM $(CPPFLAGS) $< > $@.$$$$; \
+	sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
+	rm -f $@.$$$$
+
+.PHONEY:
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+
+# 不是一个目标：
+.dvi:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+
+# 不是一个目标：
+.ym:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+
+# 不是一个目标：
+.f.o:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(COMPILE.f) $(OUTPUT_OPTION) $<
+
+# 不是一个目标：
+.l:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+
+# 不是一个目标：
+.m:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(LINK.m) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+# 不是一个目标：
+.ln:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+
+# 不是一个目标：
+.o:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(LINK.o) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+# 不是一个目标：
+.y:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+
+# 不是一个目标：
+.def.sym:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(COMPILE.def) -o $@ $<
+
+gmock1: gmock1_
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (从“Makefile”，行 161)：
+	./$(gmock1_tar)
+
+samplemy1_c_gtest.o: gtestsrc/samplemy1_c_gtest.cpp samplemy1_c.h
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+
+.PHONY: main2 test
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+
+gmock1clean:
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (从“Makefile”，行 166)：
+	rm $(gmock1_tar)
+
+# 不是一个目标：
+gtestsrc/gtestmain.cpp:
+#  对隐含规则的搜索已完成。
+#  最近更新 2023-03-27 15:20:20.962862493
+#  文件已经被更新。
+#  更新成功。
+
+# 不是一个目标：
+.p.o:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(COMPILE.p) $(OUTPUT_OPTION) $<
+
+# 不是一个目标：
+.p:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(LINK.p) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+# 不是一个目标：
+.txinfo.dvi:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(TEXI2DVI) $(TEXI2DVI_FLAGS) $<
+
+# 不是一个目标：
+gtestsrc/gtestParams.cpp:
+#  对隐含规则的搜索已完成。
+#  最近更新 2023-03-27 18:39:36.389609872
+#  文件已经被更新。
+#  更新成功。
+
+gmock1_: gmock1.cpp
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (从“Makefile”，行 163)：
+	g++ gmock1.cpp -o $(gmock1_tar) -lgtest -lgmock -pthread
+
+# 不是一个目标：
+.a:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+
+main2:
+#  假目标 (.PHONY的前提)。
+#  对隐含规则的搜索尚未完成。
+#  文件不存在。
+#  文件尚未被更新。
+#  要执行的配方 (从“Makefile”，行 170)：
+	gcc -o cfunc.o -c cfunc.c
+	g++ -o src.o -c src.cpp
+	g++ -o testsrc.o -c testsrc.cpp
+	g++ -o testsrc2.o -c testsrc2.cpp
+	g++ -o testcfunc.o -c testcfunc.cpp
+	g++ -o testFixtures.o -c testFixtures.cpp
+	g++ -o testmain.o -c testmain.cpp
+	g++ -o main *.o  -lgtest -pthread
+
+# 不是一个目标：
+.yl:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+
+# 不是一个目标：
+.l.ln:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	@$(RM) $*.c
+	 $(LEX.l) $< > $*.c
+	$(LINT.c) -i $*.c -o $@
+	 $(RM) $*.c
+
+# 不是一个目标：
+.F.o:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(COMPILE.F) $(OUTPUT_OPTION) $<
+
+dirto/samplemy2_gtest2.d: gtestsrc/samplemy2_gtest2.cpp gtestsrc/samplemy2_gtest2.cpp samplemy2.h
+#  对隐含规则的搜索已完成。
+#  隐含/静态模式主干：“samplemy2_gtest2”
+#  最近更新 2023-04-03 17:14:21.941510275
+#  文件已经被更新。
+#  更新成功。
+#  要执行的配方 (从“Makefile”，行 137)：
+	@set -e; rm -f $@; \
+	g++ -MM $(CPPFLAGS) $< > $@.$$$$; \
+	sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
+	rm -f $@.$$$$
+
+# 不是一个目标：
+.texi.info:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(MAKEINFO) $(MAKEINFO_FLAGS) $< -o $@
+
+# 不是一个目标：
+.w.c:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(CTANGLE) $< - $@
+
+# 不是一个目标：
+.texi.dvi:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(TEXI2DVI) $(TEXI2DVI_FLAGS) $<
+
+# 不是一个目标：
+.ch:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+
+# 不是一个目标：
+.m.o:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(COMPILE.m) $(OUTPUT_OPTION) $<
+
+dirto/samplemy3_gtest.d: gtestsrc/samplemy3_gtest.cpp gtestsrc/samplemy3_gtest.cpp samplemy3.h
+#  对隐含规则的搜索已完成。
+#  隐含/静态模式主干：“samplemy3_gtest”
+#  最近更新 2023-04-03 17:14:21.977510188
+#  文件已经被更新。
+#  更新成功。
+#  要执行的配方 (从“Makefile”，行 137)：
+	@set -e; rm -f $@; \
+	g++ -MM $(CPPFLAGS) $< > $@.$$$$; \
+	sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
+	rm -f $@.$$$$
+
+# 不是一个目标：
+.cc:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(LINK.cc) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+# 不是一个目标：
+.cc.o:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(COMPILE.cc) $(OUTPUT_OPTION) $<
+
+# 不是一个目标：
+gtestsrc/gtestFixtures.cpp:
+#  对隐含规则的搜索已完成。
+#  最近更新 2023-03-27 11:10:24.368248589
+#  文件已经被更新。
+#  更新成功。
+
+samplemy2_gtest.o: gtestsrc/samplemy2_gtest.cpp samplemy2.h
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+
+dirto/samplemy1_c_gtest.d: gtestsrc/samplemy1_c_gtest.cpp gtestsrc/samplemy1_c_gtest.cpp samplemy1_c.h
+#  对隐含规则的搜索已完成。
+#  隐含/静态模式主干：“samplemy1_c_gtest”
+#  最近更新 2023-04-03 17:14:22.081509939
+#  文件已经被更新。
+#  更新成功。
+#  要执行的配方 (从“Makefile”，行 137)：
+	@set -e; rm -f $@; \
+	g++ -MM $(CPPFLAGS) $< > $@.$$$$; \
+	sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
+	rm -f $@.$$$$
+
+# 不是一个目标：
+.def:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+
+samplemy3.o: samplemy3.cpp samplemy3.h
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+
+# 不是一个目标：
+.SUFFIXES: .out .a .ln .o .c .cc .C .cpp .p .f .F .m .r .y .l .ym .yl .s .S .mod .sym .def .h .info .dvi .tex .texinfo .texi .txinfo .w .ch .web .sh .elc .el
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+
+# 不是一个目标：
+.c.o:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(COMPILE.c) $(OUTPUT_OPTION) $<
+
+# 不是一个目标：
+Makefile:
+#  对隐含规则的搜索已完成。
+#  最近更新 2023-04-03 17:07:41.059623134
+#  文件已经被更新。
+#  更新成功。
+
+# 不是一个目标：
+.r.o:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(COMPILE.r) $(OUTPUT_OPTION) $<
+
+# 不是一个目标：
+.r:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(LINK.r) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+samplemy1_c.o: samplemy1_c.c samplemy1_c.h
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+
+test:
+#  假目标 (.PHONY的前提)。
+#  对隐含规则的搜索尚未完成。
+#  文件不存在。
+#  文件尚未被更新。
+#  要执行的配方 (从“Makefile”，行 190)：
+	$(warning $(CC))
+	$(info $(CC))
+	echo $(CC)
+
+# 不是一个目标：
+.ym.m:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(YACC.m) $<
+	 mv -f y.tab.c $@
+
+# 不是一个目标：
+.y.ln:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(YACC.y) $<
+	 $(LINT.c) -C$* y.tab.c
+	 $(RM) y.tab.c
+
+dirto/samplemy2.o: samplemy2.cpp
+#  对隐含规则的搜索尚未完成。
+#  隐含/静态模式主干：“samplemy2”
+#  最近更新 2023-04-03 17:14:22.1815097
+#  文件已经被更新。
+#  更新成功。
+# 自动
+# @ := dirto/samplemy2.o
+# 自动
+# % :=
+# 自动
+# * := samplemy2
+# 自动
+# + := samplemy2.cpp
+# 自动
+# | :=
+# 自动
+# < := samplemy2.cpp
+# 自动
+# ^ := samplemy2.cpp
+# 自动
+# ? := samplemy2.cpp
+# 变量的杂凑表状态:
+# 负载=8/32=25%, 重新杂凑=0, 碰撞=1/13=8%
+#  要执行的配方 (从“Makefile”，行 154)：
+	g++ -o $@ -I./ -c $<
+
+# 不是一个目标：
+samplemy2.cpp:
+#  对隐含规则的搜索已完成。
+#  最近更新 2023-03-27 10:18:22.716292161
+#  文件已经被更新。
+#  更新成功。
+
+# 不是一个目标：
+.elc:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+
+# 不是一个目标：
+.l.c:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	@$(RM) $@
+	 $(LEX.l) $< > $@
+
+# 不是一个目标：
+.out:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+
+all: dirto/main
+#  对隐含规则的搜索尚未完成。
+#  隐含/静态模式主干：“”
+#  最近更新 2023-04-03 13:53:23.617902425
+#  文件已经被更新。
+#  更新成功。
+# 自动
+# @ := all
+# 自动
+# % :=
+# 自动
+# * :=
+# 自动
+# + := dirto/main
+# 自动
+# | :=
+# 自动
+# < := dirto/main
+# 自动
+# ^ := dirto/main
+# 自动
+# ? := dirto/main
+# 变量的杂凑表状态:
+# 负载=8/32=25%, 重新杂凑=0, 碰撞=1/45=2%
+#  要执行的配方 (从“Makefile”，行 96)：
+	mkdir -p $(dirto)
+
+dirto/gtestmain.d: gtestsrc/gtestmain.cpp gtestsrc/gtestmain.cpp
+#  对隐含规则的搜索已完成。
+#  隐含/静态模式主干：“gtestmain”
+#  最近更新 2023-04-03 17:14:22.117509854
+#  文件已经被更新。
+#  更新成功。
+#  要执行的配方 (从“Makefile”，行 137)：
+	@set -e; rm -f $@; \
+	g++ -MM $(CPPFLAGS) $< > $@.$$$$; \
+	sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
+	rm -f $@.$$$$
+
+# 不是一个目标：
+.C:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(LINK.C) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+dirto/gtestParams.d: gtestsrc/gtestParams.cpp gtestsrc/gtestParams.cpp samplemy2.h
+#  对隐含规则的搜索已完成。
+#  隐含/静态模式主干：“gtestParams”
+#  最近更新 2023-04-03 17:14:22.149509777
+#  文件已经被更新。
+#  更新成功。
+#  要执行的配方 (从“Makefile”，行 137)：
+	@set -e; rm -f $@; \
+	g++ -MM $(CPPFLAGS) $< > $@.$$$$; \
+	sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
+	rm -f $@.$$$$
+
+# 不是一个目标：
+.r.f:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(PREPROCESS.r) $(OUTPUT_OPTION) $<
+
+# 不是一个目标：
+.S:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(LINK.S) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+# 不是一个目标：
+.texinfo.info:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(MAKEINFO) $(MAKEINFO_FLAGS) $< -o $@
+
+# 不是一个目标：
+.c:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(LINK.c) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+# 不是一个目标：
+.w.tex:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(CWEAVE) $< - $@
+
+# 不是一个目标：
+.c.ln:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(LINT.c) -C$* $<
+
+# 不是一个目标：
+.s.o:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(COMPILE.s) -o $@ $<
+
+# 不是一个目标：
+.s:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(LINK.s) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+# 不是一个目标：
+gtestsrc/samplemy2_gtest.cpp:
+#  对隐含规则的搜索已完成。
+#  最近更新 2023-03-27 10:28:15.169565047
+#  文件已经被更新。
+#  更新成功。
+
+dirto/samplemy2_gtest2.o: gtestsrc/samplemy2_gtest2.cpp
+#  对隐含规则的搜索尚未完成。
+#  隐含/静态模式主干：“samplemy2_gtest2”
+#  最近更新 2023-04-03 17:14:26.74549887
+#  文件已经被更新。
+#  更新成功。
+# 自动
+# @ := dirto/samplemy2_gtest2.o
+# 自动
+# % :=
+# 自动
+# * := samplemy2_gtest2
+# 自动
+# + := gtestsrc/samplemy2_gtest2.cpp
+# 自动
+# | :=
+# 自动
+# < := gtestsrc/samplemy2_gtest2.cpp
+# 自动
+# ^ := gtestsrc/samplemy2_gtest2.cpp
+# 自动
+# ? := gtestsrc/samplemy2_gtest2.cpp
+# 变量的杂凑表状态:
+# 负载=8/32=25%, 重新杂凑=0, 碰撞=1/13=8%
+#  要执行的配方 (从“Makefile”，行 154)：
+	g++ -o $@ -I./ -c $<
+
+dirto/gtestFixtures.d: gtestsrc/gtestFixtures.cpp gtestsrc/gtestFixtures.cpp
+#  对隐含规则的搜索已完成。
+#  隐含/静态模式主干：“gtestFixtures”
+#  最近更新 2023-04-03 17:14:22.045510025
+#  文件已经被更新。
+#  更新成功。
+#  要执行的配方 (从“Makefile”，行 137)：
+	@set -e; rm -f $@; \
+	g++ -MM $(CPPFLAGS) $< > $@.$$$$; \
+	sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
+	rm -f $@.$$$$
+
+dirto/samplemy3_gtest.o: gtestsrc/samplemy3_gtest.cpp
+#  对隐含规则的搜索尚未完成。
+#  隐含/静态模式主干：“samplemy3_gtest”
+#  最近更新 2023-04-03 17:14:26.229500083
+#  文件已经被更新。
+#  更新成功。
+# 自动
+# @ := dirto/samplemy3_gtest.o
+# 自动
+# % :=
+# 自动
+# * := samplemy3_gtest
+# 自动
+# + := gtestsrc/samplemy3_gtest.cpp
+# 自动
+# | :=
+# 自动
+# < := gtestsrc/samplemy3_gtest.cpp
+# 自动
+# ^ := gtestsrc/samplemy3_gtest.cpp
+# 自动
+# ? := gtestsrc/samplemy3_gtest.cpp
+# 变量的杂凑表状态:
+# 负载=8/32=25%, 重新杂凑=0, 碰撞=1/13=8%
+#  要执行的配方 (从“Makefile”，行 154)：
+	g++ -o $@ -I./ -c $<
+
+dirto/samplemy3.d: samplemy3.cpp samplemy3.cpp samplemy3.h
+#  对隐含规则的搜索已完成。
+#  隐含/静态模式主干：“samplemy3”
+#  最近更新 2023-04-03 17:14:22.153509767
+#  文件已经被更新。
+#  更新成功。
+#  要执行的配方 (从“Makefile”，行 137)：
+	@set -e; rm -f $@; \
+	g++ -MM $(CPPFLAGS) $< > $@.$$$$; \
+	sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
+	rm -f $@.$$$$
+
+# 不是一个目标：
+.texinfo.dvi:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(TEXI2DVI) $(TEXI2DVI_FLAGS) $<
+
+# 不是一个目标：
+.el:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+
+dirto/samplemy1_c_gtest.o: gtestsrc/samplemy1_c_gtest.cpp
+#  对隐含规则的搜索尚未完成。
+#  隐含/静态模式主干：“samplemy1_c_gtest”
+#  最近更新 2023-04-03 17:14:24.469504243
+#  文件已经被更新。
+#  更新成功。
+# 自动
+# @ := dirto/samplemy1_c_gtest.o
+# 自动
+# % :=
+# 自动
+# * := samplemy1_c_gtest
+# 自动
+# + := gtestsrc/samplemy1_c_gtest.cpp
+# 自动
+# | :=
+# 自动
+# < := gtestsrc/samplemy1_c_gtest.cpp
+# 自动
+# ^ := gtestsrc/samplemy1_c_gtest.cpp
+# 自动
+# ? := gtestsrc/samplemy1_c_gtest.cpp
+# 变量的杂凑表状态:
+# 负载=8/32=25%, 重新杂凑=0, 碰撞=1/13=8%
+#  要执行的配方 (从“Makefile”，行 154)：
+	g++ -o $@ -I./ -c $<
+
+# 不是一个目标：
+.lm.m:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	@$(RM) $@
+	 $(LEX.m) $< > $@
+
+dirto/samplemy1_c.d: samplemy1_c.c samplemy1_c.c samplemy1_c.h
+#  对隐含规则的搜索已完成。
+#  隐含/静态模式主干：“samplemy1_c”
+#  最近更新 2023-04-03 17:14:22.165509738
+#  文件已经被更新。
+#  更新成功。
+#  要执行的配方 (从“Makefile”，行 129)：
+	@set -e; rm -f $@; \
+	gcc -MM $(CPPFLAGS) $< > $@.$$$$; \
+	sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
+	rm -f $@.$$$$
+
+# 不是一个目标：
+.y.c:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(YACC.y) $<
+	 mv -f y.tab.c $@
+
+# 不是一个目标：
+.web.tex:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(WEAVE) $<
+
+# 不是一个目标：
+.texinfo:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+
+# 不是一个目标：
+.DEFAULT:
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+
+# 不是一个目标：
+.h:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+
+# 不是一个目标：
+samplemy1_c.c:
+#  对隐含规则的搜索已完成。
+#  最近更新 2023-03-27 09:30:40.755920637
+#  文件已经被更新。
+#  更新成功。
+
+gtestmain.o: gtestsrc/gtestmain.cpp
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+
+samplemy2_gtest2.o: gtestsrc/samplemy2_gtest2.cpp samplemy2.h
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+
+gtestParams.o: gtestsrc/gtestParams.cpp samplemy2.h
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+
+# 不是一个目标：
+.tex.dvi:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(TEX) $<
+
+# 不是一个目标：
+.cpp.o:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(COMPILE.cpp) $(OUTPUT_OPTION) $<
+
+# 不是一个目标：
+.cpp:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(LINK.cpp) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+clean:
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (从“Makefile”，行 180)：
+	-rm $(objcpp) $(objc) $(target) $(alldfile)
+
+# 不是一个目标：
+.C.o:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(COMPILE.C) $(OUTPUT_OPTION) $<
+
+# 不是一个目标：
+.texi:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+
+# 不是一个目标：
+.txinfo:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+
+dirto/gtestmain.o: gtestsrc/gtestmain.cpp
+#  对隐含规则的搜索尚未完成。
+#  隐含/静态模式主干：“gtestmain”
+#  最近更新 2023-04-03 17:14:23.949505477
+#  文件已经被更新。
+#  更新成功。
+# 自动
+# @ := dirto/gtestmain.o
+# 自动
+# % :=
+# 自动
+# * := gtestmain
+# 自动
+# + := gtestsrc/gtestmain.cpp
+# 自动
+# | :=
+# 自动
+# < := gtestsrc/gtestmain.cpp
+# 自动
+# ^ := gtestsrc/gtestmain.cpp
+# 自动
+# ? := gtestsrc/gtestmain.cpp
+# 变量的杂凑表状态:
+# 负载=8/32=25%, 重新杂凑=0, 碰撞=1/13=8%
+#  要执行的配方 (从“Makefile”，行 154)：
+	g++ -o $@ -I./ -c $<
+
+# 不是一个目标：
+.tex:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+
+dirto/gtestParams.o: gtestsrc/gtestParams.cpp
+#  对隐含规则的搜索尚未完成。
+#  隐含/静态模式主干：“gtestParams”
+#  最近更新 2023-04-03 17:14:23.449506669
+#  文件已经被更新。
+#  更新成功。
+# 自动
+# @ := dirto/gtestParams.o
+# 自动
+# % :=
+# 自动
+# * := gtestParams
+# 自动
+# + := gtestsrc/gtestParams.cpp
+# 自动
+# | :=
+# 自动
+# < := gtestsrc/gtestParams.cpp
+# 自动
+# ^ := gtestsrc/gtestParams.cpp
+# 自动
+# ? := gtestsrc/gtestParams.cpp
+# 变量的杂凑表状态:
+# 负载=8/32=25%, 重新杂凑=0, 碰撞=1/13=8%
+#  要执行的配方 (从“Makefile”，行 154)：
+	g++ -o $@ -I./ -c $<
+
+# 不是一个目标：
+.txinfo.info:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(MAKEINFO) $(MAKEINFO_FLAGS) $< -o $@
+
+gtestFixtures.o: gtestsrc/gtestFixtures.cpp
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+
+dirto/samplemy2_gtest.d: gtestsrc/samplemy2_gtest.cpp gtestsrc/samplemy2_gtest.cpp samplemy2.h
+#  对隐含规则的搜索已完成。
+#  隐含/静态模式主干：“samplemy2_gtest”
+#  最近更新 2023-04-03 17:14:22.013510102
+#  文件已经被更新。
+#  更新成功。
+#  要执行的配方 (从“Makefile”，行 137)：
+	@set -e; rm -f $@; \
+	g++ -MM $(CPPFLAGS) $< > $@.$$$$; \
+	sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
+	rm -f $@.$$$$
+
+# 不是一个目标：
+gmock1.cpp:
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+
+# 不是一个目标：
+samplemy3.h:
+#  对隐含规则的搜索已完成。
+#  最近更新 2023-03-27 10:10:17.721566789
+#  文件已经被更新。
+#  更新成功。
+
+# 不是一个目标：
+.sh:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	cat $< >$@
+	 chmod a+x $@
+
+# 不是一个目标：
+samplemy1_c.h:
+#  对隐含规则的搜索已完成。
+#  最近更新 2023-03-24 10:29:15.192598918
+#  文件已经被更新。
+#  更新成功。
+
+samplemy2.o: samplemy2.cpp samplemy2.h
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+
+dirto/gtestFixtures.o: gtestsrc/gtestFixtures.cpp
+#  对隐含规则的搜索尚未完成。
+#  隐含/静态模式主干：“gtestFixtures”
+#  最近更新 2023-04-03 17:14:25.025502924
+#  文件已经被更新。
+#  更新成功。
+# 自动
+# @ := dirto/gtestFixtures.o
+# 自动
+# % :=
+# 自动
+# * := gtestFixtures
+# 自动
+# + := gtestsrc/gtestFixtures.cpp
+# 自动
+# | :=
+# 自动
+# < := gtestsrc/gtestFixtures.cpp
+# 自动
+# ^ := gtestsrc/gtestFixtures.cpp
+# 自动
+# ? := gtestsrc/gtestFixtures.cpp
+# 变量的杂凑表状态:
+# 负载=8/32=25%, 重新杂凑=0, 碰撞=1/13=8%
+#  要执行的配方 (从“Makefile”，行 154)：
+	g++ -o $@ -I./ -c $<
+
+dirto/samplemy3.o: samplemy3.cpp
+#  对隐含规则的搜索尚未完成。
+#  隐含/静态模式主干：“samplemy3”
+#  最近更新 2023-04-03 17:14:22.197509661
+#  文件已经被更新。
+#  更新成功。
+# 自动
+# @ := dirto/samplemy3.o
+# 自动
+# % :=
+# 自动
+# * := samplemy3
+# 自动
+# + := samplemy3.cpp
+# 自动
+# | :=
+# 自动
+# < := samplemy3.cpp
+# 自动
+# ^ := samplemy3.cpp
+# 自动
+# ? := samplemy3.cpp
+# 变量的杂凑表状态:
+# 负载=8/32=25%, 重新杂凑=0, 碰撞=1/13=8%
+#  要执行的配方 (从“Makefile”，行 154)：
+	g++ -o $@ -I./ -c $<
+
+# 不是一个目标：
+samplemy3.cpp:
+#  对隐含规则的搜索已完成。
+#  最近更新 2023-03-27 10:09:08.492256143
+#  文件已经被更新。
+#  更新成功。
+
+# 不是一个目标：
+.S.s:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(PREPROCESS.S) $< > $@
+
+# 不是一个目标：
+.mod:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(COMPILE.mod) -o $@ -e $@ $^
+
+# 不是一个目标：
+.mod.o:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(COMPILE.mod) -o $@ $<
+
+# 不是一个目标：
+.F.f:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(PREPROCESS.F) $(OUTPUT_OPTION) $<
+
+dirto/samplemy1_c.o: samplemy1_c.c
+#  对隐含规则的搜索尚未完成。
+#  隐含/静态模式主干：“samplemy1_c”
+#  最近更新 2023-04-03 17:14:26.757498842
+#  文件已经被更新。
+#  更新成功。
+# 自动
+# @ := dirto/samplemy1_c.o
+# 自动
+# % :=
+# 自动
+# * := samplemy1_c
+# 自动
+# + := samplemy1_c.c
+# 自动
+# | :=
+# 自动
+# < := samplemy1_c.c
+# 自动
+# ^ := samplemy1_c.c
+# 自动
+# ? := samplemy1_c.c
+# 变量的杂凑表状态:
+# 负载=8/32=25%, 重新杂凑=0, 碰撞=1/13=8%
+#  要执行的配方 (从“Makefile”，行 151)：
+	gcc -o $@ -c $<
+
+# 不是一个目标：
+.w:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+
+# 不是一个目标：
+.S.o:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(COMPILE.S) -o $@ $<
+
+# 不是一个目标：
+samplemy2.h:
+#  对隐含规则的搜索已完成。
+#  最近更新 2023-03-27 10:18:29.916369572
+#  文件已经被更新。
+#  更新成功。
+
+# 不是一个目标：
+gtestsrc/samplemy2_gtest2.cpp:
+#  对隐含规则的搜索已完成。
+#  最近更新 2023-03-27 15:11:52.119975273
+#  文件已经被更新。
+#  更新成功。
+
+samplemy3_gtest.o: gtestsrc/samplemy3_gtest.cpp samplemy3.h
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+
+# 不是一个目标：
+.F:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(LINK.F) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+# 不是一个目标：
+gtestsrc/samplemy3_gtest.cpp:
+#  对隐含规则的搜索已完成。
+#  最近更新 2023-03-27 14:27:39.170408918
+#  文件已经被更新。
+#  更新成功。
+
+# 不是一个目标：
+.web:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+
+# 不是一个目标：
+.sym:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+
+# 不是一个目标：
+.f:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+#  要执行的配方 (内置)：
+	$(LINK.f) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+# 不是一个目标：
+.info:
+#  内建规则
+#  对隐含规则的搜索尚未完成。
+#  从不检查修改时间。
+#  文件尚未被更新。
+
+# 不是一个目标：
+gtestsrc/samplemy1_c_gtest.cpp:
+#  对隐含规则的搜索已完成。
+#  最近更新 2023-03-27 09:31:02.520205606
+#  文件已经被更新。
+#  更新成功。
+
+# 文件杂凑表状态:
+# 负载=127/1024=12%, 重新杂凑=0, 碰撞=527/1835=29%
+# VPATH 搜索路径
+
+vpath %.cpp gtestsrc
+
+# 1 “vpath”搜索路径。
+
+# 没有通用搜索路径(“VPATH”变量)。
+
+# strcache 缓冲: 1 (0) / 字串 = 419 / 空间 = 5960 B / 平均 = 14 B
+# 目前缓冲: 尺寸 = 8162 B / 已用 = 5960 B / 数量 = 419 / 平均 = 14 B
+
+# strcache 性能：查找 = 766 / 命中率 = 45%
+# 杂凑表统计数据:
+# 负载=419/8192=5%, 重新杂凑=0, 碰撞=189/766=25%
+# 在 Mon Apr  3 17:14:26 2023
+ 上完成 make 数据基础
