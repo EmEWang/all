@@ -1,0 +1,214 @@
+
+
+snmp
+1.安装 snmp服务
+  [root@localhost] rpm -qa|grep snmp  先检查是否安装了snmp
+  [root@localhost] yum install -y net-snmp net-snmp-utils 如果未安装则yum安装
+2.配置snmp服务
+  yum安装snmpd的配置文件为/etc/snmp/snmpd.conf 
+  com2sec notConfigUser default public            共同体public
+  view    systemview    included   .1   添加这行 访问 所有的系统节点
+3.运行snmp服务
+  [root@localhost] service snmpd start   或者centos7 systemctl start  snmpd.service
+  [root@localhost] service snmpd stop    或者centos7 systemctl stop   snmpd.service
+  [root@localhost] service snmpd status  或者centos7 systemctl status snmpd.service
+4.设置成开机自动运行snmpd服务
+  [root@localhost] chkconfig snmpd on
+  [root@localhost] chkconfig –list|grep snmpd
+  snmpd           0:off   1:off   2:on    3:on    4:on    5:on    6:off
+5.如果无法联网安装，就需要下载相关rpm，但是安装过程中要注意顺序
+  rpm -ivh 安装顺序如下：
+  lm_sensors-libs-3.1.1-17.el6.x86_64.rpm  
+  net-snmp-libs-5.5-60.el6.x86_64.rpm
+  net-snmp-5.5-60.el6.x86_64.rpm
+  net-snmp-utils-5.5-60.el6.x86_64.rpm
+
+7.重启snmpd服务
+   #/etc/rc.d/init.d/snmpd restart
+   完成snmpd的配置
+
+8.确保linux的iptables防火墙对我们的流量监控服务器开放了udp 161端口的访问权限（为了安全起见，也可以修改161端口）
+   可使用iptables -L -n 查看当前iptables规则
+   可编辑/etc/sysconfig/iptables文件来修改iptables规则
+
+
+
+
+
+
+
+snmp++ --------------------------------
+Pdu pdu;
+Vb vb;  
+Oid oid(strOid.GetBuffer());
+vb.set_oid(oid);
+
+类关系
+               OpaqueStr->    OctetStr->
+               GenAddress->    
+UdpAddress->   IpAddress->    Address->       SnmpSyntax  //继承关系
+output_buffer  output_buffer  address_buffer  SmiLPVALUE
+
+CTarget->SnmpTarget   //SNMPv1 SNMPv2c 使用
+UTarget->SnmpTarget   //SNMPv3 使用
+
+enum snmp_version
+{
+  version1,         ///< (0) SNMPv1 
+  version2c         ///< (1) SNMPv2c
+#ifdef _SNMPv3
+  ,version2stern,   ///< (2) Dont use this!
+  version3          ///< (3) SNMPv3
+#endif
+};
+
+
+Snmp::socket_startup();         //初始化     开始
+Snmp::socket_cleanup();         //清理       结束
+Snmp snmp(status, 0, false);    //创建对象   status != SNMP_CLASS_SUCCESS 则创建失败 参数1结果 2端口 3是否使用IPv6
+    Snmp(int &status, const unsigned short port = 0, const bool bind_ipv6 = false)
+    Snmp(int &status, const UdpAddress &addr);
+    Snmp(int &status,  const UdpAddress& addr_v4, const UdpAddress& addr_v6);
+UdpAddress address(m_strIp.GetBuffer());  //创建地址
+    UdpAddress(const char *inaddr);
+    UdpAddress(const UdpAddress &udpaddr);
+    UdpAddress(const IpAddress &ipaddr);
+    address.valid()             //检测地址有效性
+    address.set_port(161)       //端口赋值
+
+SnmpTarget *target=NULL;        //设置目的参数
+    v2版本设置
+    CTarget ctarget;                                        //v1 v2版本
+    OctetStr community(m_strRComm.GetBuffer());             //共同体
+		ctarget.set_version( (snmp_version)m_nSnmpVer);         //设置版本 SNMP version SNMPV1 or V2
+		ctarget.set_retry(2);                                   //自动重试次数  2
+		ctarget.set_timeout(100);                               //超时时间      100 表示1秒
+		ctarget.set_readcommunity( community);                  //设置只读共同体
+		target = &ctarget;
+
+    v3版本设置 不全xxxxxxxxxxx
+    UTarget utarget                                         //v3版本
+    utarget.set_version((snmp_version)this->m_nSnmpVer);    //设置版本 SNMP version SNMPV3
+    utarget.set_retry(3);
+    utarget.set_timeout(300);
+    utarget.set_security_model( this->m_nSecurityModel);
+    utarget.set_security_name( this->m_strSecurityName.GetBuffer());
+    target = &utarget;
+
+get
+    SnmpTarget *target;
+    CString strRet;
+    Pdu pdu;                                                //构造 Pdu 对象
+    Vb vb;  
+    Oid oid(strOid.GetBuffer());
+    vb.set_oid(oid);
+    pdu += vb;                                              //vb 添加到 Pdu
+    if(nVersion==version3)                                  //v3版本
+    {
+        pdu.set_security_level( securityLevel);
+        pdu.set_context_name (contextName);
+        pdu.set_context_engine_id(contextEngineID);
+    }
+    int status = pSnmp->get( pdu, *target);                 //get取值
+    if (status != SNMP_CLASS_SUCCESS)                       //失败
+    {
+        strRet.Format("%s", pSnmp->error_msg( status) );
+		    return FALSE;
+		}
+    pdu.get_vb( vb,0);                                      //取第0个值
+    if (pdu.get_type() == REPORT_MSG)                       //出错
+    {
+        strRet=pSnmp->error_msg(vb.get_printable_oid());    //返回错误值
+        return FALSE;
+    }    
+    if((vb.get_syntax()!=sNMP_SYNTAX_ENDOFMIBVIEW)||(vb.get_syntax()!=sNMP_SYNTAX_NOSUCHINSTANCE)||(vb.get_syntax()!=sNMP_SYNTAX_NOSUCHOBJECT)) 正确
+		{    
+        OctetStr val;
+        int nRet= vb.get_value(val);                        //转化为OctetStr
+        if (nRet==SNMP_CLASS_SUCCESS)                       //转化成功
+        {
+            return val.get_printable_hex();                 //16进制结果
+        }
+        else
+            return vb.get_printable_value();                //返回可显示结果
+    }
+
+bulk
+    int status=SNMP_CLASS_SUCCESS;
+    int non_reps=SNMPREPS;
+    Pdu pdu;                                                //构造 Pdu 对象
+    Vb vb;  
+    Oid oid(strOid.GetBuffer());
+    vb.set_oid(oid);
+    pdu += vb;    
+    
+    if(nVersion==version3)
+    {
+        pdu.set_security_level( securityLevel);
+        pdu.set_context_name (contextName);
+        pdu.set_context_engine_id(contextEngineID);
+    }
+    
+    if (( status = pSnmp->get_bulk( pdu,*target,non_reps,nMaxCout))== SNMP_CLASS_SUCCESS)    //bulk取值
+    {
+        for ( int z=0;z<pdu.get_vb_count();z++)             //vb的数量
+        {
+            pdu.get_vb( vb,z);                              //取第z个vb
+            if (pdu.get_type() == REPORT_MSG)               //失败
+            {
+                return FALSE;
+            }
+            if(( vb.get_syntax()!=sNMP_SYNTAX_ENDOFMIBVIEW)
+            	||(vb.get_syntax()!=sNMP_SYNTAX_NOSUCHINSTANCE)
+            	||(vb.get_syntax()!=sNMP_SYNTAX_NOSUCHOBJECT))
+            {
+                CString strOid1=vb.get_printable_oid();     //取oid
+                CString strOidVal;
+                if(IsCiscoAddr(strOid1.GetBuffer()))
+                {
+                    strOidVal=CiscoAddrToString(vb.get_printable_value());
+                }
+                else
+                    strOidVal=GetVbValue(vb).c_str();       //取value
+                mapRet.SetAt(strOid1 ,strOidVal );
+                strLastOid=strOid1;
+            }
+        }
+        return TRUE;
+        
+    }
+    else
+    {
+        printf("SnmpBulkTarget failed is  %s\r\n", pSnmp->error_msg( status) );
+        return FALSE;
+    }
+
+
+
+
+显示模式(二进制) 其结果后面会有个额外的换行符
+-----------------[1]OutputHex------------------    -[2]OutputClear-
+09 4F 63 74 65 74 53 74 72 3A 3A 67 65 74 5F 70    .OctetStr::get_p
+72 69 6E 74 61 62 6C 65 5F 68 65 78 28 29          rintable_hex()
+OctetStr::OutputHexAndClear [1][2]都显示
+OctetStr::OutputHex         [1]显示 这种模式下 后面可能有空格占位符 为了对齐
+OctetStr::OutputClear       [2]显示 其不可显示字符以 . 代替
+
+取oid
+    vb.get_oid().get_printable()  显示oid值 下同
+    vb.get_printable_oid()
+取value
+    vb.get_printable_value()          1可显示字符 显示value值(字符串形式) 2二进制形式 以16进制[1]形式显示(极个别情况不一致 怀疑是与1混淆了)
+    OctetStr val;
+    int nRet = vb.get_value(val);     获取value 若能转化为 OctetStr 则返回 SNMP_CLASS_SUCCESS 否则 SNMP_CLASS_INVALID
+    if (nRet == SNMP_CLASS_SUCCESS)
+    {
+    	val.set_hex_output_type(OctetStr::OutputHex);    设置输出模式 OutputHexAndClear OutputHex OutputClear 
+    	return val.get_printable_hex();                  16进制显示 最后会有个回车符
+    	return val.get_printable_clear();                只显示[2]部分
+    }
+    else
+    	return vb.get_printable_value();
+
+
+

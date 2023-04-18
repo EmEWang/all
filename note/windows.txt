@@ -1,0 +1,36 @@
+
+
+创建线程后马上CloseHandle(threadhandle)起什么作用
+HANDLE threadhandle = CreateThread(NULL, 0, RecvThreadProc, NULL, NULL, NULL); 
+     CloseHandle(threadhandle); 
+     不明白为什么创建线程后，要马上把线程的句柄关闭，这样做的目的是什么？ 这样做会杀掉线程吗？
+解答：
+     创建线程后返回了线程句柄，新创建的线程内核对象的使用计数是2，一个是线程本身，一个是创建线程的线程，创建线程的线程closehandle后，新的线程的内核对象使用计数为1，当这个新线程结束运行后内核对象的使用计数还要减1，这时内核对象的使用计数是0，则系统会自动删除新线程的内核对象，这是正常的处理流程。
+     你如果不显示的调用closehandle，则新线程结束运行后，由于内核对象使用计数为1，所以不会删除内核对象，会造成内存泄露，不过当整个进程结束时操作系统会自动关闭该进程的所有的内核对象包括这个新线程的内核对象，所以你不调用closehandle问题不大，只是在你的进程运行的时候会造成内存泄露，进程结束后系统是会自动清理的。
+     
+     
+关于createthread和closehandle
+一，在程序中建立线程的概念
+      对于一个进程而言，在进程建立后，同时系统也会为进程自动分配一个主线程。拿Main函数而言，当Main函数执行完后，此时主线程就退出了，主线程退出也同时意味着进程结束。
+二，线程、内核对象、内核对象引用计数
+      1.创建一个线程有几种方法，这里我们先学习的是利用CreateThread()函数创建线程，此函数的参数及具体用法参见MSDN。如果创建线程成功，函数则返回一个新的线程句柄。（根据《Windows核心编程》，线程创建时，系统设置线程内核对象的引用计数为1，在Create函数返回前，将会打开线程句柄，所以线程的内核对象引用计数+1）
+=================================================================================
+CreateThread后那个线程的引用计数不是1，而是2。   
+  creating   a   new   process   causes   the   system   to   create   a   process   kernel   object     
+  and   a   thread   kernel   object.   At   creation   time,   the   system   gives   each   object     
+  an   initial   usage   count   of   1.   Then,   just   before   CreateProcess   returns,   the     
+  function   opens   the   process   object   and   the   thread   object   and   places   the     
+  process-relative   handles   for   each   in   the   hProcess   and   hThread   members   of     
+  the   PROCESS_INFORMATION   structure.   When   CreateProcess   opens   these   objects     
+  internally,   the   usage   count   for   each   becomes   2.                                                  ---摘自《Windows核心编程》
+================================================================================
+三，CloseHandle()用法
+      1.CloseHandel(ThreadHandle );
+只是关闭了一个线程句柄对象，表示我不再使用该句柄，对该句柄不感兴趣，即不对这个句柄对应的线程做任何干预了。并没有结束线程，线程本身还在继续运行。如果你CreateThread以后需要对这个线程做一些操作，比如改变优先级，被其他线程等待，强制TermateThread等，就要保存这个句柄，使用完了再CloseHandle()。
+      2.为什么要CreateThread()和CloseHandle()紧挨配套使用
+一方面，所有的内核对象（包括线程Handle）都是系统资源，用了要还的，也就是说用完后一定要CloseHandle关闭之，如果不这么做，你系统的句柄资源很快就用光了，另一方面，由于CreateThread()后线程内核对象的引用计数是2，在CloseHandle()引用计数-1之后，内核对象引用计数仍不为0，不会被释放，所以线程仍运行，直到线程函数执行完毕后，引用计数再-1，线程结束     
+     
+
+SetUnhandledExceptionFilter()函数让程序优雅崩溃
+
+

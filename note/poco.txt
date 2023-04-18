@@ -1,0 +1,1184 @@
+
+POCO--------------------------------------------------------------------------------
+POCO库中文编程参考指南
+作者：柳大·Poechant
+博客：Blog.CSDN.net/Poechant
+邮箱：zhongchao.ustc#gmail.com (# -> @)
+日期：April 14th, 2012
+（1）总览
+1 What is POCO?
+POCO 是什么？这是我最常被人问到的。POCO 是 POrtable COmponents 的缩写，官方主页：POCOProject.org。
+是一个非常出色的 C++ 库，相当于 Java 的 Class Library、.NET 的 Framework 和 Apple 的 Cocoa。
+它与 Boost 是非常不同的，简单说 Boost 就是相当于 Advanced STL。
+
+2 本系列文章所使用的 POCO 版本
+POCO C++ Library 1.4.3p1 (2012-01-23)
+3 库逻辑结构
+下图摘自 POCO 官网。OS API 是使用操作系统层的，C++/C Standard Libararies 是标准库，其他的模块都是 POCO 所提供的，
+包括：Foundation、XML、Crypto、XML、Util、Net、Zip、NetSSL、Data（支持 SQLite、ODBC、MySQL）、Tools & Utilities、Application。
+
+A |    Zip            NetSSL                Toold&Utilities
+p |   
+p |    Util           Net                   Data
+l |                                         ----------------
+i |    XML            Crypto                SQLite ODBC MySQL
+c |    -----------------------------------------------------
+a |    Foundation
+t |    --------------------------------
+i |    C++ and C standard Libraries   |
+o |
+n |----------------------------------------------------------
+POSIX WIN32 other(RT)OS API
+
+4 支持平台
+Desktop/Server: - Windows - Linux - Mac OS X - Solaris - HP-UX - AIX
+Embedded: - Windows Embedded CE - Embedded Linux (uClibc or glibc) - iOS - QNX - VxWorks - Android
+
+5 Namespaces
+Poco
+Poco::Crypto
+Poco::Data
+Poco::Data::MySQL
+Poco::Data::ODBC
+Poco::Data::SQLite
+Poco::Net
+Poco::Util
+Poco::Util::Units
+Poco::Util::Units::Constants
+Poco::Util::Units::Internal
+Poco::Util::Units::Values
+Poco::XML
+Poco::Zip
+
+（2）基本数据类型
+基本类型在Poco/Types.h头文件中。以下以 GNU C/C++ 和 CLang 为例。不过要强调的是，POCO 有极好的跨平台性，你能想到的平台，几乎都可以运行 POCO。
+1 有符号整型
+typedef signed char            Int8;
+typedef signed short           Int16;
+typedef signed int             Int32;
+2 无符号整型
+typedef unsigned char          UInt8;
+typedef unsigned short         UInt16;
+typedef unsigned int           UInt32;
+3 Pointer or Handler
+typedef signed long            IntPtr;
+typedef unsigned long          UIntPtr;
+4 64 位整型
+考虑了 32 位机和 64 位机的情况
+
+#if defined(__LP64__)
+    #define POCO_PTR_IS_64_BIT 1
+    #define POCO_LONG_IS_64_BIT 1
+    typedef signed long        Int64;
+    typedef unsigned long      UInt64;
+#else
+    typedef signed long long   Int64;
+    typedef unsigned long long UInt64;
+#endif
+#define POCO_HAVE_INT64 1
+-
+
+（3）Poco::Net::Socket
+1 SelectMode
+enum SelectMode
+    /// The mode argument to poll() and select().
+{
+    SELECT_READ  = 1,
+    SELECT_WRITE = 2,
+    SELECT_ERROR = 4
+};
+2 SocketList
+typedef std::vector<Socket> SocketList;
+3 构造函数
+未初始化的 socket：
+
+Socket();
+拷贝构造函数
+
+Socket(const Socket& socket);
+4 重载运算符
+赋值运算符：
+
+Socket& operator = (const Socket& socket);
+比较运算符：
+
+bool operator == (const Socket& socket) const;
+bool operator != (const Socket& socket) const;
+bool operator <  (const Socket& socket) const;
+bool operator <= (const Socket& socket) const;
+bool operator >  (const Socket& socket) const;
+bool operator >= (const Socket& socket) const;
+5 常用 socket 操作
+返回该 socket 的可读数据的字节数，该操作不引起 socket 阻塞：
+
+int available() const;
+关闭 socket：
+
+void close();
+poll：
+
+bool poll(const Poco::Timespan& timeout, int mode) const;
+    /// Determines the status of the socket, using a 
+    /// call to select().
+    /// 
+    /// The mode argument is constructed by combining the values
+    /// of the SelectMode enumeration.
+    ///
+    /// Returns true if the next operation corresponding to
+    /// mode will not block, false otherwise.
+
+SocketImpl* impl() const;
+    /// Returns the SocketImpl for this socket.
+检查这个 socket 的连接是否是安全的（使用 SSL 或 TLS）：
+
+bool secure() const;
+6 缓冲区
+发送数据的缓冲区：
+
+void setSendBufferSize(int size);
+int getSendBufferSize() const;
+接收数据的缓冲区：
+
+void setReceiveBufferSize(int size);
+int getReceiveBufferSize() const;
+7 超时时间
+发送数据的超时时间：
+
+void setSendTimeout(const Poco::Timespan& timeout);
+Poco::Timespan getSendTimeout() const;
+接收数据的超时时间：
+
+void setReceiveTimeout(const Poco::Timespan& timeout);
+Poco::Timespan getReceiveTimeout() const;
+8 其他接口
+void setOption(int level, int option, int value);
+void setOption(int level, int option, unsigned value);
+void setOption(int level, int option, unsigned char value);
+void setOption(int level, int option, const Poco::Timespan& value);
+void setOption(int level, int option, const IPAddress& value);
+
+void getOption(int level, int option, int& value) const;
+void getOption(int level, int option, unsigned& value) const;
+void getOption(int level, int option, unsigned char& value) const;
+void getOption(int level, int option, Poco::Timespan& value) const;
+void getOption(int level, int option, IPAddress& value) const;
+
+void setLinger(bool on, int seconds);
+void getLinger(bool& on, int& seconds) const;
+
+void setNoDelay(bool flag);
+bool getNoDelay() const;
+
+void setKeepAlive(bool flag);
+bool getKeepAlive() const;
+
+void setReuseAddress(bool flag);
+bool getReuseAddress() const;
+
+void setReusePort(bool flag);
+bool getReusePort() const;
+
+void setOOBInline(bool flag);
+bool getOOBInline() const;
+
+void setBlocking(bool flag);
+bool getBlocking() const;
+获取 socket 的 IP 和端口：
+
+SocketAddress address() const;
+获取 peer socket 的 IP 地址和端口：
+
+SocketAddress peerAddress() const;
+9 静态函数
+select：
+
+static int select(SocketList& readList,
+                  SocketList& writeList, 
+                  SocketList& exceptList, 
+                  const Poco::Timespan& timeout);
+
+    /// Determines the status of one or more sockets, 
+    /// using a call to select().
+    ///
+    /// ReadList contains the list of sockets which should be
+    /// checked for readability.
+    ///
+    /// WriteList contains the list of sockets which should be
+    /// checked for writeability.
+    ///
+    /// ExceptList contains a list of sockets which should be
+    /// checked for a pending error.
+    ///
+    /// Returns the number of sockets ready.
+    ///
+    /// After return, 
+    ///   * readList contains those sockets ready for reading,
+    ///   * writeList contains those sockets ready for writing,
+    ///   * exceptList contains those sockets with a pending error.
+    ///
+    /// If the total number of sockets passed in readList, writeList and
+    /// exceptList is zero, select() will return immediately and the
+    /// return value will be 0.
+    ///
+    /// If one of the sockets passed to select() is closed while
+    /// select() runs, select will return immediately. However,
+    /// the closed socket will not be included in any list.
+    /// In this case, the return value may be greater than the sum
+    /// of all sockets in all list.
+检查是否支持 IPv4 或 IPv6：
+
+static bool supportsIPv4();
+static bool supportsIPv6();
+-
+
+（4）Poco::Net::IPAddress
+1 Poco::Net::IPAddress
+地址最大长度，IPv4 是 in_addr 的长度，IPv6 是 in6_addr 的长度
+
+enum
+{
+    MAX_ADDRESS_LENGTH = 
+#if defined(POCO_HAVE_IPv6)
+        sizeof(struct in6_addr)
+#else
+        sizeof(struct in_addr)
+#endif
+        /// Maximum length in bytes of a socket address.
+};
+1.1 IPv4 or IPv6?
+POCO 用一个枚举类来表示：
+
+enum Family
+    /// Possible address families for IP addresses.
+{
+    IPv4,
+    IPv6
+};
+
+1.2 构造函数
+返回一个全 0 的 IP 地址：
+IPAddress();
+
+拷贝构造函数：
+IPAddress(const IPAddress& addr);
+
+根据 IP 类型（IPv4 或 IPv6）创建一个全 0 的 IP 地址：
+explicit IPAddress(Family family);
+
+用字符串类型的 IPv4 地址或 IPv6 地址来创建一个 IP 地址，其中 IPv4 是十进制表示的，IPv6 是十六进制表示的：
+explicit IPAddress(const std::string& addr);
+
+用字符串类型的 IP 地址和指定的类型（IPv4 或 IPv6）创建一个 IP 地址，其中 IPv4 是十进制表示的，IPv6 是十六进制表示的：
+IPAddress(const std::string& addr, Family family);
+
+用原生 IP 地址 in_addr 或 in6_addr 数据结构和给定的字符串长度，创建一个 IPAddress：
+IPAddress(const void* addr, poco_socklen_t length);
+
+用原生 IP 地址 in_addr 或 in6_addr 数据结构和给定的字符串长度，创建一个 IPAddress，其中 scope 参数用于 IPv6，IPv4 会忽略这个参数：
+IPAddress(const void* addr, poco_socklen_t length, Poco::UInt32 scope);
+
+1.3 重载运算符
+
+赋值运算符：
+IPAddress& operator = (const IPAddress& addr);
+
+比较运算符
+bool operator == (const IPAddress& addr) const;
+bool operator != (const IPAddress& addr) const;
+bool operator <  (const IPAddress& addr) const;
+bool operator <= (const IPAddress& addr) const;
+bool operator >  (const IPAddress& addr) const;
+bool operator >= (const IPAddress& addr) const;
+
+1.4 常用操作
+swap：
+void swap(IPAddress& address);
+
+获取地址类型：
+Family family() const;
+
+IPv6 专用函数，返回 scope identifier，如果是 IPv4 则返回 0：
+Poco::UInt32 scope() const;
+
+toString，IPv4 则显示“d.d.d.d”，IPv6 则
+std::string toString() const;
+
+poco_socklen_t length() const;
+
+const void* addr() const;
+
+int af() const;
+
+void mask(const IPAddress& mask);
+
+void mask(const IPAddress& mask, const IPAddress& set);
+
+static IPAddress parse(const std::string& addr);
+
+static bool tryParse(const std::string& addr, IPAddress& result);
+
+static IPAddress wildcard(Family family = IPv4);
+
+static IPAddress broadcast();
+
+1.5 IS 函数
+1.5.1 是否是未初始化状态
+是否是未初始化的全零状态（wildcard）：
+bool isWildcard() const;
+
+1.5.2 是否是广播/组播/单播
+是否是广播地址（全零），与 wildcard 的区别是 wildcard 是未经过初始化的。只有 IPv4 有广播地址，IPv6 则返回 false。
+bool isBroadcast() const;
+
+是否是回环地址：
+对于 IPv4 是127.0.0.1
+对于 IPv6 是::1
+函数原型：
+bool isLoopback() const;
+
+是否是多播：
+对于 IPv4 是224.0.0.0到239.255.255.255范围；
+对于 IPv6 是FFxx:x:x:x:x:x:x:x的范围：
+函数原型：
+bool isMulticast() const;
+
+是否是单播：
+bool isUnicast() const;
+
+1.5.2 其他函数
+bool isLinkLocal() const;
+bool isSiteLocal() const;
+bool isIPv4Compatible() const;
+bool isIPv4Mapped() const;
+bool isWellKnownMC() const;
+bool isNodeLocalMC() const;
+bool isLinkLocalMC() const;
+bool isSiteLocalMC() const;
+bool isOrgLocalMC() const;
+bool isGlobalMC() const;
+1.5 protected 函数
+protected:
+    void init(IPAddressImpl* pImpl);
+-
+
+（5）Poco::Net::SocketAddress
+1 枚举
+最大地址长度，这个与Poco::Net::IPAddress中的定义可以类比，不过这里指的是`struct sockaddr_in6
+enum
+{
+    MAX_ADDRESS_LENGTH = 
+#if defined(POCO_HAVE_IPv6)
+        sizeof(struct sockaddr_in6)
+#else
+        sizeof(struct sockaddr_in)
+#endif
+        /// Maximum length in bytes of a socket address.
+};
+2 构造函数
+创建一个 wildcard 的全 0 的 IPv4 的 socket 地址：
+SocketAddress();
+
+用 Poco::Net::IPAddress 和端口号创建 IPv4 或 IPv6 的 SocketAddress：
+SocketAddress(const IPAddress& host, Poco::UInt16 port);
+
+用 std::string 和端口号创建 IPv4 或 IPv6 的 SocketAddress：
+SocketAddress(const std::string& host, Poco::UInt16 port);
+SocketAddress(const std::string& host, const std::string& port);
+explicit SocketAddress(const std::string& hostAndPort);
+
+拷贝构造函数：
+SocketAddress(const SocketAddress& addr);
+
+原生方式构造 SocketAddress：
+SocketAddress(const struct sockaddr* addr, poco_socklen_t length);
+
+3 常用函数
+swap：
+void swap(SocketAddress& addr); 
+
+获取 IPAddress、端口和地址类型：
+IPAddress host() const;
+Poco::UInt16 port() const;
+IPAddress::Family family() const;
+
+获取原生方式的地址长度、地址和地址族：
+poco_socklen_t length() const;  
+const struct sockaddr* addr() const;
+int af() const;
+
+toString：
+std::string toString() const;
+
+4 重载运算符
+bool operator == (const SocketAddress& addr) const;
+bool operator != (const SocketAddress& addr) const;
+5 protected 函数
+void init(const IPAddress& host, Poco::UInt16 port);
+void init(const std::string& host, Poco::UInt16 port);
+Poco::UInt16 resolveService(const std::string& service);
+-
+
+（6）Poco::Timestamp
+1 类型别名
+三个时间戳相关的类型别名，TimeDiff表示两个时间戳的差，第二个是以微秒为单位的时间戳，第三个是以 100 纳秒（0.1 微妙）为单位的时间戳：
+typedef Int64 TimeDiff;   /// difference between two timestamps in microseconds
+typedef Int64 TimeVal;    /// monotonic UTC time value in microsecond resolution
+typedef Int64 UtcTimeVal; /// monotonic UTC time value in 100 nanosecond resolution
+2 构造函数
+当前时间的时间戳：
+Timestamp();
+
+指定时间的时间戳：
+Timestamp(TimeVal tv);
+
+拷贝构造函数：
+Timestamp(const Timestamp& other);
+
+3 重载运算符
+赋值运算符：
+Timestamp& operator = (const Timestamp& other);
+Timestamp& operator = (TimeVal tv);
+
+比较运算符：
+bool operator == (const Timestamp& ts) const;
+bool operator != (const Timestamp& ts) const;
+bool operator >  (const Timestamp& ts) const;
+bool operator >= (const Timestamp& ts) const;
+bool operator <  (const Timestamp& ts) const;
+bool operator <= (const Timestamp& ts) const;
+
+算术运算符与算术赋值运算符
+Timestamp  operator +  (TimeDiff d) const;
+Timestamp  operator -  (TimeDiff d) const;
+TimeDiff   operator -  (const Timestamp& ts) const;
+Timestamp& operator += (TimeDiff d);
+Timestamp& operator -= (TimeDiff d);
+
+4 获取不同格式表示的时间戳
+获取 std::time_t 格式的时间戳：
+std::time_t epochTime() const;
+
+获取 UTC-based time 格式的时间戳：
+UtcTimeVal utcTime() const;
+
+获取 TimeVal 格式（微秒）的时间戳：
+TimeVal epochMicroseconds() const;
+
+5 其他成员函数
+交换时间戳：
+void swap(Timestamp& timestamp);
+
+更新时间戳为当前时间：
+void update();
+
+此时时间戳与这个时间戳的差（TimeStamp() - *this）：
+TimeDiff elapsed() const;
+
+判断一段时间是否已经过去：
+bool isElapsed(TimeDiff interval) const; 
+
+6 静态成员函数
+用std::time_t对象创建一个Timestamp:
+static Timestamp fromEpochTime(std::time_t t);
+
+用UtcTimeVal对象创建一个Timestamp：
+static Timestamp fromUtcTime(UtcTimeVal val);
+
+返回时间解析度，即 Units per second。因为 Poco::TimeStamp 的最小解析度为微妙，所以该函数都返回 1000000：
+static TimeVal resolution();
+-
+
+（7）Poco::Net::DatagramSocket
+1 构造函数
+创建一个未连接的 IPv4 数据报 Socket：
+DatagramSocket();
+
+创建一个指定 IP 类型（IPv4 或 IPv6）的数据报 Socket：
+explicit DatagramSocket(IPAddress::Family family);
+
+创建一个指定 SocketAddress 的数据报 Socket
+DatagramSocket(const SocketAddress& address, bool reuseAddress = false);
+
+DatagramSocket(const Socket& socket);
+    /// Creates the DatagramSocket with the SocketImpl
+    /// from another socket. The SocketImpl must be
+    /// a DatagramSocketImpl, otherwise an InvalidArgumentException
+    /// will be thrown.
+2 重载运算符
+DatagramSocket& operator = (const Socket& socket);
+    /// Assignment operator.
+    ///
+    /// Releases the socket's SocketImpl and
+    /// attaches the SocketImpl from the other socket and
+    /// increments the reference count of the SocketImpl.   
+3 常用操作
+3.1 连接与绑定
+void connect(const SocketAddress& address);
+void bind(const SocketAddress& address, bool reuseAddress = false);
+3.2 收发数据且不考虑 client
+int sendBytes(const void* buffer, int length, int flags = 0);
+int receiveBytes(void* buffer, int length, int flags = 0);
+3.3 手法数据且获取 client 的 SocketAddress
+int sendTo(const void* buffer, int length, const SocketAddress& address, int flags = 0);
+int receiveFrom(void* buffer, int length, SocketAddress& address, int flags = 0);
+3.4 收发广播
+void setBroadcast(bool flag);
+bool getBroadcast() const;
+4 protected 函数
+DatagramSocket(SocketImpl* pImpl);
+-
+
+（8）丰富的Socket编程
+1 POCO 中的 Socket
+POCO 中有 丰富的 Socket 封装。其继承关系如下：
+
+________________________________Socket________________________________
+     ↑               ↑                   ↑            ↑         ↑
+StreamSocket   ServerSocket       DatagramSocket   RawSocket ICMPSocket
+   ↑       ↖         ↑                   ↑
+   ↑         ↖ SecureServerSocket MulticastSocket             
+   ↑           ↖ 
+DialogSocket   SecureServerSocket            
+             
+                         
+
+本文暂且只介绍 StreamSocket、ServerSocket、DatagramSocket
+
+2 Poco::Net::ServerSocket
+ServerSocket 是一个封装层次比较低（low level）的 Socket，其使用的是 TCP 连接。在实际的 Server 中推荐使用 TCPServer 或 Reactor 框架。下面是例程：
+
+#include "Poco/Net/ServerSocket.h"
+#include "Poco/Net/SocketStream.h"
+#include "Poco/Net/StreamSocket.h"
+#include <iostream>
+
+int main(int argc, char **argv)
+{
+绑定端口，并开始监听：
+
+    Poco::Net::ServerSocket srv(12345);
+服务主循环：
+
+    while (true)
+    {
+接受连接：
+
+        Poco::Net::StreamSocket streamSocket = srv.acceptConnection();
+向 Socket 发送数据：
+
+        Poco::Net::SocketStream socketStream(streamSocket);
+        socketStream << "HTTP/1.0 200 OK\r\n"
+                     << "Content-Type: text/html\r\n"
+                     << "\r\n"
+                     << "<html><head><title>My 1st Web Server</title></head></html>"
+                     << std::flush;
+    }
+    return 0;
+}
+3 TCPServer 框架
+POCO 提供了一个 TCPServer，顾名思义，是一个 TCP 服务器。准确的说，TCPServer 是一个 Framework，要求使用 ServerSocket 去 accept 连接。并且在将 ServerSocket 转递给 TCPServer 之前必须将其设置为监听模式。
+
+TCPServer 维护一个连接队列（connection queue）。TCPServer 开启多个线程去从连接队列中取连接并进行处理，线程的数量是动态的，与连接队列中的连接数有关。
+
+非正常连接会被立即关闭，而不会被插入连接队列。TCPServer 的主线程负责将客户端发来的请求连接放入连接队列。
+
+TCPServer 是一个高效的开发框框架，具体详见《POCO库中文编程参考指南（10）如何使用TCPServer框架？》一文。
+
+4 Poco::Net::DatagramSocket
+4.1 UDP Client
+#include "Poco/Net/DatagramSocket.h"  
+#include "Poco/Net/SocketAddress.h"  
+#include "Poco/Timestamp.h"  
+#include "Poco/DateTimeFormatter.h"  
+#include <string>
+
+int main()
+{
+    const char* ipaddr = "127.0.0.1";
+    Poco::Net::SocketAddress sa("127.0.0.1", 1234);  
+    Poco::Net::DatagramSocket dgs;
+    dgs.connect(sa); 
+
+    std::string syslogMsg;  
+    Poco::Timestamp now;  
+    syslogMsg = Poco::DateTimeFormatter::format(now, "<14>%w %f %H:%M:%S Hello,world!");  
+    dgs.sendBytes(syslogMsg.data(), syslogMsg.size());  
+
+    return 0;  
+}  
+不能用：
+
+...
+const char* ipaddr = "127.0.0.1";
+Poco::Net::SocketAddress sa("127.0.0.1", 1234);  
+Poco::Net::DatagramSocket dgs(sa);
+
+std::string syslogMsg;  
+Poco::Timestamp now; 
+... 
+因为 DatagramSocket(SocketAddress) 构造函数是创建一个 DatagramSocket 然后 bind()。而这里要使用的是 connect()。
+
+4.2 UDP Server
+#include "Poco/Net/DatagramSocket.h"
+#include "Poco/Net/IPAddress.h"
+#include <iostream>
+
+int main(int argc, char **argv)
+{
+    Poco::Net::SocketAddress socketAddress(Poco::Net::IPAddress(), 1234);
+    Poco::Net::DatagramSocket datagramSocket(socketAddress);
+
+    char buffer[1024];
+
+    while (true)
+    {
+        Poco::Net::SocketAddress sender;
+        int n = datagramSocket.receiveFrom(buffer, sizeof(buffer) - 1, sender);
+        buffer[n] = '\0';
+        std::cout << sender.toString() << ": " << buffer << std::endl;
+    }
+
+    return 0;
+}
+5 Reactor 框架
+Reactor 框架是利用 Event/Notification 实现的基于 Reactor 设计模式的一个服务器框架，由于 Event/Notification 存在而支持异步。
+
+具体详见本博的另一篇博文《POCO库中文编程参考指南（11）如何使用Reactor框架？》
+
+6 StreamSocket
+也是一个 TCP 的 Socket，可以使数据传输操作变的简化，被用在 TCP 服务器和客户端。
+
+-
+
+（9）Poco::Net::DNS
+1 Poco::Net::DNS
+namespace Poco {
+namespace Net {
+class Net_API DNS {
+public:
+    static HostEntry hostByName(const std::string& hostname);
+    static HostEntry hostByAddress(const IPAddress& address);
+    static HostEntry resolve(const std::string& address);
+    static IPAddress resolveOne(const std::string& address);
+    static HostEntry thisHost();
+    static std::string hostName();
+};
+}
+}
+HostEntry 中存储 host primary name（canonical name）、alias name list、IP address list。
+
+2 相关 API
+得到一个 HostEntry 实例：
+const HostEntry& entry = DNS::hostByName("google.com");
+
+输出域名：
+std::cout << entry.name() << std::endl;
+
+Address 和 Alias：
+const HostEntry::AliasList& aliases = entry.aliases();
+const HostEntry::AddressList& addrs = entry.addresses();
+
+3 Source code
+POCO 的官方文档中的 Sample 有错误，以下提供一个正确的示例，其中域名是通过参数传入的。
+
+#include "Poco/Net/DNS.h"
+#include <iostream>
+using Poco::Net::DNS;
+using Poco::Net::IPAddress;
+using Poco::Net::HostEntry;
+int main(int argc, char** argv)
+{
+    if (argc != 2) {
+        std::cout << "Invalid argument number." << std::endl;
+    }
+    const HostEntry& entry = DNS::hostByName(argv[1]);
+    std::cout << "Canonical Name: " << entry.name() << std::endl;
+
+    const HostEntry::AliasList& aliases = entry.aliases();
+    for (HostEntry::AliasList::const_iterator it = aliases.begin();
+        it !=   aliases.end(); ++it)
+        std::cout << "Alias: " << *it << std::endl;
+
+    const HostEntry::AddressList& addrs = entry.addresses();
+    for (HostEntry::AddressList::const_iterator it = addrs.begin();
+        it !=   addrs.end(); ++it)
+        std::cout << "Address: " << it->toString() << std::endl;
+
+    return 0;
+}
+编译：
+
+$ g++ name_solver.cpp -o name_solver \
+-I/usr/local/include -I/usr/local/lib -lPocoNet
+运行：
+
+$ ./name_solver baidu.com
+Canonical Name: baidu.com
+Address: 123.125.114.144
+Address: 123.125.114.144
+Address: 220.181.111.85
+Address: 220.181.111.85
+Address: 220.181.111.86
+Address: 220.181.111.86
+
+$ ./name_solver www.ustc.edu.cn
+Canonical Name: ustc.edu.cn
+Address: 202.38.64.246
+Address: 202.38.64.246
+-
+
+
+（10）如何使用TCPServer框架？
+1 TCPServer 框架概述
+POCO 库提供TCPServer框架，用以搭建自定义的 TCP 服务器。TCPServer维护一个连接队列、一个连接线程池。连接线程用于处理连接，连接线程只要一空闲就不断地从连接队列中取连接并进行处理。一旦连接线程从连接队列中取到一个连接，就会创建一个TCPServerConnection连接对象，并且调用该对象的start()方法，直到start()方法返回，这个连接对象就被删除了。
+
+连接线程的数量是动态的，其取决于连接队列中排队的连接数。当然，你使用的时候可以设定连接队列的最大容量，以防止在高并发应用的服务器上出现连接太多而使连接队列溢出的悲剧发生。当连接队列满了，却还有新的连接到来时，新来的连接就会被立即悄无声息地关闭。
+
+现在我们总结一下，就是要有一个可运行的 TCP 服务应用程序（命名为PoechantTCPServer），还有很多 TCP 连接（命名为PoechantTCPConnection）。而这里我们用到工厂模式（准确说是TCPServerConnectionFactory要我们用的），所以还有一个 PoechantTCPConnectionFactory。
+
+2 光说不练假把式
+2.1 创建一个 PoechantTCPServer
+或许你还不熟悉 POCO 中的 Application，没关系，这不影响本文的叙述。下面先创建一个 ServerApplication 如下：
+
+// PoechantTCPServer.h
+
+#ifndef POECHANT_TCP_SERVER
+#define POECHANT_TCP_SERVER
+
+#include "Poco/Util/ServerApplication.h"
+#include "Poco/Util/Application.h"
+
+using Poco::Util::ServerApplication;
+using Poco::Util::Application;
+
+class PoechantTCPServer: public ServerApplication
+{
+public:
+    PoechantTCPServer() {}
+    ~PoechantTCPServer() {}
+protected:
+    void initialize(Application& self);
+    void uninitialize();
+    int main(const std::vector<std::string>& args)
+};
+
+#endif
+这样在调用启动PoechantTCPServer时，会先调用initialize，然后调用main，在main结束后会调用uninitialize。其实现很简单：
+
+// PoechantTCPServer.cpp
+
+#include "PoechantTCPServer.h"
+
+void PoechantTCPServer::initialize(Application& self)
+{
+    ServerApplication::loadConfiguration();
+    ServerApplication::initialize(self);
+}
+
+void PoechantTCPServer::uninitialize()
+{
+    ServerApplication::uninitialize();
+}
+
+int PoechantTCPServer::main(const std::vector<std::string>& args)
+{
+    // 这个咱最后说
+
+    return Application::EXIT_OK;
+}
+2.2 PoechantTCPConnection
+连接类的定义很简单，构造函数要传入一个 StreamSocket 和其他你需要的参数。
+
+// PoechantTCPConnection.h
+
+#ifndef POECHANT_TCP_CONNECTION_H
+#define POECHANT_TCP_CONNECTION_H
+
+#include "Poco/Net/TCPServerConnection.h"
+#include "Poco/Net/StreamSocket.h"
+#include <string>
+
+class PoechantTCPConnection: public TCPServerConnection
+{
+public:
+    PoechantTCPConnection(const StreamSocket& s,
+        const std::string& arg1,
+        int arg2,
+        double arg3);
+
+    void run();
+private:
+
+    std::string _arg1;
+    int _arg2;
+    double _arg3;
+};
+
+#endif
+实现如下：
+
+// PoechantTCPConnection.cpp
+
+#include "PoechantTCPConnection.h"
+#include "Poco/Util/Application"
+#include "Poco/Timestamp.h"
+#include "Poco/Exception.h"
+#include "Poco/DateTimeFormatter.h"
+
+PoechantTCPConnection(const StreamSocket& s, const std::string& arg1, int arg2, double arg3):
+    TCPServerConnection(s), _arg1(arg1), _arg2(arg2), _arg3(arg3)
+{
+}
+void run()
+{
+    Application& app = Application::instance();
+    // 日志输出连接的TCP用户的地址（IP和端口）
+    app.logger().information("Request from " + this->socket().peerAddress().toString());
+    try
+    {
+        // 向客户端发送数据，这里以发送一个表示时间的字符串为例
+        Timestamp now;
+        std::string dt(DateTimeFormatter::format(now, _format));
+        dt.append("\r\n");
+        socket().sendBytes(dt.data(), (int) dt.length());
+    }
+    catch (Poco::Exception& e)
+    {
+        app.logger().log(e);
+    }
+}
+2.3 PoechantTCPConnectionFactory
+工厂模式不必多说，名字唬人，其实非常非常简单（准确的说设计模式大部分名字都唬人，但大部分都很有用，设计模式本身并不牛B，能把设计模式抽象提炼出来成我们现在认为很简单的这些模式的那几个人很牛B）。具体如下：
+
+// PoechantTCPConnectionFactory.h
+
+#ifndef POECHANT_TCP_CONNECTION_FACTORY_H
+#define POECHANT_TCP_CONNECTION_FACTORY_H
+
+#include "Poco/Net/TCPServerConnectionFactory.h"
+#include "Poco/Net/TCPServerConnection.h"
+#include "Poco/Net/StreamSocket.h"
+#include <string>
+
+class PoechantTCPConnectionFactory: public TCPServerConnectionFactory
+{
+    public:
+    PoechantTCPConnectionFactory(const std::string arg1, int arg2, double arg3)
+        : _arg1(arg1), _arg2(arg2), _arg3(arg3)
+    {
+    }
+
+    TCPServerConnection* createConnection(const StreamSocket& socket)
+    {
+        return new PoechantTCPConnection(socket, arg1, arg2, arg3);
+    }
+
+private:
+    std::string arg1;
+    int arg2;
+    double arg3;
+};
+
+#endif
+2.4 启动
+回头来说PoechantTCPServer::main(const std::vector<std::string>& args)，其过程就是创建一个绑定了地址的ServerSocket，把它传给TCPServer，当然别忘了把工程对象也给你的TCPServer传一个。最后就start()，waitForTerminationRequest和stop()就行了。
+
+int PoechantTCPServer::main(const std::vector<std::string>& args)
+{
+    unsigned short port = (unsigned short) config().getInt("PoechantTCPServer.port", 12346);
+    std::string format(config().getString("PoechantTCPServer.format",
+        DateTimeFormat::ISO8601_FORMAT));
+
+    // 1. Bind a ServerSocket with an address
+    ServerSocket serverSocket(port);
+
+    // 2. Pass the ServerSocket to a TCPServer
+    TCPServer server(new PoechantTCPConnectionFactory(format), serverSocket);
+
+    // 3. Start the TCPServer
+    server.start();
+
+    // 4. Wait for termination
+    waitForTerminationRequest();
+
+    // 5. Stop the TCPServer
+    server.stop();
+
+    return Application::EXIT_OK;
+}
+然后写一个程序入口：
+
+#include "PoechantTCPServer.h"
+
+int main(int argc, char **argv)
+{
+    return PoechantTCPServer().run(argc, argv);
+}
+3 写一个 Client 测测
+TCPServer 要用 TCP 的客户端来测试。在 POCO 中有丰富的 Socket，其中 TCP 方式的 Socket 有：
+
+Poco::Net::ServerSocket
+Poco::Net::StreamSocket
+Poco::Net::DialogSocket
+Poco::Net::SecureServerSocket
+Poco::Net::SecureStreamSocket
+UDP 方式的 Socket 有：
+
+Poco::Net::DatagramSocket
+Poco::Net::MulticastSocket
+一个 TCP 方式 Client 如下（这里用了 while 循环，其实可以在收到数据后就关闭的）
+
+#include <iostream>
+#include "Poco/Net/StreamSocket.h"
+#include "Poco/Net/SocketAddress.h"
+
+#define BUFFER_SIZE 1024
+
+using Poco::Net::SocketAddress;
+using Poco::Net::StreamSocket;
+
+int main (int argc, const char * argv[])
+{
+    SocketAddress address("127.0.0.1", 12346);
+    StreamSocket socket(address);
+    char buffer[BUFFER_SIZE];
+    while (true)
+    {
+        if (socket.available())
+        {
+            int len = socket.receiveBytes(buffer, BUFFER_SIZE);
+            buffer[len] = '\0';
+            std::cout << "" << buffer << std::endl;
+        }
+    }
+    return 0;
+}
+-
+
+
+（11）如何使用Reactor框架？
+1 Reactor 框架概述
+POCO 中的 Reactor 框架是基于 Reactor 设计模式进行设计的。其中由 Handler 将某 Socket 产生的事件，发送到指定的对象的方法上，作为回调。
+
+2 光说不练假把式
+PoechantReactorServer 类，基本与 PoechantTCPServer：
+
+class PoechantReactorServer: public ServerApplication
+{
+public:
+    PoechantServer() {} //: _helpRequested(false) {}
+    ~PoechantServer() {}
+
+protected:
+    void initialize(Application& self)
+    {
+        loadConfiguration();
+        ServerApplication::initialize(self);
+    }
+    void uninitialize()
+    {
+        ServerApplication::uninitialize();
+    }
+    int main(const std::vector<std::string>& args)
+    {
+        // …
+        return Application::EXIT_OK;
+    }
+}
+PoechantServiceHandler 类定义如下。起重机把onReadable和onShutdown的声音带来很大的麻烦。
+
+class PoechantServiceHandler
+{
+public:
+    PoechantServiceHandler(StreamSocket& socket, SocketReactor& reactor)；
+    ~PoechantServiceHandler();
+    void onReadable(const AutoPtr<ReadableNotification>& pNf);
+    void onShutdown(const AutoPtr<ShutdownNotification>& pNf);
+private:
+    enum
+    {
+        BUFFER_SIZE = 1024
+    };
+    StreamSocket _socket;
+    SocketReactor& _reactor;
+    char *_pBuffer;
+}；
+PoechantServiceHandler 实现：
+
+PoechantServiceHandler::PoechantServiceHandler(StreamSocket& socket, SocketReactor& reactor)
+    :_socket(socket),
+     _reactor(reactor),
+     _pBuffer(new char[BUFFER_SIZE])
+{
+    Application& app = Application::instance();
+    app.logger().information("Connection from" + socket.peerAddress().toString());
+    _reactor.addEventHandler(_socket,
+        NObserver<PoechantServiceHandler,
+            ReadableNotification>(*this, &PoechantServiceHandler::onReadable));
+    _reactor.addEventHandler(_socket,
+        NObserver<PoechantServiceHandler,
+            ShutdownNotification>(*this, &PoechantServiceHandler::onShutdown));
+}
+~PoechantServiceHandler()
+{
+    Application& app = Application::instance();
+    app.logger().information("Disconnecting " + _socket.peerAddress().toString());
+    _reactor.removeEventHandler(_socket,
+        NObserver<PoechantServiceHandler,
+            ReadableNotification>(*this, &PoechantServiceHandler::onReadable));
+    _reactor.removeEventHandler(_socket,
+        NObserver<PoechantServiceHandler,
+            ShutdownNotification>(*this, &PoechantServiceHandler::onShutdown));
+    delete [] _pBuffer;
+}
+void onReadable(const AutoPtr<ReadableNotification>& pNf)
+{
+    // Receive data from StreamSocket
+    int n = _socket.receiveBytes(_pBuffer, BUFFER_SIZE);
+
+    // Send data back the client 
+    if (n > 0)
+        _socket.sendBytes(_pBuffer, n);
+    else
+        delete this;
+}
+
+// When ShutdownNotification is detected, this method will be invoked.
+void onShutdown(const AutoPtr<ShutdownNotification>& pNf)
+{
+    delete this;
+}
+启动：
+
+int main(const std::vector<std::string>& args)
+{
+    unsigned short port = (unsigned short) config().getInt("PoechantReactor.port", 12345);
+    ServerSocket serverSocket(port);
+    SocketReactor reactor;
+    SocketAcceptor<PoechantServiceHandler> acceptor(serverSocket, reactor);
+
+    reactor.run();
+
+    waitForTerminationRequest();
+    reactor.stop();
+
+    return Application::EXIT_OK;
+}
+
+int main(int argc, char **argv)
+{
+    return PoechantServer().run(argc, argv);
+}
+3 Clinet 测试代码
+同《POCO库中文编程参考指南（10）如何使用TCPServer框架？》中的 Client 测试用例。
+
+-
+
+
+从零开始编译Poco C++和VS2015环境配置
+Poco C++是一个C++的开源框架，详细介绍可以问百度介绍更详细，这里我就记录下我从零编译poco-1.9.0和配置 VS2015的环境，以备不时之需。
+
+步骤：
+一、安装cmake；
+二、编译poco-1.9.0；
+三、将编译后的poco-1.9.0配置到VS2015的项目中；
+四、示例简单示例。
+
+安装cmake
+我的电脑环境：
+win7 64位；
+cmake-3.12.1-win64-x64（官网下载：点击我下载cmake）。
+安装cmake按常规安装即可，但是记得勾选：
+
+这个主要是为了防止电脑登录其他用户没有cmake，建议把CMake加到系统PATH中。其他的下一步即可。
+关于cmka GUI和命令行的用法（下面会配置PocoC++使用命令行用法），也可以自行百度。
+
+编译Poco C++
+前提条件：
+1）Poco C++源码（官网下载：点击我下载）；
+2）已经安装VS2015；
+3）已经安装cmake。
+
+编译poco c++(poco-1.9.0.zip、Visual Studio 2015)
+1）用windows的命令行转到poco-1.9.0文件夹，即源码目录。
+2）执行下面命令（命令最后一句的”..”切记不可遗漏了哦）：
+
+mkdir cmake_build_x64
+cd cmake_build_x64
+cmake -G “Visual Studio 14 2015 Win64” ..
+
+3）然后进入make_build_x64 文件夹里面，用 Visual Studio 2015 打开 Poco.sln，用VS编译 POCO C++ Libraries 的动态链接库 ，建议同时编译debug和release版本（跟普通的编译VS工程一样，即按快捷键F7即可），至此PocoC++编译完成了，在目录cmake_build_x64文件夹下面的的 bin、lib 子目录中，就是我们最终得到的动态链接库等文件。
+
+poco-1.9.0配置到VS2015的项目中
+1)在源码目录下新建v1.9.0_compact_MSVC文件夹，如我的：
+
+D:\poco\poco-1.9.0\v1.9.0_compact_MSVC
+
+然后设置系统环境变量指向POCO_ROOT，即点击“”我的电脑“–》右击“属性”–》高级系统设置–》环境变量–》点击系统环境变量下面的“新建”按钮，填写：
+
+2）将所有的 include下面文件夹集中在 %POCO_ROOT%\include 目录中，如我的D:\poco\poco-1.9.0\Foundation\include\Poco文件下面的东西拷贝D:\poco\poco-1.9.0\v1.9.0_compact_MSVC\include\Poco下面。同理D:\poco\poco-1.9.0\Encodings\include\Poco同样处理（你会留意到有Encodings Foundation JSON Net Util XML这些文件夹下面\include\Poco下面的文件及文件夹需要这样处理）。这样做主要是为包含头文件方便些，最终处理完如下图所示：
+
+3）在v1.9.0_compact_MSVC文件夹下面建立build/x64文件夹，将编译得到的 bin、lib 文件夹都收集到build/x64下，如下图：
+
+4）在VS工程连接动态库和头文件：
+a.右击你的VS工程，点击“属性”–》C/C++–》常规–》添加包含目录，输入：
+
+$(POCO_ROOT)\include
+
+b.点击“属性”–》连接器–》附加库目录，输入：
+
+D:\poco\poco-1.9.0\v1.9.0_compact_MSVC\build\x64\lib\Debug
+D:\poco\poco-1.9.0\v1.9.0_compact_MSVC\build\x64\bin\Debug
+
+c.点击“属性”–》连接器–》输入–》附加依赖项。
+针对Debug，输入：
+
+PocoEncodingsd.lib
+PocoFoundationd.lib
+PocoJSONd.lib
+PocoNetd.lib
+PocoUtild.lib
+
+针对Release输入：
+
+PocoEncodings.lib
+PocoFoundation.lib
+PocoJSON.lib
+PocoNet.lib
+PocoUtil.lib
+PocoXML.lib
+
+4）将对应库配置到编译输出目录。“属性”–》生成事件–》命名行，输入：
+
+copy “(POCOROOT)\build$(Platform)\bin$(Configuration)\*.?"(POCOROOT)\build$(Platform)\bin$(Configuration)\*.?"(TargetDir)
+
+pooc c++使用简单示例代码：
+#include <iostream>
+#include "Poco\Timer.h"
+#include "Poco\Thread.h"
+using Poco::Timer;
+using Poco::Thread;
+using Poco::TimerCallback;
+using namespace std;
+
+class TimerExample
+{
+public:
+void onTimer(Poco::Timer &timer)
+{
+cout << "func : " << __FUNCTION__ << endl;
+}
+};
+
+int main(int argc, char** argv)
+{
+TimerExample te;
+Timer timer(2000, 1000);
+timer.start(TimerCallback<TimerExample>(te, &TimerExample::onTimer));
+Thread::sleep(5000);
+timer.stop();
+return 0;
+}
+
+已上是我今天编译poco c++、配置VS2015工程环境、简单使用的总结笔记，如有不当之处，还请大侠多多指教哦~
+

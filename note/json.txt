@@ -1,0 +1,45 @@
+
+主要包含三种类型Value、Reader、Writer。所有对象、类名都在 namespace Json 中，包含 json.h 即可。
+Json::Value 是jsoncpp 中最基本、最重要的类，用于表示各种类型的对象，jsoncpp 支持的对象类型可见 Json::ValueType 枚举值。
+　　Json::Value root;  // 表示整个 json 对象
+　　root["key_string"] = Json::Value("value_string");   // 新建一个 Key（名为：key_string），赋予字符串值："value_string"。 同 root["key_string"]=“value_string” 下同
+　　root["key_number"] = Json::Value(12345);            // 新建一个 Key（名为：key_number），赋予数值：12345。
+　　root["key_boolean"] = Json::Value(false);           // 新建一个 Key（名为：key_boolean），赋予bool值：false。
+　　root["key_double"] = Json::Value(12.345);           // 新建一个 Key（名为：key_double），赋予 double 值：12.345。
+　　root["key_object"] = Json_temp;                     // 新建一个 Key（名为：key_object），赋予 json::Value 对象值。
+　　root["key_array"].append("array_string");           // 新建一个 Key（名为：key_array），类型为数组，对第一个元素赋值为字符串："array_string"。
+　　root["key_array"].append(1234);                     // 为数组 key_array 赋值，对第二个元素赋值为：1234。
+　　Json::ValueType type = root.type();                 // 获得 root 的类型，此处为 objectValue 类型。
+    root["v3"].resize(0);                               设置一个空的数组也就是"v3":[]
+Jsoncpp 的 Json::Writer 类是一个纯虚类，并不能直接使用。在此我们使用 Json::Writer 的子类：Json::FastWriter、Json::StyledWriter、Json::StyledStreamWriter。
+　　顾名思义，用 Json::FastWriter 来处理 json 应该是最快的，下面我们来试试。
+　　Json::FastWriter fast_writer;
+　　std::cout << fast_writer.write(root) << std::endl;
+　　输出结果为：
+　　{"key_array":["array_string",1234],"key_boolean":false,"key_double":12.3450,"key_number":12345,"key_object":{"age":26,"name":"huchao"},"key_string":"value_string"}
+　　再次顾名思义，用 Json::StyledWriter 是格式化后的 json，下面我们来看看 Json::StyledWriter 是怎样格式化的。
+　　Json::StyledWriter styled_writer;
+　　std::cout << styled_writer.write(root) << std::endl;
+　　输出结果为：
+　　{
+　　   "key_array" : [ "array_string", 1234 ],
+　　   "key_boolean" : false,
+　　   "key_double" : 12.3450,
+　　   "key_number" : 12345,
+　　   "key_object" : {
+　　      "age" : 26,
+　　      "name" : "huchao"
+　　   },
+　　   "key_string" : "value_string"
+　　}
+Json::Reader 是用于读取的，说的确切点，是用于将字符串转换为 Json::Value 对象的。
+　　  Json::Reader reader;
+　　  Json::Value json_object;
+　　  const char* json_document = "{/"age/" : 26,/"name/" : /"huchao/"}";
+　　  if (!reader.parse(json_document, json_object))
+　　    return 0;
+　　  std::cout << json_object["name"] << std::endl;
+　　  std::cout << json_object["age"] << std::endl;
+　　输出结果为：
+　　"huchao"
+　　26

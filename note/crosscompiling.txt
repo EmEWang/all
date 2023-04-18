@@ -1,0 +1,67 @@
+
+
+
+交叉编译环境   项目链接目录>> ~/code/base/lib/uos/
+    1 解压 file=飞腾ARM\gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnu.tar.xz -> tar -xvf [file] -C /opt/
+    2 复制 file=D:\交叉编译\飞腾ARM\Enable         -> cp [file] /opt/gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnu
+    3 环境 source /opt/gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnu/Enable   备注 只在当前session中有效
+    4 编译 make CENTOS=uos
+
+中间可能有些开源库没有 需要编译
+uuid-master
+    1 解压 file=uuid-master.zip -> unzip [file] -d /opt/
+    2 目录 进入目标目录 mkdir build
+    3 修改 vim CMakeLists.txt 在project(uuid)[第4行]下添加如下2行 下面的路径指的就是上面 交叉环境 的绝对路径 第一个是gcc程序 第二个是g++
+        SET(CMAKE_C_COMPILER   /opt/gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu-gcc)
+        SET(CMAKE_CXX_COMPILER /opt/gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu-g++)
+    3 执行 1 cd build     2 cmake ../
+    4 编译 make
+    5 目标 build/src/libuuid.so 这个文件cp到 项目链接目录
+zlib-1.2.11
+    与上面的的基本一样
+    3 修改 vim CMakeLists.txt 在set(INSTALL_PKGCONFIG_DIR [第16行]下添加2行
+    5 目标 build/libz.a build/libz.so
+curl-7.51.0
+    1 解压 file=curl-7.51.0.zip -> unzip [file] -d /opt/
+    2 进入目标目录 ./configure --prefix=/opt/curl-7.51.0/build/ --host=aarch64-linux  CC=/opt/gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu-gcc  备注--prefix目标目录 CC为c编译器绝对目录
+    3 编译 make
+    4 目标 ./lib/.libs/libcurl.so ./lib/.libs/libcurl.a 这个文件cp到 项目链接目录
+    5 make install安装到指定目录 包括头文件和链接文件 按需要可以执行或者不执行 本项目暂时不需要执行 只需要步骤4
+poco-1.9.0-all
+    与上面的基本一样
+    2 进入目标目录 ./configure --prefix=/opt/poco-1.9.0-all  --config=Linux --static --minimal --no-tests --no-samples --cflags=-fPIC --cflags=-D__AARCH64EL__
+    4 目标 ./lib/Linux/x86_64/libPoco*  cp到 项目链接目录
+camke
+    1 安装 yum instal cmake
+    2 网络 虚拟机可能需要添加DNS 否则找不到 详细设置 参考下面的 网络配置
+
+备注
+make[1]: 离开目录“/home/wangjingang/code/webwork_new/JPush”
+make -C ErrorCode RELEASE=1 BITS=64 CENTOS=uos
+make[1]: 进入目录“/home/wangjingang/code/webwork_new/ErrorCode”
+g++  -O2 -DNDEBUG -D__x86_64__ -D__UOS__ -shared -fPIC -Wall -std=c++0x -pthread -fno-strict-aliasing -Wno-deprecated -Wno-sign-compare -Wno-unused-but-set-variable -Wno-unused-variable -Wno-comment -Wno-unused-local-typedefs -Wno-write-strings -Wno-parentheses -Wno-reorder -Wno-conversion-null -Wno-unused-function -Wno-unused-value     -I../include -MMD  -c -o ErrorCode.o ErrorCode.cpp
+ar -rc ../linux_bin64/Release/libErrorCode.a     ErrorCode.o      
+make[1]: 离开目录“/home/wangjingang/code/webwork_new/ErrorCode”
+make -C mxTranslateDll RELEASE=1 BITS=64 CENTOS=uos
+make[1]: 进入目录“/home/wangjingang/code/webwork_new/mxTranslateDll”
+g++  -DBSMOD_EXPORTS -O2 -DNDEBUG -D__x86_64__ -D__UOS__ -shared -fPIC -Wall -std=c++0x -pthread -fno-strict-aliasing -Wno-deprecated -Wno-sign-compare -Wno-unused-but-set-variable -Wno-unused-variable -Wno-comment -Wno-unused-local-typedefs -Wno-write-strings -Wno-parentheses -Wno-reorder -Wno-conversion-null -Wno-unused-function -Wno-unused-value     -I../../base/include/port2linux -I../../base/include/python3.7m -I../../base/include -I../../base/include/chen -I../../base/include/HttpProtocol -I../../base/include/bsapi -I../../base/include/mxcomlib -I../../base/include/tinyxml -I../../base/include/mxdbvar -I../../base/include/MxHandlePool -I../../base/include/Http -I../../base/ -I. -I.. -I../ServerData -I../ipmgm -MMD  -c -o md5Impl.o md5Impl.cpp
+g++  -DBSMOD_EXPORTS -O2 -DNDEBUG -D__x86_64__ -D__UOS__ -shared -fPIC -Wall -std=c++0x -pthread -fno-strict-aliasing -Wno-deprecated -Wno-sign-compare -Wno-unused-but-set-variable -Wno-unused-variable -Wno-comment -Wno-unused-local-typedefs -Wno-write-strings -Wno-parentheses -Wno-reorder -Wno-conversion-null -Wno-unused-function -Wno-unused-value     -I../../base/include/port2linux -I../../base/include/python3.7m -I../../base/include -I../../base/include/chen -I../../base/include/HttpProtocol -I../../base/include/bsapi -I../../base/include/mxcomlib -I../../base/include/tinyxml -I../../base/include/mxdbvar -I../../base/include/MxHandlePool -I../../base/include/Http -I../../base/ -I. -I.. -I../ServerData -I../ipmgm -MMD  -c -o pch.o pch.cpp
+g++  -DBSMOD_EXPORTS -O2 -DNDEBUG -D__x86_64__ -D__UOS__ -shared -fPIC -Wall -std=c++0x -pthread -fno-strict-aliasing -Wno-deprecated -Wno-sign-compare -Wno-unused-but-set-variable -Wno-unused-variable -Wno-comment -Wno-unused-local-typedefs -Wno-write-strings -Wno-parentheses -Wno-reorder -Wno-conversion-null -Wno-unused-function -Wno-unused-value     -I../../base/include/port2linux -I../../base/include/python3.7m -I../../base/include -I../../base/include/chen -I../../base/include/HttpProtocol -I../../base/include/bsapi -I../../base/include/mxcomlib -I../../base/include/tinyxml -I../../base/include/mxdbvar -I../../base/include/MxHandlePool -I../../base/include/Http -I../../base/ -I. -I.. -I../ServerData -I../ipmgm -MMD  -c -o dllmain.o dllmain.cpp
+g++ -Wl,-R./ -o ../linux_bin64/Release/libMXTranslate.so     -shared -fPIC -rdynamic    -pthread -ldl md5Impl.o pch.o dllmain.o -L../linux_bin64/Release -L../linux_bin64/lib -L../../base/lib/uos -lBasePython -lbsapi -lchen -lboost_python37 -lpython37 -lrt -luuid -ljson 
+/usr/bin/ld: 当搜索用于 ../../base/lib/uos/libBasePython.a 时跳过不兼容的 -lBasePython 
+/usr/bin/ld: 找不到 -lBasePython
+/usr/bin/ld: 当搜索用于 ../../base/lib/uos/libbsapi.so 时跳过不兼容的 -lbsapi 
+/usr/bin/ld: 找不到 -lbsapi
+/usr/bin/ld: 当搜索用于 ../../base/lib/uos/libchen.a 时跳过不兼容的 -lchen 
+/usr/bin/ld: 找不到 -lchen
+/usr/bin/ld: 当搜索用于 ../../base/lib/uos/libboost_python37.a 时跳过不兼容的 -lboost_python37 
+/usr/bin/ld: 找不到 -lboost_python37
+/usr/bin/ld: 当搜索用于 ../../base/lib/uos/libpython37.so 时跳过不兼容的 -lpython37 
+/usr/bin/ld: 找不到 -lpython37
+/usr/bin/ld: 当搜索用于 ../../base/lib/uos/libjson.so 时跳过不兼容的 -ljson 
+/usr/bin/ld: 找不到 -ljson
+collect2: 错误：ld 返回 1
+make[1]: *** [../linux_bin64/Release/libMXTranslate.so] 错误 1
+make[1]: 离开目录“/home/wangjingang/code/webwork_new/mxTranslateDll”
+make: *** [mxTranslateDll] 错误 2
+

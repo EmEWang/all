@@ -1,0 +1,169 @@
+
+-g 选项的作用就是在编译生成的目标文件中加入源码信息。例如，把目标文件中的机器指令与源代码的行数对应起来。注意，这里并不是将整个源码都添嵌入到目标文件中，而是只是添加对应的行数信息，因此，在进行debug的时候，必须保证gdb可以找到源文件。
+-g 选项具有三个等级。即：
+-g0等于不加-g；即不包含任何信息
+-g1 不包含局部变量和与行号有关的调试信息，因此只能够用于回溯跟踪和堆栈存储和函数的调用等等。
+-g2 默认的级别，此时产生的调试信息包括扩展的符号表、行号、局部或外部变量信息
+-g3 包含级别2中的所有调试信息，以及源代码中定义的宏
+
+-O分4个等级：
+ -O0编译不优化，如果指定了多个-o选项，不管带不带数字，最后一个选项才是生效的选项
+ -O1是最基本的优化等级。编译器会在不花费太多编译时间的同时试图生成更快更小的代码。这些优化是非常基础的，但一般这些任务肯定能顺利完成
+ -O2是推荐的优化等级，除非你有特殊的需求。-O2会比-O1启用多一些标记。设置了-O2后，编译器会试图提高代码性能而不会增大体积和大量占用的编译时间
+ -O3是最高最危险的优化等级。用这个选项会延长编译代码的时间，并且在使用gcc4.x的系统里不应全局启用。自从3.x版本以来gcc的行为已经有了极大地改变。在3.x，-O3生成的代码也只是比-O2快一点点而已，而gcc4.x中还未必更快。用-O3来编译所有的软件包将产生更大体积更耗内存的二进制文件，大大增加编译失败的机会或不可预知的程序行为（包括错误）。这样做将得不偿失，记住过犹不及。在gcc 4.x.中使用-O3是不推荐的
+ -Os这个等级用来优化代码尺寸。其中启用了-O2中不会增加磁盘空间占用的代码生成选项。这对于磁盘空间极其紧张或者CPU缓存较小的机器非常有用。但也可能产生些许问题，因此软件树中的大部分ebuild都过滤掉这个等级的优化。使用-Os是不推荐的
+
+检测内存泄漏ASAN
+gcc编译选项
+    -fsanitize=address：开启内存越界检测
+    -fsanitize-recover=address：一般后台程序为保证稳定性，不能遇到错误就简单退出，而是继续运行，采用该选项支持内存出错之后程序继续运行，需要叠加设置ASAN_OPTIONS=halt_on_error=0才会生效；若未设置此选项，则内存出错即报错退出
+    -fno-omit-frame-pointer：去使能栈溢出保护
+ASAN_OPTIONS设置
+ASAN_OPTIONS是Address-Sanitizier的运行选项环境变量。
+    halt_on_error=0：检测内存错误后继续运行
+    detect_leaks=1:使能内存泄露检测
+    malloc_context_size=15：内存错误发生时，显示的调用栈层数为15
+    log_path=/home/xos/asan.log:内存检查问题日志存放文件路径
+    suppressions=$SUPP_FILE:屏蔽打印某些内存错误
+    export ASAN_OPTIONS=halt_on_error=0:use_sigaltstack=0:detect_leaks=1:malloc_context_size=15:log_path=/home/xos/asan.log:suppressions=$SUPP_FILE
+LSAN_OPTIONS设置
+LSAN_OPTIONS是LeakSanitizier运行选项的环境变量，而LeakSanitizier是ASAN的内存泄漏检测模块，常用运行选项有：
+    exitcode=0：设置内存泄露退出码为0，默认情况内存泄露退出码0x16
+    use_unaligned=4：4字节对齐
+    export LSAN_OPTIONS=exitcode=0:use_unaligned=4
+实际开发环境中，可能存在gcc版本低，使用asan做内存检查时，需要链接libasan.so库的情况。其次，平台软件通常都会内部实现一套内存操作接口，为使用asan工具，需要替换成glibc提供的接口。此时，可以通过LD_PRELOAD环境变量解决这类问题。
+export LD_PRELOAD= libasan.so.2:libprelib.so
+
+一个使用asan的简单小例子
+//a.c
+#include <stdio.h>
+#include <stdlib.h>
+
+int my_print()
+{
+    int*a =  malloc(10);
+    printf("this is my_print
+");
+    return 0;
+}
+
+int main()
+{
+    my_print();
+    return 0;
+}
+
+动态链接的编译：/usr/local/gcc-6.4.0/bin/gcc a.c -fsanitize=address -fno-omit-frame-pointer -fsanitize-recover=address –lasan
+动态链接的运行：LD_PRELOAD=/usr/local/gcc-6.4.0/lib64/libasan.so ./a.out
+
+静态链接的编译：/usr/local/gcc-6.4.0/bin/gcc a.c -fsanitize=address -fno-omit-frame-pointer -fsanitize-recover=address -static-libasan
+静态链接的运行：./a.out
+
+运行的结果如下：
+
+this is my_print
+
+=================================================================
+
+==8437==ERROR: LeakSanitizer: detected memory leaks
+
+Direct leak of 10 byte(s) in 1 object(s) allocated from:
+
+    #0 0x7f7c835e35b8 in __interceptor_malloc ../../.././libsanitizer/asan/asan_malloc_linux.cc:62
+
+    #1 0x4007a7 in my_print (/root/workspace/a.out+0x4007a7)
+
+    #2 0x4007ca in main (/root/workspace/a.out+0x4007ca)
+
+    #3 0x7f7c82f6d454 in __libc_start_main (/lib64/libc.so.6+0x22454)
+
+SUMMARY: AddressSanitizer: 10 byte(s) leaked in 1 allocation(s).
+
+
+环境变量
+LD_PRELOAD
+    在UNIX的动态链接库的世界中，LD_PRELOAD就是这样一个环境变量，它可以影响程序的运行时的链接（Runtime linker），
+    它允许你定义在程序运行前优先加载的动态链接库。这个功能主要就是用来有选择性的载入不同动态链接库中的相同函数。
+    通过这个环境变量，我们可以在主程序和其动态链接库的中间加载别的动态链接库，甚至覆盖正常的函数库。
+
+
+
+调试程序，gdb启动程序
+1.gdb 程序名，进入gdb后，使用run/r命令运行gdb调试，如果程序需要传递参数，run后面加[arg]；
+2.如果程序需要传递参数，gdb --args 程序名 [arg]，进入gdb后，使用run/r；
+3.进入gdb后，输入程序名；如果需要给程序传递参数，使用set args  ["input"] 设定程序参数，再运行run/r，启动程序；
+
+调试正在运行的程序 gdb attach [pid] 或者 gdb -p pid
+查看源码 list：list(l)  [函数名][行数]，查看源码，简写l
+断点设置及管理
+break/b line_number:在line_number行上打断点，使程序在line_number行执行前停止
+break/b [filename]function_name:在filename文件下的function_name函数入口停止
+break/b [filename]line_number:在filename文件下的line_number行打断点
+break/b +offset/-offset:在当前行号的前面或后面offset停止
+break/b where if condition:当某个条件满足时，在某一行停止； eg:在循环体中可以设置break ... if i = 100 来设置循环次数
+break/b:没有参数在下一行停止
+break/b [内存地址]:在程序的运行地址处停止
+info break:显示当前的断点信息
+delete/d breakpoint_id:关闭断点
+disable/enable breakpoint_id:禁用/使能断点，该命令将禁止、允许断点 1，同时断点信息的 (Enb)域将变为 n、y
+运行命令
+run/r  [args]:run命令可以直接接命令行参数值
+set args ["input"]:修改发送给程序的参数（进入GDB后才能使用）
+show args：查看其缺省参数的列表（进入GDB后才能使用）
+set var 设置变量的值 print n=1 或者 set var n=1 后一种情况一般在变量名与gdb预定的变量名一样时使用
+单步命令 
+next/n : 不进入的单步执行
+step/s : 进入的额单步执行
+finish : 运行程序，直到当前函数完成返回，并打印函数返回时的堆栈地址和返回值以及参数信息
+until :退出当前的循环体
+thread id : 进入线程 id为从1开始的序号 后面有对应系统的tid 可以使用top -Hp pid查看当前进程的 所有线程
+
+查看信息
+1.查看数据:
+print  variable : 查看变量
+print  *array@len :查看数组（array是数组指针，len是需要数据长度）
+可以通过添加参数来设置输出格式:
+/x 按十六进制格式显示变量
+/d 按十进制格式显示变量
+/u 按十六进制格式显示无符号整型
+/o 按八进制格式显示变量
+/t 按二进制格式显示变量
+/a 按十六进制格式显示变量
+/c 按字符格式显示变量
+/f 按浮点数格式显示变量
+2.查看内存:
+examine /n f u + 内存地址（指针变量）
+n 表示显示内存长度
+f 表示输出格式（见上）
+u 表示字节数制定（b 单字节；h 双字节；w 四字节；g 八字节；默认为四字节）
+如:
+x /10cw pFilePath  （pFilePath为一个字符串指针，指针占4字节）
+x 为examine命令的简写。
+3.查看栈信息:
+backtrace [-n][n]，简写bt
+n  表示只打印栈顶上n层的栈信息
+-n 表示只打印栈底上n层的栈信息
+不加参数，表示打印所有栈信息
+搜索:
+search text:该命令可显示在当前文件中包含text串的下一行
+reverse-search text:该命令可以显示包含text 的前一行
+函数调用:call function:强制调用某函数，它会显示函数返回值（如果函数返回值不是void类型）
+调试进程:gdb attach pid:调试已运行的进程，pid为进程号
+别的命令:
+cd :改变当前工作目录
+clear:删除刚才停止处的断点
+commands :命中断点时，列出将要执行的命令
+display :程序停止时显示变量和表达时
+up :上移栈帧，使另一函数成为当前函数
+down :下移栈帧，使得另一个函数成为当前函数
+frame :选择下一条continue命令的帧
+jump :在源程序中的另一点开始运行
+kill :异常终止在gdb 控制下运行的程序
+pwd :显示当前工作目录
+ptype :显示一个数据结构（如一个结构或C++类）的内容
+quit :退出gdb
+set variable ["args"] = "value":给变量赋值，变量为args，value为设定值
+signal :将一个信号发送到正在运行的进程
+undisplay display :命令的反命令，不要显示表达式
+watch :在程序中设置一个监测点（即数据断点）
+whatis :显示变量或函数类型

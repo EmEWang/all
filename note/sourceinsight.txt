@@ -1,0 +1,41 @@
+
+
+
+Source Insight 4.0
+  开启选中高亮  Tools -> File Type Options (Alt + Y) -> Hightlight references to selected symbol
+  显示出匹配的括号 没这项功能，但是可把光标移动到前面的"{"前面，然后双击鼠标去匹配"}"
+  代码折叠      工具栏有工具
+  1.Ctrl + 鼠标单击 进入定义.
+  2.Alt + F12可以切换，让字符宽度变得一致，或者是大小不同地显示。函数名变醒目提醒，函数结尾时大扩号尾部有灰色提醒！！！（想隐藏再次按ALT F12）
+  3.Shift + F8 标亮文本中光标所在的单词。
+  4.Ctrl + G (或者F5) 跳转到某一行。
+  5.Ctrl + O 搜索文件，找到回车打开，找不到ESC退出
+  6.Alt + G (或者F7) 打开Symbol Window.
+  7.Alt +, 后退；Alt+.前进.
+  8.Ctrl + F 查找关键字。
+  
+  添加系统库函数头文件
+    以添加Linux系统库文件到Source Insight base同级目录为例：
+    一、库文件拷贝
+    1、使用tar压缩文件
+          sudo -s
+          cd /usr
+          tar -zcvf include.tar.gz ./include/
+    2、将压缩文件复制到windows下，解压文件
+    3、将include文件放到指定位置，如：
+         C:\Users\win 10\Documents\Source Insight 4.0\Projects\include
+    二、Source Insight添加路径
+    1、打开Base项目
+         Project->Open Project ，选择Base项目
+    2、Options->Preferrnces，选择Sysbol Lookups选项卡
+    3、打开Import Symbols for All Projects
+    4、打开右侧Add按钮，弹出Add External Symbols对话框
+    5、打开Import from an INCLUDE  path
+    6、将需要添加的系统库函数头文件所在路径添加进去
+           C:\Users\win 10\Documents\Source Insight 4.0\Projects\include
+    7、点击OK
+         Windows库文件路径，一般在安装VC、vs路径下的VC/include
+         Linux库文件路径，一般在/usr/include 。
+
+
+

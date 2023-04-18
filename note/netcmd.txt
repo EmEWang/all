@@ -1,0 +1,65 @@
+
+
+环485口 网口 专门协议 ipmi 
+
+网卡 接口 显示IP信息定制 ssh    snmp   win wmi
+./wmic -U administrator%1qaz@WSX3edc //192.168.7.30 "select * from Win32_Processor"     获取cpu信息
+./wmic -U administrator%1qaz@WSX3edc //192.168.7.30 "select Name from Win32_PerfRawData_Tcpip_NetworkInterface"
+./wmic -U administrator%1qaz@WSX3edc //192.168.7.30 "select DefaultIPGateway,Description from Win32_NetworkAdapterConfiguration WHERE IPEnabled = True" 
+
+
+ipmiutil sensor -s -N 103.219.185.29 -U root -P Mxsoft@123 -J 1 -F lan2 -V 2
+编译ipmiutil
+用的是ipmiutil-3.1.3  1.7编译命令还有问题
+./configure --build=arc
+make
+其结果在 ./util下 主要使用ipmiutil libipmiutil.so.1 
+
+
+
+
+snmpWalk  192.168.6.155 -Cpublic -v2  .1.3.6.1.2.1.25.2.2    snmpWalk IpAddress | DNSName [StartOid] [options]
+snmpWalk  192.168.6.155  1.3.6.1.2.1.7.1.0 -v2 -Cpublic      格式 snmpGet IpAddress | DNSName [Oid] [Oid...] [options]
+snmpGet 10.0.99.4  1.3.6.1.2.1.1.2.0   -v2c -Cyunzhihui123   程序中 若oid不是合格的oid 则pdu.get_vb_count()为0 其他oid返回值 若查不到 返回的值为空字符串 合格oid是只有数字和.
+1.3.6.1.2.1.17.4.3.1.2
+1.3.6.1.2.1.4.20.1.1
+
+
+1213-MIB的system组中的sysObjectId(.1.3.6.1.2.1.1.2.0)的值关联到设备型号表，获取设备型号对应的设备类型、设备型号、设备型号对应的厂商 
+
+1.3.6.1.2.1.1.2 - sysObjectID
+从rfc1213-mib2.asn1中的 OBJECT-TYPE定义生成
+OID值： 1.3.6.1.2.1.1.2
+
+OID描述：
+sysObjectID OBJECT-TYPE
+              语法对象标识符
+              ACCESS只读
+              状态强制
+              描述
+                      “供应商的权威鉴定
+                      网络管理子系统包含在
+                      实体。该值在SMI中分配
+                      企业子树（1.3.6.1.4.1）并提供了一个
+                      简单明确的方法来确定什么
+                      正在管理那种“盒子”。例如，如果
+                      供应商`Flintstones，Inc。' 被分配了
+                      子树1.3.6.1.4.1.4242，它可以分配
+                      标识符1.3.6.1.4.1.4242.1.1到其`Fred
+                      路由器'。”
+              :: = {system 2}
+
+另请参阅 OID存储库网站 1.3.6.1.2.1.1.2的 参考资料
+
+优越的参考
+1.3.6.1.2.1.1 - SNMP MIB-2系统
+1.3.6.1.2.1 - SNMP MIB-2
+1.3.6.1.2 - IETF管理
+1.3.6.1 - 来自1.3.6.1的OID分配 - 互联网
+1.3.6 - 美国国防部
+1.3 - ISO识别组织
+1 - ISO分配的OID
+OID树的顶部
+附属参考（单级）
+1.3.6.1.2.1.1.2.0 - Hp
+

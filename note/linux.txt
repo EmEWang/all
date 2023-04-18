@@ -1,0 +1,190 @@
+
+
+/etc/sysctl.conf
+net.ipv4.tcp_tw_reuse = 1
+/sbin/sysctl -p
+
+
+centos  安装软件 yum -y update  必要软件 yum -y install vim git wget net-tools gcc gcc-c++ gdb libstdc++-devel
+安装工作中需要的额外库 yum -y install openssl-devel  yum -y install libuuid-devel  yum install telnet 安装telnet
+yum -y install lrzsz    安装传输文件命令
+
+/proc/sys/fs/file-max    系统级的最大限制 句柄数
+/proc/sys/fs/file-nr     
+
+systemctl stop firewalld.service  centos7       关闭防火墙
+services iptables stop            centos6       关闭防火墙
+
+查看某个进程的最大打开文件数和当前打开文件数
+/proc/[pid]/limits 显示当前进程的资源限制
+/proc/[pid]/fd 是一个目录，包含进程打开文件的情况
+/proc/[pid]/task 查看某个进程的线程的详细信息
+
+lsof -p 127129 | wc -l 查看某个进程的打开文件数
+
+/etc/sysctl.conf      sysctl -p 参数生效 修改系统参数生效
+
+systemd service配置
+systemd 的配置文件大部分放置于 /usr/lib/systemd/system/ 目录内
+以audit服务为例
+[Unit]
+Description=Security Auditing Service
+DefaultDependencies=no
+## If auditd.conf has tcp_listen_port enabled, copy this file to
+## /etc/systemd/system/auditd.service and add network-online.target
+## to the next line so it waits for the network to start before launching.
+After=local-fs.target systemd-tmpfiles-setup.service
+Conflicts=shutdown.target
+Before=sysinit.target shutdown.target
+RefuseManualStop=yes                                             #RefuseManualStop=yes，是不允许手动停止的
+ConditionKernelCommandLine=!audit=0
+Documentation=man:auditd(8) https://github.com/linux-audit/audit-documentation
+
+[Service]
+Type=forking
+PIDFile=/var/run/auditd.pid
+ExecStart=/sbin/auditd
+## To not use augenrules, copy this file to /etc/systemd/system/auditd.service
+## and comment/delete the next line and uncomment the auditctl line.
+## NOTE: augenrules expect any rules to be added to /etc/audit/rules.d/
+ExecStartPost=-/sbin/augenrules --load
+#ExecStartPost=-/sbin/auditctl -R /etc/audit/audit.rules
+ExecReload=/bin/kill -HUP $MAINPID
+# By default we don't clear the rules on exit. To enable this, uncomment
+# the next line after copying the file to /etc/systemd/system/auditd.service
+#ExecStopPost=/sbin/auditctl -R /etc/audit/audit-stop.rules
+
+[Install]
+WantedBy=multi-user.target
+
+说明
+  [Unit]：这个项目内主要在规范服务启动的脚本、环境配置文件文件名、重新启动的方式等等。
+  [Install]：这个项目就是将此 unit 安装到哪个 target 里面去的意思！
+  [Service] 区块：启动行为
+    启动命令
+    ExecStart字段：定义启动进程时执行的命令
+    ExecReload字段：重启服务时执行的命令
+    ExecStop字段：停止服务时执行的命令
+    ExecStartPre字段：启动服务之前执行的命令
+    ExecStartPost字段：启动服务之后执行的命令
+    ExecStopPost字段：停止服务之后执行的命令
+    
+    启动类型
+    Type字段定义启动类型。它可以设置的值如下：
+    simple（默认值）：ExecStart字段启动的进程为主进程
+    forking：ExecStart字段将以fork()方式启动，此时父进程将会退出，子进程将成为主进程（后台运行）
+    oneshot：类似于simple，但只执行一次，Systemd 会等它执行完，才启动其他服务
+    dbus：类似于simple，但会等待 D-Bus 信号后启动
+    notify：类似于simple，启动结束后会发出通知信号，然后 Systemd 再启动其他服务
+    idle：类似于simple，但是要等到其他任务都执行完，才会启动该服务。一种使用场合是为让该服务的输出，不与其他服务的输出相混合
+    
+    重启行为
+    Service区块有一些字段，定义了重启行为：
+    KillMode字段：定义 Systemd 如何停止 sshd 服务：
+    control-group（默认值）：当前控制组里面的所有子进程，都会被杀掉
+    process：只杀主进程
+    mixed：主进程将收到 SIGTERM 信号，子进程收到 SIGKILL 信号
+    none：没有进程会被杀掉，只是执行服务的 stop 命令。
+    Restart字段：定义了 sshd 退出后，Systemd 的重启方式
+    
+    Restart字段可以设置的值如下。
+    no（默认值）：退出后不会重启
+    on-success：只有正常退出时（退出状态码为0），才会重启
+    on-failure：非正常退出时（退出状态码非0），包括被信号终止和超时，才会重启
+    on-abnormal：只有被信号终止和超时，才会重启
+    on-abort：只有在收到没有捕捉到的信号终止时，才会重启
+    on-watchdog：超时退出，才会重启
+    always：不管是什么退出原因，总是重启
+    注：对于守护进程，推荐设为on-failure。对于那些允许发生错误退出的服务，可以设为on-abnormal。
+    RestartSec字段：表示 Systemd 重启服务之前，需要等待的秒数。
+    
+  [Install] 区块
+    Install区块，定义如何安装这个配置文件，即怎样做到开机启动。
+    WantedBy字段：表示该服务所在的 Target。
+    Target的含义是服务组，表示一组服务。
+    WantedBy=multi-user.target指的是：sshd 所在的 Target 是multi-user.target。
+    这个设置非常重要，因为执行systemctl enable sshd.service命令时，sshd.service的一个符号链接，就会放在/etc/systemd/system目录下面的multi-user.target.wants子目录之中。
+    Systemd 有默认的启动 Target。
+
+
+
+
+内核报错kernel:NMI watchdog: BUG: soft lockup - CPU#1
+  系统管理员电话通知，描述为一台服务器突然无法ssh连接，登录服务器带外IP地址并进入远程控制台界面后，提示Authentication error，重启后即可正常进入系统，进入后过20分钟又进入死循环
+  出现死锁原因  
+    1、CPU高负载时间过长
+    2、服务器电源供电不足，导致CPU电压不稳定
+    3、vcpus超过物理cpu cores
+    4、虚机所在的宿主机的CPU太忙或磁盘IO太高
+    5、虚机机的CPU太忙或磁盘IO太高
+    6、VM网卡驱动存在bug，处理高水位流量时存在bug导致CPU死锁
+    7、BIOS开启了超频，导致超频时电压不稳，容易出现CPU死锁
+    8、Linux kernel或KVM存在bug
+    9、BIOS Intel C-State开启导致，关闭可解决
+    10、BIOS spread spectrum开启导致
+  询问了度娘，发现此报错为内核锁死，简称“死机”，询问管理员后得知，近期服务器安装了docker，可能由于负载过高导致  
+    Soft lockup：这个bug没有让系统彻底死机，但是若干个进程（或者kernel thread）被锁死在了某个状态（一般在内核区域），很多情况下这个是由于内核锁的使用的问题。
+    内核参数kernel.watchdog_thresh（/proc/sys/kernel/watchdog_thresh）系统默认值为10。如果超过2*10秒会打印信息，注意：调整值时参数不能大于60
+    Linux内核对于每一个cpu都有一个监控进程，在技术界这个叫做watchdog（看门狗）。通过ps –ef | grep watchdog能够看见，进程名称大概是watchdog/X（数字：cpu逻辑编号1/2/3/4之类的）。这个进程或者线程每一秒钟运行一次，否则会睡眠和待机。这个进程运行会收集每一个cpu运行时使用数据的时间并且存放到属于每个cpu自己的内核数据结构。在内核中有很多特定的中断函数。这些中断函数会调用soft lockup计数，他会使用当前的时间戳与特定（对应的）cpu的内核数据结构中保存的时间对比，如果发现当前的时间戳比对应cpu保存的时间大于设定的阀值，他就假设监测进程或看门狗线程在一个相当可观的时间还没有执。Cpu软锁为什么会产生，是怎么产生的？如果linux内核是经过精心设计安排的CPU调度访问，那么怎么会产生cpu软死锁？那么只能说由于用户开发的或者第三方软件引入，看我们服务器内核panic的原因就是qmgr进程引起。因为每一个无限的循环都会一直有一个cpu的执行流程（qmgr进程示一个后台邮件的消息队列服务进程），并且拥有一定的优先级。Cpu调度器调度一个驱动程序来运行，如果这个驱动程序有问题并且没有被检测到，那么这个驱动程序将会暂用cpu的很长时间。根据前面的描述，看门狗进程会抓住（catch）这一点并且抛出一个软死锁（soft lockup）错误。软死锁会挂起cpu使你的系统不可用。
+  
+  具体分析
+    1.系统如下时间2个时间进行了重启:
+      Mar  3 21:53:16 ser-node7 kernel: Linux version 3.10.0-957.el7.x86_64 (mockbuild@x86040.build.eng.bos.redhat.com)
+      Mar  3 22:37:19 ser-node7 kernel: Linux version 3.10.0-957.el7.x86_64 (mockbuild@x86040.build.eng.bos.redhat.com) 
+      在重启前的一段时间均已经出现了cpu软锁的现象，而深入分析cpu软锁，我们依赖于kdump产生的vmcore数据.
+        Mar  3 14:28:18 ser-node7 kernel: NMI watchdog: BUG: soft lockup - CPU#5 stuck for 22s! [runc[1:CHILD]:52902]
+        Mar  2 18:14:59 ser-node7 kernel: NMI watchdog: BUG: soft lockup - CPU#3 stuck for 23s! [runc:[1:CHILD]:55961]
+
+      ./systemctl_list-unit-files:kdump.service enabled
+      如果您之前已经做过，那么请您额外修改/etc/sysctl.conf加入以下行:
+      kernel.softlockup_panic = 1
+      然后执行"sysctl -p"使参数生效。这样当系统出现cpu软锁现象时，会自动触发kernel panic，此时如果kdump可以正常工作，会生成vmcore.并自动重新启动系统
+  
+    2.另外在日志中我们还注意了存在如下的告警,其和上面的soft lockup问题无直接关系.
+      # cat messages | grep "SLUB: Unable to allocate memory on node"      
+        Mar  2 18:04:45 ser-node7 kernel: SLUB: Unable to allocate memory on node -1 (gfp=0xd0)
+        Mar  3 14:54:25 ser-node7 kernel: SLUB: Unable to allocate memory on node -1 (gfp=0xd0)
+        Mar  3 14:54:25 ser-node7 kernel: SLUB: Unable to allocate memory on node -1 (gfp=0xd0)
+        
+      此为系统的已知BUG，具体请参考如下KB：      
+        SLUB: Unable to allocate memory on node -1 (gfp=0x20)
+        https://access.redhat.com/solutions/4088471
+        依据此KB，请将kernel升级到kernel-3.10.0-1062.4.1.el7或者更新.
+        kernel-3.10.0-1062.4.1.el7下载地址为:
+        https://access.redhat.com/errata/RHSA-2019:3055
+        如何升级内核，请查看下面文档：
+        How to update/upgrade the Red Hat Enterprise Linux kernel?
+        https://access.redhat.com/solutions/20366
+  
+  解决方案
+    百度大手子给的方案如下所示：    
+    vi /etc/sysctl.conf
+    kernel.watchdog_thresh=30
+    查看：# tail -1 /proc/sys/kernel/watchdog_thresh
+    临时生效：# sysctl -w kernel.watchdog_thresh=30
+    原厂建议尚在等待中
+
+  解决办法2
+    echo 30 > /proc/sys/kernel/watchdog_thresh
+    echo "kernel.watchdog_thresh=30" >> /etc/sysctl.conf
+    sysctl -w kernel.watchdog_thresh=30
+    sysctl -q vm.swappiness
+    sysctl -p
+    
+  解决办法3:脚本
+    #!/bin/bash
+    #修改阈值为30，写入文件
+    echo 30 > /proc/sys/kernel/watchdog_thresh 
+    #修改阈值为30，临时生效
+    sysctl -w kernel.watchdog_thresh=30
+    
+    #修改阈值为30，写入启动文件
+    grep 'watchdog_thresh' /etc/sysctl.conf
+    if [ $? -ne 0 ]; then
+    	echo "kernel.watchdog_thresh=30" >> /etc/sysctl.conf
+    else
+    	echo "正常"
+    fi
+
+
+

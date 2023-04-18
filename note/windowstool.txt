@@ -7,6 +7,194 @@ https://d-programming-books.github.io                     在线书 有用
 2快捷方式 属性 目标 追加 --ignore-certificate-errors
 3 node ../UnblockNeteaseMusic-master/app.js -p 18080:18081     冒号后面的https通道
 
+notepad安装插件:
+    1插件 插件管理 可用 选择安装 
+    2手动http://sourceforge.net/projects/npp-plugins/ 搜索如NppFTP See Projiect DownLload NppFTP_0.26.3.zip bin NppFTP.dll 在Notepad++\plugins下新建一个NppFTP目录把NppFTP.dll放入
+    3重启notepad
+
+关闭chrome的更新提醒:
+    右键chrome->属性->目标 后面追加“(空格)--disable-background-networking” -> 应用 ->重启浏览器即可
+
+cmd -> wmic -> product list 获取安装软件列表
+product list /? 查询
+::bat 输出 当前用户的桌面路径 
+for /f "tokens=2,*" %%i in ('reg query "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders" /v "Desktop"') do (
+set desk=%%j)
+wmic /output:%desk%\重命名为中心部门+姓名+电脑SN码.txt product get name,version,__path
+
+
+
 
 thinkpad笔记本
 Windows 11系统的点设置-蓝牙和其他设备-触摸板，通过开关进行启用/禁用
+
+win10历史信息
+C:\Users\wangjingang\AppData\Local\Microsoft\Windows\History 
+ 历史
+win+R recent                                                  使用
+任务栏 点击任务视图 向下拉                                    任务
+win+S 事件查看器                                              事件
+文件夹右侧 右键 快速访问 常规 清除 或 查看 选项 清除          清理快速访问记录
+
+
+win10如何设置每天自动开机
+设置步骤：
+  此功能需要在BIos中设置：
+  步骤一：
+  启动系统按DEL，进入BIos设置界面，然后选择 “PowER MANAGEMENT FEATUREs”
+  （电源管理设置），按回车。在电源窗口中找到“REsToRE oN AC/PowER
+  Loss”项，按回车进入 ，然后通过方向键设置其值为“PowER oN”。
+  步骤二：
+  选择“REsUME oN RTC ALARM”按回车进入，接着通过方向键设置其值为“ENABLE”
+  步骤三：
+  选择“RTC ALARM DATE”按回车进入，然后将其值设定为“EVERYDAY”，表示每天都进行一样的操作，按照同样的办法，分别将“RTC ALARM HoURs”“RTC ALARM MINUTE”“RTM ALARM sECoND”设置为“07”“15”“00”，这表示开机时间为早上的“7:15:00”，全部设置好后，按F10，保存并重头启动。
+（因为不同的主板的BIos不一样，所以设置也不一样的，但只要记住在电源管理中找到“wAKE UP”就行了，由于这是设置定时开机的选项，希望能帮到你。）
+以上内容是搬运自w[害羞]w[害羞]w[害羞]x[害羞]p[害羞]0[害羞]0[害羞]2[害羞]c[害羞]o[害羞]m[害羞]雨木风林的文章，《win10怎么实现定时开机？》
+
+
+
+
+Windows中使用命令创建计划任务（at、schtasks）
+  或者 taskschd.msc 打开任务计划程序 手动设置
+  windows10改变了任务添加命令，at命令被取消了，变更为schtasks
+  由于对schtasks命令不了解，所以设置错误成了开机自动运行shutdown，结果就是不停的开机后自动关机。
+  折腾半个多小时终于解决了，附带下解决方法：
+  进入windows10安全模式，在启动项中添加取消关机批任务(将本文最上的取消关机命令另存一个*.bat文件，然后拖到启动项里)，即可解决此项问题。
+  在Windows中通常用at和schtasks命令添加计划任务，其中at命令默认是以System权限执行。
+  at命令
+    at < Windows2012  
+    从Win2012开始不再支持at命令，以下操作在win7中进行
+    若要使用 at 命令，任务计划程序服务必须正在运行。 使用 at 命令创建任务时，必须配置这些任务，以便它们在同一用户帐户中运行。
+    at命令语法：
+      at [\\computername] time [/interactive] [/every:date[,...] | [/next:date[,...]] command
+      at [\\computername] [[id] [/delete] | /delete [/yes]]
+      参数含义：
+      \\computername： 使用此参数指定远程计算机。 如果省略此参数，任务将计划在本地计算机上运行。
+      time：使用此参数指定任务运行的时间。 时间指定为 小时： 基于 24 小时制的分钟数。
+      /interactive：使用此参数可允许任务与在任务运行时登录的用户桌面进行交互。
+      /every:date[,...]：使用此参数将任务安排在每周或每月的指定日期（例如，每周五或每月的第八天）运行。 将 date 指定为一周中的一天或多天 (请使用以下英文缩写形式：Mo、Tu、We、Th、Fr、Sa、Su) 或 (月中的一天或多天使用数字 1 到 31) 。 确保使用逗号分隔多个日期条目。 如果省略此参数，任务将默认在每月的本日运行。
+      /next:date[,...]：使用此参数将任务安排在当天的下一个事件（例如：下周一运行) 。 将 date 指定为一周中的一天或多天 (请使用以下缩写形式：Mo、Tu、We、Th、Fr、Sa、Su) 或 (月中的一天或多天使用数字 1 到 31) 。 确保使用逗号分隔多个日期条目。 如果省略此参数，任务将默认在每月的本日运行。
+      command：准备运行的Windows命令（.exe文件）或批处理程序（.bat）。如果命令需要路径作为参数，请使用绝对路径。 如果命令位于远程计算机上，请使用统一命名约定 (UNC) \ ServerName \ ShareName (路径) 。 如果命令不是可执行 (.exe) 文件，则必须在命令的之前使用 cmd /c 。例如： cmd /c copy C:\1.txt C:\temp 。
+      id：使用此参数指定分配给计划任务的标识号。可省略，自动从1开始。
+      /delete：使用此参数可以取消计划任务。 如果省略 id 参数，将取消计算机上所有计划的任务。
+      /yes：在取消计划任务时，使用此参数对系统的所有查询强制提供"是"答案。 如果省略此参数，系统将提示你确认取消任务。
+    
+    使用 at 命令时，计划任务将使用系统帐户（System）的凭据运行。
+    使用net start命令查看当前正在运行服务
+    如未开启，使用命令net start "task scheduler"开启服务。
+    
+    例子
+      添加计划任务：复制文件操作  at 15:00 cmd /c copy C:\Users\gang\Desktop\1.txt E:\
+      查看计划任务：at [id]       at 查看所有任务           at 1 查看第一条任务
+      取消计划任务：at /delete    at /delete 删除所有任务   at 1 /delete 删除第一条任务
+  
+  schtasks命令
+    schtasks >= Windows2012
+    支持win7-win10
+    创建计划任务：/create
+      1、每天固定时间，以普通权限启动notepad.exe
+      schtasks /Create /TN TestService1 /SC DAILY /ST 01:02 /TR notepad.exe
+      创建完成之后会在C:\Windows\System32\Tasks目录下生成TestService1文件
+      打开可以看到：<RunLevel>LeastPrivilege</RunLevel>，代表权限为普通用户
+      2、每天固定时间，以system权限启动notepad.exe
+      管理员权限：schtasks /Create /TN TestService2 /SC DAILY /ST 01:02 /TR notepad.exe /RL HIGHEST
+                  schtasks /Create /TN "ShutDown" /SC DAILY /ST 00:20 /TR "shutdown -s -t 600" /RL HIGHEST
+                  schtasks /create /tn "关机" /tr "shutdown -s -t 30" /sc once /st 01:30
+                    设置后建议去计划任务中查看，如果没有添加成功，需要打开windows防火墙。（计算机右键-管理-服务，开启Windows Firewall）                    
+                    命令注解：                    
+                    /Create  创建任务
+                    /TN "ShutDown"  将任务命名为ShutDown
+                    /TR "shutdown -s -t 30"  任务执行目录和附加参数
+                    /SC DAILY  设置计划频率
+                    /ST 01:30  设置任务启动时间
+      打开文件可以看到<RunLevel>HighestAvailable</RunLevel>，代表权限为最高，一般为System权限
+      3、创建每月1号下午两点执行任务
+      SchTasks /Create /TN TestService3 /SC MONTHLY /D 1 /TR “C:\1.bat” /ST 14:00
+      4、创建每周工作日下午两点执行任务
+      SchTasks /Create /TN TestService4 /SC WEEKLY /D MON,TUE,WED,THU,FRI /TR “C:RunMe.bat” /ST 14:00
+    一些参数的含义：
+      /create 指的是创建计划任务
+      /s 指定远程计算机
+      /tn 指定计划任务的名称
+      /ru　指定运行该批处理的账号，如果去掉该参数则默认为当前账户运行，会提示输入密码。(一个计划任务所用的账号如果密码变动后该批处理就不再会运行成功)
+      /rp 指定账号的密码
+      /tr 指定程序所在路径，这里为指定要执行的批处理存放路径。
+      /sc 为指定运行的周期
+      /d 为日期，一周中的一天或多天 (请使用以下缩写形式：Mon、Tue、Wed、Thu、Fri、Sat、Sun) 或 (月中的一天或多天使用数字 1 到 31)
+      /st 为运行时间
+    查看计划任务：/query
+    SchTasks /Query /TN TestService1
+    在win7中运行发生错误：无法加载列资源。
+    解决方法：chcp查看cmd编码是否为936中文GBK编码，如果是使用命令chcp 437将编码改为美国编码即可运行，但无法打印出非ascii码字符。
+    
+    修改计划任务：/change
+    SchTasks /Change /TN “TestService1” /ST 14:00
+    这里需要输入密码。
+    
+    删除计划任务：/delete
+    SchTasks /Delete /TN TestService1 [/f]
+    如图：使用/f参数强制删除，不会进行确认
+
+shutdown相关参数用法
+  shutdown用法: shutdown [-i | -l | -s | -r | -a] [-f] [-m \computername] [-t xx] [-c "mment"] [-d up:xx:yy]
+  -i 显示 GUI 界面，必须是第一个选项
+  -l 注销(不能与选项 -m 一起使用)
+  -s 关闭此计算机
+  -r 关闭并重启动此计算机
+  -a 放弃系统关机
+  -m \computername 远程计算机关机/重启动/放弃
+  -t xx 设置关闭的超时为 xx 秒
+  -c "comment" 关闭注释(最大 127 个字符)
+  -f 强制运行的应用程序关闭而没有警告
+  -d [u][p]:xx:yy 关闭原因代码 [u 是用户代码 p 是一个计划的关闭代码 xx 是一个主要原因代码(小于 256 的正整数) yy 是一个次要原因代码(小于 65536 的正整数)]
+
+cmd下无法运行的错误(发生系统错误5、拒绝访问)，那是因为cmd没有以管理员身份运行
+  1、在C:\Windows\System32 中找到cmd.exe，然后右击cmd.exe
+  2、选择右下角的高级，在“用管理员身份运行前打勾”
+  3、然后再重新打开cmd运行命令，就OK了。
+  或者右键cmd.exe 用管理员身份运行
+
+
+
+
+
+WinSCP中文版软件命令
+  call 执行任意远程Shell命令
+  cd 改变远程工作目录
+  chmod 改变远程文件权限
+  close 关闭会话
+  exit 关闭所有会话并结束程序
+  get 从远程目录下载文件到本地目录
+  help 显示帮助
+  keepuptodate 在一个远程目录连续反映本地目录的改变
+  lcd 改变本地工作目录
+  lls 列出本地目录的内容
+  ln 新建远程符号链接
+  lpwd 显示本地工作目录
+  ls 列出远程目录的内容
+  mkdir 新建远程目录
+  mv 移动或者重命名远程文件
+
+
+MSC(Microsoft Snap-In Control)文件，是微软管理控制台MMC(Microsoft Management Console)用来添加/删除的嵌入式管理单元文件。通常通过MMC来管理，可点击“文件”菜单中的“添加/删除管理单元”操作来管理当前系统中已经安装的MSC文件。C:\WINDOWS\system32
+certmgr.msc作用：系统认证证书编辑。
+ciadv.msc作用：索引服务，链接文件*:\System Volume Information
+comexp.msc所在文件夹：C:\WINDOWS\system32\Com作用：组件服务，可以打开本地服务。
+compmgmt.msc作用：本地计算机硬件和服务管理，功能很强大。
+devmgmt.msc作用：设备管理器
+dfrg.msc作用：磁盘碎片整理程序
+diskmgmt.msc作用：磁盘管理器，可以修改盘符，格式化和分区等。
+eventvwr.msc作用：事件查看器
+fsmgmt.msc作用：共享文件夹管理
+gpedit.msc作用：组策略管理器，功能强大。
+lusrmgr.msc作用：本地用户和组管理器
+ntmsmgr.msc作用：可移动存储管理器
+ntmsoprq.msc作用：可移动存储管理员操作请求
+perfmon.msc作用：性能察看管理器
+rsop.msc作用：各种策略的结果集
+secpol.msc作用：本地安全策略设置
+services.msc作用：各项本地服务管理器
+wmimgmt.msc作用：Windows管理体系结构（WMI）
+
+
+ 
