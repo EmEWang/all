@@ -5,5 +5,6 @@
 #include <stdio.h>
 int add1_1(int a, int b);
 int sub1_1(int a, int b);
+int mut1_1(int a, int b);
 
 #endif

@@ -95,11 +95,23 @@ source101=$(wildcard *.cpp module1/src/*.cpp module2/src/*.cpp)
 target101=tar101
 output101=out101
 all101:
-	clang -o $(target101) -fprofile-instr-generate -fcoverage-mapping -mllvm -runtime-counter-relocation $(source101)
+#  -mllvm -runtime-counter-relocation
+#	clang -o $(target101) -fprofile-instr-generate -fcoverage-mapping $(source101)
+	clang++ -o $(target101) -fprofile-instr-generate -fcoverage-mapping $(source101)
+#	LLVM_PROFILE_FILE="XX%p-%h-.profdata" ./$(target101) 3
 	./$(target101) 3
 # data101:
-# 运行默认产生 default.profraw 文件 可由  llvm-profdata merge 工具 更改格式成 profile
-	llvm-profdata merge -o $(target101).profdata -sparse=true default.profraw
+# 运行默认产生 default.profraw 文件 当前目录
+# LLVM_PROFILE_FILE 环境变量 改变 生成的 .profraw 文件 若带路径 同时也会生成路径 如果不存在的话
+# %p 扩展为进程ID
+# %h 扩展为hostname
+# %t 扩展为 TMPDIR 环境变量
+# 可由  llvm-profdata merge 工具 更改格式成 profile
+# --sparse  Generate a sparse profile (only meaningful for -instr)
+# 能显著的缩小文件 但是若打算重复使用线索化的文件 则不能打开此选项
+# llvm-profdata merge 能合并多个原始数据或已经线索化的数据或两种同时存在
+# llvm-profdata merge -sparse foo1.profraw foo2.profdata -o foo3.profdata
+	llvm-profdata merge -o $(target101).profdata  default.profraw
 #	llvm-cov show ./loop-cov -instr-profile=loop-cov.profdata loop-cov.profdata
 # llvm-cov show 需要 clang -fprofile-instr-generate -fcoverage-mapping 选项 生成的 profile
 # llvm-cov show [options] -instr-profile PROFILE [BIN] [-object BIN]… [-sources] [SOURCE]…
@@ -113,7 +125,10 @@ all101:
 #   --show-line-counts-or-regions                      - Show the execution counts for each line, or the execution counts for each region on lines that have multiple regions
 #   --show-regions                                     - Show the execution counts for each region
 
-# --region-coverage-gt=2 函数 功能 过滤
+# --region-coverage-lt=2 区域 功能 过滤
+# --region-coverage-gt=2
+# --line-coverage-lt=100   函数 功能 过滤
+# --line-coverage-gt=x
 # --coverage-watermark=90,50 水印 格式 high,low  >=high 绿 <low 红  其他黄
 # --format html text lcov
 # --dump 打印 内部信息
@@ -127,8 +142,9 @@ all101:
 		--show-branches=count  \
 		-instr-profile=$(target101).profdata -format=html -output-dir=$(output101)
 
+# report 命令 generate a file-level summary of coverage statistics instead of a line-oriented report
 # html(不支持) text(支持) lcov 使用(llvm-cov export)
-	# llvm-cov report ./$(target101) -instr-profile=$(target101).profdata --format=text
+#	 llvm-cov report ./$(target101) -instr-profile=$(target101).profdata --format=text
 # html(不支持) text(支持 json 格式) lcov(支持)
 #	llvm-cov export ./$(target101) -instr-profile=$(target101).profdata --format=lcov
 

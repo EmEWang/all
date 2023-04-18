@@ -22,3 +22,9 @@ int sub1_1(int a, int b)
     int c = a - b;
     return c;
 }
+
+int mut1_1(int a, int b)
+{
+    int c = a - b;
+    return c;
+}
