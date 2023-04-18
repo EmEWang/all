@@ -1,0 +1,75 @@
+
+ssh 服务安装
+要在Ubuntu主机开启SSH服务，需要开启openssh-server
+命令：
+1、执行下句，下载SSH服务
+sudo apt-get install openssh-server
+2、执行下句，验证下载后是否已经开启了服务：
+ps -e | grep ssh
+如果只有ssh-agent表示还没启动。
+3、执行下句，开启服务
+/etc/init.d/ssh start
+如果显示sshd则说明已启动成功。
+
+密码登录
+ssh user@host  远程登录 用户名user 登录远程主机host
+ssh host       本地用户名与远程用户名一致 登录时可以省略用户名
+ssh -p 2222 user@host   SSH 的默认端口是22 使用p参数可以修改这个端口
+第一次登录对方主机，系统会出现下面的提示 yes  host主机已经得到认可 输入密码 登录成功
+远程主机的公钥被接受以后，它就会被保存在文件$HOME/.ssh/known_hosts之中。
+下次再连接这台主机，系统就会认出它的公钥已经保存在本地了，从而跳过警告部分，直接提示输入密码。
+每个 SSH 用户都有自己的known_hosts文件，此外系统也有一个这样的文件，
+通常是/etc/ssh/ssh_known_hosts，保存一些对所有用户都可信赖的远程主机的公钥
+windows一般在下在C:\Users\用户\.ssh\目录下
+
+密钥登陆
+ssh-keygen   生成密钥
+  -t rsa 指定密钥的加密算法 一般为dsa或rsa -C username@host 为密钥文件指定新的注释
+  -b 1024 指定密钥的二进制位数 -f mykey 指定生成的私钥文件 -F example.com  检查某个主机名是否在known_hosts文件里面
+  -N secretword 指定私钥的密码 -p 重新指定私钥的密码(与-N的不同之处在于，新密码不在命令中指定，而是执行后再输入)
+  -R example.com 将指定的主机公钥指纹移出known_hosts文件
+运行结束以后 在$HOME/.ssh/目录下 会新生成两个文件:id_rsa.pub和id_rsa 前者是你的公钥 后者是你的私钥
+ssh-copy-id user@host  将公钥传送到远程主机 host 上面
+如果还是不行，就打开远程主机的/etc/ssh/sshd_config这个文件，检查下面几行前面#注释是否取掉。
+  RSAAuthentication yes
+  PubkeyAuthentication yes
+  AuthorizedKeysFile .ssh/authorized_keys
+然后，重启远程主机的 SSH 服务。
+/* ubuntu系统 */
+service ssh restart
+/* debian系统 */
+/etc/init.d/ssh restart
+
+authorized_keys文件
+远程主机将用户的公钥，保存在登录后的用户主目录的$HOME/.ssh/authorized_keys文件中。
+公钥就是一段字符串，只要把它追加在authorized_keys文件的末尾就行了。
+这里不使用上面的ssh-copy-id命令，改用下面的命令，解释公钥的保存过程：
+$ ssh user@host 'mkdir -p .ssh && cat >> .ssh/authorized_keys' < ~/.ssh/id_rsa.pub
+这条命令由多个语句组成，依次分解开来看：
+$ ssh user@host，表示登录远程主机；
+单引号中的mkdir .ssh && cat >> .ssh/authorized_keys，表示登录后在远程 Shell 上执行的命令：
+$ mkdir -p .ssh"的作用是，如果用户主目录中的.ssh`目录不存在，就创建一个；
+cat >> .ssh/authorized_keys < ~/.ssh/id_rsa.pub的作用是，将本地的公钥文件~/.ssh/id_rsa.pub，重定向追加到远程文件authorized_keys的末尾。
+写入authorized_keys文件后，公钥登录的设置就完成啦
+
+config文件
+命令行参数   如-p 10086, -i /path/to/identity_file 等选项来设置SSH的端口号或认证证书位置
+用户配置文件 ~/.ssh/config
+系统配置文件 /etc/ssh/ssh_config
+配置文件可分为多个配置区段，每个配置区段使用Host来区分。我们可以在命令行中输入不同的host来加载不同的配置段
+对每一个配置项来说，首次获取的参数值将被采用，因此通用的设置应该放到文件的后面，特定host相关的配置项应放到文件的前面
+Host host1
+ 别名
+HostName ip或者url            远程主机名 主机名
+User username1                登录用户名
+Port 22                       端口 默认为 22
+IdentityFile ~/.ssh/dc_1      私钥文件路径 默认为 ~/.ssh/id_dsa, ~/.ssh/id_ecdsa, ~/.ssh/id_ed25519 或 ~/.ssh/id_rsa中的一个
+IdentitiesOnly                      只接受SSH key 登录            不常用
+PreferredAuthentications publickey  强制使用Public Key验证        不常用
+
+绑定本地端口
+既然 SSH 可以传送数据，那么我们可以让那些不加密的网络连接，全部改走 SSH 连接，从而提高安全性。
+假定我们要让8080端口的数据，都通过 SSH 传向远程主机，命令就这样写：
+$ ssh -D 8080 user@host
+SSH 会建立一个 Socket，去监听本地的8080端口。一旦有数据传向那个端口，就自动把它转移到 SSH 连接上面，发往远程主机。
+可以想象，如果8080端口原来是一个不加密端口，现在将变成一个加密端口。

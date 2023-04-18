@@ -1,0 +1,25 @@
+locale  查看服务器的编码 “LANG”表示服务器编码格式 如LANG=zh_CN.UTF-8 使用的是UTF-8编码。
+scp -r lixiang@10.248.14.215:~/code/llvm/foo_html/* d:/tmp/     远程复制文件
+
+find  -path XXX -prune 排除XXX目录 -o or表示或  -a and表示与 -not或! 表示非
+-prune 不进入目录，所以可用于忽略目录，但不会忽略普通文件。
+-print 打印文件名
+find path -option [-exec/-ok command {} \; ]  [-print]   find命令结合-exec/-ok
+find path -option [-print] [|xargs command]              find命令结合xargs
+/(  XXX /) 表示表达式的结合。即指示 shell 不对后面的字符作特殊解释，而留给 find 命令去解释其意义。
+  由于命令行不能直接使用圆括号，所以需要用反斜杠'\'进行转意(即'\'转意字符使命令行认识圆括号)。同时注意'\('，'\)'两边都需空格。
+  find ./ \( -path ./googletest -prune -o -path ./cmake-examples -prune  -o -path *build* \) -o \( -name *.cpp -o -name *.c -o -name *.h \) -print | xargs wc -l
+或find ./ \( -path ./googletest -o -path ./cmake-examples  -o -path *build* \) -prune -o \( -name *.cpp -o -name *.c -o -name *.h \) -print | xargs wc -l
+上句意思是 排除当前目录下googletest cmake-examples 目录中或者子目录中包含build的目录 查找后缀名为.cpp .c .h的文件 并 统计行数
+find ./ \( -path ./googletest -o -path ./cmake-examples  -o -path *build* \) -prune -o \( -name *.cpp -o -name *.c -o -name *.h \)  -exec wc -l {} \; | awk '{print $1}' | awk '{sum+=$1}END{print sum}'
+
+syslog
+1 syslogd 守护进程
+2 /var/log/messages 或 /var/log/syslog 日志文件
+3 logger shell命令 如logger -t mylog 'test msg'
+
+# 多行写入 xx.cc
+cat <<EOF > xx.cc
+xxx
+XXX
+EOF

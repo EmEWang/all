@@ -1,0 +1,85 @@
+
+sudo apt-get remove docker \
+               docker-engine \
+               docker.io          #卸载旧版本 旧版本的 Docker 称为 docker 或者 docker-engine
+
+sudo apt-get update
+sudo apt-get install     ca-certificates     curl     gnupg     lsb-release    #安装docker
+sudo mkdir -m 0755 -p /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+echo   "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+sudo systemctl enable docker
+sudo systemctl start docker        #启动 Docker
+service docker restart             #重启docker
+
+sudo groupadd docker               # 建立 docker 组
+sudo usermod -aG docker $USER      #将当前用户加入 docker 组
+
+sudo docker run hello-world #检测docker是否安装
+docker version              #检查docker的版本信息
+docker images               #查看当前系统中的镜像信息
+docker image ls             #同上
+docker system df            #便捷的查看镜像、容器、数据卷所占用的空间
+docker search ubuntu        #搜索ubuntu系统镜像 最新版
+docker search ubuntu:20.04  #搜索ubuntu系统镜像 版本为20.04
+docker pull ubuntu          #拉取ubuntu系统镜像 最新版
+docker pull ubuntu:20.04    #拉取ubuntu系统镜像 版本为20.04
+docker run -it ubuntu:latest /bin/bash      #启动一个容器ubuntu 最新版  -i:交互式操作，-t:终端  bash:放在镜像名后的是 命令
+docker run -it --rm ubuntu:20.04 /bin/bash       #启动一个容器ubuntu 20.04版 --rm：这个参数是说容器退出后随之将其删除。默认情况下，为了排障需求，退出的容器并不会立即删除，除非手动 docker rm
+docker ps                   #查看运行中容器
+docker exec -it 775c7c9ee1e1 /bin/bash  #进入运行中的容器 775c7c9ee1e1为容器ID ps命令查出来的
+docker rmi -f  $(docker images | grep "none" | awk '{print $3}')   #删除none镜像
+docker stop $(docker ps -a | grep "Exited" | awk '{print $1 }')    #停止容器
+docker rm $(docker ps -a | grep "Exited" | awk '{print $1 }')      #删除容器
+docker image ls -f dangling=true           #查看 虚悬镜像(dangling image) 也就是 none 镜像
+docker image prune                         #删除虚悬镜像
+docker image ls -a                         #显示包括中间层镜像在内的所有镜像
+docker image ls ubuntu                     #根据仓库名列出镜像
+docker image ls ubuntu:18.04               #列出特定的某个镜像，也就是说指定仓库名和标签
+docker image ls -f since=mongo:3.2         #在 mongo:3.2 之后建立的镜像 过滤器参数 --filter，或者简写 -f 想查看某个位置之前的镜像也可以，只需要把 since 换成 before 即可
+docker image ls -f label=com.example.version=0.1     #如果镜像构建时，定义了 LABEL，还可以通过 LABEL 来过滤
+docker image ls -q                         #只列出镜像ID    --filter 配合 -q 产生出指定范围的 ID 列表
+docker image ls --format "{{.ID}}: {{.Repository}}"
+docker image ls --format "table {{.ID}}\t{{.Repository}}\t{{.Tag}}"     #自定义格式化输出列
+docker image rm 501                        #根据镜像ID删除 一般取前3位足够区分了
+docker image rm centos                     #也可以用镜像名，也就是 <仓库名>:<标签>，来删除镜像。
+docker image ls --digests
+docker image rm node@sha256:b4f0e0bdeb578043c1ea6862f0d40cc4afe32a4a582f3be235a3b164422be228  #更精确的是使用 镜像摘要 删除镜像
+docker run --name webserver -d -p 80:80 nginx   #用 nginx 镜像启动一个容器，命名为 webserver，并且映射了 80 端口
+docker build -f ./dockertest2/Dockerfile_  -t wjg:1 ./dockertest   指定构造文件和指定目录去构造镜像
+docker logs [OPTIONS] CONTAINER #-f : 跟踪日志输出  --since :显示某个开始时间的所有日志  -t : 显示时间戳  --tail :仅列出最新N条容器日志
+如docker logs --since="2016-07-01" --tail=10 mynginx
+
+
+生成最简单的镜像 Docker中直接运行程序
+1. 创建目录
+mkdir hello-docker    # 创建应用程序目录
+cd hello-docker       # 进入该目录
+2. 编写程序
+vim hello.c
+3. 源码
+#include<stdio.h>
+int main ()
+{
+    printf("hello docker\n");
+}
+4. 编译
+gcc -static hello.c -o hello  将编写的c程序编译在hello-docker根目录 静态方式
+5. 在hello-docker文件夹下新建Dockerfile文件
+vim Dockerfile
+6. 编写Dockerfile中的内容
+FROM scatch
+ADD hello /
+CMD ["/hello"]
+注： FROM:从哪构建镜像，是基础镜像的地址或者名称; scatch表示指从空白开始
+     ADD: 添加文件到镜像执行位置，如上是根目录;
+     RUN: 镜像的操作指令;
+     CMD: 容器启动时执行指令
+7. 在hello-docker 根目录编译镜像
+docker build -t wjg:1 .                     # -t 增加标签
+8. 编译完成后，在命令行中查看镜像是否存在
+docker images
+9. 运行镜像
+docker run wjg:1

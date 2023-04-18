@@ -1,0 +1,68 @@
+
+https://code.visualstudio.com/          官网
+https://code.visualstudio.com/updates   官方历史版本以及更新记录
+
+vscode一旦连接服务器之后，怎样切换回本地
+  在vscode界面，左上角“文件”-->"打开文件夹"（注意：此处只能是打开文件夹，如果是打开文件，则还是在服务器端）
+    -->从本地选择一个文件夹，打开即可切换到本地。
+列编辑功能说明
+  Shift键+Alt键+鼠标左键
+自由多行选择
+  Alt键+鼠标左键拖动选择各行的部分内容
+trim行尾空格
+  file->preferences->settings->搜索trim->选定 Trim Trailing Whitespace
+
+配置pthread编译条件
+task.json中args栏增加 “-pthread” 如下
+"args":
+            "-pthread",
+
+windows本地 vscode+MinGW配置
+  1 下载安装vscode：https://code.visualstudio.com/Download
+  2 安装cpptools工具
+  3 下载MinGW
+    下载地址：https://sourceforge.net/projects/mingw-w64/files/
+    下载的文件：进入网站后不要点击 "Download Lasted Version"，往下滑，找到最新版的 "x86_64-posix-seh"。
+    安装MinGW：下载后是一个7z的压缩包，解压后移动到你想安装的位置即可。我的安装位置是：D:\2Software\mingw64
+  4 配置环境变量
+    配置环境变量：Path环境变量增加D:\2Software\mingw64\bin。
+    验证一下环境变量是否配置成功
+      按下 win + R，输入cmd，回车键之后输入g++，再回车，如果提示以下信息[1]，则环境变量配置成功。如果提示以下信息[2]，则环境变量配置失败。
+      [1]：g++: fatal error: no input files
+      [2]：'g++' 不是内部或外部命令，也不是可运行的程序或批处理文件。
+  5 使用简单的.cpp文件配置C++环境
+      新建空文件夹Code
+      打开VScode --> 打开文件夹 --> 选择刚刚创建的文件夹Cozde
+      新建test.cpp文件(以最简单的 HelloWorld.cpp 为例)
+      进入调试界面添加配置环境，选择 C++(GDB/LLDB)，再选择 g++.exe，之后会自动生成 launch.json 配置文件
+      编辑 launch.json 配置文件
+      返回.cpp文件，按F5进行调试，会弹出找不到任务"task g++"，选择 "配置任务"，会自动生成 tasks.json 文件
+      编辑 tasks.json 文件
+  6 运行
+      返回 HelloWorld.cpp 文件，按F5调试，发现完全OK了！
+
+vscode连接远程Linux服务器
+  1 在vscode的扩展商店中搜索ssh 安装 Romote-SSH
+  2 安装完成后 左侧多一个小图标 RemoteExplorer
+  3 点击SSH栏 右上方+号
+  4 然后在此输入<用户名>@<服务器ip地址>然后回车
+  5 点击第一项即可 即xxx\.ssh\config
+  6 打开配置文件，这里可以修改显示的名称
+  Host 标签名字
+    HostName 远程ip地址
+    User 登录用户名
+    Port 22       默认是22 可以没有这行
+    IdentityFile C:\Users\wangjingang202_55893\.ssh\id_rsa  指定私钥 免密登录 同时需要将公钥拷贝至服务器~/.ssh/authorized_keys
+  7 这里右击，选择在当前窗口中连接
+  8 此时会让你输入密码，输入刚才的用户名对应的密码即可
+  9 连接上后，点击左侧的蓝色按钮选择一个你想打开的文件夹即可
+  10 断开连接，在菜单栏点击file，选择断开远程连接即可
+
+vscode无法远程连接服务器的解决办法
+  1 用mobaXterm、putty等工具都可以正常连接服务器，用vscode突然不行了
+    打开C盘下的/user/<user_name>/.ssh文件夹，找到known_hosts文件，用记事本打开该文件
+    10.248.14.215 XXX  (ip就是我的服务器ip)有3行 这三行全都删掉
+    重启vscode连接服务器，就一切正常了。
+  2 在服务器端删除.vscode-server文件夹(一般在用户目录下)   (这个方法没有试)
+    打开服务器网络(一般自动打开)
+    再用VS Code 重新连接服务器就好了

@@ -1,0 +1,12 @@
+
+https://d-programming-books.github.io                     在线书 有用
+
+
+网易云代理失败
+1版本用 2.9.10   新版本可能有问题
+2快捷方式 属性 目标 追加 --ignore-certificate-errors
+3 node ../UnblockNeteaseMusic-master/app.js -p 18080:18081     冒号后面的https通道
+
+
+thinkpad笔记本
+Windows 11系统的点设置-蓝牙和其他设备-触摸板，通过开关进行启用/禁用

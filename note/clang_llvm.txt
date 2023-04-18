@@ -1,0 +1,25 @@
+
+Ubuntu20安装clang 和 llvm
+sudo apt install clang llvm
+sudo apt-get install gcov  有 不用安装
+sudo apt-get install lcov
+# sudo apt install lcov 这个命令失败  上面默认安装的是版本10
+
+Ubuntu20安装最新版clang llvm
+1 获取签名
+wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
+2 添加llvm软件源地址
+找到/etc/apt/sources.list文件，将下面的内容加到list文件中。
+deb http://apt.llvm.org/focal/ llvm-toolchain-focal main
+deb-src http://apt.llvm.org/focal/ llvm-toolchain-focal main
+# 12
+deb http://apt.llvm.org/focal/ llvm-toolchain-focal-12 main
+deb-src http://apt.llvm.org/focal/ llvm-toolchain-focal-12 main
+# 13
+deb http://apt.llvm.org/focal/ llvm-toolchain-focal-13 main
+deb-src http://apt.llvm.org/focal/ llvm-toolchain-focal-13 main
+3 安装
+sudo apt update
+sudo apt install llvm clang
+clang -v
+# 安装版本是17 2023.4.18
