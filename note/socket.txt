@@ -2,61 +2,61 @@
 
 
 
-TCP/IP�ķֲ�
-�û�����   �û�����   �û�����   �û�����     Ӧ�ò�
-------------------------��---------------------------
-                  TCP   |   UDP               �����
----------------------�I�K-��-�L�J-----------------------
-               ICMP �� �� IP �� �� IGMP���������� �����
+TCP/IP的分层
+用户进程   用户进程   用户进程   用户进程     应用层
+------------------------↑---------------------------
+                  TCP   |   UDP               运输层
+---------------------↖↘-↓-↙↗-----------------------
+               ICMP ← → IP ← → IGMP　　　　　 网络层
 ------------------------?---------------------------
-             ARP �� �� Ӳ���ӿ� �� �� RARP        ��·��
+             ARP ← → 硬件接口 ← → RARP        链路层
 ------------------------?--------------------------
-                      ý��                    ������
+                      媒体                    物理层
 
-�����Unixϵͳ���ļ�/etc/services��������������֪�Ķ˿ں�    grep telnet /etc/services   telnet 23/tcp  ʹ��tcp�˿ں�23
+大多数Unix系统的文件/etc/services都包含了人们熟知的端口号    grep telnet /etc/services   telnet 23/tcp  使用tcp端口号23
 
-Э����У����㷨
-1��У����ֶ���Ϊ0��
-2��ÿ�����ֽڣ�16λ����ӣ���������ͣ�ֱ�����ó���������������ʣһ���ֽڼ�����ǰ������ӡ�
-3(���)����16λ���16λ��ӣ�ֱ����16λΪ0Ϊֹ��
-4�����Ľ���������ƣ�ȡ����
+协议中校验和算法
+1将校验和字段置为0。
+2将每两个字节（16位）相加（二进制求和）直到最后得出结果，若出现最后还剩一个字节继续与前面结果相加。
+3(溢出)将高16位与低16位相加，直到高16位为0为止。
+4将最后的结果（二进制）取反。
 
 
 
-Linux��PF_PACKET��ʹ��
-sock_raw��ע��һ��Ҫ��root��ʹ�ã�ԭʼ�׽��ֱ�̿��Խ��յ����������ϵ�����֡�������ݰ�,���ڼ�������������ͷ����Ǻ������õ�.һ��������3�ַ�ʽ��������socket
-    1.socket(AF_INET, SOCK_RAW, IPPROTO_TCP|IPPROTO_UDP|IPPROTO_ICMP)���ͽ���ip���ݰ���������IPPROTO_IP����Ϊ���������IPPROTO_IP��ϵͳ�����Ͳ�֪������ʲôЭ�顣
-    2.socket(PF_PACKET, SOCK_RAW, htons(ETH_P_IP|ETH_P_ARP|ETH_P_ALL))���ͽ�����̫������֡
-    3.socket(AF_INET, SOCK_PACKET, htons(ETH_P_IP|ETH_P_ARP|ETH_P_ALL))��ʱ��,��Ҫ�ð�
-1.����
-��linux���ṩ��PF_PACKET�ӿڿ��Բ�����·������ݡ�
-2.ʹ�÷���
-����һ��pf_packet = socket(PF_SOCKET, SOCK_RAW, htons(ETH_P_RARP));
-�Ϳ������ú���sendto��recefrom����ȡ�ͷ�����·������ݰ��ˣ���Ȼ������ARP�����������������Ҫ��Ϊ htons(ETH_P_ARP)������IP�İ�ΪETH_P_IP���ɲ鿴�ļ�/usr/include/linux/if_ether.h�ļ���������֧�ֵ�Э�飩��
-3.��ʹ��SOCK_RAW, SOCK_DGRAM��SOCK_PACKET������
-��socket�ĵ�һ������ʹ��PF_PACKET��ʱ����������socket�����Ͷ�����ʹ�á�����������
-    (1)ʹ��SOCK_RAW���͵����ݱ��������·���Э��ͷ�����ܵõ������ݰ���������·��Э��ͷ����ʹ��SOCK_DGRAM�򶼲�����·���Э��ͷ��
-    (2)SOCK_PACKETҲ�ǿ���ʹ�õģ������Ѿ��������Ժ󲻱�֤����֧�֣����Ƽ�ʹ�á�
-    (3)��ʹ��SOCK_RAW��SOCK_DGRAM��SOCK_PACKETʱ����sendto��recvfrom��ʹ�õĵ�ַ���Ͳ�ͬ��ǰ����ʹ��sockaddr_ll���͵ĵ�ַ��������ʹ��sockaddr���͵ĵ�ַ��
-    (4)��socket�ĵ�һ������ʹ��PF_INET���ڶ�������ʹ��SOCK_RAW������Եõ�ԭʼ��IP����
+Linux下PF_PACKET的使用
+sock_raw（注意一定要在root下使用）原始套接字编程可以接收到本机网卡上的数据帧或者数据包,对于监听网络的流量和分析是很有作用的.一共可以有3种方式创建这种socket
+    1.socket(AF_INET, SOCK_RAW, IPPROTO_TCP|IPPROTO_UDP|IPPROTO_ICMP)发送接收ip数据包，不能用IPPROTO_IP，因为如果是用了IPPROTO_IP，系统根本就不知道该用什么协议。
+    2.socket(PF_PACKET, SOCK_RAW, htons(ETH_P_IP|ETH_P_ARP|ETH_P_ALL))发送接收以太网数据帧
+    3.socket(AF_INET, SOCK_PACKET, htons(ETH_P_IP|ETH_P_ARP|ETH_P_ALL))过时了,不要用啊
+1.介绍
+在linux中提供了PF_PACKET接口可以操作链路层的数据。
+2.使用方法
+定义一个pf_packet = socket(PF_SOCKET, SOCK_RAW, htons(ETH_P_RARP));
+就可以利用函数sendto和recefrom来读取和发送链路层的数据包了（当然，发送ARP包，上面第三个参数要变为 htons(ETH_P_ARP)，或者IP的包为ETH_P_IP，可查看文件/usr/include/linux/if_ether.h文件看到所有支持的协议）。
+3.在使用SOCK_RAW, SOCK_DGRAM和SOCK_PACKET的区别
+在socket的第一个参数使用PF_PACKET的时候，上述三种socket的类型都可以使用。但是有区别。
+    (1)使用SOCK_RAW发送的数据必须包含链路层的协议头，接受得到的数据包，包含链路层协议头。而使用SOCK_DGRAM则都不含链路层的协议头。
+    (2)SOCK_PACKET也是可以使用的，但是已经废弃，以后不保证还能支持，不推荐使用。
+    (3)在使用SOCK_RAW或SOCK_DGRAM和SOCK_PACKET时，在sendto和recvfrom中使用的地址类型不同，前两者使用sockaddr_ll类型的地址，而后者使用sockaddr类型的地址。
+    (4)如socket的第一个参数使用PF_INET，第二个参数使用SOCK_RAW，则可以得到原始的IP包。
 
-AF_INET��PF_INET��ϸ΢��ͬ
-    AF ��ʾADDRESS FAMILY ��ַ�� 
-    PF ��ʾPROTOCL FAMILY Э����
-���������궨����һ���� ����ʹ���ĸ���û�й�ϵ
+AF_INET和PF_INET的细微不同
+    AF 表示ADDRESS FAMILY 地址族
+    PF 表示PROTOCL FAMILY 协议族
+但这两个宏定义是一样的 所以使用哪个都没有关系
 
-Winsock2.h��
+Winsock2.h中
 #define AF_INET 0
 #define PF_INET AF_INET
-������windows��AF_INET��PF_INET��ȫһ��
+所以在windows中AF_INET与PF_INET完全一样
 
-����Unix/Linuxϵͳ�У��ڲ�ͬ�İ汾����������΢С���
-����BSD,��AF,����POSIX��PF
-�ں���socketpair��socket��domain��������AF_UNIX,AF_LOCAL,AF_INET,PF_UNIX,PF_LOCAL,PF_INET.
-�⼸��������AF_UNIX=AF_LOCAL, PF_UNIX=PF_LOCAL, AF_LOCAL=PF_LOCAL, AF_INET=PF_INET.
-**����:����socketpair��socket��domain����,ʹ��PF_LOCALϵ��,
-���ڳ�ʼ���׽ӿڵ�ַ�ṹʱ,��ʹ��AF_LOCAL.
-����:
+而在Unix/Linux系统中，在不同的版本中这两者有微小差别
+对于BSD,是AF,对于POSIX是PF
+在函数socketpair与socket的domain参数中有AF_UNIX,AF_LOCAL,AF_INET,PF_UNIX,PF_LOCAL,PF_INET.
+这几个参数有AF_UNIX=AF_LOCAL, PF_UNIX=PF_LOCAL, AF_LOCAL=PF_LOCAL, AF_INET=PF_INET.
+**建议:对于socketpair与socket的domain参数,使用PF_LOCAL系列,
+而在初始化套接口地址结构时,则使用AF_LOCAL.
+例如:
      z = socket(PF_LOCAL, SOCK_STREAM, 0);
      adr_unix.sin_family = AF_LOCAL;
 
@@ -64,88 +64,88 @@ Winsock2.h��
 setsockopt\getsockopt
 int getsockopt(int sock, int level, int optname, void *optval, socklen_t *optlen);
 int setsockopt(int sock, int level, int optname, const void *optval, socklen_t optlen);
-��ȡ����������ĳ���׽��ֹ�����ѡ �ѡ����ܴ����ڶ��Э���У������ܻ��������������׽��ֲ㡣�������׽���ѡ��ʱ��ѡ��λ�ڵĲ��ѡ������Ʊ��������Ϊ�˲����׽��ֲ��ѡ�Ӧ�� �����ֵָ��ΪSOL_SOCKET��Ϊ�˲����������ѡ�����ѡ��ĺ���Э��ű�����������磬Ϊ�˱�ʾһ��ѡ����TCPЭ���������Ӧ���趨ΪЭ���TCP��
-������
-sock����Ҫ�����û��߻�ȡѡ����׽��֡�
-    level��ѡ�����ڵ�Э��㡣
-    optname����Ҫ���ʵ�ѡ������
-    optval������getsockopt()��ָ�򷵻�ѡ��ֵ�Ļ��塣����setsockopt()��ָ�������ѡ��ֵ�Ļ��塣
-    optlen������getsockopt()����Ϊ��ڲ���ʱ��ѡ��ֵ����󳤶ȡ���Ϊ���ڲ���ʱ��ѡ��ֵ��ʵ�ʳ��ȡ�����setsockopt()����ѡ��ĳ��ȡ�
-    ������ϸ˵����
-        SOL_SOCKET:ͨ���׽���ѡ��.
-        IPPROTO_IP:IPѡ��.
-        IPPROTO_TCP:TCPѡ��.
-        optnameָ�����Ƶķ�ʽ(ѡ�������),����������ϸ����
-        optval��û����������׽���ѡ��.����ѡ�����Ƶ��������ͽ���ת��
-����˵����
-    �ɹ�ִ��ʱ������0��ʧ�ܷ���-1��errno����Ϊ���µ�ĳ��ֵ
-        EBADF��sock������Ч���ļ�������
-        EFAULT��optvalָ����ڴ沢����Ч�Ľ��̿ռ�
-        EINVAL���ڵ���setsockopt()ʱ��optlen��Ч
-        ENOPROTOOPT��ָ����Э��㲻��ʶ��ѡ��
-        ENOTSOCK��sock�����Ĳ����׽���
+获取或者设置与某个套接字关联的选 项。选项可能存在于多层协议中，它们总会出现在最上面的套接字层。当操作套接字选项时，选项位于的层和选项的名称必须给出。为了操作套接字层的选项，应该 将层的值指定为SOL_SOCKET。为了操作其它层的选项，控制选项的合适协议号必须给出。例如，为了表示一个选项由TCP协议解析，层应该设定为协议号TCP。
+参数：
+sock：将要被设置或者获取选项的套接字。
+    level：选项所在的协议层。
+    optname：需要访问的选项名。
+    optval：对于getsockopt()，指向返回选项值的缓冲。对于setsockopt()，指向包含新选项值的缓冲。
+    optlen：对于getsockopt()，作为入口参数时，选项值的最大长度。作为出口参数时，选项值的实际长度。对于setsockopt()，现选项的长度。
+    参数详细说明：
+        SOL_SOCKET:通用套接字选项.
+        IPPROTO_IP:IP选项.
+        IPPROTO_TCP:TCP选项.
+        optname指定控制的方式(选项的名称),我们下面详细解释
+        optval获得或者是设置套接字选项.根据选项名称的数据类型进行转换
+返回说明：
+    成功执行时，返回0。失败返回-1，errno被设为以下的某个值
+        EBADF：sock不是有效的文件描述词
+        EFAULT：optval指向的内存并非有效的进程空间
+        EINVAL：在调用setsockopt()时，optlen无效
+        ENOPROTOOPT：指定的协议层不能识别选项
+        ENOTSOCK：sock描述的不是套接字
 
-SO_RCVBUF��SO_SNDBUFÿ���׽ӿڶ���һ�����ͻ�������һ�����ջ�������ʹ���������׽ӿ�ѡ����Ըı�ȱʡ��������С��
-// ���ջ�����
-int nRecvBuf=32*1024; //����Ϊ32K
+SO_RCVBUF和SO_SNDBUF每个套接口都有一个发送缓冲区和一个接收缓冲区，使用这两个套接口选项可以改变缺省缓冲区大小。
+// 接收缓冲区
+int nRecvBuf=32*1024; //设置为32K
 setsockopt(s,SOL_SOCKET,SO_RCVBUF,(const char*)&nRecvBuf,sizeof(int));
-//���ͻ�����
-int nSendBuf=32*1024;//����Ϊ32K
+//发送缓冲区
+int nSendBuf=32*1024;//设置为32K
 setsockopt(s,SOL_SOCKET,SO_SNDBUF,(const char*)&nSendBuf,sizeof(int));
-ע�⣺������TCP�׽ӿڽ��ջ������Ĵ�Сʱ����������˳���Ǻ���Ҫ�ģ���ΪTCP�Ĵ��ڹ�ģѡ�����ڽ�������ʱ��SYN��Է������õ��ġ����ڿ� ����O_RCVBUFѡ�������connect֮ǰ���ã����ڷ�������SO_RCVBUFѡ�������listenǰ���á�
+注意：当设置TCP套接口接收缓冲区的大小时，函数调用顺序是很重要的，因为TCP的窗口规模选项是在建立连接时用SYN与对方互换得到的。对于客 户，O_RCVBUF选项必须在connect之前设置；对于服务器，SO_RCVBUF选项必须在listen前设置。
 
-�÷�
-    1.closesocket��һ�㲻�������رն�����TIME_WAIT�Ĺ��̣�����������ø�socket��
+用法
+    1.closesocket（一般不会立即关闭而经历TIME_WAIT的过程）后想继续重用该socket：
     BOOL bReuseaddr=TRUE;
     setsockopt(s,SOL_SOCKET ,SO_REUSEADDR,(const char*)&bReuseaddr,sizeof(BOOL));
 
-����2. ���Ҫ�Ѿ���������״̬��soket�ڵ���closesocket��ǿ�ƹرգ�������TIME_WAIT�Ĺ��̣�
+　　2. 如果要已经处于连接状态的soket在调用closesocket后强制关闭，不经历TIME_WAIT的过程：
 BOOL bDontLinger = FALSE;
 setsockopt(s,SOL_SOCKET,SO_DONTLINGER,(const char*)&bDontLinger,sizeof(BOOL));
 
-����3.��send(),recv()��������ʱ��������״����ԭ�򣬷��ղ���Ԥ�ڽ���,�������շ�ʱ�ޣ�
-����int nNetTimeout=1000;//1��
-����//����ʱ��
-����setsockopt(socket��SOL_S0CKET,SO_SNDTIMEO��(char *)&nNetTimeout,sizeof(int));
-����//����ʱ��
-����setsockopt(socket��SOL_S0CKET,SO_RCVTIMEO��(char *)&nNetTimeout,sizeof(int));
+　　3.在send(),recv()过程中有时由于网络状况等原因，发收不能预期进行,而设置收发时限：
+　　int nNetTimeout=1000;//1秒
+　　//发送时限
+　　setsockopt(socket，SOL_S0CKET,SO_SNDTIMEO，(char *)&nNetTimeout,sizeof(int));
+　　//接收时限
+　　setsockopt(socket，SOL_S0CKET,SO_RCVTIMEO，(char *)&nNetTimeout,sizeof(int));
 
-����4.��send()��ʱ�򣬷��ص���ʵ�ʷ��ͳ�ȥ���ֽ�(ͬ��)���͵�socket���������ֽ�
-    (�첽);ϵͳĬ�ϵ�״̬���ͺͽ���һ��Ϊ8688�ֽ�(ԼΪ8.5K)����ʵ�ʵĹ����з�������
-    �ͽ����������Ƚϴ󣬿�������socket����������������send(),recv()���ϵ�ѭ���շ���
-����// ���ջ�����
-����int nRecvBuf=32*1024;//����Ϊ32K
-����setsockopt(s,SOL_SOCKET,SO_RCVBUF,(const char*)&nRecvBuf,sizeof(int));
-����//���ͻ�����
-����int nSendBuf=32*1024;//����Ϊ32K
-����setsockopt(s,SOL_SOCKET,SO_SNDBUF,(const char*)&nSendBuf,sizeof(int));
+　　4.在send()的时候，返回的是实际发送出去的字节(同步)或发送到socket缓冲区的字节
+    (异步);系统默认的状态发送和接收一次为8688字节(约为8.5K)；在实际的过程中发送数据
+    和接收数据量比较大，可以设置socket缓冲区，而避免了send(),recv()不断的循环收发：
+　　// 接收缓冲区
+　　int nRecvBuf=32*1024;//设置为32K
+　　setsockopt(s,SOL_SOCKET,SO_RCVBUF,(const char*)&nRecvBuf,sizeof(int));
+　　//发送缓冲区
+　　int nSendBuf=32*1024;//设置为32K
+　　setsockopt(s,SOL_SOCKET,SO_SNDBUF,(const char*)&nSendBuf,sizeof(int));
 
-����5. ����ڷ������ݵ�ʱ��ϣ����������ϵͳ��������socket�������Ŀ�����Ӱ���������ܣ�
-����int nZero=0;
-����setsockopt(socket��SOL_S0CKET,SO_SNDBUF��(char *)&nZero,sizeof(nZero));
+　　5. 如果在发送数据的时，希望不经历由系统缓冲区到socket缓冲区的拷贝而影响程序的性能：
+　　int nZero=0;
+　　setsockopt(socket，SOL_S0CKET,SO_SNDBUF，(char *)&nZero,sizeof(nZero));
 
-����6.ͬ����recv()�����������(Ĭ������ǽ�socket�����������ݿ�����ϵͳ������)��
-����int nZero=0;
-����setsockopt(socket��SOL_S0CKET,SO_RCVBUF��(char *)&nZero,sizeof(int));
+　　6.同上在recv()完成上述功能(默认情况是将socket缓冲区的内容拷贝到系统缓冲区)：
+　　int nZero=0;
+　　setsockopt(socket，SOL_S0CKET,SO_RCVBUF，(char *)&nZero,sizeof(int));
 
-����7.һ���ڷ���UDP���ݱ���ʱ��ϣ����socket���͵����ݾ��й㲥���ԣ�
-����BOOL bBroadcast=TRUE;
-����setsockopt(s,SOL_SOCKET,SO_BROADCAST,(const char*)&bBroadcast,sizeof(BOOL));
+　　7.一般在发送UDP数据报的时候，希望该socket发送的数据具有广播特性：
+　　BOOL bBroadcast=TRUE;
+　　setsockopt(s,SOL_SOCKET,SO_BROADCAST,(const char*)&bBroadcast,sizeof(BOOL));
 
-����8.��client���ӷ����������У�������ڷ�����ģʽ�µ�socket��connect()�Ĺ����п�������connect()��ʱ,ֱ��accpet()������(����������ֻ���ڷ������Ĺ����������������ã��������ĺ������������ò���)
-����BOOL bConditionalAccept=TRUE;
-����setsockopt(s,SOL_SOCKET,SO_CONDITIONAL_ACCEPT,(const char*)&bConditionalAccept,sizeof(BOOL));
+　　8.在client连接服务器过程中，如果处于非阻塞模式下的socket在connect()的过程中可以设置connect()延时,直到accpet()被呼叫(本函数设置只有在非阻塞的过程中有显著的作用，在阻塞的函数调用中作用不大)
+　　BOOL bConditionalAccept=TRUE;
+　　setsockopt(s,SOL_SOCKET,SO_CONDITIONAL_ACCEPT,(const char*)&bConditionalAccept,sizeof(BOOL));
 
-����9.����ڷ������ݵĹ�����(send()û����ɣ���������û����)��������closesocket(),��ǰ����һ���ȡ�Ĵ�ʩ��"���ݹ� ��"shutdown(s,SD_BOTH),���������ǿ϶���ʧ�ˣ���������ó����������Ӧ�õ�Ҫ��(����û��������ݷ��ͳ�ȥ���ڹر� socket)��
-����struct linger {
-��������u_short l_onoff;
-��������u_short l_linger;
-����};
-����linger m_sLinger;
-����m_sLinger.l_onoff=1;//(��closesocket()����,���ǻ�������û������ϵ�ʱ����������)
-����// ���m_sLinger.l_onoff=0;���ܺ�2.)������ͬ;
-����m_sLinger.l_linger=5;//(����������ʱ��Ϊ5��)
-����setsockopt(s,SOL_SOCKET,SO_LINGER,(const char*)&m_sLinger,sizeof(linger));
+　　9.如果在发送数据的过程中(send()没有完成，还有数据没发送)而调用了closesocket(),以前我们一般采取的措施是"从容关 闭"shutdown(s,SD_BOTH),但是数据是肯定丢失了，如何设置让程序满足具体应用的要求(即让没发完的数据发送出去后在关闭 socket)？
+　　struct linger {
+　　　　u_short l_onoff;
+　　　　u_short l_linger;
+　　};
+　　linger m_sLinger;
+　　m_sLinger.l_onoff=1;//(在closesocket()调用,但是还有数据没发送完毕的时候容许逗留)
+　　// 如果m_sLinger.l_onoff=0;则功能和2.)作用相同;
+　　m_sLinger.l_linger=5;//(容许逗留的时间为5秒)
+　　setsockopt(s,SOL_SOCKET,SO_LINGER,(const char*)&m_sLinger,sizeof(linger));
 
 
 
@@ -158,21 +158,21 @@ struct sockaddr (/usr/include/bits/socket.h)
     char sa_data[14];           /* 14 bytes of protocol address */
 };
 
-sa_family�ǵ�ַ���壬һ�㶼�ǡ�AF_xxx������ʽ��ͨ������AF_INET��AF_INET��ʾΪip��ַ���͡�
-��ע:/usr/include/bits/sockaddr.h
-typedef unsigned short int sa_family_t;  
+sa_family是地址家族，一般都是“AF_xxx”的形式。通常都是AF_INET，AF_INET表示为ip地址类型。
+备注:/usr/include/bits/sockaddr.h
+typedef unsigned short int sa_family_t;
 #define __SOCKADDR_COMMON(sa_prefix) sa_family_t sa_prefix##family
 
-sa_data��14�ֽ�Э���ַ�������ݽṹ����bind��connect��recvfrom��sendto�Ⱥ����Ĳ�����ָ����ַ��Ϣ��
-��һ�����в���ֱ����Դ����ݽṹ����������ʹ����һ����sockaddr�ȼ۵����ݽṹsockaddr_in 
+sa_data是14字节协议地址。此数据结构用做bind、connect、recvfrom、sendto等函数的参数，指明地址信息。
+但一般编程中并不直接针对此数据结构操作，而是使用另一个与sockaddr等价的数据结构sockaddr_in
 
-sockaddr��ȱ���� sa_data��Ŀ���ַ�Ͷ˿���Ϣ����һ����
-sockaddr_in�����sockaddr��ȱ�ݣ���port��addr �ֿ�����������������
-���ߵ�ռ�õ��ڴ��С��һ�µģ���˿��Ի���ת���������������˵�����ǲ�������
-sockaddr������bind��connect��recvfrom��sendto�Ⱥ����Ĳ�����ָ����ַ��Ϣ����һ��ͨ�õ��׽��ֵ�ַ��
-sockaddr_in ��internet�������׽��ֵĵ�ַ��ʽ�������������������ǻ��sockaddr_in�ṹ����в�����ʹ��sockaddr_in�������������Ϣ�����ʹ������ת���Ϳ����ˡ�
-һ���Ȱ�sockaddr_in������ֵ��ǿ������ת��������sockaddr�������ĺ�����sockaddr_in����socket����͸�ֵ��sockaddr���ں���������
-���߳���һ��������16���ֽڣ���ռ�õ��ڴ��С��һ�µģ���˿��Ի���ת���������ǲ��нṹ��ָ��sockaddr_in�ṹ��ָ��Ҳ����ָ��sockaddr��
+sockaddr的缺陷是 sa_data把目标地址和端口信息混在一起了
+sockaddr_in解决了sockaddr的缺陷，把port和addr 分开储存在两个变量中
+二者的占用的内存大小是一致的，因此可以互相转化，从这个意义上说，他们并无区别。
+sockaddr常用于bind、connect、recvfrom、sendto等函数的参数，指明地址信息。是一种通用的套接字地址。
+sockaddr_in 是internet环境下套接字的地址形式。所以在网络编程中我们会对sockaddr_in结构体进行操作。使用sockaddr_in来建立所需的信息，最后使用类型转化就可以了。
+一般先把sockaddr_in变量赋值后，强制类型转换后传入用sockaddr做参数的函数：sockaddr_in用于socket定义和赋值；sockaddr用于函数参数。
+二者长度一样，都是16个字节，即占用的内存大小是一致的，因此可以互相转化。二者是并列结构，指向sockaddr_in结构的指针也可以指向sockaddr。
 
 struct sockaddr_in ((/usr/include/netinet/in.h))
 {
@@ -182,19 +182,19 @@ struct sockaddr_in ((/usr/include/netinet/in.h))
     unsigned char sin_zero[8];          /* Same size as struct sockaddr */
 };
 
-struct in_addr 
+struct in_addr
 {
     in_addr_t; s_addr;
 };
 
 typedef uint32_t in_addr_t;(/usr/include/netinet/in.h)
 
-sin_port��sin_addr�������������ֽ���NBO����һ����ӻ������ֶ��������ֽ���HBO��
-in_addr �������32λIP��ַ
+sin_port和sin_addr都必须是网络字节序（NBO），一般可视化的数字都是主机字节序（HBO）
+in_addr 用来存放32位IP地址
 
-typedef struct in_addr 
+typedef struct in_addr
 {
-    union 
+    union
     {
         struct
         {
@@ -203,7 +203,7 @@ typedef struct in_addr
             s_b3,
             s_b4;
         } S_un_b;  //An IPv4 address formatted as four u_chars.
-        struct 
+        struct
         {
             unsigned short s_w1,
             s_w2;
@@ -212,82 +212,82 @@ typedef struct in_addr
     } S_un;
 } IN_ADDR;
 
- 
 
-sin_familyָ��Э���壬��socket�����ֻ����AF_INET
-sin_port�洢�˿ںţ�ʹ�������ֽ�˳��
-sin_addr�洢IP��ַ��ʹ��in_addr������ݽṹ
-sin_zero��Ϊ����sockaddr��sockaddr_in�������ݽṹ���ִ�С��ͬ�������Ŀ��ֽڡ�
-s_addr���������ֽ�˳��洢IP��ַ
 
-sockaddr_in��sockaddr�ǲ��еĽṹ��ָ��sockaddr_in�Ľṹ���ָ��Ҳ����ָ��
-sockadd�Ľṹ�壬����������Ҳ����˵�������ʹ��sockaddr_in����������Ҫ����Ϣ,
-������ý�������ת���Ϳ�����bzero((char*)&mysock,sizeof(mysock));//��ʼ��
-mysock�ṹ����
+sin_family指代协议族，在socket编程中只能是AF_INET
+sin_port存储端口号（使用网络字节顺序）
+sin_addr存储IP地址，使用in_addr这个数据结构
+sin_zero是为了让sockaddr与sockaddr_in两个数据结构保持大小相同而保留的空字节。
+s_addr按照网络字节顺序存储IP地址
+
+sockaddr_in和sockaddr是并列的结构，指向sockaddr_in的结构体的指针也可以指向
+sockadd的结构体，并代替它。也就是说，你可以使用sockaddr_in建立你所需要的信息,
+在最后用进行类型转换就可以了bzero((char*)&mysock,sizeof(mysock));//初始化
+mysock结构体名
 mysock.sa_family=AF_INET;
 mysock.sin_addr.s_addr=inet_addr("192.168.0.1");
-����
-�ȵ�Ҫ��ת����ʱ���ã�
-��struct sockaddr*��mysock
+……
+等到要做转换的时候用：
+（struct sockaddr*）mysock
 
 
-inet_addr()�����ǽ�һ��IP�ַ���ת��Ϊһ�������ֽ��������ֵ������sockaddr_in.sin_addr.s_addr��
-inet_ntoa()�����ǽ�һ��sin_addr�ṹ�������IP�ַ���(network to ascii)
-htons()�����ǽ��˿ں��������ֽ���ת��Ϊ�����ֽ��������ֵ��(host to net)
-htonl()���ú�htons()һ������������Ե���32λ�ģ�long������htons()��Ե��������ֽڣ�16λ�ģ�short����
-��htonl()��htons()�����෴�����������ǣ�ntohl()��ntohs()�� 
+inet_addr()作用是将一个IP字符串转化为一个网络字节序的整数值，用于sockaddr_in.sin_addr.s_addr。
+inet_ntoa()作用是将一个sin_addr结构体输出成IP字符串(network to ascii)
+htons()作用是将端口号由主机字节序转换为网络字节序的整数值。(host to net)
+htonl()作用和htons()一样，不过它针对的是32位的（long），而htons()针对的是两个字节，16位的（short）。
+与htonl()和htons()作用相反的两个函数是：ntohl()和ntohs()。
 
 
-���ָ�socket���Ƶ�ַ�ȷ���
+三种给socket复制地址等方法
 inet_aton(server_addr_string, &myaddr.sin_addr);
 myaddr.sin_addr.s_addr = inet_addr("192.168.1.2");
-INADDR_ANYת��תNBO���
+INADDR_ANY转不转NBO随便
 myaddr.sin_addr.s_addr = htons(INADDR_ANY);
 myaddr.sin_addr.s_addr = INADDR_ANY;
 
-���ָ�socket���ƶ˿ڵķ���
+两种给socket复制端口的方法
 myaddr.sin_port = htons(1234);
-0 ����˿� ת��תNBO���
+0 随机端口 转不转NBO随便
 myaddr.sin_port = htons(0);
 myaddr.sin_port = 0;
-��������������������������������
+————————————————
 
 
 
 
 
-socket 
-   1.socket() 
-   2.bind() 
-   3.connect() 
-   4.listen() 
-   5.accept() 
-   6.send() ��recv() 
-   7.sendto() ��recvfrom() 
-   8.close() ��shutdown() 
+socket
+   1.socket()
+   2.bind()
+   3.connect()
+   4.listen()
+   5.accept()
+   6.send() 和recv()
+   7.sendto() 和recvfrom()
+   8.close() 和shutdown()
    9.getpeername()
    10.gethostname()
 
    1.socket()
-����ʹ��ϵͳ����socket()������ļ���������
+我们使用系统调用socket()来获得文件描述符：
 #include<sys/types.h>
 #include<sys/socket.h>
 int socket(int domain,int type,int protocol);
-��һ������domain����Ϊ��AF_INET����
-�ڶ����������׽ӿڵ����ͣ�SOCK_STREAM��SOCK_DGRAM��
-��������������Ϊ0��
-ϵͳ����socket()ֻ����һ���׽ӿ�������������������򷵻�-1��
+第一个参数domain设置为“AF_INET”。
+第二个参数是套接口的类型：SOCK_STREAM或SOCK_DGRAM。
+第三个参数设置为0。
+系统调用socket()只返回一个套接口描述符，如果出错，则返回-1。
 
     2.bind()
-һ��������һ���׽ӿ��Ժ���һ�����ǰ��׽ӿڰ󶨵����ؼ������ĳһ���˿��ϡ��������ֻ��ʹ��connect()���޴˱�Ҫ��
-������ϵͳ����bind()��ʹ�÷�����
+一旦你有了一个套接口以后，下一步就是把套接口绑定到本地计算机的某一个端口上。但如果你只想使用connect()则无此必要。
+下面是系统调用bind()的使用方法：
 #include<sys/types.h>
 #include<sys/socket.h>
 int bind(int sockfd,struct sockaddr*my_addr,int addrlen);
-��һ������sockfd����socket()���÷��ص��׽ӿ��ļ���������
-�ڶ�������my_addr��ָ�����ݽṹsockaddr��ָ�롣���ݽṹsockaddr�а����˹�����ĵ�ַ���˿ں�IP��ַ����Ϣ��
-����������addrlen�������ó�sizeof(structsockaddr)��
-������һ�����ӣ�
+第一个参数sockfd是由socket()调用返回的套接口文件描述符。
+第二个参数my_addr是指向数据结构sockaddr的指针。数据结构sockaddr中包括了关于你的地址、端口和IP地址的信息。
+第三个参数addrlen可以设置成sizeof(structsockaddr)。
+下面是一个例子：
 #include<string.h>
 #include<sys/types.h>
 #include<sys/socket.h>
@@ -300,22 +300,22 @@ main()
     my_addr.sin_family=AF_INET;/*host byte order*/
     my_addr.sin_port=htons(MYPORT);/*short,network byte order*/
     my_addr.sin_addr.s_addr=inet_addr("132.241.5.10");
-    bzero(&(my_addr.sin_zero),8);/*zero the rest of the struct*/    
+    bzero(&(my_addr.sin_zero),8);/*zero the rest of the struct*/
     /*don't forget your error checking for bind():*/
     bind(sockfd,(struct sockaddr*)&my_addr,sizeof(struct sockaddr));
 ...
-���������bind()Ҳ����-1��
-�����ʹ��connect()ϵͳ���ã���ô�㲻��֪����ʹ�õĶ˿ںš��������connect()ʱ��������׽ӿ��Ƿ��Ѿ��󶨣����û�У����������һ�����еĶ˿ڡ�
+如果出错，bind()也返回-1。
+如果你使用connect()系统调用，那么你不必知道你使用的端口号。当你调用connect()时，它检查套接口是否已经绑定，如果没有，它将会分配一个空闲的端口。
 
     3.connect()
-ϵͳ����connect()���÷����£�
+系统调用connect()的用法如下：
 #include<sys/types.h>
 #include<sys/socket.h>
 int connect(int sockfd,struct sockaddr* serv_addr,int addrlen);
-��һ�����������׽ӿ��ļ���������������ϵͳ����socket()���صġ�
-�ڶ���������serv_addr��ָ�����ݽṹsockaddr��ָ�룬���а���Ŀ�Ķ˿ں�IP��ַ��
-��������������ʹ��sizeof(structsockaddr)����á�
-������һ�����ӣ�
+第一个参数还是套接口文件描述符，它是由系统调用socket()返回的。
+第二个参数是serv_addr是指向数据结构sockaddr的指针，其中包括目的端口和IP地址。
+第三个参数可以使用sizeof(structsockaddr)而获得。
+下面是一个例子：
 #include<string.h>
 #include<sys/types.h>
 #include<sys/socket.h>
@@ -333,31 +333,31 @@ main()
     /*don'tforgettoerrorchecktheconnect()!*/
     connect(sockfd,(struct sockaddr*)&dest_addr,sizeof(struct sockaddr));
 ...
-ͬ�������������connect()���᷵��-1��
- 
+同样，如果出错，connect()将会返回-1。
+
     4.listen()
-�����ϣ�������ӵ�Զ�̵�������Ҳ����˵��ϣ���ȴ�һ���������������Ȼ���ٴ������ǡ���������ͨ�����ȵ���listen()��Ȼ���ٵ���accept()��ʵ�֡�
-ϵͳ����listen()����ʽ���£�
+如果你希望不连接到远程的主机，也就是说你希望等待一个进入的连接请求，然后再处理它们。这样，你通过首先调用listen()，然后再调用accept()来实现。
+系统调用listen()的形式如下：
 intl isten(int sockfd,int backlog);
-��һ��������ϵͳ����socket()���ص��׽ӿ��ļ���������
-�ڶ��������ǽ�����������������ӵĸ��������������������ʹ��ϵͳ����accept()Ӧ��֮ǰҪ�ڽ�������еȴ������ֵ�Ƕ�����������ӵ�е�����ĸ����������ϵͳ��ȱʡ����Ϊ20�����������Ϊ5����10��������ʱ��listen()���᷵��-1ֵ��
-��Ȼ����ʹ��ϵͳ����listen()֮ǰ��������Ҫ����bind()�󶨵���Ҫ�Ķ˿ڣ�����ϵͳ�ں˽��������Ǽ���һ������Ķ˿ڡ����ԣ������ϣ������һ���˿ڣ�������Ӧ��ʹ�õ�ϵͳ���õ�˳��
+第一个参数是系统调用socket()返回的套接口文件描述符。
+第二个参数是进入队列中允许的连接的个数。进入的连接请求在使用系统调用accept()应答之前要在进入队列中等待。这个值是队列中最多可以拥有的请求的个数。大多数系统的缺省设置为20。你可以设置为5或者10。当出错时，listen()将会返回-1值。
+当然，在使用系统调用listen()之前，我们需要调用bind()绑定到需要的端口，否则系统内核将会让我们监听一个随机的端口。所以，如果你希望监听一个端口，下面是应该使用的系统调用的顺序：
 socket();
 bind();
 listen();
 /*accept()goeshere*/
- 
+
     5.accept()
-ϵͳ����accept()�Ƚ������е㸴�ӡ���Զ�̵�����������ͼʹ��connect()������ʹ��listen()���ڼ����Ķ˿ڡ�
-�������ӽ����ڶ����еȴ���ֱ��ʹ��accept()������������accept()֮�󣬽��᷵��һ��ȫ�µ��׽ӿ��ļ�������������������������ӡ�
-����������ͬһ��������˵��������������ļ���������ԭ�ȵ�һ���ļ����������ڼ�����ָ���Ķ˿ڣ��µ��ļ�������������������send()��recv()��
-���õ��������£�
+系统调用accept()比较起来有点复杂。在远程的主机可能试图使用connect()连接你使用listen()正在监听的端口。
+但此连接将会在队列中等待，直到使用accept()处理它。调用accept()之后，将会返回一个全新的套接口文件描述符来处理这个单个的连接。
+这样，对于同一个连接来说，你就有了两个文件描述符。原先的一个文件描述符正在监听你指定的端口，新的文件描述符可以用来调用send()和recv()。
+调用的例子如下：
 #include<sys/socket.h>
 int accept(int sockfd,void* addr,int* addrlen);
-��һ�����������ڼ����˿ڵ��׽ӿ��ļ���������
-�ڶ�������addr��ָ�򱾵ص����ݽṹsockaddr_in��ָ�롣����connect()�е���Ϣ���洢�����ͨ����������˽��ĸ��������ĸ��˿ں����㡣
-����������ͬ������ʹ��sizeof(structsockaddr_in)����á�
-���������accept()Ҳ������-1��������һ���򵥵����ӣ�
+第一个参数是正在监听端口的套接口文件描述符。
+第二个参数addr是指向本地的数据结构sockaddr_in的指针。调用connect()中的信息将存储在这里。通过它你可以了解哪个主机在哪个端口呼叫你。
+第三个参数同样可以使用sizeof(structsockaddr_in)来获得。
+如果出错，accept()也将返回-1。下面是一个简单的例子：
 #include<string.h>
 #include<sys/types.h>
 #include<sys/socket.h>
@@ -380,70 +380,68 @@ main()
     sin_size=sizeof(struct sockaddr_in);
     new_fd=accept(sockfd,&their_addr,&sin_size);
 ...
-���棬���ǽ�����ʹ���´������׽ӿ��ļ�������new_fd������send()��recv()��
- 
-    6.send() ��recv()
-ϵͳ����send()���÷����£�
+下面，我们将可以使用新创建的套接口文件描述符new_fd来调用send()和recv()。
+
+    6.send() 和recv()
+系统调用send()的用法如下：
 int send(int sockfd,const void* msg,int len,int flags);
-��һ����������ϣ�����������ݵ��׽ӿ��ļ�������������������ͨ��socket()ϵͳ���÷��صģ�Ҳ������ͨ��accept()ϵͳ���õõ��ġ�
-�ڶ���������ָ����ϣ�����͵����ݵ�ָ�롣
-���������������ݵ��ֽڳ��ȡ����ĸ�������־����Ϊ0��
-������һ���򵥵����ӣ�
+第一个参数是你希望给发送数据的套接口文件描述符。它可以是你通过socket()系统调用返回的，也可以是通过accept()系统调用得到的。
+第二个参数是指向你希望发送的数据的指针。
+第三个参数是数据的字节长度。第四个参数标志设置为0。
+下面是一个简单的例子：
 char*msg="Beejwashere!";
 intlen,bytes_sent;
 ..
 len=strlen(msg);
 bytes_sent=send(sockfd,msg,len,0);
 ...
-ϵͳ����send()����ʵ�ʷ��͵��ֽ���������ܱ���ʵ����Ҫ���͵��ֽ����١�������ص��ֽ�����Ҫ���͵��ֽ����٣������Ժ���뷢��ʣ�µ����ݡ���send()����ʱ��������-1��
-ϵͳ����recv()��ʹ�÷�����send()���ƣ�
+系统调用send()返回实际发送的字节数，这可能比你实际想要发送的字节数少。如果返回的字节数比要发送的字节数少，你在以后必须发送剩下的数据。当send()出错时，将返回-1。
+系统调用recv()的使用方法和send()类似：
 int recv(int sockfd,void* buf,int len,unsigned int flags);
-��һ��������Ҫ��ȡ���׽ӿ��ļ���������
-�ڶ��������Ǳ��������Ϣ�ĵ�ַ��
-�����������ǻ���������󳤶ȡ����ĸ���������Ϊ0��
-ϵͳ����recv()����ʵ�ʶ�ȡ�����������ֽ�������������򷵻�-1��
-����ʹ�������ϵͳ���ã������ͨ���������׽ӿ������ͺͽ�����Ϣ��
+第一个参数是要读取的套接口文件描述符。
+第二个参数是保存读入信息的地址。
+第三个参数是缓冲区的最大长度。第四个参数设置为0。
+系统调用recv()返回实际读取到缓冲区的字节数，如果出错则返回-1。
+这样使用上面的系统调用，你可以通过数据流套接口来发送和接受信息。
 
-    7.sendto() ��recvfrom()
-��Ϊ���ݱ��׽ӿڲ������ӵ�Զ�̵������ϣ������ڷ������ݰ�֮ǰ�����Ǳ������ȸ���Ŀ�ĵ�ַ���뿴��
+    7.sendto() 和recvfrom()
+因为数据报套接口并不连接到远程的主机上，所以在发送数据包之前，我们必须首先给出目的地址，请看：
 int sendto(int sockfd,const void* msg,int len,unsigned int flags,const struct sockaddr* to,int tolen);
-���������������⣬�����Ĳ�����ϵͳ����send()ʱ��ͬ��
-����to��ָ�����Ŀ��IP��ַ�Ͷ˿ںŵ����ݽṹsockaddr��ָ�롣
-����tolen��������Ϊsizeof(structsockaddr)��
-ϵͳ����sendto()����ʵ�ʷ��͵��ֽ�������������򷵻�-1��
-ϵͳ����recvfrom()��ʹ�÷���Ҳ��recv()��ʮ�ֽ��ƣ�
+除了两个参数以外，其他的参数和系统调用send()时相同。
+参数to是指向包含目的IP地址和端口号的数据结构sockaddr的指针。
+参数tolen可以设置为sizeof(structsockaddr)。
+系统调用sendto()返回实际发送的字节数，如果出错则返回-1。
+系统调用recvfrom()的使用方法也和recv()的十分近似：
 int recvfrom(int sockfd,void* buf,int len,unsigned int flags, struct sockaddr* from,int* fromlen);
-����from��ָ�򱾵ؼ�����а���ԴIP��ַ�Ͷ˿ںŵ����ݽṹsockaddr��ָ�롣
-����fromlen����Ϊsizeof(struct sockaddr)��
-ϵͳ����recvfrom()���ؽ��յ����ֽ�������������򷵻�-1��
- 
-    8.close() ��shutdown()
-�����ʹ��close()���ùر����ӵ��׽ӿ��ļ���������
+参数from是指向本地计算机中包含源IP地址和端口号的数据结构sockaddr的指针。
+参数fromlen设置为sizeof(struct sockaddr)。
+系统调用recvfrom()返回接收到的字节数，如果出错则返回-1。
+
+    8.close() 和shutdown()
+你可以使用close()调用关闭连接的套接口文件描述符：
 close(sockfd);
-�����Ͳ����ٶԴ��׽ӿ����κεĶ�д�����ˡ�
-ʹ��ϵͳ����shutdown()�����и���Ŀ���Ȩ������������ĳһ�������ж�ͨ�ţ������ж�˫����ͨ�ţ�
+这样就不能再对此套接口做任何的读写操作了。
+使用系统调用shutdown()，可有更多的控制权。它允许你在某一个方向切断通信，或者切断双方的通信：
 int shutdown(int sockfd,int how);
-��һ����������ϣ���ж�ͨ�ŵ��׽ӿ��ļ����������ڶ�������howֵ���£�
-0��Further receives are disallowed
-1��Further sends are disallowed
-2��Further sends and receives are disallowed(likeclose())
-shutdown()����ɹ��򷵻�0�����ʧ���򷵻�-1��
- 
+第一个参数是你希望切断通信的套接口文件描述符。第二个参数how值如下：
+0—Further receives are disallowed
+1—Further sends are disallowed
+2—Further sends and receives are disallowed(likeclose())
+shutdown()如果成功则返回0，如果失败则返回-1。
+
     9.getpeername()
-���ϵͳ�ĵ���ʮ�ּ򵥡�������������˭�����ӵ���һ�ˣ�
+这个系统的调用十分简单。它将告诉你是谁在连接的另一端：
 #include<sys/socket.h>
 int getpeername(int sockfd,struct sockaddr* addr,int* addrlen);
-��һ�����������ӵ��������׽ӿ��ļ���������
-�ڶ���������ָ�������һ�˵���Ϣ�����ݽṹsockaddr��ָ�롣
-������������������Ϊsizeof(structsockaddr)��
-���������ϵͳ���ý�����-1��
-һ�����������ǵĵ�ַ�������ʹ��inet_ntoa()����gethostbyaddr()���õ��������Ϣ��
- 
+第一个参数是连接的数据流套接口文件描述符。
+第二个参数是指向包含另一端的信息的数据结构sockaddr的指针。
+第三个参数可以设置为sizeof(structsockaddr)。
+如果出错，系统调用将返回-1。
+一旦你获得了它们的地址，你可以使用inet_ntoa()或者gethostbyaddr()来得到更多的信息。
+
     10.gethostname()
-ϵͳ����gethostname()��ϵͳ����getpeername()���򵥡������س����������еļ���������֡�ϵͳ����gethostbyname()����ʹ�����������������Ļ�����IP��ַ��
-������һ�����ӣ�
+系统调用gethostname()比系统调用getpeername()还简单。它返回程序正在运行的计算机的名字。系统调用gethostbyname()可以使用这个名字来决定你的机器的IP地址。
+下面是一个例子：
 #include<unistd.h>
 int gethostname(char*hostname,size_tsize);
-����ɹ���gethostname������0�����ʧ�ܣ���������-1��
-
-
+如果成功，gethostname将返回0。如果失败，它将返回-1。

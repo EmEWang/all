@@ -1,24 +1,24 @@
 
 POCO--------------------------------------------------------------------------------
-POCO¿âÖĞÎÄ±à³Ì²Î¿¼Ö¸ÄÏ
-×÷Õß£ºÁø´ó¡¤Poechant
-²©¿Í£ºBlog.CSDN.net/Poechant
-ÓÊÏä£ºzhongchao.ustc#gmail.com (# -> @)
-ÈÕÆÚ£ºApril 14th, 2012
-£¨1£©×ÜÀÀ
+POCOåº“ä¸­æ–‡ç¼–ç¨‹å‚è€ƒæŒ‡å—
+ä½œè€…ï¼šæŸ³å¤§Â·Poechant
+åšå®¢ï¼šBlog.CSDN.net/Poechant
+é‚®ç®±ï¼šzhongchao.ustc#gmail.com (# -> @)
+æ—¥æœŸï¼šApril 14th, 2012
+ï¼ˆ1ï¼‰æ€»è§ˆ
 1 What is POCO?
-POCO ÊÇÊ²Ã´£¿ÕâÊÇÎÒ×î³£±»ÈËÎÊµ½µÄ¡£POCO ÊÇ POrtable COmponents µÄËõĞ´£¬¹Ù·½Ö÷Ò³£ºPOCOProject.org¡£
-ÊÇÒ»¸ö·Ç³£³öÉ«µÄ C++ ¿â£¬Ïàµ±ÓÚ Java µÄ Class Library¡¢.NET µÄ Framework ºÍ Apple µÄ Cocoa¡£
-ËüÓë Boost ÊÇ·Ç³£²»Í¬µÄ£¬¼òµ¥Ëµ Boost ¾ÍÊÇÏàµ±ÓÚ Advanced STL¡£
+POCO æ˜¯ä»€ä¹ˆï¼Ÿè¿™æ˜¯æˆ‘æœ€å¸¸è¢«äººé—®åˆ°çš„ã€‚POCO æ˜¯ POrtable COmponents çš„ç¼©å†™ï¼Œå®˜æ–¹ä¸»é¡µï¼šPOCOProject.orgã€‚
+æ˜¯ä¸€ä¸ªéå¸¸å‡ºè‰²çš„ C++ åº“ï¼Œç›¸å½“äº Java çš„ Class Libraryã€.NET çš„ Framework å’Œ Apple çš„ Cocoaã€‚
+å®ƒä¸ Boost æ˜¯éå¸¸ä¸åŒçš„ï¼Œç®€å•è¯´ Boost å°±æ˜¯ç›¸å½“äº Advanced STLã€‚
 
-2 ±¾ÏµÁĞÎÄÕÂËùÊ¹ÓÃµÄ POCO °æ±¾
+2 æœ¬ç³»åˆ—æ–‡ç« æ‰€ä½¿ç”¨çš„ POCO ç‰ˆæœ¬
 POCO C++ Library 1.4.3p1 (2012-01-23)
-3 ¿âÂß¼­½á¹¹
-ÏÂÍ¼Õª×Ô POCO ¹ÙÍø¡£OS API ÊÇÊ¹ÓÃ²Ù×÷ÏµÍ³²ãµÄ£¬C++/C Standard Libararies ÊÇ±ê×¼¿â£¬ÆäËûµÄÄ£¿é¶¼ÊÇ POCO ËùÌá¹©µÄ£¬
-°üÀ¨£ºFoundation¡¢XML¡¢Crypto¡¢XML¡¢Util¡¢Net¡¢Zip¡¢NetSSL¡¢Data£¨Ö§³Ö SQLite¡¢ODBC¡¢MySQL£©¡¢Tools & Utilities¡¢Application¡£
+3 åº“é€»è¾‘ç»“æ„
+ä¸‹å›¾æ‘˜è‡ª POCO å®˜ç½‘ã€‚OS API æ˜¯ä½¿ç”¨æ“ä½œç³»ç»Ÿå±‚çš„ï¼ŒC++/C Standard Libararies æ˜¯æ ‡å‡†åº“ï¼Œå…¶ä»–çš„æ¨¡å—éƒ½æ˜¯ POCO æ‰€æä¾›çš„ï¼Œ
+åŒ…æ‹¬ï¼šFoundationã€XMLã€Cryptoã€XMLã€Utilã€Netã€Zipã€NetSSLã€Dataï¼ˆæ”¯æŒ SQLiteã€ODBCã€MySQLï¼‰ã€Tools & Utilitiesã€Applicationã€‚
 
 A |    Zip            NetSSL                Toold&Utilities
-p |   
+p |
 p |    Util           Net                   Data
 l |                                         ----------------
 i |    XML            Crypto                SQLite ODBC MySQL
@@ -30,7 +30,7 @@ o |
 n |----------------------------------------------------------
 POSIX WIN32 other(RT)OS API
 
-4 Ö§³ÖÆ½Ì¨
+4 æ”¯æŒå¹³å°
 Desktop/Server: - Windows - Linux - Mac OS X - Solaris - HP-UX - AIX
 Embedded: - Windows Embedded CE - Embedded Linux (uClibc or glibc) - iOS - QNX - VxWorks - Android
 
@@ -50,21 +50,21 @@ Poco::Util::Units::Values
 Poco::XML
 Poco::Zip
 
-£¨2£©»ù±¾Êı¾İÀàĞÍ
-»ù±¾ÀàĞÍÔÚPoco/Types.hÍ·ÎÄ¼şÖĞ¡£ÒÔÏÂÒÔ GNU C/C++ ºÍ CLang ÎªÀı¡£²»¹ıÒªÇ¿µ÷µÄÊÇ£¬POCO ÓĞ¼«ºÃµÄ¿çÆ½Ì¨ĞÔ£¬ÄãÄÜÏëµ½µÄÆ½Ì¨£¬¼¸ºõ¶¼¿ÉÒÔÔËĞĞ POCO¡£
-1 ÓĞ·ûºÅÕûĞÍ
+ï¼ˆ2ï¼‰åŸºæœ¬æ•°æ®ç±»å‹
+åŸºæœ¬ç±»å‹åœ¨Poco/Types.hå¤´æ–‡ä»¶ä¸­ã€‚ä»¥ä¸‹ä»¥ GNU C/C++ å’Œ CLang ä¸ºä¾‹ã€‚ä¸è¿‡è¦å¼ºè°ƒçš„æ˜¯ï¼ŒPOCO æœ‰æå¥½çš„è·¨å¹³å°æ€§ï¼Œä½ èƒ½æƒ³åˆ°çš„å¹³å°ï¼Œå‡ ä¹éƒ½å¯ä»¥è¿è¡Œ POCOã€‚
+1 æœ‰ç¬¦å·æ•´å‹
 typedef signed char            Int8;
 typedef signed short           Int16;
 typedef signed int             Int32;
-2 ÎŞ·ûºÅÕûĞÍ
+2 æ— ç¬¦å·æ•´å‹
 typedef unsigned char          UInt8;
 typedef unsigned short         UInt16;
 typedef unsigned int           UInt32;
 3 Pointer or Handler
 typedef signed long            IntPtr;
 typedef unsigned long          UIntPtr;
-4 64 Î»ÕûĞÍ
-¿¼ÂÇÁË 32 Î»»úºÍ 64 Î»»úµÄÇé¿ö
+4 64 ä½æ•´å‹
+è€ƒè™‘äº† 32 ä½æœºå’Œ 64 ä½æœºçš„æƒ…å†µ
 
 #if defined(__LP64__)
     #define POCO_PTR_IS_64_BIT 1
@@ -78,7 +78,7 @@ typedef unsigned long          UIntPtr;
 #define POCO_HAVE_INT64 1
 -
 
-£¨3£©Poco::Net::Socket
+ï¼ˆ3ï¼‰Poco::Net::Socket
 1 SelectMode
 enum SelectMode
     /// The mode argument to poll() and select().
@@ -89,18 +89,18 @@ enum SelectMode
 };
 2 SocketList
 typedef std::vector<Socket> SocketList;
-3 ¹¹Ôìº¯Êı
-Î´³õÊ¼»¯µÄ socket£º
+3 æ„é€ å‡½æ•°
+æœªåˆå§‹åŒ–çš„ socketï¼š
 
 Socket();
-¿½±´¹¹Ôìº¯Êı
+æ‹·è´æ„é€ å‡½æ•°
 
 Socket(const Socket& socket);
-4 ÖØÔØÔËËã·û
-¸³ÖµÔËËã·û£º
+4 é‡è½½è¿ç®—ç¬¦
+èµ‹å€¼è¿ç®—ç¬¦ï¼š
 
 Socket& operator = (const Socket& socket);
-±È½ÏÔËËã·û£º
+æ¯”è¾ƒè¿ç®—ç¬¦ï¼š
 
 bool operator == (const Socket& socket) const;
 bool operator != (const Socket& socket) const;
@@ -108,19 +108,19 @@ bool operator <  (const Socket& socket) const;
 bool operator <= (const Socket& socket) const;
 bool operator >  (const Socket& socket) const;
 bool operator >= (const Socket& socket) const;
-5 ³£ÓÃ socket ²Ù×÷
-·µ»Ø¸Ã socket µÄ¿É¶ÁÊı¾İµÄ×Ö½ÚÊı£¬¸Ã²Ù×÷²»ÒıÆğ socket ×èÈû£º
+5 å¸¸ç”¨ socket æ“ä½œ
+è¿”å›è¯¥ socket çš„å¯è¯»æ•°æ®çš„å­—èŠ‚æ•°ï¼Œè¯¥æ“ä½œä¸å¼•èµ· socket é˜»å¡ï¼š
 
 int available() const;
-¹Ø±Õ socket£º
+å…³é—­ socketï¼š
 
 void close();
-poll£º
+pollï¼š
 
 bool poll(const Poco::Timespan& timeout, int mode) const;
-    /// Determines the status of the socket, using a 
+    /// Determines the status of the socket, using a
     /// call to select().
-    /// 
+    ///
     /// The mode argument is constructed by combining the values
     /// of the SelectMode enumeration.
     ///
@@ -129,28 +129,28 @@ bool poll(const Poco::Timespan& timeout, int mode) const;
 
 SocketImpl* impl() const;
     /// Returns the SocketImpl for this socket.
-¼ì²éÕâ¸ö socket µÄÁ¬½ÓÊÇ·ñÊÇ°²È«µÄ£¨Ê¹ÓÃ SSL »ò TLS£©£º
+æ£€æŸ¥è¿™ä¸ª socket çš„è¿æ¥æ˜¯å¦æ˜¯å®‰å…¨çš„ï¼ˆä½¿ç”¨ SSL æˆ– TLSï¼‰ï¼š
 
 bool secure() const;
-6 »º³åÇø
-·¢ËÍÊı¾İµÄ»º³åÇø£º
+6 ç¼“å†²åŒº
+å‘é€æ•°æ®çš„ç¼“å†²åŒºï¼š
 
 void setSendBufferSize(int size);
 int getSendBufferSize() const;
-½ÓÊÕÊı¾İµÄ»º³åÇø£º
+æ¥æ”¶æ•°æ®çš„ç¼“å†²åŒºï¼š
 
 void setReceiveBufferSize(int size);
 int getReceiveBufferSize() const;
-7 ³¬Ê±Ê±¼ä
-·¢ËÍÊı¾İµÄ³¬Ê±Ê±¼ä£º
+7 è¶…æ—¶æ—¶é—´
+å‘é€æ•°æ®çš„è¶…æ—¶æ—¶é—´ï¼š
 
 void setSendTimeout(const Poco::Timespan& timeout);
 Poco::Timespan getSendTimeout() const;
-½ÓÊÕÊı¾İµÄ³¬Ê±Ê±¼ä£º
+æ¥æ”¶æ•°æ®çš„è¶…æ—¶æ—¶é—´ï¼š
 
 void setReceiveTimeout(const Poco::Timespan& timeout);
 Poco::Timespan getReceiveTimeout() const;
-8 ÆäËû½Ó¿Ú
+8 å…¶ä»–æ¥å£
 void setOption(int level, int option, int value);
 void setOption(int level, int option, unsigned value);
 void setOption(int level, int option, unsigned char value);
@@ -183,21 +183,21 @@ bool getOOBInline() const;
 
 void setBlocking(bool flag);
 bool getBlocking() const;
-»ñÈ¡ socket µÄ IP ºÍ¶Ë¿Ú£º
+è·å– socket çš„ IP å’Œç«¯å£ï¼š
 
 SocketAddress address() const;
-»ñÈ¡ peer socket µÄ IP µØÖ·ºÍ¶Ë¿Ú£º
+è·å– peer socket çš„ IP åœ°å€å’Œç«¯å£ï¼š
 
 SocketAddress peerAddress() const;
-9 ¾²Ì¬º¯Êı
-select£º
+9 é™æ€å‡½æ•°
+selectï¼š
 
 static int select(SocketList& readList,
-                  SocketList& writeList, 
-                  SocketList& exceptList, 
+                  SocketList& writeList,
+                  SocketList& exceptList,
                   const Poco::Timespan& timeout);
 
-    /// Determines the status of one or more sockets, 
+    /// Determines the status of one or more sockets,
     /// using a call to select().
     ///
     /// ReadList contains the list of sockets which should be
@@ -211,7 +211,7 @@ static int select(SocketList& readList,
     ///
     /// Returns the number of sockets ready.
     ///
-    /// After return, 
+    /// After return,
     ///   * readList contains those sockets ready for reading,
     ///   * writeList contains those sockets ready for writing,
     ///   * exceptList contains those sockets with a pending error.
@@ -225,19 +225,19 @@ static int select(SocketList& readList,
     /// the closed socket will not be included in any list.
     /// In this case, the return value may be greater than the sum
     /// of all sockets in all list.
-¼ì²éÊÇ·ñÖ§³Ö IPv4 »ò IPv6£º
+æ£€æŸ¥æ˜¯å¦æ”¯æŒ IPv4 æˆ– IPv6ï¼š
 
 static bool supportsIPv4();
 static bool supportsIPv6();
 -
 
-£¨4£©Poco::Net::IPAddress
+ï¼ˆ4ï¼‰Poco::Net::IPAddress
 1 Poco::Net::IPAddress
-µØÖ·×î´ó³¤¶È£¬IPv4 ÊÇ in_addr µÄ³¤¶È£¬IPv6 ÊÇ in6_addr µÄ³¤¶È
+åœ°å€æœ€å¤§é•¿åº¦ï¼ŒIPv4 æ˜¯ in_addr çš„é•¿åº¦ï¼ŒIPv6 æ˜¯ in6_addr çš„é•¿åº¦
 
 enum
 {
-    MAX_ADDRESS_LENGTH = 
+    MAX_ADDRESS_LENGTH =
 #if defined(POCO_HAVE_IPv6)
         sizeof(struct in6_addr)
 #else
@@ -246,7 +246,7 @@ enum
         /// Maximum length in bytes of a socket address.
 };
 1.1 IPv4 or IPv6?
-POCO ÓÃÒ»¸öÃ¶¾ÙÀàÀ´±íÊ¾£º
+POCO ç”¨ä¸€ä¸ªæšä¸¾ç±»æ¥è¡¨ç¤ºï¼š
 
 enum Family
     /// Possible address families for IP addresses.
@@ -255,34 +255,34 @@ enum Family
     IPv6
 };
 
-1.2 ¹¹Ôìº¯Êı
-·µ»ØÒ»¸öÈ« 0 µÄ IP µØÖ·£º
+1.2 æ„é€ å‡½æ•°
+è¿”å›ä¸€ä¸ªå…¨ 0 çš„ IP åœ°å€ï¼š
 IPAddress();
 
-¿½±´¹¹Ôìº¯Êı£º
+æ‹·è´æ„é€ å‡½æ•°ï¼š
 IPAddress(const IPAddress& addr);
 
-¸ù¾İ IP ÀàĞÍ£¨IPv4 »ò IPv6£©´´½¨Ò»¸öÈ« 0 µÄ IP µØÖ·£º
+æ ¹æ® IP ç±»å‹ï¼ˆIPv4 æˆ– IPv6ï¼‰åˆ›å»ºä¸€ä¸ªå…¨ 0 çš„ IP åœ°å€ï¼š
 explicit IPAddress(Family family);
 
-ÓÃ×Ö·û´®ÀàĞÍµÄ IPv4 µØÖ·»ò IPv6 µØÖ·À´´´½¨Ò»¸ö IP µØÖ·£¬ÆäÖĞ IPv4 ÊÇÊ®½øÖÆ±íÊ¾µÄ£¬IPv6 ÊÇÊ®Áù½øÖÆ±íÊ¾µÄ£º
+ç”¨å­—ç¬¦ä¸²ç±»å‹çš„ IPv4 åœ°å€æˆ– IPv6 åœ°å€æ¥åˆ›å»ºä¸€ä¸ª IP åœ°å€ï¼Œå…¶ä¸­ IPv4 æ˜¯åè¿›åˆ¶è¡¨ç¤ºçš„ï¼ŒIPv6 æ˜¯åå…­è¿›åˆ¶è¡¨ç¤ºçš„ï¼š
 explicit IPAddress(const std::string& addr);
 
-ÓÃ×Ö·û´®ÀàĞÍµÄ IP µØÖ·ºÍÖ¸¶¨µÄÀàĞÍ£¨IPv4 »ò IPv6£©´´½¨Ò»¸ö IP µØÖ·£¬ÆäÖĞ IPv4 ÊÇÊ®½øÖÆ±íÊ¾µÄ£¬IPv6 ÊÇÊ®Áù½øÖÆ±íÊ¾µÄ£º
+ç”¨å­—ç¬¦ä¸²ç±»å‹çš„ IP åœ°å€å’ŒæŒ‡å®šçš„ç±»å‹ï¼ˆIPv4 æˆ– IPv6ï¼‰åˆ›å»ºä¸€ä¸ª IP åœ°å€ï¼Œå…¶ä¸­ IPv4 æ˜¯åè¿›åˆ¶è¡¨ç¤ºçš„ï¼ŒIPv6 æ˜¯åå…­è¿›åˆ¶è¡¨ç¤ºçš„ï¼š
 IPAddress(const std::string& addr, Family family);
 
-ÓÃÔ­Éú IP µØÖ· in_addr »ò in6_addr Êı¾İ½á¹¹ºÍ¸ø¶¨µÄ×Ö·û´®³¤¶È£¬´´½¨Ò»¸ö IPAddress£º
+ç”¨åŸç”Ÿ IP åœ°å€ in_addr æˆ– in6_addr æ•°æ®ç»“æ„å’Œç»™å®šçš„å­—ç¬¦ä¸²é•¿åº¦ï¼Œåˆ›å»ºä¸€ä¸ª IPAddressï¼š
 IPAddress(const void* addr, poco_socklen_t length);
 
-ÓÃÔ­Éú IP µØÖ· in_addr »ò in6_addr Êı¾İ½á¹¹ºÍ¸ø¶¨µÄ×Ö·û´®³¤¶È£¬´´½¨Ò»¸ö IPAddress£¬ÆäÖĞ scope ²ÎÊıÓÃÓÚ IPv6£¬IPv4 »áºöÂÔÕâ¸ö²ÎÊı£º
+ç”¨åŸç”Ÿ IP åœ°å€ in_addr æˆ– in6_addr æ•°æ®ç»“æ„å’Œç»™å®šçš„å­—ç¬¦ä¸²é•¿åº¦ï¼Œåˆ›å»ºä¸€ä¸ª IPAddressï¼Œå…¶ä¸­ scope å‚æ•°ç”¨äº IPv6ï¼ŒIPv4 ä¼šå¿½ç•¥è¿™ä¸ªå‚æ•°ï¼š
 IPAddress(const void* addr, poco_socklen_t length, Poco::UInt32 scope);
 
-1.3 ÖØÔØÔËËã·û
+1.3 é‡è½½è¿ç®—ç¬¦
 
-¸³ÖµÔËËã·û£º
+èµ‹å€¼è¿ç®—ç¬¦ï¼š
 IPAddress& operator = (const IPAddress& addr);
 
-±È½ÏÔËËã·û
+æ¯”è¾ƒè¿ç®—ç¬¦
 bool operator == (const IPAddress& addr) const;
 bool operator != (const IPAddress& addr) const;
 bool operator <  (const IPAddress& addr) const;
@@ -290,17 +290,17 @@ bool operator <= (const IPAddress& addr) const;
 bool operator >  (const IPAddress& addr) const;
 bool operator >= (const IPAddress& addr) const;
 
-1.4 ³£ÓÃ²Ù×÷
-swap£º
+1.4 å¸¸ç”¨æ“ä½œ
+swapï¼š
 void swap(IPAddress& address);
 
-»ñÈ¡µØÖ·ÀàĞÍ£º
+è·å–åœ°å€ç±»å‹ï¼š
 Family family() const;
 
-IPv6 ×¨ÓÃº¯Êı£¬·µ»Ø scope identifier£¬Èç¹ûÊÇ IPv4 Ôò·µ»Ø 0£º
+IPv6 ä¸“ç”¨å‡½æ•°ï¼Œè¿”å› scope identifierï¼Œå¦‚æœæ˜¯ IPv4 åˆ™è¿”å› 0ï¼š
 Poco::UInt32 scope() const;
 
-toString£¬IPv4 ÔòÏÔÊ¾¡°d.d.d.d¡±£¬IPv6 Ôò
+toStringï¼ŒIPv4 åˆ™æ˜¾ç¤ºâ€œd.d.d.dâ€ï¼ŒIPv6 åˆ™
 std::string toString() const;
 
 poco_socklen_t length() const;
@@ -321,31 +321,31 @@ static IPAddress wildcard(Family family = IPv4);
 
 static IPAddress broadcast();
 
-1.5 IS º¯Êı
-1.5.1 ÊÇ·ñÊÇÎ´³õÊ¼»¯×´Ì¬
-ÊÇ·ñÊÇÎ´³õÊ¼»¯µÄÈ«Áã×´Ì¬£¨wildcard£©£º
+1.5 IS å‡½æ•°
+1.5.1 æ˜¯å¦æ˜¯æœªåˆå§‹åŒ–çŠ¶æ€
+æ˜¯å¦æ˜¯æœªåˆå§‹åŒ–çš„å…¨é›¶çŠ¶æ€ï¼ˆwildcardï¼‰ï¼š
 bool isWildcard() const;
 
-1.5.2 ÊÇ·ñÊÇ¹ã²¥/×é²¥/µ¥²¥
-ÊÇ·ñÊÇ¹ã²¥µØÖ·£¨È«Áã£©£¬Óë wildcard µÄÇø±ğÊÇ wildcard ÊÇÎ´¾­¹ı³õÊ¼»¯µÄ¡£Ö»ÓĞ IPv4 ÓĞ¹ã²¥µØÖ·£¬IPv6 Ôò·µ»Ø false¡£
+1.5.2 æ˜¯å¦æ˜¯å¹¿æ’­/ç»„æ’­/å•æ’­
+æ˜¯å¦æ˜¯å¹¿æ’­åœ°å€ï¼ˆå…¨é›¶ï¼‰ï¼Œä¸ wildcard çš„åŒºåˆ«æ˜¯ wildcard æ˜¯æœªç»è¿‡åˆå§‹åŒ–çš„ã€‚åªæœ‰ IPv4 æœ‰å¹¿æ’­åœ°å€ï¼ŒIPv6 åˆ™è¿”å› falseã€‚
 bool isBroadcast() const;
 
-ÊÇ·ñÊÇ»Ø»·µØÖ·£º
-¶ÔÓÚ IPv4 ÊÇ127.0.0.1
-¶ÔÓÚ IPv6 ÊÇ::1
-º¯ÊıÔ­ĞÍ£º
+æ˜¯å¦æ˜¯å›ç¯åœ°å€ï¼š
+å¯¹äº IPv4 æ˜¯127.0.0.1
+å¯¹äº IPv6 æ˜¯::1
+å‡½æ•°åŸå‹ï¼š
 bool isLoopback() const;
 
-ÊÇ·ñÊÇ¶à²¥£º
-¶ÔÓÚ IPv4 ÊÇ224.0.0.0µ½239.255.255.255·¶Î§£»
-¶ÔÓÚ IPv6 ÊÇFFxx:x:x:x:x:x:x:xµÄ·¶Î§£º
-º¯ÊıÔ­ĞÍ£º
+æ˜¯å¦æ˜¯å¤šæ’­ï¼š
+å¯¹äº IPv4 æ˜¯224.0.0.0åˆ°239.255.255.255èŒƒå›´ï¼›
+å¯¹äº IPv6 æ˜¯FFxx:x:x:x:x:x:x:xçš„èŒƒå›´ï¼š
+å‡½æ•°åŸå‹ï¼š
 bool isMulticast() const;
 
-ÊÇ·ñÊÇµ¥²¥£º
+æ˜¯å¦æ˜¯å•æ’­ï¼š
 bool isUnicast() const;
 
-1.5.2 ÆäËûº¯Êı
+1.5.2 å…¶ä»–å‡½æ•°
 bool isLinkLocal() const;
 bool isSiteLocal() const;
 bool isIPv4Compatible() const;
@@ -356,17 +356,17 @@ bool isLinkLocalMC() const;
 bool isSiteLocalMC() const;
 bool isOrgLocalMC() const;
 bool isGlobalMC() const;
-1.5 protected º¯Êı
+1.5 protected å‡½æ•°
 protected:
     void init(IPAddressImpl* pImpl);
 -
 
-£¨5£©Poco::Net::SocketAddress
-1 Ã¶¾Ù
-×î´óµØÖ·³¤¶È£¬Õâ¸öÓëPoco::Net::IPAddressÖĞµÄ¶¨Òå¿ÉÒÔÀà±È£¬²»¹ıÕâÀïÖ¸µÄÊÇ`struct sockaddr_in6
+ï¼ˆ5ï¼‰Poco::Net::SocketAddress
+1 æšä¸¾
+æœ€å¤§åœ°å€é•¿åº¦ï¼Œè¿™ä¸ªä¸Poco::Net::IPAddressä¸­çš„å®šä¹‰å¯ä»¥ç±»æ¯”ï¼Œä¸è¿‡è¿™é‡ŒæŒ‡çš„æ˜¯`struct sockaddr_in6
 enum
 {
-    MAX_ADDRESS_LENGTH = 
+    MAX_ADDRESS_LENGTH =
 #if defined(POCO_HAVE_IPv6)
         sizeof(struct sockaddr_in6)
 #else
@@ -374,72 +374,72 @@ enum
 #endif
         /// Maximum length in bytes of a socket address.
 };
-2 ¹¹Ôìº¯Êı
-´´½¨Ò»¸ö wildcard µÄÈ« 0 µÄ IPv4 µÄ socket µØÖ·£º
+2 æ„é€ å‡½æ•°
+åˆ›å»ºä¸€ä¸ª wildcard çš„å…¨ 0 çš„ IPv4 çš„ socket åœ°å€ï¼š
 SocketAddress();
 
-ÓÃ Poco::Net::IPAddress ºÍ¶Ë¿ÚºÅ´´½¨ IPv4 »ò IPv6 µÄ SocketAddress£º
+ç”¨ Poco::Net::IPAddress å’Œç«¯å£å·åˆ›å»º IPv4 æˆ– IPv6 çš„ SocketAddressï¼š
 SocketAddress(const IPAddress& host, Poco::UInt16 port);
 
-ÓÃ std::string ºÍ¶Ë¿ÚºÅ´´½¨ IPv4 »ò IPv6 µÄ SocketAddress£º
+ç”¨ std::string å’Œç«¯å£å·åˆ›å»º IPv4 æˆ– IPv6 çš„ SocketAddressï¼š
 SocketAddress(const std::string& host, Poco::UInt16 port);
 SocketAddress(const std::string& host, const std::string& port);
 explicit SocketAddress(const std::string& hostAndPort);
 
-¿½±´¹¹Ôìº¯Êı£º
+æ‹·è´æ„é€ å‡½æ•°ï¼š
 SocketAddress(const SocketAddress& addr);
 
-Ô­Éú·½Ê½¹¹Ôì SocketAddress£º
+åŸç”Ÿæ–¹å¼æ„é€  SocketAddressï¼š
 SocketAddress(const struct sockaddr* addr, poco_socklen_t length);
 
-3 ³£ÓÃº¯Êı
-swap£º
-void swap(SocketAddress& addr); 
+3 å¸¸ç”¨å‡½æ•°
+swapï¼š
+void swap(SocketAddress& addr);
 
-»ñÈ¡ IPAddress¡¢¶Ë¿ÚºÍµØÖ·ÀàĞÍ£º
+è·å– IPAddressã€ç«¯å£å’Œåœ°å€ç±»å‹ï¼š
 IPAddress host() const;
 Poco::UInt16 port() const;
 IPAddress::Family family() const;
 
-»ñÈ¡Ô­Éú·½Ê½µÄµØÖ·³¤¶È¡¢µØÖ·ºÍµØÖ·×å£º
-poco_socklen_t length() const;  
+è·å–åŸç”Ÿæ–¹å¼çš„åœ°å€é•¿åº¦ã€åœ°å€å’Œåœ°å€æ—ï¼š
+poco_socklen_t length() const;
 const struct sockaddr* addr() const;
 int af() const;
 
-toString£º
+toStringï¼š
 std::string toString() const;
 
-4 ÖØÔØÔËËã·û
+4 é‡è½½è¿ç®—ç¬¦
 bool operator == (const SocketAddress& addr) const;
 bool operator != (const SocketAddress& addr) const;
-5 protected º¯Êı
+5 protected å‡½æ•°
 void init(const IPAddress& host, Poco::UInt16 port);
 void init(const std::string& host, Poco::UInt16 port);
 Poco::UInt16 resolveService(const std::string& service);
 -
 
-£¨6£©Poco::Timestamp
-1 ÀàĞÍ±ğÃû
-Èı¸öÊ±¼ä´ÁÏà¹ØµÄÀàĞÍ±ğÃû£¬TimeDiff±íÊ¾Á½¸öÊ±¼ä´ÁµÄ²î£¬µÚ¶ş¸öÊÇÒÔÎ¢ÃëÎªµ¥Î»µÄÊ±¼ä´Á£¬µÚÈı¸öÊÇÒÔ 100 ÄÉÃë£¨0.1 Î¢Ãî£©Îªµ¥Î»µÄÊ±¼ä´Á£º
+ï¼ˆ6ï¼‰Poco::Timestamp
+1 ç±»å‹åˆ«å
+ä¸‰ä¸ªæ—¶é—´æˆ³ç›¸å…³çš„ç±»å‹åˆ«åï¼ŒTimeDiffè¡¨ç¤ºä¸¤ä¸ªæ—¶é—´æˆ³çš„å·®ï¼Œç¬¬äºŒä¸ªæ˜¯ä»¥å¾®ç§’ä¸ºå•ä½çš„æ—¶é—´æˆ³ï¼Œç¬¬ä¸‰ä¸ªæ˜¯ä»¥ 100 çº³ç§’ï¼ˆ0.1 å¾®å¦™ï¼‰ä¸ºå•ä½çš„æ—¶é—´æˆ³ï¼š
 typedef Int64 TimeDiff;   /// difference between two timestamps in microseconds
 typedef Int64 TimeVal;    /// monotonic UTC time value in microsecond resolution
 typedef Int64 UtcTimeVal; /// monotonic UTC time value in 100 nanosecond resolution
-2 ¹¹Ôìº¯Êı
-µ±Ç°Ê±¼äµÄÊ±¼ä´Á£º
+2 æ„é€ å‡½æ•°
+å½“å‰æ—¶é—´çš„æ—¶é—´æˆ³ï¼š
 Timestamp();
 
-Ö¸¶¨Ê±¼äµÄÊ±¼ä´Á£º
+æŒ‡å®šæ—¶é—´çš„æ—¶é—´æˆ³ï¼š
 Timestamp(TimeVal tv);
 
-¿½±´¹¹Ôìº¯Êı£º
+æ‹·è´æ„é€ å‡½æ•°ï¼š
 Timestamp(const Timestamp& other);
 
-3 ÖØÔØÔËËã·û
-¸³ÖµÔËËã·û£º
+3 é‡è½½è¿ç®—ç¬¦
+èµ‹å€¼è¿ç®—ç¬¦ï¼š
 Timestamp& operator = (const Timestamp& other);
 Timestamp& operator = (TimeVal tv);
 
-±È½ÏÔËËã·û£º
+æ¯”è¾ƒè¿ç®—ç¬¦ï¼š
 bool operator == (const Timestamp& ts) const;
 bool operator != (const Timestamp& ts) const;
 bool operator >  (const Timestamp& ts) const;
@@ -447,56 +447,56 @@ bool operator >= (const Timestamp& ts) const;
 bool operator <  (const Timestamp& ts) const;
 bool operator <= (const Timestamp& ts) const;
 
-ËãÊõÔËËã·ûÓëËãÊõ¸³ÖµÔËËã·û
+ç®—æœ¯è¿ç®—ç¬¦ä¸ç®—æœ¯èµ‹å€¼è¿ç®—ç¬¦
 Timestamp  operator +  (TimeDiff d) const;
 Timestamp  operator -  (TimeDiff d) const;
 TimeDiff   operator -  (const Timestamp& ts) const;
 Timestamp& operator += (TimeDiff d);
 Timestamp& operator -= (TimeDiff d);
 
-4 »ñÈ¡²»Í¬¸ñÊ½±íÊ¾µÄÊ±¼ä´Á
-»ñÈ¡ std::time_t ¸ñÊ½µÄÊ±¼ä´Á£º
+4 è·å–ä¸åŒæ ¼å¼è¡¨ç¤ºçš„æ—¶é—´æˆ³
+è·å– std::time_t æ ¼å¼çš„æ—¶é—´æˆ³ï¼š
 std::time_t epochTime() const;
 
-»ñÈ¡ UTC-based time ¸ñÊ½µÄÊ±¼ä´Á£º
+è·å– UTC-based time æ ¼å¼çš„æ—¶é—´æˆ³ï¼š
 UtcTimeVal utcTime() const;
 
-»ñÈ¡ TimeVal ¸ñÊ½£¨Î¢Ãë£©µÄÊ±¼ä´Á£º
+è·å– TimeVal æ ¼å¼ï¼ˆå¾®ç§’ï¼‰çš„æ—¶é—´æˆ³ï¼š
 TimeVal epochMicroseconds() const;
 
-5 ÆäËû³ÉÔ±º¯Êı
-½»»»Ê±¼ä´Á£º
+5 å…¶ä»–æˆå‘˜å‡½æ•°
+äº¤æ¢æ—¶é—´æˆ³ï¼š
 void swap(Timestamp& timestamp);
 
-¸üĞÂÊ±¼ä´ÁÎªµ±Ç°Ê±¼ä£º
+æ›´æ–°æ—¶é—´æˆ³ä¸ºå½“å‰æ—¶é—´ï¼š
 void update();
 
-´ËÊ±Ê±¼ä´ÁÓëÕâ¸öÊ±¼ä´ÁµÄ²î£¨TimeStamp() - *this£©£º
+æ­¤æ—¶æ—¶é—´æˆ³ä¸è¿™ä¸ªæ—¶é—´æˆ³çš„å·®ï¼ˆTimeStamp() - *thisï¼‰ï¼š
 TimeDiff elapsed() const;
 
-ÅĞ¶ÏÒ»¶ÎÊ±¼äÊÇ·ñÒÑ¾­¹ıÈ¥£º
-bool isElapsed(TimeDiff interval) const; 
+åˆ¤æ–­ä¸€æ®µæ—¶é—´æ˜¯å¦å·²ç»è¿‡å»ï¼š
+bool isElapsed(TimeDiff interval) const;
 
-6 ¾²Ì¬³ÉÔ±º¯Êı
-ÓÃstd::time_t¶ÔÏó´´½¨Ò»¸öTimestamp:
+6 é™æ€æˆå‘˜å‡½æ•°
+ç”¨std::time_tå¯¹è±¡åˆ›å»ºä¸€ä¸ªTimestamp:
 static Timestamp fromEpochTime(std::time_t t);
 
-ÓÃUtcTimeVal¶ÔÏó´´½¨Ò»¸öTimestamp£º
+ç”¨UtcTimeValå¯¹è±¡åˆ›å»ºä¸€ä¸ªTimestampï¼š
 static Timestamp fromUtcTime(UtcTimeVal val);
 
-·µ»ØÊ±¼ä½âÎö¶È£¬¼´ Units per second¡£ÒòÎª Poco::TimeStamp µÄ×îĞ¡½âÎö¶ÈÎªÎ¢Ãî£¬ËùÒÔ¸Ãº¯Êı¶¼·µ»Ø 1000000£º
+è¿”å›æ—¶é—´è§£æåº¦ï¼Œå³ Units per secondã€‚å› ä¸º Poco::TimeStamp çš„æœ€å°è§£æåº¦ä¸ºå¾®å¦™ï¼Œæ‰€ä»¥è¯¥å‡½æ•°éƒ½è¿”å› 1000000ï¼š
 static TimeVal resolution();
 -
 
-£¨7£©Poco::Net::DatagramSocket
-1 ¹¹Ôìº¯Êı
-´´½¨Ò»¸öÎ´Á¬½ÓµÄ IPv4 Êı¾İ±¨ Socket£º
+ï¼ˆ7ï¼‰Poco::Net::DatagramSocket
+1 æ„é€ å‡½æ•°
+åˆ›å»ºä¸€ä¸ªæœªè¿æ¥çš„ IPv4 æ•°æ®æŠ¥ Socketï¼š
 DatagramSocket();
 
-´´½¨Ò»¸öÖ¸¶¨ IP ÀàĞÍ£¨IPv4 »ò IPv6£©µÄÊı¾İ±¨ Socket£º
+åˆ›å»ºä¸€ä¸ªæŒ‡å®š IP ç±»å‹ï¼ˆIPv4 æˆ– IPv6ï¼‰çš„æ•°æ®æŠ¥ Socketï¼š
 explicit DatagramSocket(IPAddress::Family family);
 
-´´½¨Ò»¸öÖ¸¶¨ SocketAddress µÄÊı¾İ±¨ Socket
+åˆ›å»ºä¸€ä¸ªæŒ‡å®š SocketAddress çš„æ•°æ®æŠ¥ Socket
 DatagramSocket(const SocketAddress& address, bool reuseAddress = false);
 
 DatagramSocket(const Socket& socket);
@@ -504,48 +504,48 @@ DatagramSocket(const Socket& socket);
     /// from another socket. The SocketImpl must be
     /// a DatagramSocketImpl, otherwise an InvalidArgumentException
     /// will be thrown.
-2 ÖØÔØÔËËã·û
+2 é‡è½½è¿ç®—ç¬¦
 DatagramSocket& operator = (const Socket& socket);
     /// Assignment operator.
     ///
     /// Releases the socket's SocketImpl and
     /// attaches the SocketImpl from the other socket and
-    /// increments the reference count of the SocketImpl.   
-3 ³£ÓÃ²Ù×÷
-3.1 Á¬½ÓÓë°ó¶¨
+    /// increments the reference count of the SocketImpl.
+3 å¸¸ç”¨æ“ä½œ
+3.1 è¿æ¥ä¸ç»‘å®š
 void connect(const SocketAddress& address);
 void bind(const SocketAddress& address, bool reuseAddress = false);
-3.2 ÊÕ·¢Êı¾İÇÒ²»¿¼ÂÇ client
+3.2 æ”¶å‘æ•°æ®ä¸”ä¸è€ƒè™‘ client
 int sendBytes(const void* buffer, int length, int flags = 0);
 int receiveBytes(void* buffer, int length, int flags = 0);
-3.3 ÊÖ·¨Êı¾İÇÒ»ñÈ¡ client µÄ SocketAddress
+3.3 æ‰‹æ³•æ•°æ®ä¸”è·å– client çš„ SocketAddress
 int sendTo(const void* buffer, int length, const SocketAddress& address, int flags = 0);
 int receiveFrom(void* buffer, int length, SocketAddress& address, int flags = 0);
-3.4 ÊÕ·¢¹ã²¥
+3.4 æ”¶å‘å¹¿æ’­
 void setBroadcast(bool flag);
 bool getBroadcast() const;
-4 protected º¯Êı
+4 protected å‡½æ•°
 DatagramSocket(SocketImpl* pImpl);
 -
 
-£¨8£©·á¸»µÄSocket±à³Ì
-1 POCO ÖĞµÄ Socket
-POCO ÖĞÓĞ ·á¸»µÄ Socket ·â×°¡£Æä¼Ì³Ğ¹ØÏµÈçÏÂ£º
+ï¼ˆ8ï¼‰ä¸°å¯Œçš„Socketç¼–ç¨‹
+1 POCO ä¸­çš„ Socket
+POCO ä¸­æœ‰ ä¸°å¯Œçš„ Socket å°è£…ã€‚å…¶ç»§æ‰¿å…³ç³»å¦‚ä¸‹ï¼š
 
 ________________________________Socket________________________________
-     ¡ü               ¡ü                   ¡ü            ¡ü         ¡ü
+     â†‘               â†‘                   â†‘            â†‘         â†‘
 StreamSocket   ServerSocket       DatagramSocket   RawSocket ICMPSocket
-   ¡ü       ¨I         ¡ü                   ¡ü
-   ¡ü         ¨I SecureServerSocket MulticastSocket             
-   ¡ü           ¨I 
-DialogSocket   SecureServerSocket            
-             
-                         
+   â†‘       â†–         â†‘                   â†‘
+   â†‘         â†– SecureServerSocket MulticastSocket
+   â†‘           â†–
+DialogSocket   SecureServerSocket
 
-±¾ÎÄÔİÇÒÖ»½éÉÜ StreamSocket¡¢ServerSocket¡¢DatagramSocket
+
+
+æœ¬æ–‡æš‚ä¸”åªä»‹ç» StreamSocketã€ServerSocketã€DatagramSocket
 
 2 Poco::Net::ServerSocket
-ServerSocket ÊÇÒ»¸ö·â×°²ã´Î±È½ÏµÍ£¨low level£©µÄ Socket£¬ÆäÊ¹ÓÃµÄÊÇ TCP Á¬½Ó¡£ÔÚÊµ¼ÊµÄ Server ÖĞÍÆ¼öÊ¹ÓÃ TCPServer »ò Reactor ¿ò¼Ü¡£ÏÂÃæÊÇÀı³Ì£º
+ServerSocket æ˜¯ä¸€ä¸ªå°è£…å±‚æ¬¡æ¯”è¾ƒä½ï¼ˆlow levelï¼‰çš„ Socketï¼Œå…¶ä½¿ç”¨çš„æ˜¯ TCP è¿æ¥ã€‚åœ¨å®é™…çš„ Server ä¸­æ¨èä½¿ç”¨ TCPServer æˆ– Reactor æ¡†æ¶ã€‚ä¸‹é¢æ˜¯ä¾‹ç¨‹ï¼š
 
 #include "Poco/Net/ServerSocket.h"
 #include "Poco/Net/SocketStream.h"
@@ -554,17 +554,17 @@ ServerSocket ÊÇÒ»¸ö·â×°²ã´Î±È½ÏµÍ£¨low level£©µÄ Socket£¬ÆäÊ¹ÓÃµÄÊÇ TCP Á¬½Ó¡£ÔÚ
 
 int main(int argc, char **argv)
 {
-°ó¶¨¶Ë¿Ú£¬²¢¿ªÊ¼¼àÌı£º
+ç»‘å®šç«¯å£ï¼Œå¹¶å¼€å§‹ç›‘å¬ï¼š
 
     Poco::Net::ServerSocket srv(12345);
-·şÎñÖ÷Ñ­»·£º
+æœåŠ¡ä¸»å¾ªç¯ï¼š
 
     while (true)
     {
-½ÓÊÜÁ¬½Ó£º
+æ¥å—è¿æ¥ï¼š
 
         Poco::Net::StreamSocket streamSocket = srv.acceptConnection();
-Ïò Socket ·¢ËÍÊı¾İ£º
+å‘ Socket å‘é€æ•°æ®ï¼š
 
         Poco::Net::SocketStream socketStream(streamSocket);
         socketStream << "HTTP/1.0 200 OK\r\n"
@@ -575,48 +575,48 @@ int main(int argc, char **argv)
     }
     return 0;
 }
-3 TCPServer ¿ò¼Ü
-POCO Ìá¹©ÁËÒ»¸ö TCPServer£¬¹ËÃûË¼Òå£¬ÊÇÒ»¸ö TCP ·şÎñÆ÷¡£×¼È·µÄËµ£¬TCPServer ÊÇÒ»¸ö Framework£¬ÒªÇóÊ¹ÓÃ ServerSocket È¥ accept Á¬½Ó¡£²¢ÇÒÔÚ½« ServerSocket ×ªµİ¸ø TCPServer Ö®Ç°±ØĞë½«ÆäÉèÖÃÎª¼àÌıÄ£Ê½¡£
+3 TCPServer æ¡†æ¶
+POCO æä¾›äº†ä¸€ä¸ª TCPServerï¼Œé¡¾åæ€ä¹‰ï¼Œæ˜¯ä¸€ä¸ª TCP æœåŠ¡å™¨ã€‚å‡†ç¡®çš„è¯´ï¼ŒTCPServer æ˜¯ä¸€ä¸ª Frameworkï¼Œè¦æ±‚ä½¿ç”¨ ServerSocket å» accept è¿æ¥ã€‚å¹¶ä¸”åœ¨å°† ServerSocket è½¬é€’ç»™ TCPServer ä¹‹å‰å¿…é¡»å°†å…¶è®¾ç½®ä¸ºç›‘å¬æ¨¡å¼ã€‚
 
-TCPServer Î¬»¤Ò»¸öÁ¬½Ó¶ÓÁĞ£¨connection queue£©¡£TCPServer ¿ªÆô¶à¸öÏß³ÌÈ¥´ÓÁ¬½Ó¶ÓÁĞÖĞÈ¡Á¬½Ó²¢½øĞĞ´¦Àí£¬Ïß³ÌµÄÊıÁ¿ÊÇ¶¯Ì¬µÄ£¬ÓëÁ¬½Ó¶ÓÁĞÖĞµÄÁ¬½ÓÊıÓĞ¹Ø¡£
+TCPServer ç»´æŠ¤ä¸€ä¸ªè¿æ¥é˜Ÿåˆ—ï¼ˆconnection queueï¼‰ã€‚TCPServer å¼€å¯å¤šä¸ªçº¿ç¨‹å»ä»è¿æ¥é˜Ÿåˆ—ä¸­å–è¿æ¥å¹¶è¿›è¡Œå¤„ç†ï¼Œçº¿ç¨‹çš„æ•°é‡æ˜¯åŠ¨æ€çš„ï¼Œä¸è¿æ¥é˜Ÿåˆ—ä¸­çš„è¿æ¥æ•°æœ‰å…³ã€‚
 
-·ÇÕı³£Á¬½Ó»á±»Á¢¼´¹Ø±Õ£¬¶ø²»»á±»²åÈëÁ¬½Ó¶ÓÁĞ¡£TCPServer µÄÖ÷Ïß³Ì¸ºÔğ½«¿Í»§¶Ë·¢À´µÄÇëÇóÁ¬½Ó·ÅÈëÁ¬½Ó¶ÓÁĞ¡£
+éæ­£å¸¸è¿æ¥ä¼šè¢«ç«‹å³å…³é—­ï¼Œè€Œä¸ä¼šè¢«æ’å…¥è¿æ¥é˜Ÿåˆ—ã€‚TCPServer çš„ä¸»çº¿ç¨‹è´Ÿè´£å°†å®¢æˆ·ç«¯å‘æ¥çš„è¯·æ±‚è¿æ¥æ”¾å…¥è¿æ¥é˜Ÿåˆ—ã€‚
 
-TCPServer ÊÇÒ»¸ö¸ßĞ§µÄ¿ª·¢¿ò¿ò¼Ü£¬¾ßÌåÏê¼û¡¶POCO¿âÖĞÎÄ±à³Ì²Î¿¼Ö¸ÄÏ£¨10£©ÈçºÎÊ¹ÓÃTCPServer¿ò¼Ü£¿¡·Ò»ÎÄ¡£
+TCPServer æ˜¯ä¸€ä¸ªé«˜æ•ˆçš„å¼€å‘æ¡†æ¡†æ¶ï¼Œå…·ä½“è¯¦è§ã€ŠPOCOåº“ä¸­æ–‡ç¼–ç¨‹å‚è€ƒæŒ‡å—ï¼ˆ10ï¼‰å¦‚ä½•ä½¿ç”¨TCPServeræ¡†æ¶ï¼Ÿã€‹ä¸€æ–‡ã€‚
 
 4 Poco::Net::DatagramSocket
 4.1 UDP Client
-#include "Poco/Net/DatagramSocket.h"  
-#include "Poco/Net/SocketAddress.h"  
-#include "Poco/Timestamp.h"  
-#include "Poco/DateTimeFormatter.h"  
+#include "Poco/Net/DatagramSocket.h"
+#include "Poco/Net/SocketAddress.h"
+#include "Poco/Timestamp.h"
+#include "Poco/DateTimeFormatter.h"
 #include <string>
 
 int main()
 {
     const char* ipaddr = "127.0.0.1";
-    Poco::Net::SocketAddress sa("127.0.0.1", 1234);  
+    Poco::Net::SocketAddress sa("127.0.0.1", 1234);
     Poco::Net::DatagramSocket dgs;
-    dgs.connect(sa); 
+    dgs.connect(sa);
 
-    std::string syslogMsg;  
-    Poco::Timestamp now;  
-    syslogMsg = Poco::DateTimeFormatter::format(now, "<14>%w %f %H:%M:%S Hello,world!");  
-    dgs.sendBytes(syslogMsg.data(), syslogMsg.size());  
+    std::string syslogMsg;
+    Poco::Timestamp now;
+    syslogMsg = Poco::DateTimeFormatter::format(now, "<14>%w %f %H:%M:%S Hello,world!");
+    dgs.sendBytes(syslogMsg.data(), syslogMsg.size());
 
-    return 0;  
-}  
-²»ÄÜÓÃ£º
+    return 0;
+}
+ä¸èƒ½ç”¨ï¼š
 
 ...
 const char* ipaddr = "127.0.0.1";
-Poco::Net::SocketAddress sa("127.0.0.1", 1234);  
+Poco::Net::SocketAddress sa("127.0.0.1", 1234);
 Poco::Net::DatagramSocket dgs(sa);
 
-std::string syslogMsg;  
-Poco::Timestamp now; 
-... 
-ÒòÎª DatagramSocket(SocketAddress) ¹¹Ôìº¯ÊıÊÇ´´½¨Ò»¸ö DatagramSocket È»ºó bind()¡£¶øÕâÀïÒªÊ¹ÓÃµÄÊÇ connect()¡£
+std::string syslogMsg;
+Poco::Timestamp now;
+...
+å› ä¸º DatagramSocket(SocketAddress) æ„é€ å‡½æ•°æ˜¯åˆ›å»ºä¸€ä¸ª DatagramSocket ç„¶å bind()ã€‚è€Œè¿™é‡Œè¦ä½¿ç”¨çš„æ˜¯ connect()ã€‚
 
 4.2 UDP Server
 #include "Poco/Net/DatagramSocket.h"
@@ -640,17 +640,17 @@ int main(int argc, char **argv)
 
     return 0;
 }
-5 Reactor ¿ò¼Ü
-Reactor ¿ò¼ÜÊÇÀûÓÃ Event/Notification ÊµÏÖµÄ»ùÓÚ Reactor Éè¼ÆÄ£Ê½µÄÒ»¸ö·şÎñÆ÷¿ò¼Ü£¬ÓÉÓÚ Event/Notification ´æÔÚ¶øÖ§³ÖÒì²½¡£
+5 Reactor æ¡†æ¶
+Reactor æ¡†æ¶æ˜¯åˆ©ç”¨ Event/Notification å®ç°çš„åŸºäº Reactor è®¾è®¡æ¨¡å¼çš„ä¸€ä¸ªæœåŠ¡å™¨æ¡†æ¶ï¼Œç”±äº Event/Notification å­˜åœ¨è€Œæ”¯æŒå¼‚æ­¥ã€‚
 
-¾ßÌåÏê¼û±¾²©µÄÁíÒ»Æª²©ÎÄ¡¶POCO¿âÖĞÎÄ±à³Ì²Î¿¼Ö¸ÄÏ£¨11£©ÈçºÎÊ¹ÓÃReactor¿ò¼Ü£¿¡·
+å…·ä½“è¯¦è§æœ¬åšçš„å¦ä¸€ç¯‡åšæ–‡ã€ŠPOCOåº“ä¸­æ–‡ç¼–ç¨‹å‚è€ƒæŒ‡å—ï¼ˆ11ï¼‰å¦‚ä½•ä½¿ç”¨Reactoræ¡†æ¶ï¼Ÿã€‹
 
 6 StreamSocket
-Ò²ÊÇÒ»¸ö TCP µÄ Socket£¬¿ÉÒÔÊ¹Êı¾İ´«Êä²Ù×÷±äµÄ¼ò»¯£¬±»ÓÃÔÚ TCP ·şÎñÆ÷ºÍ¿Í»§¶Ë¡£
+ä¹Ÿæ˜¯ä¸€ä¸ª TCP çš„ Socketï¼Œå¯ä»¥ä½¿æ•°æ®ä¼ è¾“æ“ä½œå˜çš„ç®€åŒ–ï¼Œè¢«ç”¨åœ¨ TCP æœåŠ¡å™¨å’Œå®¢æˆ·ç«¯ã€‚
 
 -
 
-£¨9£©Poco::Net::DNS
+ï¼ˆ9ï¼‰Poco::Net::DNS
 1 Poco::Net::DNS
 namespace Poco {
 namespace Net {
@@ -665,21 +665,21 @@ public:
 };
 }
 }
-HostEntry ÖĞ´æ´¢ host primary name£¨canonical name£©¡¢alias name list¡¢IP address list¡£
+HostEntry ä¸­å­˜å‚¨ host primary nameï¼ˆcanonical nameï¼‰ã€alias name listã€IP address listã€‚
 
-2 Ïà¹Ø API
-µÃµ½Ò»¸ö HostEntry ÊµÀı£º
+2 ç›¸å…³ API
+å¾—åˆ°ä¸€ä¸ª HostEntry å®ä¾‹ï¼š
 const HostEntry& entry = DNS::hostByName("google.com");
 
-Êä³öÓòÃû£º
+è¾“å‡ºåŸŸåï¼š
 std::cout << entry.name() << std::endl;
 
-Address ºÍ Alias£º
+Address å’Œ Aliasï¼š
 const HostEntry::AliasList& aliases = entry.aliases();
 const HostEntry::AddressList& addrs = entry.addresses();
 
 3 Source code
-POCO µÄ¹Ù·½ÎÄµµÖĞµÄ Sample ÓĞ´íÎó£¬ÒÔÏÂÌá¹©Ò»¸öÕıÈ·µÄÊ¾Àı£¬ÆäÖĞÓòÃûÊÇÍ¨¹ı²ÎÊı´«ÈëµÄ¡£
+POCO çš„å®˜æ–¹æ–‡æ¡£ä¸­çš„ Sample æœ‰é”™è¯¯ï¼Œä»¥ä¸‹æä¾›ä¸€ä¸ªæ­£ç¡®çš„ç¤ºä¾‹ï¼Œå…¶ä¸­åŸŸåæ˜¯é€šè¿‡å‚æ•°ä¼ å…¥çš„ã€‚
 
 #include "Poco/Net/DNS.h"
 #include <iostream>
@@ -706,11 +706,11 @@ int main(int argc, char** argv)
 
     return 0;
 }
-±àÒë£º
+ç¼–è¯‘ï¼š
 
 $ g++ name_solver.cpp -o name_solver \
 -I/usr/local/include -I/usr/local/lib -lPocoNet
-ÔËĞĞ£º
+è¿è¡Œï¼š
 
 $ ./name_solver baidu.com
 Canonical Name: baidu.com
@@ -728,17 +728,17 @@ Address: 202.38.64.246
 -
 
 
-£¨10£©ÈçºÎÊ¹ÓÃTCPServer¿ò¼Ü£¿
-1 TCPServer ¿ò¼Ü¸ÅÊö
-POCO ¿âÌá¹©TCPServer¿ò¼Ü£¬ÓÃÒÔ´î½¨×Ô¶¨ÒåµÄ TCP ·şÎñÆ÷¡£TCPServerÎ¬»¤Ò»¸öÁ¬½Ó¶ÓÁĞ¡¢Ò»¸öÁ¬½ÓÏß³Ì³Ø¡£Á¬½ÓÏß³ÌÓÃÓÚ´¦ÀíÁ¬½Ó£¬Á¬½ÓÏß³ÌÖ»ÒªÒ»¿ÕÏĞ¾Í²»¶ÏµØ´ÓÁ¬½Ó¶ÓÁĞÖĞÈ¡Á¬½Ó²¢½øĞĞ´¦Àí¡£Ò»µ©Á¬½ÓÏß³Ì´ÓÁ¬½Ó¶ÓÁĞÖĞÈ¡µ½Ò»¸öÁ¬½Ó£¬¾Í»á´´½¨Ò»¸öTCPServerConnectionÁ¬½Ó¶ÔÏó£¬²¢ÇÒµ÷ÓÃ¸Ã¶ÔÏóµÄstart()·½·¨£¬Ö±µ½start()·½·¨·µ»Ø£¬Õâ¸öÁ¬½Ó¶ÔÏó¾Í±»É¾³ıÁË¡£
+ï¼ˆ10ï¼‰å¦‚ä½•ä½¿ç”¨TCPServeræ¡†æ¶ï¼Ÿ
+1 TCPServer æ¡†æ¶æ¦‚è¿°
+POCO åº“æä¾›TCPServeræ¡†æ¶ï¼Œç”¨ä»¥æ­å»ºè‡ªå®šä¹‰çš„ TCP æœåŠ¡å™¨ã€‚TCPServerç»´æŠ¤ä¸€ä¸ªè¿æ¥é˜Ÿåˆ—ã€ä¸€ä¸ªè¿æ¥çº¿ç¨‹æ± ã€‚è¿æ¥çº¿ç¨‹ç”¨äºå¤„ç†è¿æ¥ï¼Œè¿æ¥çº¿ç¨‹åªè¦ä¸€ç©ºé—²å°±ä¸æ–­åœ°ä»è¿æ¥é˜Ÿåˆ—ä¸­å–è¿æ¥å¹¶è¿›è¡Œå¤„ç†ã€‚ä¸€æ—¦è¿æ¥çº¿ç¨‹ä»è¿æ¥é˜Ÿåˆ—ä¸­å–åˆ°ä¸€ä¸ªè¿æ¥ï¼Œå°±ä¼šåˆ›å»ºä¸€ä¸ªTCPServerConnectionè¿æ¥å¯¹è±¡ï¼Œå¹¶ä¸”è°ƒç”¨è¯¥å¯¹è±¡çš„start()æ–¹æ³•ï¼Œç›´åˆ°start()æ–¹æ³•è¿”å›ï¼Œè¿™ä¸ªè¿æ¥å¯¹è±¡å°±è¢«åˆ é™¤äº†ã€‚
 
-Á¬½ÓÏß³ÌµÄÊıÁ¿ÊÇ¶¯Ì¬µÄ£¬ÆäÈ¡¾öÓÚÁ¬½Ó¶ÓÁĞÖĞÅÅ¶ÓµÄÁ¬½ÓÊı¡£µ±È»£¬ÄãÊ¹ÓÃµÄÊ±ºò¿ÉÒÔÉè¶¨Á¬½Ó¶ÓÁĞµÄ×î´óÈİÁ¿£¬ÒÔ·ÀÖ¹ÔÚ¸ß²¢·¢Ó¦ÓÃµÄ·şÎñÆ÷ÉÏ³öÏÖÁ¬½ÓÌ«¶à¶øÊ¹Á¬½Ó¶ÓÁĞÒç³öµÄ±¯¾ç·¢Éú¡£µ±Á¬½Ó¶ÓÁĞÂúÁË£¬È´»¹ÓĞĞÂµÄÁ¬½Óµ½À´Ê±£¬ĞÂÀ´µÄÁ¬½Ó¾Í»á±»Á¢¼´ÇÄÎŞÉùÏ¢µØ¹Ø±Õ¡£
+è¿æ¥çº¿ç¨‹çš„æ•°é‡æ˜¯åŠ¨æ€çš„ï¼Œå…¶å–å†³äºè¿æ¥é˜Ÿåˆ—ä¸­æ’é˜Ÿçš„è¿æ¥æ•°ã€‚å½“ç„¶ï¼Œä½ ä½¿ç”¨çš„æ—¶å€™å¯ä»¥è®¾å®šè¿æ¥é˜Ÿåˆ—çš„æœ€å¤§å®¹é‡ï¼Œä»¥é˜²æ­¢åœ¨é«˜å¹¶å‘åº”ç”¨çš„æœåŠ¡å™¨ä¸Šå‡ºç°è¿æ¥å¤ªå¤šè€Œä½¿è¿æ¥é˜Ÿåˆ—æº¢å‡ºçš„æ‚²å‰§å‘ç”Ÿã€‚å½“è¿æ¥é˜Ÿåˆ—æ»¡äº†ï¼Œå´è¿˜æœ‰æ–°çš„è¿æ¥åˆ°æ¥æ—¶ï¼Œæ–°æ¥çš„è¿æ¥å°±ä¼šè¢«ç«‹å³æ‚„æ— å£°æ¯åœ°å…³é—­ã€‚
 
-ÏÖÔÚÎÒÃÇ×Ü½áÒ»ÏÂ£¬¾ÍÊÇÒªÓĞÒ»¸ö¿ÉÔËĞĞµÄ TCP ·şÎñÓ¦ÓÃ³ÌĞò£¨ÃüÃûÎªPoechantTCPServer£©£¬»¹ÓĞºÜ¶à TCP Á¬½Ó£¨ÃüÃûÎªPoechantTCPConnection£©¡£¶øÕâÀïÎÒÃÇÓÃµ½¹¤³§Ä£Ê½£¨×¼È·ËµÊÇTCPServerConnectionFactoryÒªÎÒÃÇÓÃµÄ£©£¬ËùÒÔ»¹ÓĞÒ»¸ö PoechantTCPConnectionFactory¡£
+ç°åœ¨æˆ‘ä»¬æ€»ç»“ä¸€ä¸‹ï¼Œå°±æ˜¯è¦æœ‰ä¸€ä¸ªå¯è¿è¡Œçš„ TCP æœåŠ¡åº”ç”¨ç¨‹åºï¼ˆå‘½åä¸ºPoechantTCPServerï¼‰ï¼Œè¿˜æœ‰å¾ˆå¤š TCP è¿æ¥ï¼ˆå‘½åä¸ºPoechantTCPConnectionï¼‰ã€‚è€Œè¿™é‡Œæˆ‘ä»¬ç”¨åˆ°å·¥å‚æ¨¡å¼ï¼ˆå‡†ç¡®è¯´æ˜¯TCPServerConnectionFactoryè¦æˆ‘ä»¬ç”¨çš„ï¼‰ï¼Œæ‰€ä»¥è¿˜æœ‰ä¸€ä¸ª PoechantTCPConnectionFactoryã€‚
 
-2 ¹âËµ²»Á·¼Ù°ÑÊ½
-2.1 ´´½¨Ò»¸ö PoechantTCPServer
-»òĞíÄã»¹²»ÊìÏ¤ POCO ÖĞµÄ Application£¬Ã»¹ØÏµ£¬Õâ²»Ó°Ïì±¾ÎÄµÄĞğÊö¡£ÏÂÃæÏÈ´´½¨Ò»¸ö ServerApplication ÈçÏÂ£º
+2 å…‰è¯´ä¸ç»ƒå‡æŠŠå¼
+2.1 åˆ›å»ºä¸€ä¸ª PoechantTCPServer
+æˆ–è®¸ä½ è¿˜ä¸ç†Ÿæ‚‰ POCO ä¸­çš„ Applicationï¼Œæ²¡å…³ç³»ï¼Œè¿™ä¸å½±å“æœ¬æ–‡çš„å™è¿°ã€‚ä¸‹é¢å…ˆåˆ›å»ºä¸€ä¸ª ServerApplication å¦‚ä¸‹ï¼š
 
 // PoechantTCPServer.h
 
@@ -763,7 +763,7 @@ protected:
 };
 
 #endif
-ÕâÑùÔÚµ÷ÓÃÆô¶¯PoechantTCPServerÊ±£¬»áÏÈµ÷ÓÃinitialize£¬È»ºóµ÷ÓÃmain£¬ÔÚmain½áÊøºó»áµ÷ÓÃuninitialize¡£ÆäÊµÏÖºÜ¼òµ¥£º
+è¿™æ ·åœ¨è°ƒç”¨å¯åŠ¨PoechantTCPServeræ—¶ï¼Œä¼šå…ˆè°ƒç”¨initializeï¼Œç„¶åè°ƒç”¨mainï¼Œåœ¨mainç»“æŸåä¼šè°ƒç”¨uninitializeã€‚å…¶å®ç°å¾ˆç®€å•ï¼š
 
 // PoechantTCPServer.cpp
 
@@ -782,12 +782,12 @@ void PoechantTCPServer::uninitialize()
 
 int PoechantTCPServer::main(const std::vector<std::string>& args)
 {
-    // Õâ¸öÔÛ×îºóËµ
+    // è¿™ä¸ªå’±æœ€åè¯´
 
     return Application::EXIT_OK;
 }
 2.2 PoechantTCPConnection
-Á¬½ÓÀàµÄ¶¨ÒåºÜ¼òµ¥£¬¹¹Ôìº¯ÊıÒª´«ÈëÒ»¸ö StreamSocket ºÍÆäËûÄãĞèÒªµÄ²ÎÊı¡£
+è¿æ¥ç±»çš„å®šä¹‰å¾ˆç®€å•ï¼Œæ„é€ å‡½æ•°è¦ä¼ å…¥ä¸€ä¸ª StreamSocket å’Œå…¶ä»–ä½ éœ€è¦çš„å‚æ•°ã€‚
 
 // PoechantTCPConnection.h
 
@@ -815,7 +815,7 @@ private:
 };
 
 #endif
-ÊµÏÖÈçÏÂ£º
+å®ç°å¦‚ä¸‹ï¼š
 
 // PoechantTCPConnection.cpp
 
@@ -832,11 +832,11 @@ PoechantTCPConnection(const StreamSocket& s, const std::string& arg1, int arg2, 
 void run()
 {
     Application& app = Application::instance();
-    // ÈÕÖ¾Êä³öÁ¬½ÓµÄTCPÓÃ»§µÄµØÖ·£¨IPºÍ¶Ë¿Ú£©
+    // æ—¥å¿—è¾“å‡ºè¿æ¥çš„TCPç”¨æˆ·çš„åœ°å€ï¼ˆIPå’Œç«¯å£ï¼‰
     app.logger().information("Request from " + this->socket().peerAddress().toString());
     try
     {
-        // Ïò¿Í»§¶Ë·¢ËÍÊı¾İ£¬ÕâÀïÒÔ·¢ËÍÒ»¸ö±íÊ¾Ê±¼äµÄ×Ö·û´®ÎªÀı
+        // å‘å®¢æˆ·ç«¯å‘é€æ•°æ®ï¼Œè¿™é‡Œä»¥å‘é€ä¸€ä¸ªè¡¨ç¤ºæ—¶é—´çš„å­—ç¬¦ä¸²ä¸ºä¾‹
         Timestamp now;
         std::string dt(DateTimeFormatter::format(now, _format));
         dt.append("\r\n");
@@ -848,7 +848,7 @@ void run()
     }
 }
 2.3 PoechantTCPConnectionFactory
-¹¤³§Ä£Ê½²»±Ø¶àËµ£¬Ãû×Ö»£ÈË£¬ÆäÊµ·Ç³£·Ç³£¼òµ¥£¨×¼È·µÄËµÉè¼ÆÄ£Ê½´ó²¿·ÖÃû×Ö¶¼»£ÈË£¬µ«´ó²¿·Ö¶¼ºÜÓĞÓÃ£¬Éè¼ÆÄ£Ê½±¾Éí²¢²»Å£B£¬ÄÜ°ÑÉè¼ÆÄ£Ê½³éÏóÌáÁ¶³öÀ´³ÉÎÒÃÇÏÖÔÚÈÏÎªºÜ¼òµ¥µÄÕâĞ©Ä£Ê½µÄÄÇ¼¸¸öÈËºÜÅ£B£©¡£¾ßÌåÈçÏÂ£º
+å·¥å‚æ¨¡å¼ä¸å¿…å¤šè¯´ï¼Œåå­—å”¬äººï¼Œå…¶å®éå¸¸éå¸¸ç®€å•ï¼ˆå‡†ç¡®çš„è¯´è®¾è®¡æ¨¡å¼å¤§éƒ¨åˆ†åå­—éƒ½å”¬äººï¼Œä½†å¤§éƒ¨åˆ†éƒ½å¾ˆæœ‰ç”¨ï¼Œè®¾è®¡æ¨¡å¼æœ¬èº«å¹¶ä¸ç‰›Bï¼Œèƒ½æŠŠè®¾è®¡æ¨¡å¼æŠ½è±¡æç‚¼å‡ºæ¥æˆæˆ‘ä»¬ç°åœ¨è®¤ä¸ºå¾ˆç®€å•çš„è¿™äº›æ¨¡å¼çš„é‚£å‡ ä¸ªäººå¾ˆç‰›Bï¼‰ã€‚å…·ä½“å¦‚ä¸‹ï¼š
 
 // PoechantTCPConnectionFactory.h
 
@@ -880,8 +880,8 @@ private:
 };
 
 #endif
-2.4 Æô¶¯
-»ØÍ·À´ËµPoechantTCPServer::main(const std::vector<std::string>& args)£¬Æä¹ı³Ì¾ÍÊÇ´´½¨Ò»¸ö°ó¶¨ÁËµØÖ·µÄServerSocket£¬°ÑËü´«¸øTCPServer£¬µ±È»±ğÍüÁË°Ñ¹¤³Ì¶ÔÏóÒ²¸øÄãµÄTCPServer´«Ò»¸ö¡£×îºó¾Ístart()£¬waitForTerminationRequestºÍstop()¾ÍĞĞÁË¡£
+2.4 å¯åŠ¨
+å›å¤´æ¥è¯´PoechantTCPServer::main(const std::vector<std::string>& args)ï¼Œå…¶è¿‡ç¨‹å°±æ˜¯åˆ›å»ºä¸€ä¸ªç»‘å®šäº†åœ°å€çš„ServerSocketï¼ŒæŠŠå®ƒä¼ ç»™TCPServerï¼Œå½“ç„¶åˆ«å¿˜äº†æŠŠå·¥ç¨‹å¯¹è±¡ä¹Ÿç»™ä½ çš„TCPServerä¼ ä¸€ä¸ªã€‚æœ€åå°±start()ï¼ŒwaitForTerminationRequestå’Œstop()å°±è¡Œäº†ã€‚
 
 int PoechantTCPServer::main(const std::vector<std::string>& args)
 {
@@ -906,7 +906,7 @@ int PoechantTCPServer::main(const std::vector<std::string>& args)
 
     return Application::EXIT_OK;
 }
-È»ºóĞ´Ò»¸ö³ÌĞòÈë¿Ú£º
+ç„¶åå†™ä¸€ä¸ªç¨‹åºå…¥å£ï¼š
 
 #include "PoechantTCPServer.h"
 
@@ -914,19 +914,19 @@ int main(int argc, char **argv)
 {
     return PoechantTCPServer().run(argc, argv);
 }
-3 Ğ´Ò»¸ö Client ²â²â
-TCPServer ÒªÓÃ TCP µÄ¿Í»§¶ËÀ´²âÊÔ¡£ÔÚ POCO ÖĞÓĞ·á¸»µÄ Socket£¬ÆäÖĞ TCP ·½Ê½µÄ Socket ÓĞ£º
+3 å†™ä¸€ä¸ª Client æµ‹æµ‹
+TCPServer è¦ç”¨ TCP çš„å®¢æˆ·ç«¯æ¥æµ‹è¯•ã€‚åœ¨ POCO ä¸­æœ‰ä¸°å¯Œçš„ Socketï¼Œå…¶ä¸­ TCP æ–¹å¼çš„ Socket æœ‰ï¼š
 
 Poco::Net::ServerSocket
 Poco::Net::StreamSocket
 Poco::Net::DialogSocket
 Poco::Net::SecureServerSocket
 Poco::Net::SecureStreamSocket
-UDP ·½Ê½µÄ Socket ÓĞ£º
+UDP æ–¹å¼çš„ Socket æœ‰ï¼š
 
 Poco::Net::DatagramSocket
 Poco::Net::MulticastSocket
-Ò»¸ö TCP ·½Ê½ Client ÈçÏÂ£¨ÕâÀïÓÃÁË while Ñ­»·£¬ÆäÊµ¿ÉÒÔÔÚÊÕµ½Êı¾İºó¾Í¹Ø±ÕµÄ£©
+ä¸€ä¸ª TCP æ–¹å¼ Client å¦‚ä¸‹ï¼ˆè¿™é‡Œç”¨äº† while å¾ªç¯ï¼Œå…¶å®å¯ä»¥åœ¨æ”¶åˆ°æ•°æ®åå°±å…³é—­çš„ï¼‰
 
 #include <iostream>
 #include "Poco/Net/StreamSocket.h"
@@ -956,12 +956,12 @@ int main (int argc, const char * argv[])
 -
 
 
-£¨11£©ÈçºÎÊ¹ÓÃReactor¿ò¼Ü£¿
-1 Reactor ¿ò¼Ü¸ÅÊö
-POCO ÖĞµÄ Reactor ¿ò¼ÜÊÇ»ùÓÚ Reactor Éè¼ÆÄ£Ê½½øĞĞÉè¼ÆµÄ¡£ÆäÖĞÓÉ Handler ½«Ä³ Socket ²úÉúµÄÊÂ¼ş£¬·¢ËÍµ½Ö¸¶¨µÄ¶ÔÏóµÄ·½·¨ÉÏ£¬×÷Îª»Øµ÷¡£
+ï¼ˆ11ï¼‰å¦‚ä½•ä½¿ç”¨Reactoræ¡†æ¶ï¼Ÿ
+1 Reactor æ¡†æ¶æ¦‚è¿°
+POCO ä¸­çš„ Reactor æ¡†æ¶æ˜¯åŸºäº Reactor è®¾è®¡æ¨¡å¼è¿›è¡Œè®¾è®¡çš„ã€‚å…¶ä¸­ç”± Handler å°†æŸ Socket äº§ç”Ÿçš„äº‹ä»¶ï¼Œå‘é€åˆ°æŒ‡å®šçš„å¯¹è±¡çš„æ–¹æ³•ä¸Šï¼Œä½œä¸ºå›è°ƒã€‚
 
-2 ¹âËµ²»Á·¼Ù°ÑÊ½
-PoechantReactorServer Àà£¬»ù±¾Óë PoechantTCPServer£º
+2 å…‰è¯´ä¸ç»ƒå‡æŠŠå¼
+PoechantReactorServer ç±»ï¼ŒåŸºæœ¬ä¸ PoechantTCPServerï¼š
 
 class PoechantReactorServer: public ServerApplication
 {
@@ -981,16 +981,16 @@ protected:
     }
     int main(const std::vector<std::string>& args)
     {
-        // ¡­
+        // â€¦
         return Application::EXIT_OK;
     }
 }
-PoechantServiceHandler Àà¶¨ÒåÈçÏÂ¡£ÆğÖØ»ú°ÑonReadableºÍonShutdownµÄÉùÒô´øÀ´ºÜ´óµÄÂé·³¡£
+PoechantServiceHandler ç±»å®šä¹‰å¦‚ä¸‹ã€‚èµ·é‡æœºæŠŠonReadableå’ŒonShutdownçš„å£°éŸ³å¸¦æ¥å¾ˆå¤§çš„éº»çƒ¦ã€‚
 
 class PoechantServiceHandler
 {
 public:
-    PoechantServiceHandler(StreamSocket& socket, SocketReactor& reactor)£»
+    PoechantServiceHandler(StreamSocket& socket, SocketReactor& reactor)ï¼›
     ~PoechantServiceHandler();
     void onReadable(const AutoPtr<ReadableNotification>& pNf);
     void onShutdown(const AutoPtr<ShutdownNotification>& pNf);
@@ -1002,8 +1002,8 @@ private:
     StreamSocket _socket;
     SocketReactor& _reactor;
     char *_pBuffer;
-}£»
-PoechantServiceHandler ÊµÏÖ£º
+}ï¼›
+PoechantServiceHandler å®ç°ï¼š
 
 PoechantServiceHandler::PoechantServiceHandler(StreamSocket& socket, SocketReactor& reactor)
     :_socket(socket),
@@ -1036,7 +1036,7 @@ void onReadable(const AutoPtr<ReadableNotification>& pNf)
     // Receive data from StreamSocket
     int n = _socket.receiveBytes(_pBuffer, BUFFER_SIZE);
 
-    // Send data back the client 
+    // Send data back the client
     if (n > 0)
         _socket.sendBytes(_pBuffer, n);
     else
@@ -1048,7 +1048,7 @@ void onShutdown(const AutoPtr<ShutdownNotification>& pNf)
 {
     delete this;
 }
-Æô¶¯£º
+å¯åŠ¨ï¼š
 
 int main(const std::vector<std::string>& args)
 {
@@ -1069,69 +1069,69 @@ int main(int argc, char **argv)
 {
     return PoechantServer().run(argc, argv);
 }
-3 Clinet ²âÊÔ´úÂë
-Í¬¡¶POCO¿âÖĞÎÄ±à³Ì²Î¿¼Ö¸ÄÏ£¨10£©ÈçºÎÊ¹ÓÃTCPServer¿ò¼Ü£¿¡·ÖĞµÄ Client ²âÊÔÓÃÀı¡£
+3 Clinet æµ‹è¯•ä»£ç 
+åŒã€ŠPOCOåº“ä¸­æ–‡ç¼–ç¨‹å‚è€ƒæŒ‡å—ï¼ˆ10ï¼‰å¦‚ä½•ä½¿ç”¨TCPServeræ¡†æ¶ï¼Ÿã€‹ä¸­çš„ Client æµ‹è¯•ç”¨ä¾‹ã€‚
 
 -
 
 
-´ÓÁã¿ªÊ¼±àÒëPoco C++ºÍVS2015»·¾³ÅäÖÃ
-Poco C++ÊÇÒ»¸öC++µÄ¿ªÔ´¿ò¼Ü£¬ÏêÏ¸½éÉÜ¿ÉÒÔÎÊ°Ù¶È½éÉÜ¸üÏêÏ¸£¬ÕâÀïÎÒ¾Í¼ÇÂ¼ÏÂÎÒ´ÓÁã±àÒëpoco-1.9.0ºÍÅäÖÃ VS2015µÄ»·¾³£¬ÒÔ±¸²»Ê±Ö®Ğè¡£
+ä»é›¶å¼€å§‹ç¼–è¯‘Poco C++å’ŒVS2015ç¯å¢ƒé…ç½®
+Poco C++æ˜¯ä¸€ä¸ªC++çš„å¼€æºæ¡†æ¶ï¼Œè¯¦ç»†ä»‹ç»å¯ä»¥é—®ç™¾åº¦ä»‹ç»æ›´è¯¦ç»†ï¼Œè¿™é‡Œæˆ‘å°±è®°å½•ä¸‹æˆ‘ä»é›¶ç¼–è¯‘poco-1.9.0å’Œé…ç½® VS2015çš„ç¯å¢ƒï¼Œä»¥å¤‡ä¸æ—¶ä¹‹éœ€ã€‚
 
-²½Öè£º
-Ò»¡¢°²×°cmake£»
-¶ş¡¢±àÒëpoco-1.9.0£»
-Èı¡¢½«±àÒëºóµÄpoco-1.9.0ÅäÖÃµ½VS2015µÄÏîÄ¿ÖĞ£»
-ËÄ¡¢Ê¾Àı¼òµ¥Ê¾Àı¡£
+æ­¥éª¤ï¼š
+ä¸€ã€å®‰è£…cmakeï¼›
+äºŒã€ç¼–è¯‘poco-1.9.0ï¼›
+ä¸‰ã€å°†ç¼–è¯‘åçš„poco-1.9.0é…ç½®åˆ°VS2015çš„é¡¹ç›®ä¸­ï¼›
+å››ã€ç¤ºä¾‹ç®€å•ç¤ºä¾‹ã€‚
 
-°²×°cmake
-ÎÒµÄµçÄÔ»·¾³£º
-win7 64Î»£»
-cmake-3.12.1-win64-x64£¨¹ÙÍøÏÂÔØ£ºµã»÷ÎÒÏÂÔØcmake£©¡£
-°²×°cmake°´³£¹æ°²×°¼´¿É£¬µ«ÊÇ¼ÇµÃ¹´Ñ¡£º
+å®‰è£…cmake
+æˆ‘çš„ç”µè„‘ç¯å¢ƒï¼š
+win7 64ä½ï¼›
+cmake-3.12.1-win64-x64ï¼ˆå®˜ç½‘ä¸‹è½½ï¼šç‚¹å‡»æˆ‘ä¸‹è½½cmakeï¼‰ã€‚
+å®‰è£…cmakeæŒ‰å¸¸è§„å®‰è£…å³å¯ï¼Œä½†æ˜¯è®°å¾—å‹¾é€‰ï¼š
 
-Õâ¸öÖ÷ÒªÊÇÎªÁË·ÀÖ¹µçÄÔµÇÂ¼ÆäËûÓÃ»§Ã»ÓĞcmake£¬½¨Òé°ÑCMake¼Óµ½ÏµÍ³PATHÖĞ¡£ÆäËûµÄÏÂÒ»²½¼´¿É¡£
-¹ØÓÚcmka GUIºÍÃüÁîĞĞµÄÓÃ·¨£¨ÏÂÃæ»áÅäÖÃPocoC++Ê¹ÓÃÃüÁîĞĞÓÃ·¨£©£¬Ò²¿ÉÒÔ×ÔĞĞ°Ù¶È¡£
+è¿™ä¸ªä¸»è¦æ˜¯ä¸ºäº†é˜²æ­¢ç”µè„‘ç™»å½•å…¶ä»–ç”¨æˆ·æ²¡æœ‰cmakeï¼Œå»ºè®®æŠŠCMakeåŠ åˆ°ç³»ç»ŸPATHä¸­ã€‚å…¶ä»–çš„ä¸‹ä¸€æ­¥å³å¯ã€‚
+å…³äºcmka GUIå’Œå‘½ä»¤è¡Œçš„ç”¨æ³•ï¼ˆä¸‹é¢ä¼šé…ç½®PocoC++ä½¿ç”¨å‘½ä»¤è¡Œç”¨æ³•ï¼‰ï¼Œä¹Ÿå¯ä»¥è‡ªè¡Œç™¾åº¦ã€‚
 
-±àÒëPoco C++
-Ç°ÌáÌõ¼ş£º
-1£©Poco C++Ô´Âë£¨¹ÙÍøÏÂÔØ£ºµã»÷ÎÒÏÂÔØ£©£»
-2£©ÒÑ¾­°²×°VS2015£»
-3£©ÒÑ¾­°²×°cmake¡£
+ç¼–è¯‘Poco C++
+å‰ææ¡ä»¶ï¼š
+1ï¼‰Poco C++æºç ï¼ˆå®˜ç½‘ä¸‹è½½ï¼šç‚¹å‡»æˆ‘ä¸‹è½½ï¼‰ï¼›
+2ï¼‰å·²ç»å®‰è£…VS2015ï¼›
+3ï¼‰å·²ç»å®‰è£…cmakeã€‚
 
-±àÒëpoco c++(poco-1.9.0.zip¡¢Visual Studio 2015)
-1£©ÓÃwindowsµÄÃüÁîĞĞ×ªµ½poco-1.9.0ÎÄ¼ş¼Ğ£¬¼´Ô´ÂëÄ¿Â¼¡£
-2£©Ö´ĞĞÏÂÃæÃüÁî£¨ÃüÁî×îºóÒ»¾äµÄ¡±..¡±ÇĞ¼Ç²»¿ÉÒÅÂ©ÁËÅ¶£©£º
+ç¼–è¯‘poco c++(poco-1.9.0.zipã€Visual Studio 2015)
+1ï¼‰ç”¨windowsçš„å‘½ä»¤è¡Œè½¬åˆ°poco-1.9.0æ–‡ä»¶å¤¹ï¼Œå³æºç ç›®å½•ã€‚
+2ï¼‰æ‰§è¡Œä¸‹é¢å‘½ä»¤ï¼ˆå‘½ä»¤æœ€åä¸€å¥çš„â€..â€åˆ‡è®°ä¸å¯é—æ¼äº†å“¦ï¼‰ï¼š
 
 mkdir cmake_build_x64
 cd cmake_build_x64
-cmake -G ¡°Visual Studio 14 2015 Win64¡± ..
+cmake -G â€œVisual Studio 14 2015 Win64â€ ..
 
-3£©È»ºó½øÈëmake_build_x64 ÎÄ¼ş¼ĞÀïÃæ£¬ÓÃ Visual Studio 2015 ´ò¿ª Poco.sln£¬ÓÃVS±àÒë POCO C++ Libraries µÄ¶¯Ì¬Á´½Ó¿â £¬½¨ÒéÍ¬Ê±±àÒëdebugºÍrelease°æ±¾£¨¸úÆÕÍ¨µÄ±àÒëVS¹¤³ÌÒ»Ñù£¬¼´°´¿ì½İ¼üF7¼´¿É£©£¬ÖÁ´ËPocoC++±àÒëÍê³ÉÁË£¬ÔÚÄ¿Â¼cmake_build_x64ÎÄ¼ş¼ĞÏÂÃæµÄµÄ bin¡¢lib ×ÓÄ¿Â¼ÖĞ£¬¾ÍÊÇÎÒÃÇ×îÖÕµÃµ½µÄ¶¯Ì¬Á´½Ó¿âµÈÎÄ¼ş¡£
+3ï¼‰ç„¶åè¿›å…¥make_build_x64 æ–‡ä»¶å¤¹é‡Œé¢ï¼Œç”¨ Visual Studio 2015 æ‰“å¼€ Poco.slnï¼Œç”¨VSç¼–è¯‘ POCO C++ Libraries çš„åŠ¨æ€é“¾æ¥åº“ ï¼Œå»ºè®®åŒæ—¶ç¼–è¯‘debugå’Œreleaseç‰ˆæœ¬ï¼ˆè·Ÿæ™®é€šçš„ç¼–è¯‘VSå·¥ç¨‹ä¸€æ ·ï¼Œå³æŒ‰å¿«æ·é”®F7å³å¯ï¼‰ï¼Œè‡³æ­¤PocoC++ç¼–è¯‘å®Œæˆäº†ï¼Œåœ¨ç›®å½•cmake_build_x64æ–‡ä»¶å¤¹ä¸‹é¢çš„çš„ binã€lib å­ç›®å½•ä¸­ï¼Œå°±æ˜¯æˆ‘ä»¬æœ€ç»ˆå¾—åˆ°çš„åŠ¨æ€é“¾æ¥åº“ç­‰æ–‡ä»¶ã€‚
 
-poco-1.9.0ÅäÖÃµ½VS2015µÄÏîÄ¿ÖĞ
-1)ÔÚÔ´ÂëÄ¿Â¼ÏÂĞÂ½¨v1.9.0_compact_MSVCÎÄ¼ş¼Ğ£¬ÈçÎÒµÄ£º
+poco-1.9.0é…ç½®åˆ°VS2015çš„é¡¹ç›®ä¸­
+1)åœ¨æºç ç›®å½•ä¸‹æ–°å»ºv1.9.0_compact_MSVCæ–‡ä»¶å¤¹ï¼Œå¦‚æˆ‘çš„ï¼š
 
 D:\poco\poco-1.9.0\v1.9.0_compact_MSVC
 
-È»ºóÉèÖÃÏµÍ³»·¾³±äÁ¿Ö¸ÏòPOCO_ROOT£¬¼´µã»÷¡°¡±ÎÒµÄµçÄÔ¡°¨C¡·ÓÒ»÷¡°ÊôĞÔ¡±¨C¡·¸ß¼¶ÏµÍ³ÉèÖÃ¨C¡·»·¾³±äÁ¿¨C¡·µã»÷ÏµÍ³»·¾³±äÁ¿ÏÂÃæµÄ¡°ĞÂ½¨¡±°´Å¥£¬ÌîĞ´£º
+ç„¶åè®¾ç½®ç³»ç»Ÿç¯å¢ƒå˜é‡æŒ‡å‘POCO_ROOTï¼Œå³ç‚¹å‡»â€œâ€æˆ‘çš„ç”µè„‘â€œâ€“ã€‹å³å‡»â€œå±æ€§â€â€“ã€‹é«˜çº§ç³»ç»Ÿè®¾ç½®â€“ã€‹ç¯å¢ƒå˜é‡â€“ã€‹ç‚¹å‡»ç³»ç»Ÿç¯å¢ƒå˜é‡ä¸‹é¢çš„â€œæ–°å»ºâ€æŒ‰é’®ï¼Œå¡«å†™ï¼š
 
-2£©½«ËùÓĞµÄ includeÏÂÃæÎÄ¼ş¼Ğ¼¯ÖĞÔÚ %POCO_ROOT%\include Ä¿Â¼ÖĞ£¬ÈçÎÒµÄD:\poco\poco-1.9.0\Foundation\include\PocoÎÄ¼şÏÂÃæµÄ¶«Î÷¿½±´D:\poco\poco-1.9.0\v1.9.0_compact_MSVC\include\PocoÏÂÃæ¡£Í¬ÀíD:\poco\poco-1.9.0\Encodings\include\PocoÍ¬Ñù´¦Àí£¨Äã»áÁôÒâµ½ÓĞEncodings Foundation JSON Net Util XMLÕâĞ©ÎÄ¼ş¼ĞÏÂÃæ\include\PocoÏÂÃæµÄÎÄ¼ş¼°ÎÄ¼ş¼ĞĞèÒªÕâÑù´¦Àí£©¡£ÕâÑù×öÖ÷ÒªÊÇÎª°üº¬Í·ÎÄ¼ş·½±ãĞ©£¬×îÖÕ´¦ÀíÍêÈçÏÂÍ¼ËùÊ¾£º
+2ï¼‰å°†æ‰€æœ‰çš„ includeä¸‹é¢æ–‡ä»¶å¤¹é›†ä¸­åœ¨ %POCO_ROOT%\include ç›®å½•ä¸­ï¼Œå¦‚æˆ‘çš„D:\poco\poco-1.9.0\Foundation\include\Pocoæ–‡ä»¶ä¸‹é¢çš„ä¸œè¥¿æ‹·è´D:\poco\poco-1.9.0\v1.9.0_compact_MSVC\include\Pocoä¸‹é¢ã€‚åŒç†D:\poco\poco-1.9.0\Encodings\include\PocoåŒæ ·å¤„ç†ï¼ˆä½ ä¼šç•™æ„åˆ°æœ‰Encodings Foundation JSON Net Util XMLè¿™äº›æ–‡ä»¶å¤¹ä¸‹é¢\include\Pocoä¸‹é¢çš„æ–‡ä»¶åŠæ–‡ä»¶å¤¹éœ€è¦è¿™æ ·å¤„ç†ï¼‰ã€‚è¿™æ ·åšä¸»è¦æ˜¯ä¸ºåŒ…å«å¤´æ–‡ä»¶æ–¹ä¾¿äº›ï¼Œæœ€ç»ˆå¤„ç†å®Œå¦‚ä¸‹å›¾æ‰€ç¤ºï¼š
 
-3£©ÔÚv1.9.0_compact_MSVCÎÄ¼ş¼ĞÏÂÃæ½¨Á¢build/x64ÎÄ¼ş¼Ğ£¬½«±àÒëµÃµ½µÄ bin¡¢lib ÎÄ¼ş¼Ğ¶¼ÊÕ¼¯µ½build/x64ÏÂ£¬ÈçÏÂÍ¼£º
+3ï¼‰åœ¨v1.9.0_compact_MSVCæ–‡ä»¶å¤¹ä¸‹é¢å»ºç«‹build/x64æ–‡ä»¶å¤¹ï¼Œå°†ç¼–è¯‘å¾—åˆ°çš„ binã€lib æ–‡ä»¶å¤¹éƒ½æ”¶é›†åˆ°build/x64ä¸‹ï¼Œå¦‚ä¸‹å›¾ï¼š
 
-4£©ÔÚVS¹¤³ÌÁ¬½Ó¶¯Ì¬¿âºÍÍ·ÎÄ¼ş£º
-a.ÓÒ»÷ÄãµÄVS¹¤³Ì£¬µã»÷¡°ÊôĞÔ¡±¨C¡·C/C++¨C¡·³£¹æ¨C¡·Ìí¼Ó°üº¬Ä¿Â¼£¬ÊäÈë£º
+4ï¼‰åœ¨VSå·¥ç¨‹è¿æ¥åŠ¨æ€åº“å’Œå¤´æ–‡ä»¶ï¼š
+a.å³å‡»ä½ çš„VSå·¥ç¨‹ï¼Œç‚¹å‡»â€œå±æ€§â€â€“ã€‹C/C++â€“ã€‹å¸¸è§„â€“ã€‹æ·»åŠ åŒ…å«ç›®å½•ï¼Œè¾“å…¥ï¼š
 
 $(POCO_ROOT)\include
 
-b.µã»÷¡°ÊôĞÔ¡±¨C¡·Á¬½ÓÆ÷¨C¡·¸½¼Ó¿âÄ¿Â¼£¬ÊäÈë£º
+b.ç‚¹å‡»â€œå±æ€§â€â€“ã€‹è¿æ¥å™¨â€“ã€‹é™„åŠ åº“ç›®å½•ï¼Œè¾“å…¥ï¼š
 
 D:\poco\poco-1.9.0\v1.9.0_compact_MSVC\build\x64\lib\Debug
 D:\poco\poco-1.9.0\v1.9.0_compact_MSVC\build\x64\bin\Debug
 
-c.µã»÷¡°ÊôĞÔ¡±¨C¡·Á¬½ÓÆ÷¨C¡·ÊäÈë¨C¡·¸½¼ÓÒÀÀµÏî¡£
-Õë¶ÔDebug£¬ÊäÈë£º
+c.ç‚¹å‡»â€œå±æ€§â€â€“ã€‹è¿æ¥å™¨â€“ã€‹è¾“å…¥â€“ã€‹é™„åŠ ä¾èµ–é¡¹ã€‚
+é’ˆå¯¹Debugï¼Œè¾“å…¥ï¼š
 
 PocoEncodingsd.lib
 PocoFoundationd.lib
@@ -1139,7 +1139,7 @@ PocoJSONd.lib
 PocoNetd.lib
 PocoUtild.lib
 
-Õë¶ÔReleaseÊäÈë£º
+é’ˆå¯¹Releaseè¾“å…¥ï¼š
 
 PocoEncodings.lib
 PocoFoundation.lib
@@ -1148,11 +1148,11 @@ PocoNet.lib
 PocoUtil.lib
 PocoXML.lib
 
-4£©½«¶ÔÓ¦¿âÅäÖÃµ½±àÒëÊä³öÄ¿Â¼¡£¡°ÊôĞÔ¡±¨C¡·Éú³ÉÊÂ¼ş¨C¡·ÃüÃûĞĞ£¬ÊäÈë£º
+4ï¼‰å°†å¯¹åº”åº“é…ç½®åˆ°ç¼–è¯‘è¾“å‡ºç›®å½•ã€‚â€œå±æ€§â€â€“ã€‹ç”Ÿæˆäº‹ä»¶â€“ã€‹å‘½åè¡Œï¼Œè¾“å…¥ï¼š
 
-copy ¡°(POCOROOT)\build$(Platform)\bin$(Configuration)\*.?"(POCOROOT)\build$(Platform)\bin$(Configuration)\*.?"(TargetDir)
+copy â€œ(POCOROOT)\build$(Platform)\bin$(Configuration)\*.?"(POCOROOT)\build$(Platform)\bin$(Configuration)\*.?"(TargetDir)
 
-pooc c++Ê¹ÓÃ¼òµ¥Ê¾Àı´úÂë£º
+pooc c++ä½¿ç”¨ç®€å•ç¤ºä¾‹ä»£ç ï¼š
 #include <iostream>
 #include "Poco\Timer.h"
 #include "Poco\Thread.h"
@@ -1180,5 +1180,4 @@ timer.stop();
 return 0;
 }
 
-ÒÑÉÏÊÇÎÒ½ñÌì±àÒëpoco c++¡¢ÅäÖÃVS2015¹¤³Ì»·¾³¡¢¼òµ¥Ê¹ÓÃµÄ×Ü½á±Ê¼Ç£¬ÈçÓĞ²»µ±Ö®´¦£¬»¹Çë´óÏÀ¶à¶àÖ¸½ÌÅ¶~
-
+å·²ä¸Šæ˜¯æˆ‘ä»Šå¤©ç¼–è¯‘poco c++ã€é…ç½®VS2015å·¥ç¨‹ç¯å¢ƒã€ç®€å•ä½¿ç”¨çš„æ€»ç»“ç¬”è®°ï¼Œå¦‚æœ‰ä¸å½“ä¹‹å¤„ï¼Œè¿˜è¯·å¤§ä¾ å¤šå¤šæŒ‡æ•™å“¦~

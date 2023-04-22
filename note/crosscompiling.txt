@@ -1,67 +1,66 @@
 
 
 
-½»²æ±àÒë»·¾³   ÏîÄ¿Á´½ÓÄ¿Â¼>> ~/code/base/lib/uos/
-    1 ½âÑ¹ file=·ÉÌÚARM\gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnu.tar.xz -> tar -xvf [file] -C /opt/
-    2 ¸´ÖÆ file=D:\½»²æ±àÒë\·ÉÌÚARM\Enable         -> cp [file] /opt/gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnu
-    3 »·¾³ source /opt/gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnu/Enable   ±¸×¢ Ö»ÔÚµ±Ç°sessionÖĞÓĞĞ§
-    4 ±àÒë make CENTOS=uos
+äº¤å‰ç¼–è¯‘ç¯å¢ƒ   é¡¹ç›®é“¾æ¥ç›®å½•>> ~/code/base/lib/uos/
+    1 è§£å‹ file=é£è…¾ARM\gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnu.tar.xz -> tar -xvf [file] -C /opt/
+    2 å¤åˆ¶ file=D:\äº¤å‰ç¼–è¯‘\é£è…¾ARM\Enable         -> cp [file] /opt/gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnu
+    3 ç¯å¢ƒ source /opt/gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnu/Enable   å¤‡æ³¨ åªåœ¨å½“å‰sessionä¸­æœ‰æ•ˆ
+    4 ç¼–è¯‘ make CENTOS=uos
 
-ÖĞ¼ä¿ÉÄÜÓĞĞ©¿ªÔ´¿âÃ»ÓĞ ĞèÒª±àÒë
+ä¸­é—´å¯èƒ½æœ‰äº›å¼€æºåº“æ²¡æœ‰ éœ€è¦ç¼–è¯‘
 uuid-master
-    1 ½âÑ¹ file=uuid-master.zip -> unzip [file] -d /opt/
-    2 Ä¿Â¼ ½øÈëÄ¿±êÄ¿Â¼ mkdir build
-    3 ĞŞ¸Ä vim CMakeLists.txt ÔÚproject(uuid)[µÚ4ĞĞ]ÏÂÌí¼ÓÈçÏÂ2ĞĞ ÏÂÃæµÄÂ·¾¶Ö¸µÄ¾ÍÊÇÉÏÃæ ½»²æ»·¾³ µÄ¾ø¶ÔÂ·¾¶ µÚÒ»¸öÊÇgcc³ÌĞò µÚ¶ş¸öÊÇg++
+    1 è§£å‹ file=uuid-master.zip -> unzip [file] -d /opt/
+    2 ç›®å½• è¿›å…¥ç›®æ ‡ç›®å½• mkdir build
+    3 ä¿®æ”¹ vim CMakeLists.txt åœ¨project(uuid)[ç¬¬4è¡Œ]ä¸‹æ·»åŠ å¦‚ä¸‹2è¡Œ ä¸‹é¢çš„è·¯å¾„æŒ‡çš„å°±æ˜¯ä¸Šé¢ äº¤å‰ç¯å¢ƒ çš„ç»å¯¹è·¯å¾„ ç¬¬ä¸€ä¸ªæ˜¯gccç¨‹åº ç¬¬äºŒä¸ªæ˜¯g++
         SET(CMAKE_C_COMPILER   /opt/gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu-gcc)
         SET(CMAKE_CXX_COMPILER /opt/gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu-g++)
-    3 Ö´ĞĞ 1 cd build     2 cmake ../
-    4 ±àÒë make
-    5 Ä¿±ê build/src/libuuid.so Õâ¸öÎÄ¼şcpµ½ ÏîÄ¿Á´½ÓÄ¿Â¼
+    3 æ‰§è¡Œ 1 cd build     2 cmake ../
+    4 ç¼–è¯‘ make
+    5 ç›®æ ‡ build/src/libuuid.so è¿™ä¸ªæ–‡ä»¶cpåˆ° é¡¹ç›®é“¾æ¥ç›®å½•
 zlib-1.2.11
-    ÓëÉÏÃæµÄµÄ»ù±¾Ò»Ñù
-    3 ĞŞ¸Ä vim CMakeLists.txt ÔÚset(INSTALL_PKGCONFIG_DIR [µÚ16ĞĞ]ÏÂÌí¼Ó2ĞĞ
-    5 Ä¿±ê build/libz.a build/libz.so
+    ä¸ä¸Šé¢çš„çš„åŸºæœ¬ä¸€æ ·
+    3 ä¿®æ”¹ vim CMakeLists.txt åœ¨set(INSTALL_PKGCONFIG_DIR [ç¬¬16è¡Œ]ä¸‹æ·»åŠ 2è¡Œ
+    5 ç›®æ ‡ build/libz.a build/libz.so
 curl-7.51.0
-    1 ½âÑ¹ file=curl-7.51.0.zip -> unzip [file] -d /opt/
-    2 ½øÈëÄ¿±êÄ¿Â¼ ./configure --prefix=/opt/curl-7.51.0/build/ --host=aarch64-linux  CC=/opt/gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu-gcc  ±¸×¢--prefixÄ¿±êÄ¿Â¼ CCÎªc±àÒëÆ÷¾ø¶ÔÄ¿Â¼
-    3 ±àÒë make
-    4 Ä¿±ê ./lib/.libs/libcurl.so ./lib/.libs/libcurl.a Õâ¸öÎÄ¼şcpµ½ ÏîÄ¿Á´½ÓÄ¿Â¼
-    5 make install°²×°µ½Ö¸¶¨Ä¿Â¼ °üÀ¨Í·ÎÄ¼şºÍÁ´½ÓÎÄ¼ş °´ĞèÒª¿ÉÒÔÖ´ĞĞ»òÕß²»Ö´ĞĞ ±¾ÏîÄ¿ÔİÊ±²»ĞèÒªÖ´ĞĞ Ö»ĞèÒª²½Öè4
+    1 è§£å‹ file=curl-7.51.0.zip -> unzip [file] -d /opt/
+    2 è¿›å…¥ç›®æ ‡ç›®å½• ./configure --prefix=/opt/curl-7.51.0/build/ --host=aarch64-linux  CC=/opt/gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu-gcc  å¤‡æ³¨--prefixç›®æ ‡ç›®å½• CCä¸ºcç¼–è¯‘å™¨ç»å¯¹ç›®å½•
+    3 ç¼–è¯‘ make
+    4 ç›®æ ‡ ./lib/.libs/libcurl.so ./lib/.libs/libcurl.a è¿™ä¸ªæ–‡ä»¶cpåˆ° é¡¹ç›®é“¾æ¥ç›®å½•
+    5 make installå®‰è£…åˆ°æŒ‡å®šç›®å½• åŒ…æ‹¬å¤´æ–‡ä»¶å’Œé“¾æ¥æ–‡ä»¶ æŒ‰éœ€è¦å¯ä»¥æ‰§è¡Œæˆ–è€…ä¸æ‰§è¡Œ æœ¬é¡¹ç›®æš‚æ—¶ä¸éœ€è¦æ‰§è¡Œ åªéœ€è¦æ­¥éª¤4
 poco-1.9.0-all
-    ÓëÉÏÃæµÄ»ù±¾Ò»Ñù
-    2 ½øÈëÄ¿±êÄ¿Â¼ ./configure --prefix=/opt/poco-1.9.0-all  --config=Linux --static --minimal --no-tests --no-samples --cflags=-fPIC --cflags=-D__AARCH64EL__
-    4 Ä¿±ê ./lib/Linux/x86_64/libPoco*  cpµ½ ÏîÄ¿Á´½ÓÄ¿Â¼
+    ä¸ä¸Šé¢çš„åŸºæœ¬ä¸€æ ·
+    2 è¿›å…¥ç›®æ ‡ç›®å½• ./configure --prefix=/opt/poco-1.9.0-all  --config=Linux --static --minimal --no-tests --no-samples --cflags=-fPIC --cflags=-D__AARCH64EL__
+    4 ç›®æ ‡ ./lib/Linux/x86_64/libPoco*  cpåˆ° é¡¹ç›®é“¾æ¥ç›®å½•
 camke
-    1 °²×° yum instal cmake
-    2 ÍøÂç ĞéÄâ»ú¿ÉÄÜĞèÒªÌí¼ÓDNS ·ñÔòÕÒ²»µ½ ÏêÏ¸ÉèÖÃ ²Î¿¼ÏÂÃæµÄ ÍøÂçÅäÖÃ
+    1 å®‰è£… yum instal cmake
+    2 ç½‘ç»œ è™šæ‹Ÿæœºå¯èƒ½éœ€è¦æ·»åŠ DNS å¦åˆ™æ‰¾ä¸åˆ° è¯¦ç»†è®¾ç½® å‚è€ƒä¸‹é¢çš„ ç½‘ç»œé…ç½®
 
-±¸×¢
-make[1]: Àë¿ªÄ¿Â¼¡°/home/wangjingang/code/webwork_new/JPush¡±
+å¤‡æ³¨
+make[1]: ç¦»å¼€ç›®å½•â€œ/home/wangjingang/code/webwork_new/JPushâ€
 make -C ErrorCode RELEASE=1 BITS=64 CENTOS=uos
-make[1]: ½øÈëÄ¿Â¼¡°/home/wangjingang/code/webwork_new/ErrorCode¡±
+make[1]: è¿›å…¥ç›®å½•â€œ/home/wangjingang/code/webwork_new/ErrorCodeâ€
 g++  -O2 -DNDEBUG -D__x86_64__ -D__UOS__ -shared -fPIC -Wall -std=c++0x -pthread -fno-strict-aliasing -Wno-deprecated -Wno-sign-compare -Wno-unused-but-set-variable -Wno-unused-variable -Wno-comment -Wno-unused-local-typedefs -Wno-write-strings -Wno-parentheses -Wno-reorder -Wno-conversion-null -Wno-unused-function -Wno-unused-value     -I../include -MMD  -c -o ErrorCode.o ErrorCode.cpp
-ar -rc ../linux_bin64/Release/libErrorCode.a     ErrorCode.o      
-make[1]: Àë¿ªÄ¿Â¼¡°/home/wangjingang/code/webwork_new/ErrorCode¡±
+ar -rc ../linux_bin64/Release/libErrorCode.a     ErrorCode.o
+make[1]: ç¦»å¼€ç›®å½•â€œ/home/wangjingang/code/webwork_new/ErrorCodeâ€
 make -C mxTranslateDll RELEASE=1 BITS=64 CENTOS=uos
-make[1]: ½øÈëÄ¿Â¼¡°/home/wangjingang/code/webwork_new/mxTranslateDll¡±
+make[1]: è¿›å…¥ç›®å½•â€œ/home/wangjingang/code/webwork_new/mxTranslateDllâ€
 g++  -DBSMOD_EXPORTS -O2 -DNDEBUG -D__x86_64__ -D__UOS__ -shared -fPIC -Wall -std=c++0x -pthread -fno-strict-aliasing -Wno-deprecated -Wno-sign-compare -Wno-unused-but-set-variable -Wno-unused-variable -Wno-comment -Wno-unused-local-typedefs -Wno-write-strings -Wno-parentheses -Wno-reorder -Wno-conversion-null -Wno-unused-function -Wno-unused-value     -I../../base/include/port2linux -I../../base/include/python3.7m -I../../base/include -I../../base/include/chen -I../../base/include/HttpProtocol -I../../base/include/bsapi -I../../base/include/mxcomlib -I../../base/include/tinyxml -I../../base/include/mxdbvar -I../../base/include/MxHandlePool -I../../base/include/Http -I../../base/ -I. -I.. -I../ServerData -I../ipmgm -MMD  -c -o md5Impl.o md5Impl.cpp
 g++  -DBSMOD_EXPORTS -O2 -DNDEBUG -D__x86_64__ -D__UOS__ -shared -fPIC -Wall -std=c++0x -pthread -fno-strict-aliasing -Wno-deprecated -Wno-sign-compare -Wno-unused-but-set-variable -Wno-unused-variable -Wno-comment -Wno-unused-local-typedefs -Wno-write-strings -Wno-parentheses -Wno-reorder -Wno-conversion-null -Wno-unused-function -Wno-unused-value     -I../../base/include/port2linux -I../../base/include/python3.7m -I../../base/include -I../../base/include/chen -I../../base/include/HttpProtocol -I../../base/include/bsapi -I../../base/include/mxcomlib -I../../base/include/tinyxml -I../../base/include/mxdbvar -I../../base/include/MxHandlePool -I../../base/include/Http -I../../base/ -I. -I.. -I../ServerData -I../ipmgm -MMD  -c -o pch.o pch.cpp
 g++  -DBSMOD_EXPORTS -O2 -DNDEBUG -D__x86_64__ -D__UOS__ -shared -fPIC -Wall -std=c++0x -pthread -fno-strict-aliasing -Wno-deprecated -Wno-sign-compare -Wno-unused-but-set-variable -Wno-unused-variable -Wno-comment -Wno-unused-local-typedefs -Wno-write-strings -Wno-parentheses -Wno-reorder -Wno-conversion-null -Wno-unused-function -Wno-unused-value     -I../../base/include/port2linux -I../../base/include/python3.7m -I../../base/include -I../../base/include/chen -I../../base/include/HttpProtocol -I../../base/include/bsapi -I../../base/include/mxcomlib -I../../base/include/tinyxml -I../../base/include/mxdbvar -I../../base/include/MxHandlePool -I../../base/include/Http -I../../base/ -I. -I.. -I../ServerData -I../ipmgm -MMD  -c -o dllmain.o dllmain.cpp
-g++ -Wl,-R./ -o ../linux_bin64/Release/libMXTranslate.so     -shared -fPIC -rdynamic    -pthread -ldl md5Impl.o pch.o dllmain.o -L../linux_bin64/Release -L../linux_bin64/lib -L../../base/lib/uos -lBasePython -lbsapi -lchen -lboost_python37 -lpython37 -lrt -luuid -ljson 
-/usr/bin/ld: µ±ËÑË÷ÓÃÓÚ ../../base/lib/uos/libBasePython.a Ê±Ìø¹ı²»¼æÈİµÄ -lBasePython 
-/usr/bin/ld: ÕÒ²»µ½ -lBasePython
-/usr/bin/ld: µ±ËÑË÷ÓÃÓÚ ../../base/lib/uos/libbsapi.so Ê±Ìø¹ı²»¼æÈİµÄ -lbsapi 
-/usr/bin/ld: ÕÒ²»µ½ -lbsapi
-/usr/bin/ld: µ±ËÑË÷ÓÃÓÚ ../../base/lib/uos/libchen.a Ê±Ìø¹ı²»¼æÈİµÄ -lchen 
-/usr/bin/ld: ÕÒ²»µ½ -lchen
-/usr/bin/ld: µ±ËÑË÷ÓÃÓÚ ../../base/lib/uos/libboost_python37.a Ê±Ìø¹ı²»¼æÈİµÄ -lboost_python37 
-/usr/bin/ld: ÕÒ²»µ½ -lboost_python37
-/usr/bin/ld: µ±ËÑË÷ÓÃÓÚ ../../base/lib/uos/libpython37.so Ê±Ìø¹ı²»¼æÈİµÄ -lpython37 
-/usr/bin/ld: ÕÒ²»µ½ -lpython37
-/usr/bin/ld: µ±ËÑË÷ÓÃÓÚ ../../base/lib/uos/libjson.so Ê±Ìø¹ı²»¼æÈİµÄ -ljson 
-/usr/bin/ld: ÕÒ²»µ½ -ljson
-collect2: ´íÎó£ºld ·µ»Ø 1
-make[1]: *** [../linux_bin64/Release/libMXTranslate.so] ´íÎó 1
-make[1]: Àë¿ªÄ¿Â¼¡°/home/wangjingang/code/webwork_new/mxTranslateDll¡±
-make: *** [mxTranslateDll] ´íÎó 2
-
+g++ -Wl,-R./ -o ../linux_bin64/Release/libMXTranslate.so     -shared -fPIC -rdynamic    -pthread -ldl md5Impl.o pch.o dllmain.o -L../linux_bin64/Release -L../linux_bin64/lib -L../../base/lib/uos -lBasePython -lbsapi -lchen -lboost_python37 -lpython37 -lrt -luuid -ljson
+/usr/bin/ld: å½“æœç´¢ç”¨äº ../../base/lib/uos/libBasePython.a æ—¶è·³è¿‡ä¸å…¼å®¹çš„ -lBasePython
+/usr/bin/ld: æ‰¾ä¸åˆ° -lBasePython
+/usr/bin/ld: å½“æœç´¢ç”¨äº ../../base/lib/uos/libbsapi.so æ—¶è·³è¿‡ä¸å…¼å®¹çš„ -lbsapi
+/usr/bin/ld: æ‰¾ä¸åˆ° -lbsapi
+/usr/bin/ld: å½“æœç´¢ç”¨äº ../../base/lib/uos/libchen.a æ—¶è·³è¿‡ä¸å…¼å®¹çš„ -lchen
+/usr/bin/ld: æ‰¾ä¸åˆ° -lchen
+/usr/bin/ld: å½“æœç´¢ç”¨äº ../../base/lib/uos/libboost_python37.a æ—¶è·³è¿‡ä¸å…¼å®¹çš„ -lboost_python37
+/usr/bin/ld: æ‰¾ä¸åˆ° -lboost_python37
+/usr/bin/ld: å½“æœç´¢ç”¨äº ../../base/lib/uos/libpython37.so æ—¶è·³è¿‡ä¸å…¼å®¹çš„ -lpython37
+/usr/bin/ld: æ‰¾ä¸åˆ° -lpython37
+/usr/bin/ld: å½“æœç´¢ç”¨äº ../../base/lib/uos/libjson.so æ—¶è·³è¿‡ä¸å…¼å®¹çš„ -ljson
+/usr/bin/ld: æ‰¾ä¸åˆ° -ljson
+collect2: é”™è¯¯ï¼šld è¿”å› 1
+make[1]: *** [../linux_bin64/Release/libMXTranslate.so] é”™è¯¯ 1
+make[1]: ç¦»å¼€ç›®å½•â€œ/home/wangjingang/code/webwork_new/mxTranslateDllâ€
+make: *** [mxTranslateDll] é”™è¯¯ 2

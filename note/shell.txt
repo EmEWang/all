@@ -1,27 +1,245 @@
 
+Shell 是一个程序，一般都是放在 /bin 或者 /usr/bin 目录下，当前 Linux 系统可用的 Shell 都记录在 /etc/shells 文件中
+echo $SHELL   查看系统默认shell
+Linux Shell 默认的命令提示符的格式为：[username@host directory]$  root下 提示符为 #
+Shell 通过 PS1 和 PS2 这两个环境变量来控制提示符的格式
+PS1="[\t][\u]\$ "     #修改 PS1 的环境变量的值 临时生效 永久生效 需要将修改过的内容添加至.bashrc文件
+
+
+Linux命令提示符格式
+字符	描述
+\a	铃声字符
+\d	格式为“日 月 年”的日期
+\e	ASCII 转义字符 等同于\033
+\h	本地主机名
+\H	完全合格的限定域主机名
+\j	shell 当前管理的作业数
+\1	shell 终端设备名的基本名称
+\n	ASCII 换行字符
+\r	ASCII 回车
+\s	shell 的名称
+\t	格式为“小时:分钟:秒”的24小时制的当前时间
+\T	格式为“小时:分钟:秒”的12小时制的当前时间
+@	格式为 am/pm 的12小时制的当前时间
+\u	当前用户的用户名
+\v	bash shell 的版本
+\V	bash shell 的发布级别
+\w	当前工作目录
+\W	当前工作目录的基本名称
+!	该命令的 bash shell 历史数
+#	该命令的命令数量
+$	如果是普通用户，则为美元符号$；如果超级用户（root 用户），则为井号#。
+\nnn	对应于八进制值 nnn 的字符
+\	斜杠
+[	控制码序列的开头
+]	控制码序列的结尾
+注意，所有的特殊字符均以反斜杠\开头，目的是与普通字符区分开来。您可以在命令提示符中使用以上任何特殊字符的组合。
+
+Linux短格式选项和长格式选项
+  短格式选项是长格式选项的简写，用一个减号 - 和一个字母表示，例如 ls -l
+  长格式选项是完整的英文单词，用两个减号 -- 和一个单词表示，例如 ls --all
+  一般情况下，短格式选项是长格式选项的缩写，也就是一个短格式选项会有对应的长格式选项。当然也有例外
 
 linux命令行如何换行,一行命令太长,看的不清晰    在行未  \ + ENTER 就可以实现换行
-Linux命令_多条命令执行 
-1.多条命令--( ; 隔开)    各命令的执行结果，不会影响其它命令的执行。各个命令都会执行，但不保证每个命令都执行成功             ls;pwd
-2.多条命令--( && 隔开)   若前面的命令执行成功，才会去执行后面的命令。这样可以保证所有的命令执行完毕后，执行过程都是成功的。 lsa&&pwd    没有las命令
-3.多条命令--( || 隔开)   是或的意思，只有前面的命令执行失败后才去执行下一条命令                                             lsa||pwd
-4.多条命令--( | 隔开)    在命令行中，| 表示管道，管道可以将一个命令的输出导向另一个命令的输入，从而让两个(或者更多命令)像流水线一样连续工作，不断地处理文本流。 env|grep LANG
 
+Linux命令_多条命令执行 如下是分隔符
+1. ;  各命令的执行结果 不会影响其它命令的执行 各个命令都会执行 但不保证每个命令都执行成功 如:ls;pwd
+2. && 前面命令执行成功 才会去执行后面的命令 保证所有的命令执行完毕后 执行过程都是成功的 如: ls&&pwd
+3. || 或 只有前面的命令执行失败后才去执行下一条命令     如:lsa||pwd  lsa没有这个
+4. |  命令行中 | 表示管道 将一个命令输出导向另一个命令输入 像流水线一样连续工作不断地处理文本流 如: env|grep LANG
 
-locale  查看服务器的编码 “LANG”表示服务器编码格式 如LANG=zh_CN.UTF-8 使用的是UTF-8编码。
-scp -r lixiang@10.248.14.215:~/code/llvm/foo_html/* d:/tmp/     远程复制文件
+xftp
+ldd   list dynamic dependencies缩写 #列出动态库依赖关系 提示 not a dynamic executable 表示不认动态库 编译的平台与运行的平台不匹配
+pstack 10901                          #查看进程的堆栈
+locale  查看服务器的编码 “LANG”表示服务器编码格式 如LANG=zh_CN.UTF-8 #使用的是UTF-8编码。
+scp -r lixiang@10.248.14.215:~/code/llvm/foo_html/* d:/tmp/       #远程复制文件夹
+tree       显示路径树状图 /f显示文件
+file  xxx  查看文件格式
+netstat -a ip               #查询主机名 netbios 协议 137端口 win
+lsof（list open files）     #列出当前系统打开文件的工具
+lsof -p 127129 | wc -l      #查看某个进程的打开文件数
+测试端口通不通
+  telnet ip port
+  ssh -v -p port username@ip   -v 调试模式(会打印日志) -p 指定端口 username可以随意
+  wget ip:port
+  nmap ... -p
 
-find  -path XXX -prune 排除XXX目录 -o or表示或  -a and表示与 -not或! 表示非
--prune 不进入目录，所以可用于忽略目录，但不会忽略普通文件。
--print 打印文件名
-find path -option [-exec/-ok command {} \; ]  [-print]   find命令结合-exec/-ok
-find path -option [-print] [|xargs command]              find命令结合xargs
-/(  XXX /) 表示表达式的结合。即指示 shell 不对后面的字符作特殊解释，而留给 find 命令去解释其意义。
-  由于命令行不能直接使用圆括号，所以需要用反斜杠'\'进行转意(即'\'转意字符使命令行认识圆括号)。同时注意'\('，'\)'两边都需空格。
-  find ./ \( -path ./googletest -prune -o -path ./cmake-examples -prune  -o -path *build* \) -o \( -name *.cpp -o -name *.c -o -name *.h \) -print | xargs wc -l
-或find ./ \( -path ./googletest -o -path ./cmake-examples  -o -path *build* \) -prune -o \( -name *.cpp -o -name *.c -o -name *.h \) -print | xargs wc -l
-上句意思是 排除当前目录下googletest cmake-examples 目录中或者子目录中包含build的目录 查找后缀名为.cpp .c .h的文件 并 统计行数
-find ./ \( -path ./googletest -o -path ./cmake-examples  -o -path *build* \) -prune -o \( -name *.cpp -o -name *.c -o -name *.h \)  -exec wc -l {} \; | awk '{print $1}' | awk '{sum+=$1}END{print sum}'
+fuser -mv /mnt/volume1/  找出正在使用设备的进程
+pgrep的p表明了这个命令是专门用于进程查询的grep  例:pgrep httpd
+pidof WebExpress     查询进程的pid 和pgrep相比稍显不足的是，pidof必须给出进程的全名
+cut -c 9-15 是截取输入行的第9个字符到第15个字符，而这正好是进程号PID (ps -ef 中PID范围)
+date -s "2021-11-23 17:00:00"  centOS更改系统时间
+  date 格式化输出
+  %H 小时 00..23
+  %M 分钟 00..59
+  %S 秒   00..61
+  %X 等于 %H:%M:%S
+  %Y 年份 0000..9999
+  %m 月份 01..12
+  %d 日   01..31
+  %F 等于 %Y-%m-%d
+  Unix时间戳（Unix epoch, Unix time, POSIX time 或 Unix timestamp）是从1970年1月1日0时0分0秒（UTC/GMT的午夜）开始累计到现在的秒数，不考虑闰秒
+date +%s                #将当前时间转化为时间戳  date +%s  ->  1681979884
+date +%s -d "xxx"       #将字符串指定的时间转化为时间戳  date +%s -d "2023-04-20 16:32:19"  ->  1681979539
+date -d @时间戳         #将时间戳转化为时间        date -d @1681979884 -> 2023年 04月 20日 星期四 16:38:04 CST
+hwclock  -w   写入系统时间
+cal            查看日历 cal year 查看某年的日历 cal -3 查看前一个月 单月 下一个月
+uptime         系统运行时间
+dmesg          显示系统诊断信息 系统版本号 物理内存大小以及其他信息
+df       -h    文件系统各个分区的情况  查看一级文件夹大小、使用比例、档案系统及其挂入点，但对文件却无能为力
+du       -h    查看某个目录中各级子目录所使用的硬盘数 du [参数] <目录名>  查看文件及文件夹的大小
+free           查看系统内存 虚拟内存(交换空间)的大小占用情况
+mkdir -p /a/b/c/d/e/f       #linux创建多层嵌套目录
+cd -                        #返回上一次的目录
+rm -rf dir                  #递归地删除目录 递归选项-r或-R，-f 强制删除而不被提示  rm -rf * 删除所有
+ifconfig                    #网络
+ip a                        #网络
+top -Hp pid                 #查看某个进程的线程信息 -H线程模式，-p指定pid d每隔几秒刷新默认5 c显示命令行参数
+UID启动进程的用户 PID进程的进程号 PPID父进程进程号 C cpu使用率 STIME进程启动时的系统时间 TTY进程启动时终端设备 TIME运行进程需要的累积CPU时间 CMD启动程序名称或命令
+ps aux                      #进程 同下
+ps -ef                      #进程 -e显示运行在系统上的所有进程  -f扩展显示输出
+tar -czvf ip1106.tar.gz --exclude=linux_bin64/Release/*.a linux_bin64/Release/   #排除xxx 其他的打包
+tar -cvf etcbak.tar etc/          #打包 c打包 v列出文件 f归档文件 x解包 z压缩格式gzip C解压目录
+tar -zcvf etcbak.tar.gz etc/      #打包压缩一个 tar.gz
+tar -xvf etcbak.tar               #解包
+tar -xvf  etcbak.tar  -C ./dir    #解开一个tar到当前的 dir 目录中
+tar -zxvf etcbak.tar.gz           #解压一个tar
+zip -r mybatis.zip ./mybatis      #将目录./mybatis压缩成一个mybatis.zip 文件  r递归
+unzip mybatis.zip -d ./newdir     #将mybatis.zip 文件解压缩到目录 ./newdir    d目标目录
+gzip  file.txt                    #压缩文件 只能用来压缩文件，不能压缩目录 r进入目录递归压缩 一个文件一个gz
+gunzip file.txt.gz                #解压缩文件
+ls -S大小排序 -t时间 -r反序 -l名字 -X扩展名 -h人类可读大小 -i inode号 -d只看当前目录的信息 -a显示所有文件 -A除了"."和".."以外的文件
+which xx                          #xx的位置
+alias #查看别名 alias 别名=’原命令 -选项/参数’ 设置别名  alias -p1查看已经设置的别名列表  unalias 别名1 删除别名  alias命令存放在 ~/.bashrc 文件中
+man man                           #man 分页格式
+strings ~/code/base/lib/c7/libMxHandlePool.a | grep WriteKeyMap   #在对象文件或二进制文件中查找可打印的字符串
+reset #设定终端机的状态 cat某些二进制文件导致界面乱码用reset指令重置以后恢复正常 用od命令查看二进制文件就没问题
+ln –s 源文件 软连接                 # ln -s abc   abc_soft_link
+rm -rf 软连接                      # rm -rf abc_soft_link      删除软连接本身 其指向的文件不删除 不用rf同样效果
+ln -snf 新源文件 软链接地址         # ln -snf abd abc_soft_link 修改软连接指向 或者用ln -sf
+readlink 软连接文件                #查看软连接源文件路径     readlink abc_soft_link  输出 abc
+watch -n 2 "ss -antp | grep 8123 | wc -l"	#查询端口的连接数  watch实时监测一个命令的运行结果，省得一遍又一遍的手动运行 -n表示间隔多少秒执行一次"command"，-d表示高亮发生变化的位置
+netstat -antp | grep 8123 | wc -l
+netstat -tunlp | grep 8123
+tail -n 100                       #/data/app/DOIM/Server/middle/log/mxLS_nnmbase20211028.log n数量 f跟随
+systemctl stop WebExpress
+systemctl start WebExpress
+systemctl list-unit-files         #可以查看启动项
+tracert xxx		                    #跟踪路由路径 traceroute destination-hostname
+find /usr/include -type f  -exec grep CLOCKS_PER_SEC -n --color -H {} \;
+find . -maxdepth 2 -type f −name′∗.h′ −o −name′∗.cpp′ -exec grep foo {} \; 查找所有的.h .cpp文件用 -o 链接 深度是2
+grep -rin --include=*.h ifaddrs xxx #在xxx中搜索ifaddrs 文件格式*.h -r遍历文件夹 -i忽略大小写 -n行
+grep -w 精确匹配
+grep -v 是反向查找的意思 ps -ef | grep '/home/helife/tomcat-wap/' | grep -v "grep"  查看包含 '/home/helife/tomcat-wap/' 但不包含 "grep" 的进程
+grep / ! -regex ".*/code.*" -exec grep xxx {} \;       从 / 开始 排除路径名中有 code的 查找 xxx
+
+hexdump 将指定文件内容以二进制文件转换为ASCII、八进制、十进制、十六进制格式进行查看
+  hexdump: [-bcCdovx] [-e fmt] [-f fmt_file] [-n length] [-s skip] [file ...]
+  -b 每个字节显示为8进制。一行共16个字节，一行开始以十六进制显示偏移值
+  -c 每个字节显示为ASCII字符
+  -C 每个字节显示为16进制和相应的ASCII字符
+  -d 两个字节显示为10进制
+  -n 只格式前n个长度的字符
+  -o 两个字节显示为8进制
+  -s 从偏移量开始输出
+  -x 双字节十六进制显示
+
+od(Octal Dump)将指定文件内容以八进制、十进制、十六进制、浮点格式或ASCII编码字符方式显示 默认显示方式是八进制
+  -A RADIX (--address-radix=RADIX)  #选择以何种基数表示地址偏移 [doxn] d:decimal o:octal x:hexadecimal n:none
+  -j BYTES (--skip-bytes=BYTES)     #跳过指定数目的字节
+  -N BYTES (--read-bytes=BYTES)     #输出指定字节数
+  -S [BYTES] (--strings[=BYTES])    #输出长度不小于指定字节数的字符串，BYTES 缺省为 3
+  -v (--output-duplicates)          #输出时不省略重复的数据
+  -w [BYTES] (--width[=BYTES])      #设置每行显示的字节数，BYTES 缺省为 32 字节
+  -t TYPE (--format=TYPE)           #指定输出格式，格式包括 a、c、d、f、o、u 和 x，各含义如下：
+    a：具名字符；比如换行符显示为 nl
+    c：可打印字符或反斜杠表示的转义字符；比如换行符显示为 n
+    d[SIZE]：SIZE 字节组成一个有符号十进制整数。SIZE 缺省为 sizeof(int)
+    f[SIZE]：SIZE 字节组成一个浮点数。SIZE 缺省为 sizeof(double)
+    o[SIZE]：SIZE 字节组成一个八进制整数。SIZE 缺省为 sizeof(int)
+    u[SIZE]：SIZE 字节组成一个无符号十进制整数。SIZE 缺省为 sizeof(int)
+    x[SIZE]：SIZE 字节组成一个十六进制整数。SIZE 缺省为 sizeof(int)
+    SIZE可以为数字，也可以为大写字母。如果 TYPE 是 [doux] 中的一个，那么SIZE 可以为C = sizeof(char)，S = sizeof(short)，I = sizeof(int)，L = sizeof(long)。如果 TYPE 是 f，那么 SIZE 可以为 F = sizeof(float)，D = sizeof(double) ，L = sizeof(long double)
+
+xargs
+  使用的过程中，由于很多命令不支持管道符“|”来传递参数，但是在我们的日常工作中有这个必要，于是，就出现了xargs命令。
+  xargs用于产生某个命令的参数，可以读入 stdin 的数据，并且以空格符或回车符将 stdin 的数据分割成为 arguments。需要注意的是，文件名或者其他意义的名词内含有空格符的情况。
+  当然，有些命里不能接受过多参数，这样命令可能会执行失败，这种情况也可以用xargs来解决。
+  Example：
+    ls f* | xargs rm   寻找以f开头的文件，并删除。
+    find /sbin perm +700 | xargs ls -l  寻找/sbin下所属者权限位为满的文件，并长列出。
+
+ldconfig [参数]  通常在系统启动时运行，而当用户安装了一个新的动态链接库时，就需要手工运行这个命令。
+主要是在默认搜寻目录/lib和/usr/lib以及动态库配置文件/etc/ld.so.conf内所列的目录下，搜索出可共享的动态链接库
+  (格式如lib*.so*),进而创建出动态装入程序(ld.so)所需的连接和缓存文件，缓存文件默认为/etc/ld.so.cache，
+  此文件保存已排好序的动态链接库名字列表。linux下的共享库机制采用了类似高速缓存机制，将库信息保存在/etc/ld.so.cache，
+  程序连接的时候首先从这个文件里查找，然后再到ld.so.conf的路径中查找。为了让动态链接库为系统所共享，
+  需运行动态链接库的管理命令ldconfig，此执行程序存放在/sbin目录下。
+  常用参数：
+    -v	显示正在扫描的目录及搜索到的动态链接库以及所创建的连接的名字
+    -n	仅扫描命令行指定的目录，不扫描默认目录，也不扫描配置文件所列的目录
+    -N	不重建缓存文件
+    -X	不更新文件的连接
+    -f  CONF	指定动态链接库的配置文件为CONF，系统默认为/etc/ld.so.conf
+    -C  CACHE	指定生成的缓存文件为CACHE，系统默认的是/etc/ld.so.cache
+    -r  ROOT	改变应用程序的根目录为ROOT
+    -l	进入专家模式手工设置连接
+    -p	打印出当前缓存文件所保存的所有共享库的名字
+    -c FORMAT	指定缓存文件所使用的格式
+  注意:以下4种方法 择一即可 最后调用ldconfig 其实就是系统刷新下so文件
+    1 在/lib和/usr/lib里面添加库文件，但是需要使用命令sudo ldconfig,否则无法找到库文件。 sudo ldconfig -v
+    2 在上述两个目录之外的路径添加库文件，需要先将将库文件的路径追加入/etc/ld.so.conf。 echo "/usr/local/mysql/lib" >> /etc/ld.so.conf
+    3 还可以用添加环境变量LD_LIBRARY_PATH的做法让系统识别到库文件。   export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/mysql/lib
+    4 还可以在/etc/ld.so.conf.d/目录下创建.conf文件来添加库路径。touch opencv.conf;echo "/user/local/lib" > opencv.conf;sudo ldconfig
+
+Linux使用cp命令复制不提示直接覆盖
+  方法1：修改~/.bashrc文件禁用掉cp的alias
+    vi ~/.bashrc
+    把alias cp='cp -i'注释掉，执行source ~/.bashrc或者重新登录即可实现复制不提示覆盖。
+      # User specific aliases and functions
+      alias rm='rm -i'
+      #alias cp='cp -i'
+      alias mv='mv -i'
+      source ~/.bashrc
+  方法2：在cp命令前面加一个斜杠
+    \cp -rf srcdir dstpath
+
+Linux 指令前加反斜杠 ‘\’
+  在指令前加上反斜杠，可以忽略掉 alias 的指定选项
+  alias是shell的内置命令，可以用来设置命令的别名，如使用alias ls='ls --color=auto'设置使用ls时以彩色输出 在命令前加上反斜杠，可以临时取消使用别名
+  例如：\ls 则直接调用ls的原始命令，而不会使用alias设置的带有color选项的命令
+  同样的事情，常常出现在安装软件的介绍上，作者为了保证你使用的命令和他使用的一致，而不是各种系统别名，经常会在命令前面加一个反斜杠来去除别名。
+
+scp远程拷贝命令
+Linux下提供了scp(secure copy)命令，用于进行远程拷贝文件，功能类似cp命令，支持跨服务器，并且提供加密传输。
+由于使用ssh，登录之后的本机地址是不需要给出的。但是也可以不登录直接跨主机拷贝文件，可能会需要用户名及密码。
+基本命令格式如下
+scp [...] src_file dst_file    -r迭代 -P 端口 -v显示进度 -4强制用ipv4地址 -6强制用ipv6地址
+
+# 文件复制
+$scp local_file remote_username@remote_ip:remote_folder    把local_file复制到远程的文件夹下
+$scp local_file remote_username@remote_ip:remote_file      把local_file复制到远程 并改名为remote_file
+$scp local_file remote_ip:remote_folder                    同上第一个 只是会提示输出用户名 和 密码
+$scp local_file remote_ip:remote_file                      同上第二个 只是会提示输出用户名 和 密码
+
+# 目录复制
+$scp -r local_folder remote_username@remote_ip:remote_folder   -r遍历文件夹
+$scp -r local_folder remote_ip:remote_folder
+
+指定用户名是需要输入密码，不指定用户名需要同时输入用户名和密码。
+假设主机A的ip是192.168.0.200，主机B的ip地址是192.168.0.100。
+SSH登录之后
+我们在主机A（0.200）上通过ssh远程登录到主机B（0.100）。
+
+从本地复制到远程
+$ scp a.txt tocy@192.168.0.200:~/a.txt    # 文件
+$ scp -r src tocy@192.168.0.200:~/src    # 目录
+从远程复制到本地
+$ scp tocy@192.168.0.200:~/a.txt a.txt
+$ scp -r tocy@192.168.0.200:~/src src
+直接指定两个主机拷贝
+$scp tocy@192.168.0.200:~/b.txt v@192.168.0.100:~/from_b.txt
+
 
 syslog
 1 syslogd 守护进程
@@ -33,22 +251,6 @@ cat <<EOF > xx.cc
 xxx
 XXX
 EOF
-
-查看进程的堆栈
-top -Hp 2725
-pstack 10901
-
-查看是不是 麒麟V10系统 
-cat /etc/.productinfo   如果release是 V10 版本，即为银河麒麟系统 如果release是 V7 版本，即为中标麒麟系统
-注:麒麟V10的x86_64与aarch64架构不兼容  x86_64需要在centos7上以make RELEASE=1 BITS=64 CENTOS=uos编译 aarch64需要在120.46.130.85上以make RELEASE=1 BITS=64 CENTOS=uos编译
-
-调用ldd 提示 not a dynamic executable 表示不认动态库 编译的平台与运行的平台不匹配
-
-某个centos7 停止服务
-/etc/init.d/mxagentrun stop
-
-netstat -a ip               查询主机名 netbios 协议 137端口 win
-lsof（list open files）是一个列出当前系统打开文件的工具
 
 
 查看命令耗时
@@ -75,19 +277,20 @@ section number	description                                                      
 9	              Kernel routines [Non standard]                                                    其他
 man -f xxx      查询有那些条目  然后再用 man n xxx 查询
 
-tree   win 显示路径树状图 /f显示文件
 
-测试端口通不通
-telnet ip port   ssh -v -p port username@ip   -v 调试模式(会打印日志) -p 指定端口 username可以随意    wget ip:port      nmap ... -p 
-
-
-
-
-
-grep -w 精确匹配
-grep -v 是反向查找的意思 ps -ef | grep '/home/helife/tomcat-wap/' | grep -v "grep"  查看包含 '/home/helife/tomcat-wap/' 但不包含 "grep" 的进程
-grep / ! -regex ".*/code.*" -exec grep xxx {} \;       从 / 开始 排除路径名中有 code的 查找 xxx
-find / -type f  ! -regex /va.*  ! -regex /pro.* ! -empty -mtime -3 -mtime +1  查找三天前一天内的文件，并且排除/va*、/pro* 
+find-----------------------------------------------------------------------------
+find  -path XXX -prune 排除XXX目录 -o or表示或  -a and表示与 -not或! 表示非
+  -prune 不进入目录，所以可用于忽略目录，但不会忽略普通文件。
+  -print 打印文件名
+  find path -option [-exec/-ok command {} \; ]  [-print]   find命令结合-exec/-ok
+  find path -option [-print] [|xargs command]              find命令结合xargs
+  /(  XXX /) 表示表达式的结合。即指示 shell 不对后面的字符作特殊解释，而留给 find 命令去解释其意义。
+    由于命令行不能直接使用圆括号，所以需要用反斜杠'\'进行转意(即'\'转意字符使命令行认识圆括号)。同时注意'\('，'\)'两边都需空格。
+    find ./ \( -path ./googletest -prune -o -path ./cmake-examples -prune  -o -path *build* \) -o \( -name *.cpp -o -name *.c -o -name *.h \) -print | xargs wc -l
+  或find ./ \( -path ./googletest -o -path ./cmake-examples  -o -path *build* \) -prune -o \( -name *.cpp -o -name *.c -o -name *.h \) -print | xargs wc -l
+  上句意思是 排除当前目录下googletest cmake-examples 目录中或者子目录中包含build的目录 查找后缀名为.cpp .c .h的文件 并 统计行数
+  find ./ \( -path ./googletest -o -path ./cmake-examples  -o -path *build* \) -prune -o \( -name *.cpp -o -name *.c -o -name *.h \)  -exec wc -l {} \; | awk '{print $1}' | awk '{sum+=$1}END{print sum}'
+find / -type f  ! -regex /va.*  ! -regex /pro.* ! -empty -mtime -3 -mtime +1  查找三天前一天内的文件，并且排除/va*、/pro*
 find / -type f -mtime -3 ! -path '/var/' -prune -o -name "*.log" -print       查找所有三天前被修改的log文件，并排除/var目录
 find . -path "./abc" -prune -o -print  # 在当前目录下排除abc目录，查找所有文件
 find . -path "./abc" -prune -o -name "*.txt" -print   # 在当前目录下排除abc目录，查找所有以.txt结尾的文件【方式一】
@@ -103,12 +306,11 @@ find . ! -name "*.html" -type f  # 在当前目录下查找所有不是以.html�
       -prune
     else
       -print
-  
+
   find . \( -path ./abc -o -path ./def \) -prune -o -name "*.txt" -print
     圆括号表示表达式的结合
     \ 表示引用 即shell不对后面的字符做特殊解释 而留给find去解释含义
     查找到某一确定文件 -name 等选项加在 -o 之后
-
 
 find
   linux下的实时查找工具，通过遍历指定目录下的文件系统完成文件查找。
@@ -177,7 +379,7 @@ find
              find -perm 755   匹配权限模式恰好是755的文件
              find -perm /222  只要当任意人有写权限时
              find -perm -222  只有当每个人都有写权限时
-             find -perm -002  只有当其它人（other）有写权限时才会匹配（/002也可）  
+             find -perm -002  只有当其它人（other）有写权限时才会匹配（/002也可）
       根据目录深度查找：
          -maxdepth levels：设置目录最大几层
          -mindepth levels：设置目录最小几层
@@ -207,276 +409,6 @@ find
         find -name "*.conf" -exec cp {} {}.orig \;    备份以“.conf”结尾的文件，并添加.orig扩展名
         find ~ perm -002 -exec chmod -w {} \;        在你的主目录中寻找可被其它用户写入的文件，并取消这些文件其他用户的写权限
 
-xargs
-  使用的过程中，由于很多命令不支持管道符“|”来传递参数，但是在我们的日常工作中有这个必要，于是，就出现了xargs命令。
-  xargs用于产生某个命令的参数，可以读入 stdin 的数据，并且以空格符或回车符将 stdin 的数据分割成为 arguments。需要注意的是，文件名或者其他意义的名词内含有空格符的情况。
-  当然，有些命里不能接受过多参数，这样命令可能会执行失败，这种情况也可以用xargs来解决。
-  Example：
-    ls f* | xargs rm   寻找以f开头的文件，并删除。
-    find /sbin perm +700 | xargs ls -l  寻找/sbin下所属者权限位为满的文件，并长列出。
-
-  
-
-
-
-
-
-ldconfig [参数]  通常在系统启动时运行，而当用户安装了一个新的动态链接库时，就需要手工运行这个命令。
-常用参数：
--v	显示正在扫描的目录及搜索到的动态链接库以及所创建的连接的名字
--n	仅扫描命令行指定的目录，不扫描默认目录，也不扫描配置文件所列的目录
--N	不重建缓存文件
--X	不更新文件的连接
--f CONF	指定动态链接库的配置文件为CONF，系统默认为/etc/ld.so.conf
--C CACHE	指定生成的缓存文件为CACHE，系统默认的是/etc/ld.so.cache
--r ROOT	改变应用程序的根目录为ROOT
--l	进入专家模式手工设置连接
--p	打印出当前缓存文件所保存的所有共享库的名字
--c FORMAT	指定缓存文件所使用的格式
--V	打印出ldconfig的版本信息，而后退出
--- -help	打印出其帮助信息，而后退出
-
-file  xxx  查看文件格式
-
-CentOS7查看CPU个数
-查看逻辑cpu个数：cat /proc/cpuinfo | grep "processor" | wc -l
-查看物理cpu个数：cat /proc/cpuinfo | grep "physical id" | sort | uniq | wc -l
-查看每个物理cpu的核数cores：cat /proc/cpuinfo | grep "cpu cores"
-如果所有物理cpu的cores个数加起来小于逻辑cpu的个数，则该cpu使用了超线程技术。查看每个物理cpu中逻辑cpu的个数：cat /proc/cpuinfo | grep "siblings"
-cpu信息 cat /proc/cpuinfo |grep "model name" && cat /proc/cpuinfo |grep "physical id"
-内存大小 cat /proc/meminfo |grep MemTotal
-磁盘大小 fdisk -l |grep Disk
-其他查看linux硬件信息的方法
-uname -a # 查看内核/操作系统/CPU信息的linux系统信息命令
-head -n 1 /etc/issue # 查看操作系统版本，是数字1不是字母L
-cat /proc/cpuinfo # 查看CPU信息的linux系统信息命令
-hostname # 查看计算机名的linux系统信息命令
-lspci -tv # 列出所有PCI设备
-lsusb -tv # 列出所有USB设备的linux系统信息命令
-lsmod # 列出加载的内核模块
-env # 查看环境变量资源
-free -m # 查看内存使用量和交换区使用量
-df -h # 查看各分区使用情况
-du -sh # 查看指定目录的大小
-grep MemTotal /proc/meminfo # 查看内存总量
-grep MemFree /proc/meminfo # 查看空闲内存量
-uptime # 查看系统运行时间、用户数、负载
-cat /proc/loadavg # 查看系统负载磁盘和分区
-mount | column -t # 查看挂接的分区状态
-fdisk -l # 查看所有分区
-swapon -s # 查看所有交换分区
-hdparm -i /dev/hda # 查看磁盘参数(仅适用于IDE设备)
-dmesg | grep IDE # 查看启动时IDE设备检测状况网络
-ifconfig # 查看所有网络接口的属性
-iptables -L # 查看防火墙设置
-route -n # 查看路由表
-netstat -lntp # 查看所有监听端口
-netstat -antp # 查看所有已经建立的连接
-netstat -s # 查看网络统计信息进程
-ps -ef # 查看所有进程
-top # 实时显示进程状态用户
-w # 查看活动用户
-id # 查看指定用户信息
-last # 查看用户登录日志
-cut -d: -f1 /etc/passwd # 查看系统所有用户
-cut -d: -f1 /etc/group # 查看系统所有组
-crontab -l # 查看当前用户的计划任务服务
-chkconfig –list # 列出所有系统服务
-chkconfig –list | grep on # 列出所有启动的系统服务程序
-rpm -qa # 查看所有安装的软件包
-cat /proc/cpuinfo ：查看CPU相关参数的linux系统命令
-cat /proc/partitions ：查看linux硬盘和分区信息的系统信息命令
-cat /proc/meminfo ：查看linux系统内存信息的linux系统命令
-cat /proc/version ：查看版本，类似uname -r
-cat /proc/ioports ：查看设备io端口
-cat /proc/interrupts ：查看中断
-cat /proc/pci ：查看pci设备的信息
-cat /proc/swaps ：查看所有swap分区的信息
-
-
-
-
-Linux查看进程内存空间分布 - pmap
-The pmap command reports the memory map of a process or processes.
-pmap 提供了进程的内存映射，用于显示一个或多个进程的内存状态，报告进程的地址空间和内存状态信息。
-
-测试代码如下：
-
-#include <iostream>
-#include <unistd.h>
-
-using namespace std;
-
-int main()
-{
-    int i = 0;
-    char a[100];
-    for(int i = 0; i < sizeof(a); ++i)
-    {
-        a[i] = i;
-    }
-
-    while(1)
-    {
-        cout << "get pid " << getpid() << endl;
-        int *ptr = new int[1000];
-        sleep(1);
-    }
-    return 0;
-}
-
-
-使用pmap -d [PID]，表示以设备格式方式查看。
-
-fzz@ubuntu:~/src/testCPP$ pmap -d 4106
-4106:   ./testCPP
-Address           Kbytes Mode  Offset           Device    Mapping
-0000000000400000      12 r-x-- 0000000000000000 008:00001 testCPP
-0000000000602000       4 r---- 0000000000002000 008:00001 testCPP
-0000000000603000       4 rw--- 0000000000003000 008:00001 testCPP
-000000000229a000     200 rw--- 0000000000000000 000:00000   [ anon ]
-00007f7ec7414000    1056 r-x-- 0000000000000000 008:00001 libm-2.23.so
-00007f7ec751c000    2044 ----- 0000000000108000 008:00001 libm-2.23.so
-00007f7ec771b000       4 r---- 0000000000107000 008:00001 libm-2.23.so
-00007f7ec771c000       4 rw--- 0000000000108000 008:00001 libm-2.23.so
-00007f7ec771d000    1792 r-x-- 0000000000000000 008:00001 libc-2.23.so
-00007f7ec78dd000    2048 ----- 00000000001c0000 008:00001 libc-2.23.so
-00007f7ec7add000      16 r---- 00000000001c0000 008:00001 libc-2.23.so
-00007f7ec7ae1000       8 rw--- 00000000001c4000 008:00001 libc-2.23.so
-00007f7ec7ae3000      16 rw--- 0000000000000000 000:00000   [ anon ]
-00007f7ec7ae7000      92 r-x-- 0000000000000000 008:00001 libgcc_s.so.1
-00007f7ec7afe000    2044 ----- 0000000000017000 008:00001 libgcc_s.so.1
-00007f7ec7cfd000       4 r---- 0000000000016000 008:00001 libgcc_s.so.1
-00007f7ec7cfe000       4 rw--- 0000000000017000 008:00001 libgcc_s.so.1
-00007f7ec7cff000    1868 r-x-- 0000000000000000 008:00001 libstdc++.so.6.0.28
-00007f7ec7ed2000    2048 ----- 00000000001d3000 008:00001 libstdc++.so.6.0.28
-00007f7ec80d2000      44 r---- 00000000001d3000 008:00001 libstdc++.so.6.0.28
-00007f7ec80dd000      12 rw--- 00000000001de000 008:00001 libstdc++.so.6.0.28
-00007f7ec80e0000      12 rw--- 0000000000000000 000:00000   [ anon ]
-00007f7ec80e3000     152 r-x-- 0000000000000000 008:00001 ld-2.23.so
-00007f7ec82eb000      24 rw--- 0000000000000000 000:00000   [ anon ]
-00007f7ec8308000       4 r---- 0000000000025000 008:00001 ld-2.23.so
-00007f7ec8309000       4 rw--- 0000000000026000 008:00001 ld-2.23.so
-00007f7ec830a000       4 rw--- 0000000000000000 000:00000   [ anon ]
-00007ffee87e4000     132 rw--- 0000000000000000 000:00000   [ stack ]
-00007ffee8858000      12 r---- 0000000000000000 000:00000   [ anon ]
-00007ffee885b000       8 r-x-- 0000000000000000 000:00000   [ anon ]
-ffffffffff600000       4 r-x-- 0000000000000000 000:00000   [ anon ]
-mapped: 13680K    writeable/private: 424K    shared: 0K
-
-
-使用pmap -X [PID] 则可以查看更加详细的内存映像（扩展格式）
-
-fzz@ubuntu:~/src/testCPP$ pmap -X 4363
-4363:   ./testCPP
-         Address Perm   Offset Device   Inode  Size  Rss Pss Referenced Anonymous LazyFree ShmemPmdMapped Shared_Hugetlb Private_Hugetlb Swap SwapPss Locked Mapping
-        00400000 r-xp 00000000  08:01 1175070    12   12  12         12         0        0              0              0               0    0       0      0 testCPP
-        00602000 r--p 00002000  08:01 1175070     4    4   4          4         4        0              0              0               0    0       0      0 testCPP
-        00603000 rw-p 00003000  08:01 1175070     4    4   4          4         4        0              0              0               0    0       0      0 testCPP
-        00ec7000 rw-p 00000000  00:00       0   200   96  96         96        96        0              0              0               0    0       0      0 [heap]
-    7f9537874000 r-xp 00000000  08:01  926551  1056  176   3        176         0        0              0              0               0    0       0      0 libm-2.23.so
-    7f953797c000 ---p 00108000  08:01  926551  2044    0   0          0         0        0              0              0               0    0       0      0 libm-2.23.so
-    7f9537b7b000 r--p 00107000  08:01  926551     4    4   4          4         4        0              0              0               0    0       0      0 libm-2.23.so
-    7f9537b7c000 rw-p 00108000  08:01  926551     4    4   4          4         4        0              0              0               0    0       0      0 libm-2.23.so
-    7f9537b7d000 r-xp 00000000  08:01  926594  1792 1164  13       1164         0        0              0              0               0    0       0      0 libc-2.23.so
-    7f9537d3d000 ---p 001c0000  08:01  926594  2048    0   0          0         0        0              0              0               0    0       0      0 libc-2.23.so
-    7f9537f3d000 r--p 001c0000  08:01  926594    16   16  16         16        16        0              0              0               0    0       0      0 libc-2.23.so
-    7f9537f41000 rw-p 001c4000  08:01  926594     8    8   8          8         8        0              0              0               0    0       0      0 libc-2.23.so
-    7f9537f43000 rw-p 00000000  00:00       0    16    8   8          8         8        0              0              0               0    0       0      0 
-    7f9537f47000 r-xp 00000000  08:01  926430    92   88   2         88         0        0              0              0               0    0       0      0 libgcc_s.so.1
-    7f9537f5e000 ---p 00017000  08:01  926430  2044    0   0          0         0        0              0              0               0    0       0      0 libgcc_s.so.1
-    7f953815d000 r--p 00016000  08:01  926430     4    4   4          4         4        0              0              0               0    0       0      0 libgcc_s.so.1
-    7f953815e000 rw-p 00017000  08:01  926430     4    4   4          4         4        0              0              0               0    0       0      0 libgcc_s.so.1
-    7f953815f000 r-xp 00000000  08:01    6136  1868 1276  41       1276         0        0              0              0               0    0       0      0 libstdc++.so.6.0.28
-    7f9538332000 ---p 001d3000  08:01    6136  2048    0   0          0         0        0              0              0               0    0       0      0 libstdc++.so.6.0.28
-    7f9538532000 r--p 001d3000  08:01    6136    44   44  44         44        44        0              0              0               0    0       0      0 libstdc++.so.6.0.28
-    7f953853d000 rw-p 001de000  08:01    6136    12   12  12         12        12        0              0              0               0    0       0      0 libstdc++.so.6.0.28
-    7f9538540000 rw-p 00000000  00:00       0    12   12  12         12        12        0              0              0               0    0       0      0 
-    7f9538543000 r-xp 00000000  08:01  926314   152  152   1        152         0        0              0              0               0    0       0      0 ld-2.23.so
-    7f953874b000 rw-p 00000000  00:00       0    24   24  24         24        24        0              0              0               0    0       0      0 
-    7f9538768000 r--p 00025000  08:01  926314     4    4   4          4         4        0              0              0               0    0       0      0 ld-2.23.so
-    7f9538769000 rw-p 00026000  08:01  926314     4    4   4          4         4        0              0              0               0    0       0      0 ld-2.23.so
-    7f953876a000 rw-p 00000000  00:00       0     4    4   4          4         4        0              0              0               0    0       0      0 
-    7ffc4ae5d000 rw-p 00000000  00:00       0   132   12  12         12        12        0              0              0               0    0       0      0 [stack]
-    7ffc4af69000 r--p 00000000  00:00       0    12    0   0          0         0        0              0              0               0    0       0      0 [vvar]
-    7ffc4af6c000 r-xp 00000000  00:00       0     8    4   0          4         0        0              0              0               0    0       0      0 [vdso]
-ffffffffff600000 r-xp 00000000  00:00       0     4    0   0          0         0        0              0              0               0    0       0      0 [vsyscall]
-                                              ===== ==== === ========== ========= ======== ============== ============== =============== ==== ======= ====== 
-                                              13680 3140 340       3140       268        0              0              0               0    0       0      0 KB 
-
-
-
-Address: 内存开始地址
-Kbytes: 分配的虚拟内存块大小（KB）
-RSS（Resident Set Size - 常驻内存集）: 保留在内存的字节数（KB）,top命令输出中的RES和pmap输出中的RSS是一个东西。表征的是物理内存。
-Dirty: 脏页的字节数（包括共享和私有的）（KB）
-Mode: 内存的权限：read、write、execute
-Mapping: 占用内存的文件、[anon]（匿名的，表示在磁盘上没有对应的文件）、[stack]（栈）
-Offset: 文件偏移
-Device: 设备名 (major:minor)
-anonymous （anon 匿名的意思）：表示在磁盘上没有对应的文件，这些一般都是可执行文件或者动态库里的bss段、heap(堆)。当然有对应文件的mapping也有可能是anonymous，比如文件的数据段
-
-
-
-
-
-Linux使用cp命令复制不提示直接覆盖
-  方法1：修改~/.bashrc文件禁用掉cp的alias
-    vi ~/.bashrc
-    把alias cp='cp -i'注释掉，执行source ~/.bashrc或者重新登录即可实现复制不提示覆盖。
-    
-    如
-      # User specific aliases and functions
-      alias rm='rm -i'
-      #alias cp='cp -i'
-      alias mv='mv -i'
-      source ~/.bashrc
-  方法2：在cp命令前面加一个斜杠
-    \cp -rf srcdir dstpath
-
-
-Linux 指令前加反斜杠 ‘\’
-  在指令前加上反斜杠，可以忽略掉 alias 的指定选项
-  alias是shell的内置命令，可以用来设置命令的别名，如使用alias ls='ls --color=auto'设置使用ls时以彩色输出 在命令前加上反斜杠，可以临时取消使用别名
-  例如：\ls 则直接调用ls的原始命令，而不会使用alias设置的带有color选项的命令
-  同样的事情，常常出现在安装软件的介绍上，作者为了保证你使用的命令和他使用的一致，而不是各种系统别名，经常会在命令前面加一个反斜杠来去除别名。
-
-
-
-
-
-
-scp远程拷贝命令
-Linux下提供了scp(secure copy)命令，用于进行远程拷贝文件，功能类似cp命令，支持跨服务器，并且提供加密传输。
-由于使用ssh，登录之后的本机地址是不需要给出的。但是也可以不登录直接跨主机拷贝文件，可能会需要用户名及密码。
-基本命令格式如下
-scp [...] src_file dst_file    -r迭代 -P 端口 -v显示进度 -4强制用ipv4地址 -6强制用ipv6地址
-
-# 文件复制
-$scp local_file remote_username@remote_ip:remote_folder    把local_file复制到远程的文件夹下
-$scp local_file remote_username@remote_ip:remote_file      把local_file复制到远程 并改名为remote_file
-$scp local_file remote_ip:remote_folder                    同上第一个 只是会提示输出用户名 和 密码
-$scp local_file remote_ip:remote_file                      同上第二个 只是会提示输出用户名 和 密码
-
-# 目录复制
-$scp -r local_folder remote_username@remote_ip:remote_folder   -r遍历文件夹
-$scp -r local_folder remote_ip:remote_folder
-
-指定用户名是需要输入密码，不指定用户名需要同时输入用户名和密码。
-假设主机A的ip是192.168.0.200，主机B的ip地址是192.168.0.100。
-SSH登录之后
-我们在主机A（0.200）上通过ssh远程登录到主机B（0.100）。
-
-从本地复制到远程
-$ scp a.txt tocy@192.168.0.200:~/a.txt    # 文件
-$ scp -r src tocy@192.168.0.200:~/src    # 目录    
-从远程复制到本地
-$ scp tocy@192.168.0.200:~/a.txt a.txt
-$ scp -r tocy@192.168.0.200:~/src src
-直接指定两个主机拷贝
-$scp tocy@192.168.0.200:~/b.txt v@192.168.0.100:~/from_b.txt
-
-
 用find命令查找时例如命令find /home -name w*如下会出错，查文档找出
 find: paths must precede expression
 Usage: find [-H] [-L] [-P] [-Olevel] [-D help|tree|search|stat|rates|opt|exec]
@@ -496,7 +428,7 @@ find . -name \*.c -print
 也就是查找多文件的时候需要加 单引号
 
 
-
+kill-----------------------------------------------------------------------------
 kill -s SIGUSR2	$(pidof bluesky)  向blusky进程 发送SIGUSR2信号
 
 kill PID  默认发送的信号是SIGTERM  编号通常为15  该信号可以被目标进程捕获 SIGTERM信号不一定能够“杀死”目标进程 可通过以下四种方式发送SIGTERM信号
@@ -528,98 +460,293 @@ kill不能杀死进程原因
         方法二，直接kill父进程，将此进程变成孤儿进程，交给init进程管理，由init进程回收此进程的资源 kill -9 PPID
 
 kill -s 9 `pgrep httpd`   杀掉 所有进程过滤为httpd的进程
-killall -9 httpd          杀掉 所有进程过滤为httpd的进程   killall后面的需要接完整的程序名称，否则会报
-
-fuser -mv /mnt/volume1/  找出正在使用设备的进程
-pgrep的p表明了这个命令是专门用于进程查询的grep  例:pgrep httpd
-pidof WebExpress     查询进程的pid 和pgrep相比稍显不足的是，pidof必须给出进程的全名
-cut -c 9-15 是截取输入行的第9个字符到第15个字符，而这正好是进程号PID (ps -ef 中PID范围)
+killall -9 httpd          杀掉 所有进程过滤为httpd的进程   killall后面的需要接完整的程序名称，否则会报未找到进程
 
 
+crontab-----------------------------------------------------------------------------
+  架构
+                         系统服务                         配置工具
+    配置文件              crond                           crontab
+    文件方式设置定时任务  每分钟从配置文件中刷新定时任务  调整定时任务
 
-date -s "2021-11-23 17:00:00"  centOS更改系统时间
-date 格式化输出
-%H 小时 00..23
-%M 分钟 00..59
-%S 秒   00..61
-%X 等于 %H:%M:%S
-%Y 年份 0000..9999
-%m 月份 01..12
-%d 日   01..31
-%F 等于 %Y-%m-%d
-Unix时间戳（Unix epoch, Unix time, POSIX time 或 Unix timestamp）是从1970年1月1日0时0分0秒（UTC/GMT的午夜）开始累计到现在的秒数，不考虑闰秒
-date +%s 将时间转化为时间戳
-date -d @时间戳 将时间戳转化为时间
-hwclock  -w   写入系统时间
-cal            查看日历 cal year 查看某年的日历 cal -3 查看前一个月 单月 下一个月
-uptime         系统运行时间
-dmesg          显示系统诊断信息 系统版本号 物理内存大小以及其他信息
-df       -h    文件系统各个分区的情况  查看一级文件夹大小、使用比例、档案系统及其挂入点，但对文件却无能为力
-du       -h    查看某个目录中各级子目录所使用的硬盘数 du [参数] <目录名>  查看文件及文件夹的大小
-free           查看系统内存 虚拟内存(交换空间)的大小占用情况
-mkdir -p /a/b/c/d/e/f       linux创建多层嵌套目录
-cd -                        返回上一次的目录
-rm -rf MyDocuments rm通常删除文件 可以添加参数用来删除目录 递归地删除目录，使用递归选项-r或-R，-f 强制删除而不被提示  rm -rf * 删除所有
-ifconfig                    网络
-ps -ef                      进程 -e显示运行在系统上的所有进程  -f扩展显示输出 
-top -Hp pid                 查看某个进程的线程信息 -H 显示线程信息，-p指定pid
-UID启动进程的用户 PID进程的进程号 PPID父进程进程号 C cpu使用率 STIME进程启动时的系统时间 TTY进程启动时终端设备 TIME运行进程需要的累积CPU时间 CMD启动程序名称或命令
-ps aux | grep XXX           进程
-tar -czvf ip1106.tar.gz --exclude=linux_bin64/Release/*.a linux_bin64/Release/                 排除xxx其他的打包
-tar -cvf etcbak.tar etc/          打包一个tar
-tar -xvf etcbak.tar                 解开一个tar
-tar -xvf  etcbak.tar  -C ./dir  解开一个tar到当前的 dir 目录中
-tar -zcvf etcbak.tar.gz etc/ 打包压缩一个 tar 
-tar -zxvf etcbak.tar.gz  解压一个tar
-zip -r mybatis.zip    ./mybatis 将目录./mybatis压缩成一个mybatis.zip 文件
-unzip  mybatis.zip  -d ./newdir 将mybatis.zip 文件解压缩到目录  ./newdir
-gzip  file.txt   --压缩文件 
-gunzip file.txt.gz  --解压缩文件 
-ls -S大小排序 -t时间 -r反序 -l名字 -X扩展名 -h人类可读大小 -i inode号 -d只看当前目录的信息 -a显示所有文件 -A除了"."和".."以外的文件
-which xx  xx的位置
-alias 查看别名 alias 别名=’原命令 -选项/参数’ 设置别名  alias -p1查看已经设置的别名列表  unalias 别名1 删除别名  alias命令存放在 ~/.bashrc 文件中
-man man
-Linux版本
-  内核版本
-    uname -a 查看内核版本
-    cat /proc/version 查看内核版本
-  发行版本
-    lsb_release -a   即可列出所有版本信息   适用于所有的Linux发行版，包括RedHat、SUSE、Debian…等发行版
-    cat /etc/redhat-release  查看发行版本   只适合Redhat系的Linux
-    cat /etc/issue   此命令也适用于所有的Linux发行版
-strings ~/code/base/lib/c7/libMxHandlePool.a | grep WriteKeyMap      在对象文件或二进制文件中查找可打印的字符串
-reset 设定终端机的状态 cat某些二进制文件导致界面乱码用reset指令重置以后恢复正常 用od命令查看二进制文件就没问题
-ln –s 源文件 软连接                            ln -s abc   abc_soft_link
-rm -rf 软连接                                  rm -rf abc_soft_link        删除软连接本身 其指向的文件不删除
-ln -snf 新源文件 软链接地址                    ln -snf abd abc_soft_link   修改软连接指向 或者用ln -sf
-readlink 软连接文件   查看软连接源文件路径     readlink abc_soft_link  输出 abc
+    crontab配置文件
+    Linux下的任务调度分为两类：系统任务调度和用户任务调度。
+    Linux系统任务是由 cron (crond) 这个系统服务来控制的，这个系统服务是默认启动的。
+    用户自己设置的计划任务则使用crontab 命令。在CentOS系统中，
+    /etc/crontab
 
-watch -n | "ss -antp |  8123 | wc -l"	查询端口的连接数  watch实时监测一个命令的运行结果，省得一遍又一遍的手动运行 -n表示间隔多少秒执行一次"command"，-d表示高亮发生变化的位置
-netstat -antp | grep 8123 | wc -l
-netstat -tunlp | grep 8123
-tail -n 100 /data/app/DOIM/Server/middle/log/mxLS_nnmbase20211028.log
-systemctl stop WebExpress
-systemctl start WebExpress
-systemctl list-unit-files 可以查看启动项
-tracert xxx		跟踪路由路径
-find /usr/include -type f  -exec grep CLOCKS_PER_SEC -n --color -H {} \; 
-find . -maxdepth 2 -type f −name′∗.h′ −o −name′∗.cpp′ -exec grep foo {} \; 查找所有的.h .cpp文件用 -o 链接 深度是2 
-grep -rin  --include=*.h   ifaddrs  xxx 在xxx中搜索ifaddrs 文件格式*.h -r遍历文件夹 -i忽略大小写 -n行
-ldd   list dynamic dependencies缩写 列出动态库依赖关系
+service cron start
+service cron stop
+service cron status
+
+SHELL=/bin/bash
+PATH=/sbin:/bin:/usr/sbin:/usr/bin
+MAILTO=root
+
+# For details see man 4 crontabs
+
+# Example of job definition:
+# .---------------- minute (0 - 59)
+# |  .------------- hour (0 - 23)
+# |  |  .---------- day of month (1 - 31)
+# |  |  |  .------- month (1 - 12) OR jan,feb,mar,apr ...
+# |  |  |  |  .---- day of week (0 - 6) (Sunday=0 or 7) OR sun,mon,tue,wed,thu,fri,sat
+# |  |  |  |  |
+# *  *  *  *  * user-name  command to be executed
+
+    配置文件可以看到如下解释：
+    前四行是用来配置crond任务运行的环境变量，
+    第一行SHELL变量指定了系统要使用哪个shell，这里是bash；
+    第二行PATH变量指定了系统执行命令的路径；
+    第三行MAILTO变量指定了crond的任务执行信息将通过电子邮件发送给root用户，如果MAILTO变量的值为空，则表示不发送任务执行信息给用户；
+    第四行的HOME变量指定了在执行命令或者脚本时使用的主目录。
+
+    用户定期要执行的工作，比如用户数据备份、定时邮件提醒等。
+    用户可以使用 crontab 工具来定制自己的计划任务。
+    所有用户定义的crontab 文件都被保存在 /var/spool/cron目录中。其文件名与用户名一致。
+
+  更改文本编辑程序
+    select-editor
+
+  命令
+    crontab –e :  修改 crontab 文件. 如果文件不存在会自动创建。
+    crontab –l :  显示 crontab 文件。
+    crontab -r :  删除 crontab 文件。
+    crontab -ir : 删除 crontab 文件前提醒用户。
+
+    crontab file [-u user]   用指定的文件替代目前的crontab。
+    crontab -[-u user]       用标准输入替代目前的crontab.
+    crontab -1[user]         列出用户目前的crontab.
+    crontab -e[user]         编辑用户目前的crontab.
+    crontab -d[user]         删除用户目前的crontab.
+    crontab -c dir           指定crontab的目录。
+
+    例子
+      crontab -u username 便可以指定其他用户
+      sudo crontab -u root -e 便可编辑 root 用户的配置
+
+    注意：如果要停止某个定时任务，只需要 -e 的时候使用 # 将其注释即可。
+    https://crontab.guru/  在线工具
+
+  文件
+    /var/spool/cron/下,如果你是root用户,那下面有个root文件 有的系统是在 /var/spool/cron/crontabs 下
+    /var/log下,如:#ls /var/log/cron*  /var/log/cron  /var/log/cron.1  /var/log/cron.2  日志写在
+    /etc/cron.allow 文件控制哪些用户可以使用 crontab，
+    /etc/cron.deny  文件控制哪些用户不可以使用 crontab。
+    /etc/crontab 文件中设置的是一些系统级的定时任务，其中每行都多了一个执行用户，并且直接编辑该文件而不是使用 crontab 命令来管理。
+
+    crontab文件的格式：M H D m d cmd.
+      M: 分钟（0-59）。
+      H：小时（0-23）。
+      D：天（1-31）。
+      m: 月（1-12）。
+      d: 一星期内的天（0~6，0为星期天）。
+
+    *    *    *    *    *
+    -    -    -    -    -
+    |    |    |    |    |
+    |    |    |    |    +----- 星期中星期几 (0 - 6) (星期天 为0)
+    |    |    |    +---------- 月份 (1 - 12)
+    |    |    +--------------- 一个月中的第几天 (1 - 31)
+    |    +-------------------- 小时 (0 - 23)
+    +------------------------- 分钟 (0 - 59)
+
+    特殊的取值
+      * 所有，例如对于 minute 来说，* 等价于 0-59
+      , 数组，例如 1,3,5
+      - 段，例如 1-3 等价于 1,2,3
+      / 间隔，例如对于 minute 来说，*/2 代表每 2 分钟
+
+  问题排查
+    所有的定时任务都是由 cron 守护进程来负责调度执行的，如果任务未按照你的预期运行，可以通过 systemctl status cron.service 查看守护进程是否 running。
+    下图的日志还可以看到由于缺少用户名导致语法错误，一个定时任务被忽略，使用 journalctl -u cron.service 还可以查看更多的日志信息。
+
+  参考
+    man 1 crontab
+    man 5 crontab
+    man 8 cron
 
 
+ulimit-----------------------------------------------------------------------------
+Linux对于每个用户，系统限制其最大进程数，为提高性能，可以根据设备资源情况，设置个Linux用户的最大进程数，或为无限制：
+ulimit -a 用来显示当前的各种用户进程限制 可以看到如下信息
+core file size          (blocks, -c) 0
+data seg size           (kbytes, -d) unlimited
+file size               (blocks, -f) unlimited
+pending signals                 (-i) 1024
+max locked memory       (kbytes, -l) 32
+max memory size         (kbytes, -m) unlimited
+open files                      (-n) 1024
+pipe size            (512 bytes, -p) 8
+POSIX message queues     (bytes, -q) 819200
+stack size              (kbytes, -s) 10240
+cpu time               (seconds, -t) unlimited
+max user processes              (-u) 4096
+virtual memory          (kbytes, -v) unlimited
+file locks                      (-x) unlimited
 
-shell--------------------------------------------------------------------------------
+若我们需要修改的是open files (-n) 1024的值
+于是命令就是limit -n 2048(随各自需要设置)
+数据段长度：ulimit -d unlimited
+最大内存大小：ulimit -m unlimited
+堆栈大小：ulimit -s unlimited
+
+开启或关闭core文件的生成
+ulimit -c           #可以查看是否打开此选项，若为0则为关闭；
+ulimit -c 0         #可手动关闭
+ulimit -c 1000      #为设置core文件大小最大为1000k
+ulimit -c unlimited #设置core文件大小为不限制大小
+很多系统在默认的情况下是关闭生成core文件的，这个命令可以加到你的profile中去。
+
+功能说明：控制shell程序的资源。
+语　　法：ulimit [-aHS][-c <core文件上限>][-d <数据节区大小>][-f <文件大小>][-m <内存大小>][-n <文件数目>][-p <缓冲区大小>][-s <堆叠大小>][-t <CPU时间>][-u <程序数目>][-v <虚拟内存大小>]
+补充说明：ulimit为shell内建指令，可用来控制shell执行程序的资源。
+参　　数：
+   -a 　显示目前资源限制的设定。
+   -c <core文件上限> 　设定core文件的最大值，单位为区块。
+   -d <数据节区大小> 　程序数据节区的最大值，单位为KB。
+   -f <文件大小> 　shell所能建立的最大文件，单位为区块。
+   -H 　设定资源的硬性限制，也就是管理员所设下的限制。
+   -m <内存大小> 　指定可使用内存的上限，单位为KB。
+   -n <文件数目> 　指定同一时间最多可开启的文件数。
+   -p <缓冲区大小> 　指定管道缓冲区的大小，单位512字节。
+   -s <堆叠大小> 　指定堆叠的上限，单位为KB。
+   -S 　设定资源的弹性限制。
+   -t <CPU时间> 　指定CPU使用时间的上限，单位为秒。
+   -u <程序数目> 　用户最多可开启的程序数目。
+   -v <虚拟内存大小> 　指定可使用的虚拟内存上限，单位为KB。
+
+当系统中的一些程序在遇到一些错误以及crash时，系统会自动产生core文件记录crash时刻系统信息，包括内存和寄存器信息，用以程序员日 后debug时可以使用。这些错误包括段错误、非法指令、总线错误或用户自己生成的退出信息等等，一般地，core文件在当前文件夹中存放。
+core文件有时可能在你发生错误时，并没有出现在你当前的文件夹中，发生这种情况的原因有两个：一个是当前终端被设置为不能弹出core文件；另一种则是core文件被指定了路径。
+对于前者，我们可以使用ulimit命令对core文件的大小进行设定。一般默认情况下，core文件的大小被设置为0，这样系统就不dump出core文件了。这时，使用命令：ulimit -c unlimited进行设置，就可以把core文件的大小设置为无限大，同时也可以使用数字来替代unlimited，对core文件的上限制做更精确的设定。
+除了可以设置core文件的大小之外，还可以对core文件的名称进行一些规定。这种设置是对/proc/sys/kernel/core_pattern和/proc/sys/kernel/core_uses_pid这两个文件进行修改。改动这两个文件的方法如下：
+echo <pattern> > /proc/sys/kernel/core_pattern
+echo <"0"/"1"> /proc/sys/kernel/core_uses_pid
+并且注意，只有超级用户才可以修改这两个表。
+core_pattern接受的是core文件名称的pattern，它包含任何字符串，并且用%作为转移符号生成一些标示符，为core文件名称加入特殊含义。已定义的标示符有如下这些：
+%%：相当于%
+%p：相当于<pid>
+%u：相当于<uid>
+%g：相当于<gid>
+%s：相当于导致dump的信号的数字
+%t：相当于dump的时间
+%e：相当于执行文件的名称
+%h：相当于hostname
+除以上这些标志位外，还规定：
+1、末尾的单个%可以直接去除；
+2、%加上除上述以外的任何字符，%和该字符都会被去除；
+3、所有其他字符都作为一般字符加入名称中；
+4、core文件的名称最大值为64个字节（包括'\0'）；
+5、core_pattern中默认的pattern为core；
+6、为了保持兼容性，通过设置core_uses_pid，可以在core文件的末尾加上%p；
+7、pattern中可以包含路径信息。
+
+当然，你可以用下列方式来完成
+sysctl -w kernel.core_pattern=/tmp/core-%e-%p
+
+这些操作一旦计算机重启，则会丢失，如果你想持久化这些操作，可以在 /etc/sysctl.conf文件中增加：
+kernel.core_pattern=/tmp/core%p
+
+加好后，如果你想不重启看看效果的话，则用下面的命令：
+sysctl -p /etc/sysctl.conf
+
+高手指教：
+  解决的问题：
+    现有一程序P 长期在服务器上运行，目前经常是每1天死掉一次（段错误）。
+  目前解决方法：
+    用SecureCRT开一个终端，并在服务其上设置ulimit -c nulimited，然后启动程序P。用ulimite -a 命令查询结果如下：
+    core file size       (blocks, -c) unlimited
+    data seg size           (kbytes, -d) unlimited
+    file size             (blocks, -f) unlimited
+    pending signals                 (-i) 1024
+    max locked memory    (kbytes, -l) 32
+    ............
+    表明core文件可以生成。
+    并测试利用kill -6 pid能够core文件。
+  目前的困难：
+    当运行ulimit -c nulimited终端 （并且该终端将程序P启动到后台了 ./P &）关闭，程序P死掉后并没有生成 core文件。
+    经试验后发现ulimit 命令与终端有关。
+  高手指教：
+    如何设置能够生成core 文件，与终端无关
+    即，程序启动，关闭终端，当程序死掉（段错误）后能够生成core文件。
+
+在/etc/security/limits.conf （中设置 redhat衍生系linux）
+或/etc/profile中的：
+ulimit -S -c 0 > /dev/null 2>&1
+还有其他UNIX类操作系统也有自己的配置文件可以设置。
+
+gdb core 多线程
+多线程如果dump，多为段错误，一般都涉及内存非法读写。使用下面的命令打开系统开关，让其可以在死掉的时候生成core文件。
+ulimit -c unlimited
+这样的话死掉的时候就可以在当前目录看到core.pid(pid为进程号)的文件。接着使用gdb:
+gdb ./bin ./core.pid
+进去后，使用bt查看死掉时栈的情况，在使用frame命令。
+还有就是里面某个线程停住，也没死，这种情况一般就是死锁或者涉及消息接受的超时问题。遇到这种情况，可以使用：
+gcore pid （调试进程的pid号）
+手动生成core文件，在使用pstack(linux下好像不好使)查看堆栈的情况。如果都看不出来，就仔细查看代码，是不是在 if，return，break，continue这种语句操作是忘记解锁，还有嵌套锁的问题，都需要分析清楚了。
+
+
+curl-----------------------------------------------------------------------------
+  例子：curl -i -X GET -H 'Cookie: mxsessionid={E842CEF8F8C04E52-0199-5948-C308-E66520ADD8E5}' -o /dev/null -s -w 'DNS解析：%{time_namelookup}\n建立tcp时长：%{time_connect}\n请求开始到响应开始传输的时间：%{time_pretransfer}\n客户端到服务器时长：%{time_starttransfer}\n从开始到结束时长：%{time_total}\n下载速度：%{speed_download}\n' http://192.168.8.202:8121/mxlogin.BSI
+        curl --location --request POST 'http://127.0.0.1/gettree.BSI' --header 'Cookie: mxsessionid=1f1c22fa-1d7d-403f-921e-0bf336d1f799;' --form 'id=""' --form 'isClearEmptyGroup="1"' --form 'isGetTree="1"' --form 'MaxLevel="9999"' --form 'isTopnTree="1"' --form 'functype="netcfgmgr"' --form 'devType="Network"'
+  参数有空格 需要使用引号把参数括起来 curl -A "are you ok?" http://aaa.com
+  参数本身有引号的时候 使用单引号把参数括起来（不过在Windows中不管用） curl -d '{"name":"fool"}' http://aaa.com
+  数据很多时，我们可以指定一个文件 curl -d @param.json http://aaa.com
+  -i --include 输出中包含协议头
+  -L --locatio 跟随302跳转
+  -X --request 请求方式 GET POST等
+  -H --header 自定义的协议头
+  -o --output 输出文件
+  -s --silent 不输出任何东西
+  -F --form POST方式中 在内容发送额外的参数
+  -K 指定参数文件 curl -K 11 http://baidu.com
+  -w --write-out 格式化输出   或者指定 curl -w @12 -o /dev/null -s -L http://baidu.com   其中@之后表示文件 其他类型参数类似
+    time_appconnect 从开始到SSL/SSH/等连接/手摇完成到远程主机的时间，单位为秒。(7.19.0中新增) #ssl才会有，http的话为0
+    time_connect 从开始到TCP连接到远程主机（或代理）完成的时间，单位为秒。
+    time_namelookup 从开始到名称解析完成的时间，单位为秒。
+    time_pretransfer 从开始到文件传输即将开始所花的时间，单位为秒。
+    time_redirect 在最终事务开始之前，所有的重定向步骤，包括名称查询、连接、预传输和传输所花费的时间，单位为秒。 (新增于7.12.3)
+    time_starttransfer 时间_starttransfer 从开始到第一个字节即将被转发的时间，单位是秒。 这包括time_pretransfer和服务器计算结果所需的时间。
+    time_total 整个操作持续的总时间，单位为秒。
+    time_appconnect The time, in seconds, it took from the start until the SSL/SSH/etc connect/handshake to the remote host was completed. (Added in 7.19.0)
+    time_connect The time, in seconds, it took from the start until the TCP connect to the remote host (or proxy) was completed.
+    time_namelookup The time, in seconds, it took from the start until the name resolving was completed.
+    time_pretransfer The time, in seconds, it took from the start until the file transfer was just about to begin.This includes all pre-transfer commands and negotiations that are specific to the particular protocol(s) involved.
+    time_redirect The time, in seconds, it took for all redirection steps including name lookup, connect, pretransfer and transfer before the final transaction was started. time_redirect shows the complete execu tion time for multiple redirections. (Added in 7.12.3)
+    time_starttransfer The time, in seconds, it took from the start un til the first byte was just about to be trans ferred. This includes time_pretransfer and also the time the server needed to calculate the re sult.
+    ime_total The total time, in seconds, that the full operation lasted.
+
+vi 11
+ -i -X GET
+
+vi 12
+timelookup:  %{time_namelookup} \n
+time_connect:  %{time_connect} \n
+time_appconnect:  %{time_appconnect} \n
+time_redirect:  %{time_redirect} \n
+time_pretransfer:  %{time_pretransfer} \n
+time_starttransfer:  %{time_starttransfer} \n
+            ---------- \n
+time_total:  %{time_total} \n
+
+
+shell编程--- 示例 0.sh  -----------------------------------------------------------------
+执行一个 Shell 脚本，有四种方式，即使用点，.、使用绝对路径或相对路径执行、使用 sh 执行和使用 source 执行。
 变量
-your_name="qinjx"               定义变量
-echo $your_name                 使用变量 只要在变量名前面加美元符号即可
-echo ${your_name}               变量名外面的花括号是可选的，加不加都行，加花括号是为了帮助解释器识别变量的边界
+在 Bash shell 中，每一个变量的值都是字符串，无论你给变量赋值时有没有使用引号，值都会以字符串的形式存储。
+variable=value                  #赋值号 = 的周围不能有空格
+variable='value'
+variable="value"                #如果 value 包含了空白符，那么就必须使用引号包围起来。
+your_name="qinjx"               #定义变量
+echo $your_name                 #使用变量 只要在变量名前面加美元符号即可
+echo ${your_name}               #变量名外面的花括号是可选的，加不加都行，加花括号是为了帮助解释器识别变量的边界
 
-执行命令
-echo `ls /etc`
-echo $(ls /etc)
+variable=`ls /etc`              #命令结果赋值给变量 下同
+variable=$(ls /etc)
+unset variable                  #删除变量 unset 命令不能删除只读变量
 
-字符串
+url=xxx
+readonly url                    #将变量声明为只读的
 
 单引号
 str='this is a string'
@@ -632,12 +759,12 @@ your_name="runoob"
 str="Hello, I know you are \"$your_name\"! \n"
 echo -e $str
 输出结果为：
-Hello, I know you are "runoob"! 
+Hello, I know you are "runoob"!
 双引号的优点：
 双引号里可以有变量
 双引号里可以出现转义字符
 
-拼接字符串
+拼接字符串  格式 str=$str1$str2
 your_name="runoob"
 # 使用双引号拼接
 greeting="hello, "$your_name" !"
@@ -660,12 +787,31 @@ echo ${#string}   # 输出 4
 
 string="abcd"
 echo ${#string[0]}   # 输出 4
-提取子字符串
 
-从字符串第 2 个字符开始截取 4 个字符
-string="runoob is a great site"
-echo ${string:1:4} # 输出 unoo
-注意：第一个字符的索引值为 0。
+从指定位置开始截取字符串
+${string: start :length}
+  start	起始位置，从左边开始，第一个下标从 0 开始  默认
+${string: 0-start :length}
+  start 起始位置，从右边开始，第一个下标从 1 开始 多了 0-，这是固定的写法，专门用来表示从字符串右边开始计数。
+length省略的话表示直到字符串的末尾 不管从哪边开始计数，截取方向都是从左到右
+string=12345
+${string:2}                    #从左边截取  ${string:2:1}  截取一个字符
+${string:0-2}                  #从右边截取  ${string:0-2:1}
+
+从指定字符开始截取字符串
+使用指定字符方式截取无法指定字符串长度，只能从指定字符（子字符串）截取到字符串末尾。
+  Shell 可以截取指定字符（子字符串）右边的所有字符，也可以截取左边的所有字符。
+${string#*chars} 从 string 字符串第一次出现 *chars 的位置开始，截取 *chars 右边的所有字符。
+  从左向右开始遍历
+  使用 # 号可以截取指定字符（或者子字符串）右边的所有字符
+  string 表示要截取的字符，chars 是指定的字符（或者子字符串），* 是通配符的一种，表示任意长度的字符串。
+  *chars 连起来使用的意思是：忽略左边的所有字符，直到遇见 chars（chars 不会被截取）
+${string##*chars}	从 string 字符串最后一次出现 *chars 的位置开始，截取 *chars 右边的所有字符。
+${string%chars*} 从 string 字符串第一次出现 *chars 的位置开始，截取 *chars 左边的所有字符。
+  从右向左开始遍历
+  使用 % 号可以截取指定字符（或者子字符串）左边的所有字符，请注意 * 的位置，因为要截取 chars 左边的字符，
+    而忽略 chars 右边的字符，所以 * 应该位于 chars 的右侧。其他方面 % 和 # 的用法相同。
+${string%%chars*}	从 string 字符串最后一次出现 *chars 的位置开始，截取 *chars 左边的所有字符。
 
 查找子字符串
 查找字符 i 或 o 的位置(哪个字母先出现就计算哪个)
@@ -673,18 +819,17 @@ string="runoob is a great site"
 echo `expr index "$string" io`  # 输出 4
 注意： 以上脚本中 ` 是反引号，而不是单引号 '，不要看错了哦。
 
-
 条件表达式要放在 [ ] 之间，并且要有空格，例如: [$a==$b] 是错误的，必须写成 [ $a == $b ]
-if [ 1 -gt 2 ]; then echo 11; else echo 22; fi              使用 [...] 判断语句中大于使用 -gt，小于使用 -lt
-if ((1 < 2)); then echo 11; else echo 22; fi                使用 ((...)) 作为判断语句，大于和小于可以直接使用 > 和 <。
+if [ 1 -gt 2 ]; then echo 11; else echo 22; fi   使用 [...] 判断语句中大于使用 -gt，小于使用 -lt
+if ((1 < 2)); then echo 11; else echo 22; fi     使用 ((...)) 作为判断语句，大于和小于可以直接使用 > 和 <。
 
 逻辑运算符 放到 [[ ]] 之间
 if [[ 1 -lt 2 && 2 -lt 3 ]]; then echo 11; else echo 22; fi
-if (( 1 < 2 && 2 < 3 )); then echo 11; else echo 22; fi  
-
-
+if (( 1 < 2 && 2 < 3 )); then echo 11; else echo 22; fi
 
 算术运算符
+Shell 不能直接进行算数运算，必须使用数学计算命令。
+如果不特别指明，每一个变量的值都是字符串，无论你给变量赋值时有没有使用引号，值都会以字符串的形式存储。
 下表列出了常用的算术运算符 假定变量 a 为 10 变量 b 为 20
 运算符  说明                          举例
 +       加法                          `expr $a + $b` 结果为 30。
@@ -695,7 +840,63 @@ if (( 1 < 2 && 2 < 3 )); then echo 11; else echo 22; fi
 =       赋值                          a=$b 把变量 b 的值赋给 a。
 ==      相等 两数字相同返回true       [ $a == $b ] 返回 false。
 !=      不相等 两数字不相同返回true   [ $a != $b ] 返回 true。
+**	    幂运算
+++、–	  自增和自减，可以放在变量的前面也可以放在变量的后面
+!、&&、||	            逻辑非（取反）、逻辑与（and）、逻辑或（or）
+<、<=、>、>=	        比较符号（小于、小于等于、大于、大于等于）
+==、!=、=	            比较符号（相等、不相等；对于字符串，= 也可以表示相当于）
+<<、>>	              向左移位、向右移位
+~、|、 &、^	          按位取反、按位或、按位与、按位异或
+=、+=、-=、*=、/=、%=	 赋值运算符，例如 a+=1 相当于 a=a+1，a-=1 相当于 a=a-1
 注意：条件表达式要放在方括号之间，并且要有空格，例如: [$a==$b] 是错误的，必须写成 [ $a == $b ]。
+运算操作符/运算命令	说明
+(( ))	             用于整数运算，效率很高，推荐使用。不能对小数（浮点数）或者字符串进行运算。
+let	               用于整数运算，和 (()) 类似。
+$[]	               用于整数运算，不如 (()) 灵活。
+expr	             可用于整数运算，也可以处理字符串。比较麻烦，需要注意各种细节，不推荐使用。
+bc	               Linux下的一个计算器程序，可以处理整数和小数。Shell 本身只支持整数运算，想计算小数就得使用 bc 这个外部的计算器。
+declare -i	       将变量定义为整数，然后再进行数学运算时就不会被当做字符串了。功能有限，仅支持最基本的数学运算（加减乘除和取余），不支持逻辑运算、自增自减等，所以在实际开发中很少使用。
+说明 推荐只使用 (()) 和 bc 即可，(()) 可以用于整数计算，bc 可以小数计算。
+
+双小括号 (( )) 是 Bash Shell 中专门用来进行整数运算的命令
+语法((expr))
+expr表达式可以有一个或多个，多个表达式之间以逗号,分隔，以最后一个表达式的值作为整个 (( )) 命令的执行结果。
+使用 $ 获取 (( )) 命令的结果，这和使用 $ 获得变量值是类似的。
+((a=10+66)) ((b=a-15))    #这种写法可以在计算完成后给变量赋值 使用变量时不用加$前缀，(( )) 会自动解析变量名。
+a=$((10+66)) b=$((a-15))  #在 (( )) 前面加上$获取 (( )) 命令的执行结果，即获取整个表达式的值。不加则出错
+((a>7 && b==5))	          #(( )) 也可以进行逻辑运算，在 if 语句中常会使用逻辑运算。
+echo $((a+10))	          #需要立即输出表达式的运算结果时，可以在 (( )) 前面加$符号。
+((a=3+5, b=a+10))	        #对多个表达式同时进行计算。
+$((a++)) $((++a))         #前自增/后自增
+$((--a)) $((a–-))         #前自减/后自减
+
+let命令  和双小括号 (( )) 的用法是类似的，它们都是用来对整数进行运算
+语法
+let expr      #其中的 expr 可以不加引号，也可以加单引号和双引号。
+let "expr"    #当表达式中含有 Shell 特殊字符（例如 |）时，需要用双引号 "" 或者单引号 '' 将表达式包围起来。
+let 'expr'
+let ret=expr  #将表达式 expr 的运行结果保存到变量 ret 中
+let 也支持一次性计算多个表达式，并且以最后一个表达式的值作为整个 let 命令的执行结果。但是，对于多个表达式之间的分隔符，
+  let 和 (( )) 是有区别的：let 命令以空格来分隔多个表达式；(( )) 以逗号,来分隔多个表达式。
+
+expr 命令是 evaluate expressions 的缩写，译为 “表达式求值”。
+expr 是一个功能强大，并且比较复杂的命令，它除了可以实现整数计算，还可以结合一些选项对字符串进行处理，
+  例如计算字符串长度、字符串比较、字符串匹配、字符串提取等。
+语法 expr exprisson
+出现在表达式中的运算符、数字、变量和小括号的左右两边至少要有一个空格，否则会报错。
+有些特殊符号必须用反斜杠 \ 进行转义（屏蔽其特殊含义），比如乘号 * 和小括号 ()，如果不用 \ 转义，
+  那么 Shell 会把它们误解为正则表达式中的符号（ * 对应通配符，() 对应分组）。
+使用变量时要加 $ 前缀。
+expr 10 + 20   #注意空格
+expr 4 \* 5    #注意转义字符 *
+expr 2 + \( 4 \* 5 \)   #注意转义字符 * ()
+
+bc 命令可以很方便的进行浮点运算，当然整数运算也是支持的。
+bc 甚至可以称得上是一种编程语言了，它支持变量、数组、输入输出、分支结构、循环结构、函数等基本的编程元素。
+https://haicoder.net/shell/shell-bc.html
+Shell中bc借助管道使用 bc 计算器。语法 echo "expression" | bc
+echo "5+3" | bc
+echo "(2+6)*3" | bc
 
 
 关系运算符
@@ -704,11 +905,10 @@ if (( 1 < 2 && 2 < 3 )); then echo 11; else echo 22; fi
 运算符  说明                                                       举例
 -eq     检测两个数是否相等，相等返回 true。                        [ $a -eq $b ] 返回 false。
 -ne     检测两个数是否不相等，不相等返回 true。                    [ $a -ne $b ] 返回 true。
--gt     检测左边的数是否大于右边的，如果是，则返回 true。          [ $a -gt $b ] 返回 false。
--lt     检测左边的数是否小于右边的，如果是，则返回 true。          [ $a -lt $b ] 返回 true。
--ge     检测左边的数是否大于等于右边的，如果是，则返回 true。      [ $a -ge $b ] 返回 false。
--le     检测左边的数是否小于等于右边的，如果是，则返回 true。      [ $a -le $b ] 返回 true。
-
+-gt     检测左边的数是否大于右边的，如果是，则返回 true。           [ $a -gt $b ] 返回 false。
+-lt     检测左边的数是否小于右边的，如果是，则返回 true。           [ $a -lt $b ] 返回 true。
+-ge     检测左边的数是否大于等于右边的，如果是，则返回 true。       [ $a -ge $b ] 返回 false。
+-le     检测左边的数是否小于等于右边的，如果是，则返回 true。       [ $a -le $b ] 返回 true。
 
 布尔运算符
 下表列出了常用的布尔运算符，假定变量 a 为 10，变量 b 为 20
@@ -717,49 +917,368 @@ if (( 1 < 2 && 2 < 3 )); then echo 11; else echo 22; fi
 -o      或运算，有一个表达式为 true 则返回 true。                  [ $a -lt 20 -o $b -gt 100 ] 返回 true。
 -a      与运算，两个表达式都为 true 才返回 true。                  [ $a -lt 20 -a $b -gt 100 ] 返回 false。
 
-
 逻辑运算符
 以下介绍 Shell 的逻辑运算符，假定变量 a 为 10，变量 b 为 20
 运算符  说明          举例
 &&      逻辑的 AND    [[ $a -lt 100 && $b -gt 100 ]] 返回 false
 ||      逻辑的 OR     [[ $a -lt 100 || $b -gt 100 ]] 返回 true
+-a      逻辑的 AND    [ $a -lt 100 -a $b -gt 100 ] 返回 true
+-o      逻辑的 OR     [ $a -lt 100 -o $b -gt 100 ] 返回 true
+!       逻辑的 NOT    [[ !($a -lt 100) ]] 返回 false
 
 
 字符串运算符
 下表列出了常用的字符串运算符，假定变量 a 为 "abc"，变量 b 为 "efg"
 运算符  说明                                            举例
-=       检测两个字符串是否相等，相等返回 true。         [ $a = $b ] 返回 false。
+= 或 == 检测两个字符串是否相等，相等返回 true。         [ $a = $b ] 返回 false。
 !=      检测两个字符串是否不相等，不相等返回 true。     [ $a != $b ] 返回 true。
 -z      检测字符串长度是否为0，为0返回 true。           [ -z $a ] 返回 false。
 -n      检测字符串长度是否不为 0，不为 0 返回 true。    [ -n "$a" ] 返回 true。
 $       检测字符串是否不为空，不为空返回 true。         [ $a ] 返回 true。
-
+str1 > str2	判断 str1 是否大于 str2 \>是转义字符，这样写是为了防止>被误认为成重定向运算符        [ str1 \> str2	]
+str1 < str2	判断 str1 是否小于 str2。 同样，\<也是转义字符
 
 文件测试运算符
-文件测试运算符用于检测 Unix 文件的各种属性。
-属性检测描述如下：
+文件测试运算符用于检测 Unix 文件的各种属性。属性检测描述如下：
 操作符  说明                                                                        举例
--b file 检测文件是否是块设备文件，如果是，则返回 true。                             [ -b $file ] 返回 false。
--c file 检测文件是否是字符设备文件，如果是，则返回 true。                           [ -c $file ] 返回 false。
--d file 检测文件是否是目录，如果是，则返回 true。                                   [ -d $file ] 返回 false。
+-b file 检测文件是否是块设备文件，如果是，则返回 true。                          [ -b $file ] 返回 false。
+-c file 检测文件是否是字符设备文件，如果是，则返回 true。                        [ -c $file ] 返回 false。
+-d file 检测文件是否是目录，如果是，则返回 true。                                [ -d $file ] 返回 false。
+-e file 检测文件（包括目录）是否存在，如果是，则返回 true。                       [ -e $file ] 返回 true。
 -f file 检测文件是否是普通文件（既不是目录，也不是设备文件），如果是，则返回 true。 [ -f $file ] 返回 true。
--g file 检测文件是否设置了 SGID 位，如果是，则返回 true。                           [ -g $file ] 返回 false。
--k file 检测文件是否设置了粘着位(Sticky Bit)，如果是，则返回 true。                 [ -k $file ] 返回 false。
--p file 检测文件是否是有名管道，如果是，则返回 true。                               [ -p $file ] 返回 false。
--u file 检测文件是否设置了 SUID 位，如果是，则返回 true。                           [ -u $file ] 返回 false。
--r file 检测文件是否可读，如果是，则返回 true。                                     [ -r $file ] 返回 true。
--w file 检测文件是否可写，如果是，则返回 true。                                     [ -w $file ] 返回 true。
--x file 检测文件是否可执行，如果是，则返回 true。                                   [ -x $file ] 返回 true。
--s file 检测文件是否为空（文件大小是否大于0），不为空返回 true。                    [ -s $file ] 返回 true。
--e file 检测文件（包括目录）是否存在，如果是，则返回 true。                         [ -e $file ] 返回 true。
-其他检查符：
--S: 判断某文件是否 socket。
--L: 检测文件是否存在并且是一个符号链接。
+-g file 检测文件是否设置了 SGID 位，如果是，则返回 true。                        [ -g $file ] 返回 false。
+-L file检测文件是否存在并且是一个符号链接。
+-k file 检测文件是否设置了粘着位(Sticky Bit)，如果是，则返回 true。              [ -k $file ] 返回 false。
+-p file 检测文件是否是有名管道，如果是，则返回 true。                            [ -p $file ] 返回 false。
+-u file 检测文件是否设置了 SUID 位，如果是，则返回 true。                        [ -u $file ] 返回 false。
+-r file 检测文件是否可读，如果是，则返回 true。                                  [ -r $file ] 返回 true。
+-w file 检测文件是否可写，如果是，则返回 true。                                  [ -w $file ] 返回 true。
+-x file 检测文件是否可执行，如果是，则返回 true。                                [ -x $file ] 返回 true。
+-s file 检测文件是否为空（文件大小是否大于0），不为空返回 true。                  [ -s $file ] 返回 true。
+-S file 判断该文件是否存在，并且是否为套接字文件，是W返回 true。                  [ -s $file ] 返回 true。
+文件比较
+选项                     作用
+filename1 -nt filename2	判断 filename1 的修改时间是否比 filename2 的新。
+filename -ot filename2	判断 filename1 的修改时间是否比 filename2 的旧。
+filename1 -ef filename2	判断 filename1 是否和 filename2 的 inode 号一致，可以理解为两个文件是否为同一个文件。这个判断用于判断硬链接是很好的方法
 
+
+函数
+使用函数前，必须先声明与定义函数。
+函数定义
+function func1() {            # 若关键字function省略 则()不能省略 否则 () 可省
+    statements                # {} 包围的为函数体
+    [return value]            # return 是 Shell 关键字 可省略 如果有 必须为数字
+}
+
+函数调用
+func1 param1 param2 param3    #函数名 参数
+echo $?                       #函数返回值 $? 是一个特殊变量 用来获取上一个命令的退出状态 或上一个函数的返回值
+
+函数参数 类似脚本参数 ./xx.sh p1 p2 p3
+函数内部可以使用 $n 来接收，例如，$0 当前脚本的文件名./xx.sh $1 表示第一个参数 p1，$2 表示第二个参数 p2，依次类推。
+$# 获取传递的参数的个数        #3
+$* 一次性获取所有的参数        "p1 p2 p3"      #以一个单字符串显示所有向脚本传递的参数
+"$*" 一次性获取所有的参数      "p1 p2 p3"      #以"$1 $2 … $n"的形式输出所有参数
+$@ 一次性获取所有的参数        同$*
+"$@" 一次性获取所有的参数      "p1" "p2" "p3"  #以"$1" "$2" … "$n" 的形式输出所有参数
+$$	                          #脚本运行的当前进程ID号
+$!	                          #后台运行的最后一个进程的ID号
+$-	                          #显示Shell使用的当前选项，与set命令功能相同
+$?	                          #显示最后命令的退出状态。0表示没有错误，其他任何值表明有错误
+
+函数返回值
+1 通过全局变量的方式 函数内对全局变量赋值
+2 函数内 return value     只能返回数字
+  函数内 echo xx1;echo xx2;return $*
+    外部 以$(func param1 param2) 或者 `func param1 param2` 捕获之
+    注意 函数内echo不打印 而是把它们整合成一个变量放回 中间以空格分隔
+
+数组
+数组中可以存放多个值。bash 只支持一维数组 不支持多维数组 初始化时不需要定义数组大小 数组元素的下标由 0 开始。
+数组用括号来表示 元素用"空格"符号分割开，语法格式：array_name=(value1 value2 ... valuen)
+也可以使用数字下标来定义数组:array_name[0]=value0;array_name[1]=value1
+关联数组 可以使用任意的字符串 或整数作为下标来访问数组元素 语法格式：declare -A array_name
+如：declare -A site=(["A"]="A.a" ["B"]="B.b" ["C"]="C.c") #-A 选项就是用于声明一个关联数组 主键唯一
+ 或 declare -A site;site["A"]="A.a";site["B"]="B.b";
+读取数组单个元素 ${array_name[index]}
+获取数组所有元素 ${array_name[@]} 或 ${array_name[*]}
+获取数组的所有键 ${!array_name[@]} 或 ${!array_name[*]}
+获取数组的长度 ${#array_name[@]} 或 ${#array_name[*]} 使用 @ 或 * 将数组转成列表 再次使用 # 获取数组长度
+数组拼接array_new=(${array1[@]}  ${array2[@]}) 使用 @ 将数组转成列表，再次将两个数组写在一起，实现了数组的拼接
+删除数组元素 unset array_name[index]  使用了 unset 实现了删除数组指定下标的元素
+删除整个数组 unset array_name
+
+在 Shell 中，命令可以分为内建命令和外部命令
+内置命令
+Bash 自身提供的命令，而不是文件系统中的某个可执行文件。执行内建命令相当于调用当前 Shell 进程的一个函数。
+外部命令
+执行外部命令时不但会触发磁盘 I/O，还需要 fork 出一个单独的进程来执行，执行完成后再退出。通常来说，内建命令会比外部命令执行得更快
+
+查看命令类型 type command   如: type cd
+
+alias                  #查看当前系统所有的命令别名
+alias new_cmd="cmd"    #使用 alias 命令，可以给命令起别名。 如 alias lsl='ls -l'
+unalias cmd            #使用 unalias 命令，后面加别名，可以删除别名。 unalias lsl
+
+echo "haicoder.net"              #输出字符并换行
+echo -n "haicoder.net"           #输出字符不换行
+echo -e "hello \nhaicoder.net"   #解析转义字符
+
+
+从标准输入中读取数据并赋值给变量。若没有进行重定向，默认从键盘读取用户输入的数据；若进行了重定向，可从文件中读取数据。
+read [-options] [variables]
+options	read 命令使用的选项
+variables	用来存储数据的变量，可以有一个，也可以有多个
+options 和 variables 都是可选的，如果没有提供变量名，那么读取的数据将存放到环境变量 REPLY 中。
+选项	说明
+-a array	把读取的数据赋值给数组 array，从下标 0 开始。
+-d delimiter	用字符串 delimiter 指定读取结束的位置，而不是一个换行符（读取到的数据不包括 delimiter）。
+-e	在获取用户输入的时候，对功能键进行编码转换，不会直接显式功能键对应的字符。
+-n num	读取 num 个字符，而不是整行字符。
+-p prompt	显示提示信息，提示内容为 prompt。
+-r	原样读取（Raw mode），不把反斜杠字符解释为转义字符。
+-s	静默模式（Silent mode），不会在屏幕上显示输入的字符。当输入密码和其它确认信息的时候，这是很有必要的。
+-t seconds	设置超时时间，单位为秒。如果用户没有在指定时间内输入完成，那么 read 将会返回一个非 0 的退出状态，表示读取失败。
+-u fd	使用文件描述符 fd 作为输入源，而不是标准输入，类似于重定向。
+read -p "please input info > " name url age      #读取3个变量
+read -n 1 -p "Enter a char > " char              #读取单个字符
+read -t 20 -sp "Enter password in 20 seconds > " pass1 && printf "\n"  #输入密码 不回显 超过20s不输入程序自动结束
+
+exit code
+用来用来退出当前 Shell 进程，并返回一个退出状态；使用 $? 可以接受这个退出状态。
+exit 命令可以接受一个整数值作为参数，代表退出状态。如果不指定，默认状态值是 0。
+一般情况下，退出状态为 0 表示成功，退出状态为非 0 表示执行失败（出错）了。
+exit 退出状态只能是一个介于 0~255 之间的整数，其中只有 0 表示成功，其它值都表示失败。
+exit 4
+
+declare
+declare 和 typeset 都是 Shell 内建命令，它们的用法相同，都用来设置变量的属性。不过 typeset 已经被弃用了，建议使用 declare 代替。
+declare [+/-] [aAfFgilprtux] [变量名=变量值]
+选项	     含义
+-f [name]	列出之前由用户在脚本中定义的函数名称和函数体。
+-F [name]	仅列出自定义函数名称。
+-g name	在 Shell 函数内部创建全局变量。
+-p [name]	显示指定变量的属性和值。
+-a name	声明变量为普通数组。
+-A name	声明变量为关联数组（支持索引下标为字符串）。
+-i name	将变量定义为整数型。
+-r name[=value]	将变量定义为只读（不可修改和删除），等价于 readonly name。
+-x name[=value]	将变量设置为环境变量，等价于 export name[=value]。
+其中，- 表示设置属性，+
+表示取消属性，aAfFgilprtux 都是具体的选项。
+declare -i m n ret  #将多个变量声明为整数
+declare -r n=10     #将变量声明为只读变量
+
+
+
+内置命令列表
+命令	  说明
+:	扩展参数列表，执行重定向操作
+.	读取并执行指定文件中的命令（在当前 shell 环境中）
+alias	为指定命令定义一个别名
+bg	将作业以后台模式运行
+bind	将键盘序列绑定到一个 readline 函数或宏
+break	退出 for、while、select 或 until 循环
+builtin	执行指定的 shell 内建命令
+caller	返回活动子函数调用的上下文
+cd	将当前目录切换为指定的目录
+command	执行指定的命令，无需进行通常的 shell 查找
+compgen	为指定单词生成可能的补全匹配
+complete	显示指定的单词是如何补全的
+compopt	修改指定单词的补全选项
+continue	继续执行 for、while、select 或 until 循环的下一次迭代
+declare	声明一个变量或变量类型。
+dirs	显示当前存储目录的列表
+disown	从进程作业表中刪除指定的作业
+echo	将指定字符串输出到 STDOUT
+enable	启用或禁用指定的内建shell命令
+eval	将指定的参数拼接成一个命令，然后执行该命令
+exec	用指定命令替换 shell 进程
+exit	强制 shell 以指定的退出状态码退出
+export	设置子 shell 进程可用的变量
+fc	从历史记录中选择命令列表
+fg	将作业以前台模式运行
+getopts	分析指定的位置参数
+hash	查找并记住指定命令的全路径名
+help	显示帮助文件
+history	显示命令历史记录
+jobs	列出活动作业
+kill	向指定的进程 ID(PID) 发送一个系统信号
+let	计算一个数学表达式中的每个参数
+local	在函数中创建一个作用域受限的变量
+logout	退出登录 shell
+mapfile	从 STDIN 读取数据行，并将其加入索引数组
+popd	从目录栈中删除记录
+printf	使用格式化字符串显示文本
+pushd	向目录栈添加一个目录
+pwd	显示当前工作目录的路径名
+read	从 STDIN 读取一行数据并将其赋给一个变量
+readarray	从 STDIN 读取数据行并将其放入索引数组
+readonly	从 STDIN 读取一行数据并将其赋给一个不可修改的变量
+return	强制函数以某个值退出，这个值可以被调用脚本提取
+set	设置并显示环境变量的值和 shell 属性
+shift	将位置参数依次向下降一个位置
+shopt	打开/关闭控制 shell 可选行为的变量值
+source	读取并执行指定文件中的命令（在当前 shell 环境中）
+suspend	暂停 Shell 的执行，直到收到一个 SIGCONT 信号
+test	基于指定条件返回退出状态码 0 或 1
+times	显示累计的用户和系统时间
+trap	如果收到了指定的系统信号，执行指定的命令
+type	显示指定的单词如果作为命令将会如何被解释
+typeset	声明一个变量或变量类型。
+ulimit	为系统用户设置指定的资源的上限
+umask	为新建的文件和目录设置默认权限
+unalias	刪除指定的别名
+unset	刪除指定的环境变量或 shell 属性
+wait	等待指定的进程完成，并返回退出状态码
+
+
+if条件判断
+语法
+if  condition
+then
+    statement(s)
+fi
+
+或
+if  condition; then
+    statement(s)
+fi
+condition 后面加一个分号，并且将 then 和 condition 写在一行。
+
+elif语句
+if  condition1
+then
+   statement1
+elif condition2
+then
+    statement2
+elif condition3
+then
+    statement3
+fi
+
+if else语句
+if condition
+then
+   statement
+else
+   statementn
+fi
+
+if elif else语句
+if  condition1
+then
+   statement1
+elif condition2
+then
+    statement2
+elif condition3
+then
+    statement3
+else
+   statementn
+fi
+
+判断条件
+[[ ]] 是 Shell 的内置命令，用于检测某个条件是否成立。test 能做到的，[[ ]] 也能做到，而且 [[ ]] 做的更好；
+test 做不到的，[[ ]] 还能做到。可以认为 [[ ]] 是 test 的升级版，对细节进行了优化，并且扩展了一些功能。
+[[ expression ]]
+[[ ]] 判断 expression 成立时，退出状态为 0，否则为非 0 值。注意 [[ ]] 和 expression 之间的空格，这两个空格是必须的，否则会导致语法错误。
+[[ ]] 是 Shell 内置关键字，不是命令，在使用时没有给函数传递参数的过程，所以 test 命令的某些注意事项在 [[ ]] 中就不存在了，具体包括：
+不需要把变量名用双引号""包围起来，即使变量是空值，也不会出错。
+不需要、也不能对 >、< 进行转义，转义后会出错。
+
+case in语句
+支持两种分支结构（选择结构），分别是 if else 语句和 case in 语句。当分支较多，并且判断条件比较简单时，使用 case in 语句就比较方便了。
+case expression in
+    pattern1)
+        statement1
+        ;;
+    pattern2)
+        statement2
+        ;;
+    pattern3)
+        statement3
+        ;;
+    ……
+    *)
+        statementn
+esac
+case、in 和 esac 都是 Shell 关键字，expression 表示表达式，pattern 表示匹配模式。expression 既可以是一个变量、
+  一个数字、一个字符串，还可以是一个数学计算表达式，或者是命令的执行结果，只要能够得到 expression 的值就可以。
+pattern 可以是一个数字、一个字符串，甚至是一个简单的正则表达式。
+case 会将 expression 的值与 pattern1、pattern2、pattern3 逐个进行匹配
+如果 expression 和某个模式（比如 pattern2）匹配成功，就会执行这模式（比如 pattern2）后面对应的所有语句
+  （该语句可以有一条，也可以有多条），直到遇见双分号;;才停止；然后整个 case 语句就执行完了，程序会跳出整个 case 语句，
+  执行 esac 后面的其它语句。
+如果 expression 没有匹配到任何一个模式，那么就执行 *) 后面的语句（ * 表示其它所有值），直到遇见双分号 ;;
+  或者 esac 才结束。 *) 相当于多个 if 分支语句中最后的 else 部分。
+如果你有 C 语言、 C++、 Java 等编程经验，这里的 ;; 和 *) 就相当于其它编程语言中的 break 和 default。
+
+while循环
+while condition
+do
+    statements
+done
+while 循环是当条件成立时，一直执行循环里的逻辑
+
+until循环
+until condition
+do
+    statements
+done
+当判断条件不成立时才进行循环，一旦判断条件成立，就终止循环。until 循环跟 while 循环正好相反
+
+for循环
+for ((express1; express2; express3))
+do
+	# statements
+done
+
+for in循环
+for variable in value_list
+do
+	# statements
+done
+每次循环都会从 value_list 中取出一个值赋给变量 variable，然后进入循环体（do 和 done 之间的部分），
+  执行循环体中的 statements。直到取完 value_list 中的所有值，循环就结束了。
+
+select in循环
+select variable in value_list
+do
+    statements
+done
+增强交互性，它可以显示出带编号的菜单，用户输入不同的编号就可以选择不同的菜单，并执行不同的功能。
+注意，select 是无限循环（死循环），输入空值，或者输入的值无效，都不会结束循环，只有遇到 break 语句，
+  或者按下 Ctrl+D 组合键才能结束循环。
+
+continue语句
+for ((i = startIndex; i < endIndex; i++))
+do
+    if ((condition))
+    then
+        continue;
+    fi
+    # do something
+done
+循环时，在某种条件满足的情况下，需要跳过本次循环，继续执行下一次循环
+
+break语句
+for ((i = startIndex; i < endIndex; i++))
+do
+    if ((condition))
+    then
+        break;
+    fi
+    # do something
+done
+循环时，在某种条件满足的情况下，需要终止循环的继续执行
 
 
 echo -c xxx   表示统计符合条件的行数
-echo -e xxx   激活转义字符   如：echo -e “a\ndddd” //自动换行
+echo -e xxx   激活转义字符   如：echo -e "a\ndddd" //自动换行
 echo -e "\033[背景颜色;字体颜色m字符串\033[0m"
 echo -e "\033[41;36m something here \033[0m"
 其中41的位置代表底色, 36的位置是代表字的颜色
@@ -817,10 +1336,10 @@ ANSI Color的说明见下：
   仅介绍\033控制字符(ESC)的方法。该方法可以直接适用于printf()函数中。
   其中，\033(八进制)即ESC符号，Windows中为\027(十进制)，\x1b(十六进制)
   格式
-	开始格式 \033[参数1; 参数2; 参数3 m  //以字母m结尾	
-	内容格式 正常的printf中的参数及内容	
+	开始格式 \033[参数1; 参数2; 参数3 m  //以字母m结尾
+	内容格式 正常的printf中的参数及内容
 	结束格式 \033[0m   //结束一定要有结束标志 如果没有这个则上面设置的一直生效
-	
+
 	背景颜色:40----49
 	40:黑 41:红 42:绿 43:黄 44:蓝 45:紫 46:浅蓝 47:白色 48:无 49:无
 	字体颜色:30---------- - 39
@@ -830,14 +1349,14 @@ ANSI Color的说明见下：
 	\033[1m 设置字体高亮度
 	\033[2m	低亮（减弱）显示
 	\033[3m 没有任何效果
-	\033[4m 下划线	
+	\033[4m 下划线
 	\033[5m 闪烁          win无效
 	\033[6m 没有任何效果
 	\033[7m 反显
 	\033[8m 消隐          win无效
 	\033[30m~\33[37m 设置字体颜色
 	\033[40m~\33[47m 设置背景颜色
-	
+
 	单值控制码 不能与其他控制码联用
 	\033[nA 光标上移n行
 	\033[nB 光标下移n行
@@ -850,7 +1369,7 @@ ANSI Color的说明见下：
 	\033[u 恢复光标位置
 	\033[? 25l 隐藏光标
 	\033[? 25h 显示光标
-	
+
 	如
   printf("以下是测试文字：\n");
 	printf("\033[0m默认文字\033[0m\n");
@@ -892,537 +1411,6 @@ ANSI Color的说明见下：
 
 
 
-xftp
-
-
-
-crontab   
-  架构
-                         系统服务                         配置工具
-    配置文件              crond                           crontab
-    文件方式设置定时任务  每分钟从配置文件中刷新定时任务  调整定时任务
-    
-    crontab配置文件
-    Linux下的任务调度分为两类：系统任务调度和用户任务调度。
-    Linux系统任务是由 cron (crond) 这个系统服务来控制的，这个系统服务是默认启动的。
-    用户自己设置的计划任务则使用crontab 命令。在CentOS系统中，
-    /etc/crontab
-    
-SHELL=/bin/bash
-PATH=/sbin:/bin:/usr/sbin:/usr/bin
-MAILTO=root
-
-# For details see man 4 crontabs
-
-# Example of job definition:
-# .---------------- minute (0 - 59)
-# |  .------------- hour (0 - 23)
-# |  |  .---------- day of month (1 - 31)
-# |  |  |  .------- month (1 - 12) OR jan,feb,mar,apr ...
-# |  |  |  |  .---- day of week (0 - 6) (Sunday=0 or 7) OR sun,mon,tue,wed,thu,fri,sat
-# |  |  |  |  |
-# *  *  *  *  * user-name  command to be executed
-
-    配置文件可以看到如下解释：
-    前四行是用来配置crond任务运行的环境变量，
-    第一行SHELL变量指定了系统要使用哪个shell，这里是bash；
-    第二行PATH变量指定了系统执行命令的路径；
-    第三行MAILTO变量指定了crond的任务执行信息将通过电子邮件发送给root用户，如果MAILTO变量的值为空，则表示不发送任务执行信息给用户；
-    第四行的HOME变量指定了在执行命令或者脚本时使用的主目录。
-
-    用户定期要执行的工作，比如用户数据备份、定时邮件提醒等。
-    用户可以使用 crontab 工具来定制自己的计划任务。
-    所有用户定义的crontab 文件都被保存在 /var/spool/cron目录中。其文件名与用户名一致。
-
-  命令
-    crontab –e :  修改 crontab 文件. 如果文件不存在会自动创建。
-    crontab –l :  显示 crontab 文件。 
-    crontab -r :  删除 crontab 文件。
-    crontab -ir : 删除 crontab 文件前提醒用户。
-    
-    crontab file [-u user]   用指定的文件替代目前的crontab。
-    crontab -[-u user]       用标准输入替代目前的crontab.
-    crontab -1[user]         列出用户目前的crontab.
-    crontab -e[user]         编辑用户目前的crontab.
-    crontab -d[user]         删除用户目前的crontab.
-    crontab -c dir           指定crontab的目录。
-    
-    例子
-      crontab -u username 便可以指定其他用户
-      sudo crontab -u root -e 便可编辑 root 用户的配置
-    
-    注意：如果要停止某个定时任务，只需要 -e 的时候使用 # 将其注释即可。
-    https://crontab.guru/  在线工具    
-
-  文件
-    /var/spool/cron/下,如果你是root用户,那下面有个root文件 有的系统是在 /var/spool/cron/crontabs 下
-    /var/log下,如:#ls /var/log/cron*  /var/log/cron  /var/log/cron.1  /var/log/cron.2  日志写在
-    /etc/cron.allow 文件控制哪些用户可以使用 crontab，
-    /etc/cron.deny  文件控制哪些用户不可以使用 crontab。
-    /etc/crontab 文件中设置的是一些系统级的定时任务，其中每行都多了一个执行用户，并且直接编辑该文件而不是使用 crontab 命令来管理。
-
-    crontab文件的格式：M H D m d cmd.
-      M: 分钟（0-59）。
-      H：小时（0-23）。
-      D：天（1-31）。
-      m: 月（1-12）。
-      d: 一星期内的天（0~6，0为星期天）。    
-    
-    *    *    *    *    *
-    -    -    -    -    -
-    |    |    |    |    |
-    |    |    |    |    +----- 星期中星期几 (0 - 6) (星期天 为0)
-    |    |    |    +---------- 月份 (1 - 12) 
-    |    |    +--------------- 一个月中的第几天 (1 - 31)
-    |    +-------------------- 小时 (0 - 23)
-    +------------------------- 分钟 (0 - 59)
-    
-    特殊的取值
-      * 所有，例如对于 minute 来说，* 等价于 0-59
-      , 数组，例如 1,3,5
-      - 段，例如 1-3 等价于 1,2,3
-      / 间隔，例如对于 minute 来说，*/2 代表每 2 分钟
-
-  问题排查
-    所有的定时任务都是由 cron 守护进程来负责调度执行的，如果任务未按照你的预期运行，可以通过 systemctl status cron.service 查看守护进程是否 running。
-    下图的日志还可以看到由于缺少用户名导致语法错误，一个定时任务被忽略，使用 journalctl -u cron.service 还可以查看更多的日志信息。
-
-  参考
-    man 1 crontab
-    man 5 crontab
-    man 8 cron
-
-
-
-
-ulimit-----------------------------------------------------------------------------
-ulimit -a 用来显示当前的各种用户进程限制
-Linux对于每个用户，系统限制其最大进程数，为提高性能，可以根据设备资源情况，
-设置个Linux用户的最大进程数，一些需要设置为无限制：
-数据段长度：ulimit -d unlimited
-最大内存大小：ulimit -m unlimited
-堆栈大小：ulimit -s unlimited
-
-开启或关闭core文件的生成
-ulimit -c 可以查看是否打开此选项，若为0则为关闭；
-ulimit -c 0可手动关闭
-ulimit -c 1000 为设置core文件大小最大为1000k
-ulimit -c unlimited 设置core文件大小为不限制大小
-很多系统在默认的情况下是关闭生成core文件的，这个命令可以加到你的profile中去。
-
-功能说明：控制shell程序的资源。
-语　　法：ulimit [-aHS][-c <core文件上限>][-d <数据节区大小>][-f <文件大小>][-m <内存大小>][-n <文件数目>][-p <缓冲区大小>][-s <堆叠大小>][-t <CPU时间>][-u <程序数目>][-v <虚拟内存大小>]
-补充说明：ulimit为shell内建指令，可用来控制shell执行程序的资源。
-参　　数：
-   -a 　显示目前资源限制的设定。 
-   -c <core文件上限> 　设定core文件的最大值，单位为区块。 
-   -d <数据节区大小> 　程序数据节区的最大值，单位为KB。 
-   -f <文件大小> 　shell所能建立的最大文件，单位为区块。 
-   -H 　设定资源的硬性限制，也就是管理员所设下的限制。 
-   -m <内存大小> 　指定可使用内存的上限，单位为KB。 
-   -n <文件数目> 　指定同一时间最多可开启的文件数。 
-   -p <缓冲区大小> 　指定管道缓冲区的大小，单位512字节。 
-   -s <堆叠大小> 　指定堆叠的上限，单位为KB。 
-   -S 　设定资源的弹性限制。 
-   -t <CPU时间> 　指定CPU使用时间的上限，单位为秒。 
-   -u <程序数目> 　用户最多可开启的程序数目。 
-   -v <虚拟内存大小> 　指定可使用的虚拟内存上限，单位为KB。
-
-当系统中的一些程序在遇到一些错误以及crash时，系统会自动产生core文件记录crash时刻系统信息，包括内存和寄存器信息，用以程序员日 后debug时可以使用。这些错误包括段错误、非法指令、总线错误或用户自己生成的退出信息等等，一般地，core文件在当前文件夹中存放。
-core文件有时可能在你发生错误时，并没有出现在你当前的文件夹中，发生这种情况的原因有两个：一个是当前终端被设置为不能弹出core文件；另一种则是core文件被指定了路径。
-对于前者，我们可以使用ulimit命令对core文件的大小进行设定。一般默认情况下，core文件的大小被设置为0，这样系统就不dump出core文件了。这时，使用命令：ulimit -c unlimited进行设置，就可以把core文件的大小设置为无限大，同时也可以使用数字来替代unlimited，对core文件的上限制做更精确的设定。
-除了可以设置core文件的大小之外，还可以对core文件的名称进行一些规定。这种设置是对/proc/sys/kernel/core_pattern和/proc/sys/kernel/core_uses_pid这两个文件进行修改。改动这两个文件的方法如下：
-echo <pattern> > /proc/sys/kernel/core_pattern
-echo <"0"/"1"> /proc/sys/kernel/core_uses_pid
-并且注意，只有超级用户才可以修改这两个表。
-core_pattern接受的是core文件名称的pattern，它包含任何字符串，并且用%作为转移符号生成一些标示符，为core文件名称加入特殊含义。已定义的标示符有如下这些：
-%%：相当于%
-%p：相当于<pid>
-%u：相当于<uid>
-%g：相当于<gid>
-%s：相当于导致dump的信号的数字
-%t：相当于dump的时间
-%e：相当于执行文件的名称
-%h：相当于hostname
-除以上这些标志位外，还规定：
-1、末尾的单个%可以直接去除；
-2、%加上除上述以外的任何字符，%和该字符都会被去除；
-3、所有其他字符都作为一般字符加入名称中；
-4、core文件的名称最大值为64个字节（包括'\0'）；
-5、core_pattern中默认的pattern为core；
-6、为了保持兼容性，通过设置core_uses_pid，可以在core文件的末尾加上%p；
-7、pattern中可以包含路径信息。
-
-
-生成core文件,
-#######################################################
-以下来自；http://hi.baidu.com/jrckkyy/blog/item/2562320a5bdbc534b1351d95.html
-
-查看限制情况 ulimit -a
-
-可以看到如下信息
-
-core file size          (blocks, -c) 0
-data seg size           (kbytes, -d) unlimited
-file size               (blocks, -f) unlimited
-pending signals                 (-i) 1024
-max locked memory       (kbytes, -l) 32
-max memory size         (kbytes, -m) unlimited
-open files                      (-n) 1024
-pipe size            (512 bytes, -p) 8
-POSIX message queues     (bytes, -q) 819200
-stack size              (kbytes, -s) 10240
-cpu time               (seconds, -t) unlimited
-max user processes              (-u) 4096
-virtual memory          (kbytes, -v) unlimited
-file locks                      (-x) unlimited
-
-而我们需要修改的是open files (-n) 1024的值
-
-于是命令就是limit -n 2048(随各自需要设置)
-
-----------
- 
-
-功能说明：控制shell程序的资源。
-语　　法：ulimit [-aHS][-c <core文件上限>][-d <数据节区大小>][-f <文件大小>][-m <内存大小>][-n <文件数目>][-p <缓冲区大小>][-s <堆叠大小>][-t <CPU时间>][-u <程序数目>][-v <虚拟内存大小>]
-补充说明：ulimit为shell内建指令，可用来控制shell执行程序的资源。
-参　　数：
-   -a 　显示目前资源限制的设定。 
-   -c <core文件上限> 　设定core文件的最大值，单位为区块。 
-   -d <数据节区大小> 　程序数据节区的最大值，单位为KB。 
-   -f <文件大小> 　shell所能建立的最大文件，单位为区块。 
-   -H 　设定资源的硬性限制，也就是管理员所设下的限制。 
-   -m <内存大小> 　指定可使用内存的上限，单位为KB。 
-   -n <文件数目> 　指定同一时间最多可开启的文件数。 
-   -p <缓冲区大小> 　指定管道缓冲区的大小，单位512字节。 
-   -s <堆叠大小> 　指定堆叠的上限，单位为KB。 
-   -S 　设定资源的弹性限制。 
-   -t <CPU时间> 　指定CPU使用时间的上限，单位为秒。 
-   -u <程序数目> 　用户最多可开启的程序数目。 
-   -v <虚拟内存大小> 　指定可使用的虚拟内存上限，单位为KB。
-----------
-
-1,说明:
-ulimit用于shell启动进程所占用的资源.
-
-2,类别:
-shell内建命令
-
-3,语法格式:
-ulimit [-acdfHlmnpsStvw] [size]
-
-4,参数介绍:
-
-QUOTE:
--H 设置硬件资源限制.
--S 设置软件资源限制.
--a 显示当前所有的资源限制.
--c size:设置core文件的最大值.单位:blocks
--d size:设置数据段的最大值.单位:kbytes
--f size:设置创建文件的最大值.单位:blocks
--l size:设置在内存中锁定进程的最大值.单位:kbytes
--m size:设置可以使用的常驻内存的最大值.单位:kbytes
--n size:设置内核可以同时打开的文件描述符的最大值.单位:n
--p size:设置管道缓冲区的最大值.单位:kbytes
--s size:设置堆栈的最大值.单位:kbytes
--t size:设置CPU使用时间的最大上限.单位:seconds
--v size:设置虚拟内存的最大值.单位:kbytes
-
-5,简单实例:
-
-1]在RH8的环境文件/etc/profile中,我们可以看到系统是如何配置ulimit的:
-
-CODE:
-#grep ulimit /etc/profile
-ulimit -S -c 0 > /dev/null 2>&1
-
-这条语句设置了对软件资源和对core文件大小的设置
-
-2]如果我们想要对由shell创建的文件大小作些限制,如:
-
-CODE:
-#ll h
--rw-r--r-- 1 lee lee 150062 7月 22 02:39 h
-#ulimit -f 100 #设置创建文件的最大块(一块=512字节)
-#cat h>newh
-File size limit exceeded
-#ll newh
--rw-r--r-- 1 lee lee 51200 11月 8 11:47 newh
-
-文件h的大小是150062字节,而我们设定的创建文件的大小是512字节x100块=51200字节
-当然系统就会根据你的设置生成了51200字节的newh文件.
-
-3]可以像实例1]一样,把你要设置的ulimit放在/etc/profile这个环境文件中.
-
-----------
-
-当系统中的一些程序在遇到一些错误以及crash时，系统会自动产生core文件记录crash时刻系统信息，包括内存和寄存器信息，用以程序员日 后debug时可以使用。这些错误包括段错误、非法指令、总线错误或用户自己生成的退出信息等等，一般地，core文件在当前文件夹中存放。
-core文件有时可能在你发生错误时，并没有出现在你当前的文件夹中，发生这种情况的原因有两个：一个是当前终端被设置为不能弹出core文件；另一种则是core文件被指定了路径。
-对于前者，我们可以使用ulimit命令对core文件的大小进行设定。一般默认情况下，core文件的大小被设置为0，这样系统就不dump出core文件了。这时，使用命令：ulimit -c unlimited进行设置，就可以把core文件的大小设置为无限大，同时也可以使用数字来替代unlimited，对core文件的上限制做更精确的设定。
-除了可以设置core文件的大小之外，还可以对core文件的名称进行一些规定。这种设置是对/proc/sys/kernel/core_pattern和/proc/sys/kernel/core_uses_pid这两个文件进行修改。改动这两个文件的方法如下：
-echo <pattern> > /proc/sys/kernel/core_pattern
-echo <"0"/"1"> /proc/sys/kernel/core_uses_pid
-并且注意，只有超级用户才可以修改这两个表。
-core_pattern接受的是core文件名称的pattern，它包含任何字符串，并且用%作为转移符号生成一些标示符，为core文件名称加入特殊含义。已定义的标示符有如下这些：
-%%：相当于%
-%p：相当于<pid>
-%u：相当于<uid>
-%g：相当于<gid>
-%s：相当于导致dump的信号的数字
-%t：相当于dump的时间
-%e：相当于执行文件的名称
-%h：相当于hostname
-除以上这些标志位外，还规定：
-1、末尾的单个%可以直接去除；
-2、%加上除上述以外的任何字符，%和该字符都会被去除；
-3、所有其他字符都作为一般字符加入名称中；
-4、core文件的名称最大值为64个字节（包括'\0'）；
-5、core_pattern中默认的pattern为core；
-6、为了保持兼容性，通过设置core_uses_pid，可以在core文件的末尾加上%p；
-7、pattern中可以包含路径信息。
-
-----------
-
-下面的资料是从互联网上整理的来的，参考文献如下：
-http://blog.csdn.net/hanchaoman/archive/2009/08/03/4405655.aspx
-http://www.mysys-admin.org/category/general/
-
-1. 可以用ulimit -a 查看一下栈的大小。
-在内核2.6.20下， stack size 为8192 kbytes
-如果这里没有限制，就栈的大小就只受内存的限制。2G是上限。
-
-2. core 文件
-    * 开启或关闭core文件的生成
-ulimit -c 可以查看是否打开此选项，若为0则为关闭；
-ulimit -c 0可手动关闭
-ulimit -c 1000 为设置core文件大小最大为1000k
-
-ulimit -c unlimited 设置core文件大小为不限制大小
-
-
-很多系统在默认的情况下是关闭生成core文件的，这个命令可以加到你的profile中去
-
-3.设置Core Dump的核心转储文件目录和命名规则
-
- 
-在默认的情况下，很多系统的core文件是生成在你运行程序的目录下，或者你在程序中chdir后的那个目录，然后在core文件的后面加了一个 pid。在实际工作中，这样可能会造成很多目录下产生core文件，不便于管理，实际上，在2.6下，core文件的生成位置和文件名的命名都是可以配置 的。
-
- 
-
-/proc/sys/kernel/core_uses_pid可以控制产生的core文件的文件名中是否添加pid作为扩展，如果添加则文件内容为1，否则为0
-proc/sys/kernel/core_pattern可以设置格式化的core文件保存位置或文件名，比如原来文件内容是core-%e
-可以这样修改:
-echo "/tmp/core-%e-%p" > core_pattern
-将会控制所产生的core文件会存放到/corefile目录下，产生的文件名为core-命令名-pid-时间戳
-以下是参数列表:
-    %p - insert pid into filename 添加pid
-    %u - insert current uid into filename 添加当前uid
-    %g - insert current gid into filename 添加当前gid
-    %s - insert signal that caused the coredump into the filename 添加导致产生core的信号
-    %t - insert UNIX time that the coredump occurred into filename 添加core文件生成时的unix时间
-    %h - insert hostname where the coredump happened into filename 添加主机名
-    %e - insert coredumping executable name into filename 添加命令名
-
-当然，你可以用下列方式来完成
-sysctl -w kernel.core_pattern=/tmp/core-%e-%p
-
- 
-
-这些操作一旦计算机重启，则会丢失，如果你想持久化这些操作，可以在 /etc/sysctl.conf文件中增加：
-kernel.core_pattern=/tmp/core%p
-
- 
-
-加好后，如果你想不重启看看效果的话，则用下面的命令：
-sysctl -p /etc/sysctl.conf
-
-------------------------------------------------------------------------------------------------------------------
-
-高手指教：
-
-    解决的问题：
-         现有一程序P 长期在服务器上运行，目前经常是每1天死掉一次（段错误）。
-
-    目前解决方法：
-         用SecureCRT开一个终端，并在服务其上设置ulimit -c nulimited，然后启动程序P。用ulimite -a 命令查询结果如下：
-
-         core file size       (blocks, -c) unlimited
-         data seg size           (kbytes, -d) unlimited
-         file size             (blocks, -f) unlimited
-         pending signals                 (-i) 1024
-         max locked memory    (kbytes, -l) 32
-          ............
-         表明core文件可以生成。
-
-         并测试利用kill -6 pid能够core文件。
-
-   目前的困难：
-
-         当运行ulimit -c nulimited终端 （并且该终端将程序P启动到后台了 ./P &）关闭，程序P死掉后并没有生成 core文件。
-         经试验后发现ulimit 命令与终端有关。
-
-   高手指教：
-          如何设置能够生成core 文件，与终端无关
-          即，程序启动，关闭终端，当程序死掉（段错误）后能够生成core文件。
-
-在
-/etc/security/limits.conf （中设置 redhat衍生系linux）
-或
-/etc/profile中的：
-# No core files by default
-ulimit -S -c 0 > /dev/null 2>&1
-
-注释掉上面一行。
-
-还有其他UNIX类操作系统也有自己的配置文件可以设置。
-
-------------------------------------------------------------------------------------------------------------------
-
-gdb core 多线程
-在linux环境下调试多线程，总觉得不像.NET那么方便。这几天就为找一个死锁的bug折腾好久，介绍一下用过的方法吧。
-
-多线程如果dump，多为段错误，一般都涉及内存非法读写。可以这样处理，使用下面的命令打开系统开关，让其可以在死掉的时候生成core文件。   
-ulimit -c unlimited
-这样的话死掉的时候就可以在当前目录看到core.pid(pid为进程号)的文件。接着使用gdb:
-gdb ./bin ./core.pid 
-进去后，使用bt查看死掉时栈的情况，在使用frame命令。
-
-还有就是里面某个线程停住，也没死，这种情况一般就是死锁或者涉及消息接受的超时问题(听人说的，没有遇到过)。遇到这种情况，可以使用：
-gcore pid （调试进程的pid号）
-手动生成core文件，在使用pstack(linux下好像不好使)查看堆栈的情况。如果都看不出来，就仔细查看代码，看看是不是在 if，return，break，continue这种语句操作是忘记解锁，还有嵌套锁的问题，都需要分析清楚了。
-
-最后，说一句，静心看代码，捶胸顿足是没有用的。
-
--------------------------------------
-
-1,说明:
-ulimit用于shell启动进程所占用的资源.
-2,类别:
-shell内建命令
-3,语法格式:
-ulimit [-acdfHlmnpsStvw] [size]
-4,参数介绍:
--H 设置硬件资源限制.
--S 设置软件资源限制.
--a 显示当前所有的资源限制.
--c size:设置core文件的最大值.单位:blocks
--d size:设置数据段的最大值.单位:kbytes
--f size:设置创建文件的最大值.单位:blocks
--l size:设置在内存中锁定进程的最大值.单位:kbytes
--m size:设置可以使用的常驻内存的最大值.单位:kbytes
--n size:设置内核可以同时打开的文件描述符的最大值.单位:n
--p size:设置管道缓冲区的最大值.单位:kbytes
--s size:设置堆栈的最大值.单位:kbytes
--t size:设置CPU使用时间的最大上限.单位:seconds
--v size:设置虚拟内存的最大值.单位:kbytes 5,简单实例: 
-5.举例
-在Linux下写程序的时候，如果程序比较大，经常会遇到“段错误”（segmentation fault）这样的问题，这主要就是由于Linux系统初始的堆栈大小（stack size）太小的缘故，一般为10M。我一般把stack size设置成256M，这样就没有段错误了！命令为：
-ulimit   -s 262140 
-如果要系统自动记住这个配置，就编辑/etc/profile文件，在 “ulimit -S -c 0 > /dev/null 2>&1”行下，添加“ulimit   -s 262140”，保存重启系统就可以了！ 
-1]在RH8的环境文件/etc/profile中,我们可以看到系统是如何配置ulimit的:
-#grep ulimit /etc/profile
-ulimit -S -c 0 > /dev/null 2>&1
-这条语句设置了对软件资源和对core文件大小的设置
-2]如果我们想要对由shell创建的文件大小作些限制,如:
-#ll h
--rw-r--r-- 1 lee lee 150062 7月 22 02:39 h
-#ulimit -f 100 #设置创建文件的最大块(一块=512字节)
-#cat h>newh
-File size limit exceeded
-#ll newh
--rw-r--r-- 1 lee lee 51200 11月 8 11:47 newh
-文件h的大小是150062字节,而我们设定的创建文件的大小是512字节x100块=51200字节
-当然系统就会根据你的设置生成了51200字节的newh文件.
-3]可以像实例1]一样,把你要设置的ulimit放在/etc/profile这个环境文件中.
-用途 
-设置或报告用户资源极限。
-语法 
-ulimit [ -H ] [ -S ] [ -a ] [ -c ] [ -d ] [ -f ] [ -m ] [ -n ] [ -s ] [ -t ] [ Limit ]
-描述 
-ulimit 命令设置或报告用户进程资源极限，如 /etc/security/limits 文件所定义。文件包含以下缺省值极限： 
-fsize = 2097151
-core = 2097151
-cpu = -1
-data = 262144
-rss = 65536
-stack = 65536
-nofiles = 2000 
-当新用户添加到系统中时，这些值被作为缺省值使用。当向系统中添加用户时，以上值通过 mkuser 命令设置，或通过 chuser 命令更改。 
-极限分为软性或硬性。通过 ulimit 命令，用户可将软极限更改到硬极限的最大设置值。要更改资源硬极限，必须拥有 root 用户权限。 
-很多系统不包括以上一种或数种极限。 特定资源的极限在指定 Limit 参数时设定。Limit 参数的值可以是每个资源中指定单元中的数字，或者为值 unlimited。要将特定的 ulimit 设置为 unlimited，可使用词 unlimited。 
-    注：在 /etc/security/limits 文件中设置缺省极限就是设置了系统宽度极限， 而不仅仅是创建用户时用户所需的极限。 
-省略 Limit 参数时，将会打印出当前资源极限。除非用户指定 -H 标志，否则打印出软极限。当用户指定一个以上资源时，极限名称和单元在值之前打印。如果未给予选项，则假定带有了 -f 标志。 
-由于 ulimit 命令影响当前 shell 环境，所以它将作为 shell 常规内置命令提供。如果在独立的命令执行环境中调用该命令，则不影响调用者环境的文件大小极限。以下示例中正是这种情况： 
-nohup ulimit -f 10000
-env ulimit 10000 
-一旦通过进程减少了硬极限，若无 root 特权则无法增加，即使返回到原值也不可能。 
-关于用户和系统资源极限的更多信息，请参见 AIX 5L Version 5.3 Technical Reference: Base Operating System and Extensions Volume 1 中的 getrlimit、setrlimit 或 vlimit 子例程。
-标志
--a     列出所有当前资源极限。
--c     以 512 字节块为单位，指定核心转储的大小。
--d     以 K 字节为单位指定数据区域的大小。
--f     使用 Limit 参数时设定文件大小极限（以块计），或者在未指定参数时报告文件大小极限。缺省值为 -f 标志。
--H     指定设置某个给定资源的硬极限。如果用户拥有 root 用户权限，可以增大硬极限。任何用户均可减少硬极限。
--m     以 K 字节为单位指定物理存储器的大小。
--n     指定一个进程可以拥有的文件描述符的数量的极限。
--s     以 K 字节为单位指定堆栈的大小。
--S     指定为给定的资源设置软极限。软极限可增大到硬极限的值。如果 -H 和 -S 标志均未指定，极限适用于以上二者。
--t     指定每个进程所使用的秒数。
-退出状态 
-返回以下退出值：
-0     成功完成。
->0     拒绝对更高的极限的请求，或发生错误。
-示例 
-要将文件大小极限设置为 51,200 字节，输入： 
-ulimit -f 100
-
-
-
-
-curl
-  例子：curl -i -X GET -H 'Cookie: mxsessionid={E842CEF8F8C04E52-0199-5948-C308-E66520ADD8E5}' -o /dev/null -s -w 'DNS解析：%{time_namelookup}\n建立tcp时长：%{time_connect}\n请求开始到响应开始传输的时间：%{time_pretransfer}\n客户端到服务器时长：%{time_starttransfer}\n从开始到结束时长：%{time_total}\n下载速度：%{speed_download}\n' http://192.168.8.202:8121/mxlogin.BSI
-        curl --location --request POST 'http://127.0.0.1/gettree.BSI' --header 'Cookie: mxsessionid=1f1c22fa-1d7d-403f-921e-0bf336d1f799;' --form 'id=""' --form 'isClearEmptyGroup="1"' --form 'isGetTree="1"' --form 'MaxLevel="9999"' --form 'isTopnTree="1"' --form 'functype="netcfgmgr"' --form 'devType="Network"'
-  参数有空格 需要使用引号把参数括起来 curl -A "are you ok?" http://aaa.com
-  参数本身有引号的时候 使用单引号把参数括起来（不过在Windows中不管用） curl -d '{"name":"fool"}' http://aaa.com
-  数据很多时，我们可以指定一个文件 curl -d @param.json http://aaa.com
-  -i --include 输出中包含协议头
-  -L --locatio 跟随302跳转
-  -X --request 请求方式 GET POST等
-  -H --header 自定义的协议头
-  -o --output 输出文件
-  -s --silent 不输出任何东西
-  -F --form POST方式中 在内容发送额外的参数
-  -K 指定参数文件 curl -K 11 http://baidu.com 
-  -w --write-out 格式化输出   或者指定 curl -w @12 -o /dev/null -s -L http://baidu.com   其中@之后表示文件 其他类型参数类似
-    time_appconnect 从开始到SSL/SSH/等连接/手摇完成到远程主机的时间，单位为秒。(7.19.0中新增) #ssl才会有，http的话为0   
-    time_connect 从开始到TCP连接到远程主机（或代理）完成的时间，单位为秒。
-    time_namelookup 从开始到名称解析完成的时间，单位为秒。
-    time_pretransfer 从开始到文件传输即将开始所花的时间，单位为秒。
-    time_redirect 在最终事务开始之前，所有的重定向步骤，包括名称查询、连接、预传输和传输所花费的时间，单位为秒。 (新增于7.12.3)
-    time_starttransfer 时间_starttransfer 从开始到第一个字节即将被转发的时间，单位是秒。 这包括time_pretransfer和服务器计算结果所需的时间。
-    time_total 整个操作持续的总时间，单位为秒。
-    time_appconnect The time, in seconds, it took from the start until the SSL/SSH/etc connect/handshake to the remote host was completed. (Added in 7.19.0)
-    time_connect The time, in seconds, it took from the start until the TCP connect to the remote host (or proxy) was completed.
-    time_namelookup The time, in seconds, it took from the start until the name resolving was completed.
-    time_pretransfer The time, in seconds, it took from the start until the file transfer was just about to begin.This includes all pre-transfer commands and negotiations that are specific to the particular protocol(s) involved.
-    time_redirect The time, in seconds, it took for all redirection steps including name lookup, connect, pretransfer and transfer before the final transaction was started. time_redirect shows the complete execu tion time for multiple redirections. (Added in 7.12.3)
-    time_starttransfer The time, in seconds, it took from the start un til the first byte was just about to be trans ferred. This includes time_pretransfer and also the time the server needed to calculate the re sult.
-    ime_total The total time, in seconds, that the full operation lasted.
-
-vi 11
- -i -X GET
-
-vi 12
-timelookup:  %{time_namelookup} \n
-time_connect:  %{time_connect} \n
-time_appconnect:  %{time_appconnect} \n
-time_redirect:  %{time_redirect} \n
-time_pretransfer:  %{time_pretransfer} \n
-time_starttransfer:  %{time_starttransfer} \n
-            ---------- \n
-time_total:  %{time_total} \n
-
 
 
 
@@ -1432,7 +1420,7 @@ time_total:  %{time_total} \n
 for ((i=1; i<=5000; i++))
 do
 echo `date`
-netstat -antp | grep 8123 | grep CLOSE_WAIT | grep Web |  wc -l 
+netstat -antp | grep 8123 | grep CLOSE_WAIT | grep Web |  wc -l
 sleep 3
 done
 [root@bogon ~]# cat 123.sh     每三秒 用curl 登录系统
@@ -1451,8 +1439,3 @@ echo `date`
 lsof -n|grep WebExpress| awk '{print $2}'|sort|uniq -c|sort -nr|more
 sleep 3
 done
-
-
-
-
-

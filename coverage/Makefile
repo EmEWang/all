@@ -100,7 +100,7 @@ all101:
 	clang++ -o $(target101) -fprofile-instr-generate -fcoverage-mapping $(source101)
 #	LLVM_PROFILE_FILE="XX%p-%h-.profdata" ./$(target101) 3
 	./$(target101) 3
-# data101:
+data101:
 # 运行默认产生 default.profraw 文件 当前目录
 # LLVM_PROFILE_FILE 环境变量 改变 生成的 .profraw 文件 若带路径 同时也会生成路径 如果不存在的话
 # %p 扩展为进程ID

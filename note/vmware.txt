@@ -2,53 +2,51 @@
 
 
 
-VMware 16 ¼¤»îÂë ZF3R0-FHED2-M80TY-8QYGC-NPKYF YF390-0HF8P-M81RQ-2DXQE-M2UT6 ZF71R-DMX85-08DQY-8YMNC-PPHV8
-ÐéÄâ»ú make RELEASE=1 BITS=64 CENTOS=7 ÐèÒªÊÖ¶¯´´½¨Â·¾¶../linux_bin64/Release    mkdir -p xxxx
-       make RELEASE=1 BITS=64 CENTOS=uos    Í³ÐÅuos arm¼Ü¹¹
-ÐéÄâ»úcentos7 Íü¼ÇrootÃÜÂëÖØÖÃ
-1¡¢ÖØÆôÐéÄâ»ú
-2¡¢½øÈëµ½¸ÃÒ³ÃæÖ®ºó£¬Ñ¡ÖÐµÚÒ»¸ö£¨¸ßÁÁÏÔÊ¾¼´ÎªÑ¡ÖÐ£©Ñ¡Ïî£¬È»ºó°´ÏÂ¼üÅÌµÄ¡°E¡±¼ü
-3¡¢½øÈëµ½³õÊ¼»¯½Å±¾±à¼­Ò³Ãæ£¬¸Ã½Å±¾ÓÐÁ½Ò³£¬ÓÃÏÂ¼üÏòÏÂÀ­£¬Ö±µ½×îºóÁ½ÐÐ
-4¡¢¹â±êÀ­µ½×îºóÁ½ÐÐµÄµ¹ÊýµÚ¶þÐÐ LANG=\zh_CN.UTF-8£¨ÎÒ°²×°µÄÊÇÖÐÎÄ°æµÄ£¬Ò²ÓÐ¿ÉÄÜÄãµÄÊÇ\en_US.utf-8£©ºóÃæ¼ÓÏÂÃæÕâÒ»ÐÐÎÄ×Ö (ÕâÀïÓÐ¸ö¿Õ¸ñ) init=/bin/sh
-5¡¢¼ÓºÃÖ®ºó È»ºó°´ctrl+xÍË³ö
-6¡¢½øÈëµ½Õâ¸öÒ³ÃæÖ®ºó£¨Ò»¿ªÊ¼Ö»ÓÐÉÏÃæÄÇÒ»ÐÐ£©£¬±íÊ¾³õÊ¼»¯³É¹¦£¬È»ºóÒÀ´ÎÊäÈë
+VMware 16 æ¿€æ´»ç  ZF3R0-FHED2-M80TY-8QYGC-NPKYF YF390-0HF8P-M81RQ-2DXQE-M2UT6 ZF71R-DMX85-08DQY-8YMNC-PPHV8
+è™šæ‹Ÿæœº make RELEASE=1 BITS=64 CENTOS=7 éœ€è¦æ‰‹åŠ¨åˆ›å»ºè·¯å¾„../linux_bin64/Release    mkdir -p xxxx
+       make RELEASE=1 BITS=64 CENTOS=uos    ç»Ÿä¿¡uos armæž¶æž„
+è™šæ‹Ÿæœºcentos7 å¿˜è®°rootå¯†ç é‡ç½®
+1ã€é‡å¯è™šæ‹Ÿæœº
+2ã€è¿›å…¥åˆ°è¯¥é¡µé¢ä¹‹åŽï¼Œé€‰ä¸­ç¬¬ä¸€ä¸ªï¼ˆé«˜äº®æ˜¾ç¤ºå³ä¸ºé€‰ä¸­ï¼‰é€‰é¡¹ï¼Œç„¶åŽæŒ‰ä¸‹é”®ç›˜çš„â€œEâ€é”®
+3ã€è¿›å…¥åˆ°åˆå§‹åŒ–è„šæœ¬ç¼–è¾‘é¡µé¢ï¼Œè¯¥è„šæœ¬æœ‰ä¸¤é¡µï¼Œç”¨ä¸‹é”®å‘ä¸‹æ‹‰ï¼Œç›´åˆ°æœ€åŽä¸¤è¡Œ
+4ã€å…‰æ ‡æ‹‰åˆ°æœ€åŽä¸¤è¡Œçš„å€’æ•°ç¬¬äºŒè¡Œ LANG=\zh_CN.UTF-8ï¼ˆæˆ‘å®‰è£…çš„æ˜¯ä¸­æ–‡ç‰ˆçš„ï¼Œä¹Ÿæœ‰å¯èƒ½ä½ çš„æ˜¯\en_US.utf-8ï¼‰åŽé¢åŠ ä¸‹é¢è¿™ä¸€è¡Œæ–‡å­— (è¿™é‡Œæœ‰ä¸ªç©ºæ ¼) init=/bin/sh
+5ã€åŠ å¥½ä¹‹åŽ ç„¶åŽæŒ‰ctrl+xé€€å‡º
+6ã€è¿›å…¥åˆ°è¿™ä¸ªé¡µé¢ä¹‹åŽï¼ˆä¸€å¼€å§‹åªæœ‰ä¸Šé¢é‚£ä¸€è¡Œï¼‰ï¼Œè¡¨ç¤ºåˆå§‹åŒ–æˆåŠŸï¼Œç„¶åŽä¾æ¬¡è¾“å…¥
 mount -o remount,rw /
 passwd root
-ÊäÈëÁ½´ÎÐÂµÄÃÜÂë£¨ÃÜÂë²»»áÖ±½ÓÏÔÊ¾³öÀ´£©
+è¾“å…¥ä¸¤æ¬¡æ–°çš„å¯†ç ï¼ˆå¯†ç ä¸ä¼šç›´æŽ¥æ˜¾ç¤ºå‡ºæ¥ï¼‰
 touch /.autorelabel
 exec /sbin/init
-7¡¢ÔÙÖØÆôÐéÄâ»ú£¬ÊäÈëÐÂÃÜÂë¼´¿ÉÒÔµÇÂ¼¡£
+7ã€å†é‡å¯è™šæ‹Ÿæœºï¼Œè¾“å…¥æ–°å¯†ç å³å¯ä»¥ç™»å½•ã€‚
 
-ÐéÄâ»úcentos7 ×îÐ¡»¯°²×°ÍøÂçÅäÖÃ
-1 ip addr ÈôÃ»ÓÐÏÔÊ¾ÍøÂçÔòÍøÂçÃ»ÓÐÆô¶¯     ¿ÉÄÜÃ»ÓÐifconfigµÈÃüÁî
-  ifup ens33 Æô¶¯ÍøÂç
-  ifdown ens33 ¹Ø±ÕÍøÂç
-  systemctl restart network »òÕß service network restart ÖØÆôÍøÂç·þÎñ 
-2 /etc/sysconfig/network-scripts/ifcfg-ens33 Íø¿¨ÅäÖÃÎÄ¼þ   service network restart   #ÖØÆôÍøÂç
-  TYPE=Ethernet           ÀàÐÍÊÇÒÔÌ«Íø
-  BOOTPROTO=none          ¾²Ì¬ÅäÖÃip²»Æô¶¯¸ÃÐ­Òé dhcpÆô¶¯dhcpÐ­Òé bootpÆô¶¯bootpÐ­Òé staticÊÖ¶¯ÉèÖÃ¾²Ì¬ip
-  ONBOOT=yes              ¿ª»úÆô¶¯±¾ÅäÖÃ¼¤»îÍø¿¨ no²»¼¤»î
-  IPADDR=192.168.6.235    ¾²Ì¬IP
-  NETNASK=255.255.255.0   ×ÓÍøÑÚÂë    ÓÐµÄËµÊÇ PREFIX=24  #ÉèÖÃ×ÓÍøÑÚÂë
-  GATEWAY=192.168.6.155   Íø¹Ø
-  NAME=ens33              ÒÔÌ«ÍøÃû³Æ
-  HWADDR                  Íø¿¨mac
-  DNS1=8.8.8.8            ÉèÖÃÖ÷DNS      ping www.baidu.com  #²âÊÔÍøÂçÊÇ·ñÕý³£ ²»ÅäÖÃDNSÖ»ÄÜping ipµØÖ·
-  DNS2=8.8.4.4            ÉèÖÃ±¸DNS
-  UUID=ae0965e7-22b9-45aa-8ec9-3f0a20a85d11     Ò»°ã¿ÉÒÔ²»ÅäÖÃ
-3 nmcli d ²é¿´Éè±¸ ÈôÏÔÊ¾enthernet disconnected ÔòÍøÂçÃ»ÓÐÆô¶¯
-  nmtui Í¼ÐÎ½çÃæÍøÂçÅäÖÃ Ñ¡Ôñedit a connection ¾Í¿ÉÒÔ±àÒëÍøÂç ÀàËÆÓÚdos Ò²¾ÍÊÇ±à¾ç2µÄÎÄ¼þ
-
-
-centos ×îÐ¡°²×°ÍøÂç²»ÄÜÓÃ cat /etc/sysconfig/network-scripts/ifcfg-enp0s3 NBOOT ¸ÄÎªyes service network restart
-
-ÇÅ½ÓÄ£Ê½ ÐéÄâÆ÷Æô¶¯ÒÔºó ÓÒ¼ü->ÉèÖÃ->ÍøÂçÊÊÅäÆ÷->Ñ¡ÔñÇÅ½Ó ÐéÄâ»úÖÐ µ¥»÷ÍøÂç->ÓÐÏßÉèÖÃ->ÓÐÏß->IPv4(1×Ô¶¯ »ò 2ÊÖ¶¯ ÅäÖÃ192.168.6.231 255.255.255.0 192.168.6.155) ×¢ÒâÊÖ¶¯ÅäÖÃÐèÒªÌáÇ°ÑéÖ¤ÏÂipÓÐÃ»±»Õ¼ÓÃ
-NATÄ£Ê½  ÓëÖ÷»ú¹²ÏíÍøÂçip ÐéÄâ»úÉú³ÉÒ»¸öÄ¬ÈÏµÄip ÐéÄâ»úÄÜ·ÃÎÊÍøÂç ÍøÂçÉÏµÄÆäËûÖ÷»ú²»ÄÜ·ÃÎÊÐéÄâ»ú
-
-CentOS7 EST£¨ÃÀ¹ú¶«²¿Ê±¼ä£©Óë±±¾©Ê±¼äµÄÊ±²î 3ÔÂÖÁ10ÔÂÁ½ÕßÏà²îÊ±¼äÎª12Ð¡Ê±£»11ÔÂÖÁ2ÔÂÁ½ÕßÏà²îÊ±¼äÎª13Ð¡Ê±£» CSTÉÏº£Ê±¼ä
-½â¾ö°ì·¨£ºCenOS7ÖÐÉèÖÃÊ±ÇøÊ¹ÓÃµÄÊÇtimedatectlµÄ³ÌÐò¡£
-#ÁÐ³öÊ±Çøtimedatectl list-timezones 
-#ÐÞ¸ÄÊ±Çø ÉèÖÃÏµÍ³Ê±ÇøÎªÉÏº£timedatectl set-timezone Asia/Shanghai
-#½«Ó²¼þÊ±ÖÓµ÷ÕûÎªÓë±¾µØÊ±ÖÓÒ»ÖÂ, 0 ÎªÉèÖÃÎª UTC Ê±¼ä timedatectl set-local-rtc 1 
+è™šæ‹Ÿæœºcentos7 æœ€å°åŒ–å®‰è£…ç½‘ç»œé…ç½®
+1 ip addr è‹¥æ²¡æœ‰æ˜¾ç¤ºç½‘ç»œåˆ™ç½‘ç»œæ²¡æœ‰å¯åŠ¨     å¯èƒ½æ²¡æœ‰ifconfigç­‰å‘½ä»¤
+  ifup ens33 å¯åŠ¨ç½‘ç»œ
+  ifdown ens33 å…³é—­ç½‘ç»œ
+  systemctl restart network æˆ–è€… service network restart é‡å¯ç½‘ç»œæœåŠ¡
+2 /etc/sysconfig/network-scripts/ifcfg-ens33 ç½‘å¡é…ç½®æ–‡ä»¶   service network restart   #é‡å¯ç½‘ç»œ
+  TYPE=Ethernet           ç±»åž‹æ˜¯ä»¥å¤ªç½‘
+  BOOTPROTO=none          é™æ€é…ç½®ipä¸å¯åŠ¨è¯¥åè®® dhcpå¯åŠ¨dhcpåè®® bootpå¯åŠ¨bootpåè®® staticæ‰‹åŠ¨è®¾ç½®é™æ€ip
+  ONBOOT=yes              å¼€æœºå¯åŠ¨æœ¬é…ç½®æ¿€æ´»ç½‘å¡ noä¸æ¿€æ´»
+  IPADDR=192.168.6.235    é™æ€IP
+  NETNASK=255.255.255.0   å­ç½‘æŽ©ç     æœ‰çš„è¯´æ˜¯ PREFIX=24  #è®¾ç½®å­ç½‘æŽ©ç 
+  GATEWAY=192.168.6.155   ç½‘å…³
+  NAME=ens33              ä»¥å¤ªç½‘åç§°
+  HWADDR                  ç½‘å¡mac
+  DNS1=8.8.8.8            è®¾ç½®ä¸»DNS      ping www.baidu.com  #æµ‹è¯•ç½‘ç»œæ˜¯å¦æ­£å¸¸ ä¸é…ç½®DNSåªèƒ½ping ipåœ°å€
+  DNS2=8.8.4.4            è®¾ç½®å¤‡DNS
+  UUID=ae0965e7-22b9-45aa-8ec9-3f0a20a85d11     ä¸€èˆ¬å¯ä»¥ä¸é…ç½®
+3 nmcli d æŸ¥çœ‹è®¾å¤‡ è‹¥æ˜¾ç¤ºenthernet disconnected åˆ™ç½‘ç»œæ²¡æœ‰å¯åŠ¨
+  nmtui å›¾å½¢ç•Œé¢ç½‘ç»œé…ç½® é€‰æ‹©edit a connection å°±å¯ä»¥ç¼–è¯‘ç½‘ç»œ ç±»ä¼¼äºŽdos ä¹Ÿå°±æ˜¯ç¼–å‰§2çš„æ–‡ä»¶
 
 
+centos æœ€å°å®‰è£…ç½‘ç»œä¸èƒ½ç”¨ cat /etc/sysconfig/network-scripts/ifcfg-enp0s3 NBOOT æ”¹ä¸ºyes service network restart
+
+æ¡¥æŽ¥æ¨¡å¼ è™šæ‹Ÿå™¨å¯åŠ¨ä»¥åŽ å³é”®->è®¾ç½®->ç½‘ç»œé€‚é…å™¨->é€‰æ‹©æ¡¥æŽ¥ è™šæ‹Ÿæœºä¸­ å•å‡»ç½‘ç»œ->æœ‰çº¿è®¾ç½®->æœ‰çº¿->IPv4(1è‡ªåŠ¨ æˆ– 2æ‰‹åŠ¨ é…ç½®192.168.6.231 255.255.255.0 192.168.6.155) æ³¨æ„æ‰‹åŠ¨é…ç½®éœ€è¦æå‰éªŒè¯ä¸‹ipæœ‰æ²¡è¢«å ç”¨
+NATæ¨¡å¼  ä¸Žä¸»æœºå…±äº«ç½‘ç»œip è™šæ‹Ÿæœºç”Ÿæˆä¸€ä¸ªé»˜è®¤çš„ip è™šæ‹Ÿæœºèƒ½è®¿é—®ç½‘ç»œ ç½‘ç»œä¸Šçš„å…¶ä»–ä¸»æœºä¸èƒ½è®¿é—®è™šæ‹Ÿæœº
+
+CentOS7 ESTï¼ˆç¾Žå›½ä¸œéƒ¨æ—¶é—´ï¼‰ä¸ŽåŒ—äº¬æ—¶é—´çš„æ—¶å·® 3æœˆè‡³10æœˆä¸¤è€…ç›¸å·®æ—¶é—´ä¸º12å°æ—¶ï¼›11æœˆè‡³2æœˆä¸¤è€…ç›¸å·®æ—¶é—´ä¸º13å°æ—¶ï¼› CSTä¸Šæµ·æ—¶é—´
+è§£å†³åŠžæ³•ï¼šCenOS7ä¸­è®¾ç½®æ—¶åŒºä½¿ç”¨çš„æ˜¯timedatectlçš„ç¨‹åºã€‚
+#åˆ—å‡ºæ—¶åŒºtimedatectl list-timezones
+#ä¿®æ”¹æ—¶åŒº è®¾ç½®ç³»ç»Ÿæ—¶åŒºä¸ºä¸Šæµ·timedatectl set-timezone Asia/Shanghai
+#å°†ç¡¬ä»¶æ—¶é’Ÿè°ƒæ•´ä¸ºä¸Žæœ¬åœ°æ—¶é’Ÿä¸€è‡´, 0 ä¸ºè®¾ç½®ä¸º UTC æ—¶é—´ timedatectl set-local-rtc 1

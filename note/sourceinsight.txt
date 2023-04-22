@@ -2,40 +2,37 @@
 
 
 Source Insight 4.0
-  ¿ªÆôÑ¡ÖĞ¸ßÁÁ  Tools -> File Type Options (Alt + Y) -> Hightlight references to selected symbol
-  ÏÔÊ¾³öÆ¥ÅäµÄÀ¨ºÅ Ã»ÕâÏî¹¦ÄÜ£¬µ«ÊÇ¿É°Ñ¹â±êÒÆ¶¯µ½Ç°ÃæµÄ"{"Ç°Ãæ£¬È»ºóË«»÷Êó±êÈ¥Æ¥Åä"}"
-  ´úÂëÕÛµş      ¹¤¾ßÀ¸ÓĞ¹¤¾ß
-  1.Ctrl + Êó±êµ¥»÷ ½øÈë¶¨Òå.
-  2.Alt + F12¿ÉÒÔÇĞ»»£¬ÈÃ×Ö·û¿í¶È±äµÃÒ»ÖÂ£¬»òÕßÊÇ´óĞ¡²»Í¬µØÏÔÊ¾¡£º¯ÊıÃû±äĞÑÄ¿ÌáĞÑ£¬º¯Êı½áÎ²Ê±´óÀ©ºÅÎ²²¿ÓĞ»ÒÉ«ÌáĞÑ£¡£¡£¡£¨ÏëÒş²ØÔÙ´Î°´ALT F12£©
-  3.Shift + F8 ±êÁÁÎÄ±¾ÖĞ¹â±êËùÔÚµÄµ¥´Ê¡£
-  4.Ctrl + G (»òÕßF5) Ìø×ªµ½Ä³Ò»ĞĞ¡£
-  5.Ctrl + O ËÑË÷ÎÄ¼ş£¬ÕÒµ½»Ø³µ´ò¿ª£¬ÕÒ²»µ½ESCÍË³ö
-  6.Alt + G (»òÕßF7) ´ò¿ªSymbol Window.
-  7.Alt +, ºóÍË£»Alt+.Ç°½ø.
-  8.Ctrl + F ²éÕÒ¹Ø¼ü×Ö¡£
-  
-  Ìí¼ÓÏµÍ³¿âº¯ÊıÍ·ÎÄ¼ş
-    ÒÔÌí¼ÓLinuxÏµÍ³¿âÎÄ¼şµ½Source Insight baseÍ¬¼¶Ä¿Â¼ÎªÀı£º
-    Ò»¡¢¿âÎÄ¼ş¿½±´
-    1¡¢Ê¹ÓÃtarÑ¹ËõÎÄ¼ş
+  å¼€å¯é€‰ä¸­é«˜äº®  Tools -> File Type Options (Alt + Y) -> Hightlight references to selected symbol
+  æ˜¾ç¤ºå‡ºåŒ¹é…çš„æ‹¬å· æ²¡è¿™é¡¹åŠŸèƒ½ï¼Œä½†æ˜¯å¯æŠŠå…‰æ ‡ç§»åŠ¨åˆ°å‰é¢çš„"{"å‰é¢ï¼Œç„¶ååŒå‡»é¼ æ ‡å»åŒ¹é…"}"
+  ä»£ç æŠ˜å       å·¥å…·æ æœ‰å·¥å…·
+  1.Ctrl + é¼ æ ‡å•å‡» è¿›å…¥å®šä¹‰.
+  2.Alt + F12å¯ä»¥åˆ‡æ¢ï¼Œè®©å­—ç¬¦å®½åº¦å˜å¾—ä¸€è‡´ï¼Œæˆ–è€…æ˜¯å¤§å°ä¸åŒåœ°æ˜¾ç¤ºã€‚å‡½æ•°åå˜é†’ç›®æé†’ï¼Œå‡½æ•°ç»“å°¾æ—¶å¤§æ‰©å·å°¾éƒ¨æœ‰ç°è‰²æé†’ï¼ï¼ï¼ï¼ˆæƒ³éšè—å†æ¬¡æŒ‰ALT F12ï¼‰
+  3.Shift + F8 æ ‡äº®æ–‡æœ¬ä¸­å…‰æ ‡æ‰€åœ¨çš„å•è¯ã€‚
+  4.Ctrl + G (æˆ–è€…F5) è·³è½¬åˆ°æŸä¸€è¡Œã€‚
+  5.Ctrl + O æœç´¢æ–‡ä»¶ï¼Œæ‰¾åˆ°å›è½¦æ‰“å¼€ï¼Œæ‰¾ä¸åˆ°ESCé€€å‡º
+  6.Alt + G (æˆ–è€…F7) æ‰“å¼€Symbol Window.
+  7.Alt +, åé€€ï¼›Alt+.å‰è¿›.
+  8.Ctrl + F æŸ¥æ‰¾å…³é”®å­—ã€‚
+
+  æ·»åŠ ç³»ç»Ÿåº“å‡½æ•°å¤´æ–‡ä»¶
+    ä»¥æ·»åŠ Linuxç³»ç»Ÿåº“æ–‡ä»¶åˆ°Source Insight baseåŒçº§ç›®å½•ä¸ºä¾‹ï¼š
+    ä¸€ã€åº“æ–‡ä»¶æ‹·è´
+    1ã€ä½¿ç”¨tarå‹ç¼©æ–‡ä»¶
           sudo -s
           cd /usr
           tar -zcvf include.tar.gz ./include/
-    2¡¢½«Ñ¹ËõÎÄ¼ş¸´ÖÆµ½windowsÏÂ£¬½âÑ¹ÎÄ¼ş
-    3¡¢½«includeÎÄ¼ş·Åµ½Ö¸¶¨Î»ÖÃ£¬Èç£º
+    2ã€å°†å‹ç¼©æ–‡ä»¶å¤åˆ¶åˆ°windowsä¸‹ï¼Œè§£å‹æ–‡ä»¶
+    3ã€å°†includeæ–‡ä»¶æ”¾åˆ°æŒ‡å®šä½ç½®ï¼Œå¦‚ï¼š
          C:\Users\win 10\Documents\Source Insight 4.0\Projects\include
-    ¶ş¡¢Source InsightÌí¼ÓÂ·¾¶
-    1¡¢´ò¿ªBaseÏîÄ¿
-         Project->Open Project £¬Ñ¡ÔñBaseÏîÄ¿
-    2¡¢Options->Preferrnces£¬Ñ¡ÔñSysbol LookupsÑ¡Ïî¿¨
-    3¡¢´ò¿ªImport Symbols for All Projects
-    4¡¢´ò¿ªÓÒ²àAdd°´Å¥£¬µ¯³öAdd External Symbols¶Ô»°¿ò
-    5¡¢´ò¿ªImport from an INCLUDE  path
-    6¡¢½«ĞèÒªÌí¼ÓµÄÏµÍ³¿âº¯ÊıÍ·ÎÄ¼şËùÔÚÂ·¾¶Ìí¼Ó½øÈ¥
+    äºŒã€Source Insightæ·»åŠ è·¯å¾„
+    1ã€æ‰“å¼€Baseé¡¹ç›®
+         Project->Open Project ï¼Œé€‰æ‹©Baseé¡¹ç›®
+    2ã€Options->Preferrncesï¼Œé€‰æ‹©Sysbol Lookupsé€‰é¡¹å¡
+    3ã€æ‰“å¼€Import Symbols for All Projects
+    4ã€æ‰“å¼€å³ä¾§AddæŒ‰é’®ï¼Œå¼¹å‡ºAdd External Symbolså¯¹è¯æ¡†
+    5ã€æ‰“å¼€Import from an INCLUDE  path
+    6ã€å°†éœ€è¦æ·»åŠ çš„ç³»ç»Ÿåº“å‡½æ•°å¤´æ–‡ä»¶æ‰€åœ¨è·¯å¾„æ·»åŠ è¿›å»
            C:\Users\win 10\Documents\Source Insight 4.0\Projects\include
-    7¡¢µã»÷OK
-         Windows¿âÎÄ¼şÂ·¾¶£¬Ò»°ãÔÚ°²×°VC¡¢vsÂ·¾¶ÏÂµÄVC/include
-         Linux¿âÎÄ¼şÂ·¾¶£¬Ò»°ãÔÚ/usr/include ¡£
-
-
-
+    7ã€ç‚¹å‡»OK
+         Windowsåº“æ–‡ä»¶è·¯å¾„ï¼Œä¸€èˆ¬åœ¨å®‰è£…VCã€vsè·¯å¾„ä¸‹çš„VC/include
+         Linuxåº“æ–‡ä»¶è·¯å¾„ï¼Œä¸€èˆ¬åœ¨/usr/include ã€‚

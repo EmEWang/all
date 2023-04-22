@@ -1,65 +1,64 @@
 
 
-»·485¿Ú Íø¿Ú ×¨ÃÅĞ­Òé ipmi 
+ç¯485å£ ç½‘å£ ä¸“é—¨åè®® ipmi
 
-Íø¿¨ ½Ó¿Ú ÏÔÊ¾IPĞÅÏ¢¶¨ÖÆ ssh    snmp   win wmi
-./wmic -U administrator%1qaz@WSX3edc //192.168.7.30 "select * from Win32_Processor"     »ñÈ¡cpuĞÅÏ¢
+ç½‘å¡ æ¥å£ æ˜¾ç¤ºIPä¿¡æ¯å®šåˆ¶ ssh    snmp   win wmi
+./wmic -U administrator%1qaz@WSX3edc //192.168.7.30 "select * from Win32_Processor"     è·å–cpuä¿¡æ¯
 ./wmic -U administrator%1qaz@WSX3edc //192.168.7.30 "select Name from Win32_PerfRawData_Tcpip_NetworkInterface"
-./wmic -U administrator%1qaz@WSX3edc //192.168.7.30 "select DefaultIPGateway,Description from Win32_NetworkAdapterConfiguration WHERE IPEnabled = True" 
+./wmic -U administrator%1qaz@WSX3edc //192.168.7.30 "select DefaultIPGateway,Description from Win32_NetworkAdapterConfiguration WHERE IPEnabled = True"
 
 
 ipmiutil sensor -s -N 103.219.185.29 -U root -P Mxsoft@123 -J 1 -F lan2 -V 2
-±àÒëipmiutil
-ÓÃµÄÊÇipmiutil-3.1.3  1.7±àÒëÃüÁî»¹ÓĞÎÊÌâ
+ç¼–è¯‘ipmiutil
+ç”¨çš„æ˜¯ipmiutil-3.1.3  1.7ç¼–è¯‘å‘½ä»¤è¿˜æœ‰é—®é¢˜
 ./configure --build=arc
 make
-Æä½á¹ûÔÚ ./utilÏÂ Ö÷ÒªÊ¹ÓÃipmiutil libipmiutil.so.1 
+å…¶ç»“æœåœ¨ ./utilä¸‹ ä¸»è¦ä½¿ç”¨ipmiutil libipmiutil.so.1
 
 
 
 
 snmpWalk  192.168.6.155 -Cpublic -v2  .1.3.6.1.2.1.25.2.2    snmpWalk IpAddress | DNSName [StartOid] [options]
-snmpWalk  192.168.6.155  1.3.6.1.2.1.7.1.0 -v2 -Cpublic      ¸ñÊ½ snmpGet IpAddress | DNSName [Oid] [Oid...] [options]
-snmpGet 10.0.99.4  1.3.6.1.2.1.1.2.0   -v2c -Cyunzhihui123   ³ÌĞòÖĞ Èôoid²»ÊÇºÏ¸ñµÄoid Ôòpdu.get_vb_count()Îª0 ÆäËûoid·µ»ØÖµ Èô²é²»µ½ ·µ»ØµÄÖµÎª¿Õ×Ö·û´® ºÏ¸ñoidÊÇÖ»ÓĞÊı×ÖºÍ.
+snmpWalk  192.168.6.155  1.3.6.1.2.1.7.1.0 -v2 -Cpublic      æ ¼å¼ snmpGet IpAddress | DNSName [Oid] [Oid...] [options]
+snmpGet 10.0.99.4  1.3.6.1.2.1.1.2.0   -v2c -Cyunzhihui123   ç¨‹åºä¸­ è‹¥oidä¸æ˜¯åˆæ ¼çš„oid åˆ™pdu.get_vb_count()ä¸º0 å…¶ä»–oidè¿”å›å€¼ è‹¥æŸ¥ä¸åˆ° è¿”å›çš„å€¼ä¸ºç©ºå­—ç¬¦ä¸² åˆæ ¼oidæ˜¯åªæœ‰æ•°å­—å’Œ.
 1.3.6.1.2.1.17.4.3.1.2
 1.3.6.1.2.1.4.20.1.1
 
 
-1213-MIBµÄsystem×éÖĞµÄsysObjectId(.1.3.6.1.2.1.1.2.0)µÄÖµ¹ØÁªµ½Éè±¸ĞÍºÅ±í£¬»ñÈ¡Éè±¸ĞÍºÅ¶ÔÓ¦µÄÉè±¸ÀàĞÍ¡¢Éè±¸ĞÍºÅ¡¢Éè±¸ĞÍºÅ¶ÔÓ¦µÄ³§ÉÌ 
+1213-MIBçš„systemç»„ä¸­çš„sysObjectId(.1.3.6.1.2.1.1.2.0)çš„å€¼å…³è”åˆ°è®¾å¤‡å‹å·è¡¨ï¼Œè·å–è®¾å¤‡å‹å·å¯¹åº”çš„è®¾å¤‡ç±»å‹ã€è®¾å¤‡å‹å·ã€è®¾å¤‡å‹å·å¯¹åº”çš„å‚å•†
 
 1.3.6.1.2.1.1.2 - sysObjectID
-´Órfc1213-mib2.asn1ÖĞµÄ OBJECT-TYPE¶¨ÒåÉú³É
-OIDÖµ£º 1.3.6.1.2.1.1.2
+ä»rfc1213-mib2.asn1ä¸­çš„ OBJECT-TYPEå®šä¹‰ç”Ÿæˆ
+OIDå€¼ï¼š 1.3.6.1.2.1.1.2
 
-OIDÃèÊö£º
+OIDæè¿°ï¼š
 sysObjectID OBJECT-TYPE
-              Óï·¨¶ÔÏó±êÊ¶·û
-              ACCESSÖ»¶Á
-              ×´Ì¬Ç¿ÖÆ
-              ÃèÊö
-                      ¡°¹©Ó¦ÉÌµÄÈ¨Íş¼ø¶¨
-                      ÍøÂç¹ÜÀí×ÓÏµÍ³°üº¬ÔÚ
-                      ÊµÌå¡£¸ÃÖµÔÚSMIÖĞ·ÖÅä
-                      ÆóÒµ×ÓÊ÷£¨1.3.6.1.4.1£©²¢Ìá¹©ÁËÒ»¸ö
-                      ¼òµ¥Ã÷È·µÄ·½·¨À´È·¶¨Ê²Ã´
-                      ÕıÔÚ¹ÜÀíÄÇÖÖ¡°ºĞ×Ó¡±¡£ÀıÈç£¬Èç¹û
-                      ¹©Ó¦ÉÌ`Flintstones£¬Inc¡£' ±»·ÖÅäÁË
-                      ×ÓÊ÷1.3.6.1.4.1.4242£¬Ëü¿ÉÒÔ·ÖÅä
-                      ±êÊ¶·û1.3.6.1.4.1.4242.1.1µ½Æä`Fred
-                      Â·ÓÉÆ÷'¡£¡±
+              è¯­æ³•å¯¹è±¡æ ‡è¯†ç¬¦
+              ACCESSåªè¯»
+              çŠ¶æ€å¼ºåˆ¶
+              æè¿°
+                      â€œä¾›åº”å•†çš„æƒå¨é‰´å®š
+                      ç½‘ç»œç®¡ç†å­ç³»ç»ŸåŒ…å«åœ¨
+                      å®ä½“ã€‚è¯¥å€¼åœ¨SMIä¸­åˆ†é…
+                      ä¼ä¸šå­æ ‘ï¼ˆ1.3.6.1.4.1ï¼‰å¹¶æä¾›äº†ä¸€ä¸ª
+                      ç®€å•æ˜ç¡®çš„æ–¹æ³•æ¥ç¡®å®šä»€ä¹ˆ
+                      æ­£åœ¨ç®¡ç†é‚£ç§â€œç›’å­â€ã€‚ä¾‹å¦‚ï¼Œå¦‚æœ
+                      ä¾›åº”å•†`Flintstonesï¼ŒIncã€‚' è¢«åˆ†é…äº†
+                      å­æ ‘1.3.6.1.4.1.4242ï¼Œå®ƒå¯ä»¥åˆ†é…
+                      æ ‡è¯†ç¬¦1.3.6.1.4.1.4242.1.1åˆ°å…¶`Fred
+                      è·¯ç”±å™¨'ã€‚â€
               :: = {system 2}
 
-ÁíÇë²ÎÔÄ OID´æ´¢¿âÍøÕ¾ 1.3.6.1.2.1.1.2µÄ ²Î¿¼×ÊÁÏ
+å¦è¯·å‚é˜… OIDå­˜å‚¨åº“ç½‘ç«™ 1.3.6.1.2.1.1.2çš„ å‚è€ƒèµ„æ–™
 
-ÓÅÔ½µÄ²Î¿¼
-1.3.6.1.2.1.1 - SNMP MIB-2ÏµÍ³
+ä¼˜è¶Šçš„å‚è€ƒ
+1.3.6.1.2.1.1 - SNMP MIB-2ç³»ç»Ÿ
 1.3.6.1.2.1 - SNMP MIB-2
-1.3.6.1.2 - IETF¹ÜÀí
-1.3.6.1 - À´×Ô1.3.6.1µÄOID·ÖÅä - »¥ÁªÍø
-1.3.6 - ÃÀ¹ú¹ú·À²¿
-1.3 - ISOÊ¶±ğ×éÖ¯
-1 - ISO·ÖÅäµÄOID
-OIDÊ÷µÄ¶¥²¿
-¸½Êô²Î¿¼£¨µ¥¼¶£©
+1.3.6.1.2 - IETFç®¡ç†
+1.3.6.1 - æ¥è‡ª1.3.6.1çš„OIDåˆ†é… - äº’è”ç½‘
+1.3.6 - ç¾å›½å›½é˜²éƒ¨
+1.3 - ISOè¯†åˆ«ç»„ç»‡
+1 - ISOåˆ†é…çš„OID
+OIDæ ‘çš„é¡¶éƒ¨
+é™„å±å‚è€ƒï¼ˆå•çº§ï¼‰
 1.3.6.1.2.1.1.2.0 - Hp
-

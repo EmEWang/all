@@ -66,19 +66,21 @@ vscode无法远程连接服务器的解决办法
   2 在服务器端删除.vscode-server文件夹(一般在用户目录下)   (这个方法没有试)
     打开服务器网络(一般自动打开)
     再用VS Code 重新连接服务器就好了
-    
 
 
-[wjg]vscode--------------------------------------------------------------------------------
+改变编码
+  右下角状态栏 UTF-8(Select Encoding)->Save with Encoding
+
 乱码问题
   问题一：打开文件后，中文显示出现乱码
     注意：当打开文件，其内容中文乱码时，不要Ctrl+S保存文件。因为那样会保存乱码，使其无法恢复。
     解决方法一：点击右下角中的“UTF-8”，选择“通过编码重新打开”，输入“GB 2312”，选择“Simplified Chinese(GB 2312)”即可。
       点击UTF-8 > 通过编码重新打开 > Simplified Chinese(GB 2312) > 中文正确显示
-    解决方法二：打开“查看”>“命令面板”，输入“setting”， 选择“首选项：打开设置(json)”，输入如下语句并保存即可。
-      打开控制面板 > 首选项：打开设置(json) > 输入语句："files.autoGuessEncoding": true > 成功显示
+    解决方法二：File->Preferences->Settings->搜索“files.autoGuessEncoding”: false
+      将其用户设置改为 “files.autoGuessEncoding”: true 高级版本 勾选即可
+      同 File->Preferences->Settings->user->Text Editor->Files->Auto Guess Encoding 勾选
     提示：设置完成后，若文件还是中文乱码，关闭文件重新打开即可。
-  
+
   问题二： 终端命令行运行时出现中文乱码
     g++ 1.cpp -o 1.exe; ./1.exe
     终端中文乱码
@@ -87,7 +89,7 @@ vscode无法远程连接服务器的解决办法
       chcp 65001; g++ 1.cpp -o 1.exe; ./1.exe  >  命令行运行结果
     解决方法二：点击右下角的"UTF-8"，选择”通过编码保存“，输入”GB 2312“，选择“Simplified Chinese(GB 2312)”，将UTF-8转换成GB 2312。
       通过编码保存 > 填写：Simplified Chinese(GB 2312) > 中文字符成功显示
-  
+
   问题三：点击运行键运行程序出现中文乱码
     原因：从终端可发现，点击运行键运行程序与直接用命令行运行程序相类似，其中文乱码也是因为使用UTF-8编码。
     解决方法一：打开“查看”>“命令面板”，输入“setting”， 选择“首选项：打开设置(json)”，在"code-runner.executorMap"中的“cpp”添加“chcp 65001”。
@@ -97,12 +99,12 @@ vscode无法远程连接服务器的解决办法
     成功显示。
     解决方法二：点击右下角的"UTF-8"，选择”通过编码保存“，输入”GB 2312“，选择“Simplified Chinese(GB 2312)”，将UTF-8转换成GB 2312。
     填写：Simplified Chinese(GB 2312) > 成功显示。
-  
+
   问题四： 调试时，终端出现中文乱码或无法输出中文
     原因：文件使用GB2312编码，而非UTF-8编码。
     解决方法：点击右下角的"GB2312"，选择”通过编码保存“，输入”utf-8“，选择”UTF-8 utf8“即可。
     填写：GB2312 > 通过编码保存 > 选择UTF-8 > 成功调试
-  
+
   总结
   打开文件时，设置"files.autoGuessEncoding": true，令VS Code自动选择合适编码方式；
   通过命令行或运行键运行程序时，若是UTF-8编码会造成中文乱码，需要在运行命令中添加“chcp 65001”，或者将UTF-8编码转换成GB2312编码；
@@ -145,9 +147,5 @@ vscode无法远程连接服务器的解决办法
         打开.ssh/config文件
         修改.ssh/config文件：加入IdentityFile的路径（也就是私钥在本机的所在位置）
         如：IdentityFile C:\Users\wangjingang\.ssh\id_rsa_95
-    
-  这时候再用vscode登录server就不用输入密码了！
 
-    
-    
-    
+  这时候再用vscode登录server就不用输入密码了！

@@ -1,440 +1,440 @@
 
-Ê×ÏÈ£¬Åú´¦ÀíÎÄ¼þÊÇÒ»¸öÎÄ±¾ÎÄ¼þ£¬Õâ¸öÎÄ¼þµÄÃ¿Ò»ÐÐ¶¼ÊÇÒ»ÌõDOSÃüÁî£¨´ó²¿·ÖÊ±ºò¾ÍºÃÏóÎÒÃÇÔÚDOSÌáÊ¾·ûÏÂÖ´ÐÐµÄÃüÁîÐÐÒ»Ñù£©£¬Äã¿ÉÒÔÊ¹ÓÃDOSÏÂµÄEdit»òÕßWindowsµÄ¼ÇÊÂ±¾(notepad)µÈÈÎºÎÎÄ±¾ÎÄ¼þ±à¼­¹¤¾ß´´½¨ºÍÐÞ¸ÄÅú´¦ÀíÎÄ¼þ¡£ 
-Æä´Î£¬Åú´¦ÀíÎÄ¼þÊÇÒ»ÖÖ¼òµ¥µÄ³ÌÐò£¬¿ÉÒÔÍ¨¹ýÌõ¼þÓï¾ä(if)ºÍÁ÷³Ì¿ØÖÆÓï¾ä(goto)À´¿ØÖÆÃüÁîÔËÐÐµÄÁ÷³Ì£¬ÔÚÅú´¦ÀíÖÐÒ²¿ÉÒÔÊ¹ÓÃÑ­»·Óï¾ä(for)À´Ñ­»·Ö´ÐÐÒ»ÌõÃüÁî¡£µ±È»£¬Åú´¦ÀíÎÄ¼þµÄ±à³ÌÄÜÁ¦ÓëCÓïÑÔµÈ±à³ÌÓï¾ä±ÈÆðÀ´ÊÇÊ®·ÖÓÐÏÞµÄ£¬Ò²ÊÇÊ®·Ö²»¹æ·¶µÄ¡£Åú´¦ÀíµÄ³ÌÐòÓï¾ä¾ÍÊÇÒ»ÌõÌõµÄDOSÃüÁî£¨°üÀ¨ÄÚ²¿ÃüÁîºÍÍâ²¿ÃüÁî£©£¬¶øÅú´¦ÀíµÄÄÜÁ¦Ö÷ÒªÈ¡¾öÓÚÄãËùÊ¹ÓÃµÄÃüÁî¡£ 
-µÚÈý£¬Ã¿¸ö±àÐ´ºÃµÄÅú´¦ÀíÎÄ¼þ¶¼Ïàµ±ÓÚÒ»¸öDOSµÄÍâ²¿ÃüÁî£¬Äã¿ÉÒÔ°ÑËüËùÔÚµÄÄ¿Â¼·Åµ½ÄãµÄDOSËÑË÷Â·¾¶(path)ÖÐÀ´Ê¹µÃËü¿ÉÒÔÔÚÈÎÒâÎ»ÖÃÔËÐÐ¡£Ò»¸öÁ¼ºÃµÄÏ°¹ßÊÇÔÚÓ²ÅÌÉÏ½¨Á¢Ò»¸öbat»òÕßbatchÄ¿Â¼£¨ÀýÈçC:\BATCH£©£¬È»ºó½«ËùÓÐÄã±àÐ´µÄÅú´¦ÀíÎÄ¼þ·Åµ½¸ÃÄ¿Â¼ÖÐ£¬ÕâÑùÖ»ÒªÔÚpathÖÐÉèÖÃÉÏc:\batch£¬Äã¾Í¿ÉÒÔÔÚÈÎÒâÎ»ÖÃÔËÐÐËùÓÐÄã±àÐ´µÄÅú´¦Àí³ÌÐò¡£ 
-µÚËÄ£¬ÔÚDOSºÍWin9x/MeÏµÍ³ÏÂ£¬C:ÅÌ¸ùÄ¿Â¼ÏÂµÄAUTOEXEC.BATÅú´¦ÀíÎÄ¼þÊÇ×Ô¶¯ÔËÐÐÅú´¦ÀíÎÄ¼þ£¬Ã¿´ÎÏµÍ³Æô¶¯Ê±»á×Ô¶¯ÔËÐÐ¸ÃÎÄ¼þ£¬Äã¿ÉÒÔ½«ÏµÍ³Ã¿´ÎÆô¶¯Ê±¶¼ÒªÔËÐÐµÄÃüÁî·ÅÈë¸ÃÎÄ¼þÖÐ£¬ÀýÈçÉèÖÃËÑË÷Â·¾¶£¬µ÷ÈëÊó±êÇý¶¯ºÍ´ÅÅÌ»º´æ£¬ÉèÖÃÏµÍ³»·¾³±äÁ¿µÈ¡£ÏÂÃæÊÇÒ»¸öÔËÐÐÓÚWindows 98ÏÂµÄautoexec.batµÄÊ¾Àý£º
-@ECHO OFF 
-PATH C:\WINDOWS;C:\WINDOWS\COMMAND;C:\UCDOS;C:\DOSTools;C:\SYSTOOLS;C:\WINTOOLS;C:\BATCH 
-LH SMARTDRV.EXE /X 
-LH DOSKEY.COM /INSERT 
-LH CTMOUSE.EXE 
-SET TEMP=D:\TEMP 
+é¦–å…ˆï¼Œæ‰¹å¤„ç†æ–‡ä»¶æ˜¯ä¸€ä¸ªæ–‡æœ¬æ–‡ä»¶ï¼Œè¿™ä¸ªæ–‡ä»¶çš„æ¯ä¸€è¡Œéƒ½æ˜¯ä¸€æ¡DOSå‘½ä»¤ï¼ˆå¤§éƒ¨åˆ†æ—¶å€™å°±å¥½è±¡æˆ‘ä»¬åœ¨DOSæç¤ºç¬¦ä¸‹æ‰§è¡Œçš„å‘½ä»¤è¡Œä¸€æ ·ï¼‰ï¼Œä½ å¯ä»¥ä½¿ç”¨DOSä¸‹çš„Editæˆ–è€…Windowsçš„è®°äº‹æœ¬(notepad)ç­‰ä»»ä½•æ–‡æœ¬æ–‡ä»¶ç¼–è¾‘å·¥å…·åˆ›å»ºå’Œä¿®æ”¹æ‰¹å¤„ç†æ–‡ä»¶ã€‚
+å…¶æ¬¡ï¼Œæ‰¹å¤„ç†æ–‡ä»¶æ˜¯ä¸€ç§ç®€å•çš„ç¨‹åºï¼Œå¯ä»¥é€šè¿‡æ¡ä»¶è¯­å¥(if)å’Œæµç¨‹æŽ§åˆ¶è¯­å¥(goto)æ¥æŽ§åˆ¶å‘½ä»¤è¿è¡Œçš„æµç¨‹ï¼Œåœ¨æ‰¹å¤„ç†ä¸­ä¹Ÿå¯ä»¥ä½¿ç”¨å¾ªçŽ¯è¯­å¥(for)æ¥å¾ªçŽ¯æ‰§è¡Œä¸€æ¡å‘½ä»¤ã€‚å½“ç„¶ï¼Œæ‰¹å¤„ç†æ–‡ä»¶çš„ç¼–ç¨‹èƒ½åŠ›ä¸ŽCè¯­è¨€ç­‰ç¼–ç¨‹è¯­å¥æ¯”èµ·æ¥æ˜¯ååˆ†æœ‰é™çš„ï¼Œä¹Ÿæ˜¯ååˆ†ä¸è§„èŒƒçš„ã€‚æ‰¹å¤„ç†çš„ç¨‹åºè¯­å¥å°±æ˜¯ä¸€æ¡æ¡çš„DOSå‘½ä»¤ï¼ˆåŒ…æ‹¬å†…éƒ¨å‘½ä»¤å’Œå¤–éƒ¨å‘½ä»¤ï¼‰ï¼Œè€Œæ‰¹å¤„ç†çš„èƒ½åŠ›ä¸»è¦å–å†³äºŽä½ æ‰€ä½¿ç”¨çš„å‘½ä»¤ã€‚
+ç¬¬ä¸‰ï¼Œæ¯ä¸ªç¼–å†™å¥½çš„æ‰¹å¤„ç†æ–‡ä»¶éƒ½ç›¸å½“äºŽä¸€ä¸ªDOSçš„å¤–éƒ¨å‘½ä»¤ï¼Œä½ å¯ä»¥æŠŠå®ƒæ‰€åœ¨çš„ç›®å½•æ”¾åˆ°ä½ çš„DOSæœç´¢è·¯å¾„(path)ä¸­æ¥ä½¿å¾—å®ƒå¯ä»¥åœ¨ä»»æ„ä½ç½®è¿è¡Œã€‚ä¸€ä¸ªè‰¯å¥½çš„ä¹ æƒ¯æ˜¯åœ¨ç¡¬ç›˜ä¸Šå»ºç«‹ä¸€ä¸ªbatæˆ–è€…batchç›®å½•ï¼ˆä¾‹å¦‚C:\BATCHï¼‰ï¼Œç„¶åŽå°†æ‰€æœ‰ä½ ç¼–å†™çš„æ‰¹å¤„ç†æ–‡ä»¶æ”¾åˆ°è¯¥ç›®å½•ä¸­ï¼Œè¿™æ ·åªè¦åœ¨pathä¸­è®¾ç½®ä¸Šc:\batchï¼Œä½ å°±å¯ä»¥åœ¨ä»»æ„ä½ç½®è¿è¡Œæ‰€æœ‰ä½ ç¼–å†™çš„æ‰¹å¤„ç†ç¨‹åºã€‚
+ç¬¬å››ï¼Œåœ¨DOSå’ŒWin9x/Meç³»ç»Ÿä¸‹ï¼ŒC:ç›˜æ ¹ç›®å½•ä¸‹çš„AUTOEXEC.BATæ‰¹å¤„ç†æ–‡ä»¶æ˜¯è‡ªåŠ¨è¿è¡Œæ‰¹å¤„ç†æ–‡ä»¶ï¼Œæ¯æ¬¡ç³»ç»Ÿå¯åŠ¨æ—¶ä¼šè‡ªåŠ¨è¿è¡Œè¯¥æ–‡ä»¶ï¼Œä½ å¯ä»¥å°†ç³»ç»Ÿæ¯æ¬¡å¯åŠ¨æ—¶éƒ½è¦è¿è¡Œçš„å‘½ä»¤æ”¾å…¥è¯¥æ–‡ä»¶ä¸­ï¼Œä¾‹å¦‚è®¾ç½®æœç´¢è·¯å¾„ï¼Œè°ƒå…¥é¼ æ ‡é©±åŠ¨å’Œç£ç›˜ç¼“å­˜ï¼Œè®¾ç½®ç³»ç»ŸçŽ¯å¢ƒå˜é‡ç­‰ã€‚ä¸‹é¢æ˜¯ä¸€ä¸ªè¿è¡ŒäºŽWindows 98ä¸‹çš„autoexec.batçš„ç¤ºä¾‹ï¼š
+@ECHO OFF
+PATH C:\WINDOWS;C:\WINDOWS\COMMAND;C:\UCDOS;C:\DOSTools;C:\SYSTOOLS;C:\WINTOOLS;C:\BATCH
+LH SMARTDRV.EXE /X
+LH DOSKEY.COM /INSERT
+LH CTMOUSE.EXE
+SET TEMP=D:\TEMP
 SET TMP=D:\TEMP
 
-Åú´¦ÀíµÄ×÷ÓÃ 
-¼òµ¥µÄËµ£¬Åú´¦ÀíµÄ×÷ÓÃ¾ÍÊÇ×Ô¶¯µÄÁ¬ÐøÖ´ÐÐ¶àÌõÃüÁî¡£
+æ‰¹å¤„ç†çš„ä½œç”¨
+ç®€å•çš„è¯´ï¼Œæ‰¹å¤„ç†çš„ä½œç”¨å°±æ˜¯è‡ªåŠ¨çš„è¿žç»­æ‰§è¡Œå¤šæ¡å‘½ä»¤ã€‚
 
-³£ÓÃÃüÁî
-::±íÊ¾ÐÐ×¢ÊÍ 
-echo ±íÊ¾ÏÔÊ¾´ËÃüÁîºóµÄ×Ö·û 
-echo off ±íÊ¾ÔÚ´ËÓï¾äºóËùÓÐÔËÐÐµÄÃüÁî¶¼²»ÏÔÊ¾ÃüÁîÐÐ±¾Éí 
-@Óëecho offÏàÏó£¬µ«ËüÊÇ¼ÓÔÚÃ¿¸öÃüÁîÐÐµÄ×îÇ°Ãæ£¬±íÊ¾ÔËÐÐÊ±²»ÏÔÊ¾ÕâÒ»ÐÐµÄÃüÁîÐÐ£¨Ö»ÄÜÓ°Ïìµ±Ç°ÐÐ£©¡£ 
-call µ÷ÓÃÁíÒ»¸öÅú´¦ÀíÎÄ¼þ£¨Èç¹û²»ÓÃcall¶øÖ±½Óµ÷ÓÃ±ðµÄÅú´¦ÀíÎÄ¼þ£¬ÄÇÃ´Ö´ÐÐÍêÄÇ¸öÅú´¦ÀíÎÄ¼þºó½«ÎÞ·¨·µ»Øµ±Ç°ÎÄ¼þ²¢Ö´ÐÐµ±Ç°ÎÄ¼þµÄºóÐøÃüÁî£©¡£ 
-pause ÔËÐÐ´Ë¾ä»áÔÝÍ£Åú´¦ÀíµÄÖ´ÐÐ²¢ÔÚÆÁÄ»ÉÏÏÔÊ¾Press any key to continue...µÄÌáÊ¾£¬µÈ´ýÓÃ»§°´ÈÎÒâ¼üºó¼ÌÐø 
-rem ±íÊ¾´ËÃüÁîºóµÄ×Ö·ûÎª½âÊÍÐÐ£¨×¢ÊÍ£©£¬²»Ö´ÐÐ£¬Ö»ÊÇ¸ø×Ô¼º½ñºó²Î¿¼ÓÃµÄ£¨Ïàµ±ÓÚ³ÌÐòÖÐµÄ×¢ÊÍ£©¡£ 
+å¸¸ç”¨å‘½ä»¤
+::è¡¨ç¤ºè¡Œæ³¨é‡Š
+echo è¡¨ç¤ºæ˜¾ç¤ºæ­¤å‘½ä»¤åŽçš„å­—ç¬¦
+echo off è¡¨ç¤ºåœ¨æ­¤è¯­å¥åŽæ‰€æœ‰è¿è¡Œçš„å‘½ä»¤éƒ½ä¸æ˜¾ç¤ºå‘½ä»¤è¡Œæœ¬èº«
+@ä¸Žecho offç›¸è±¡ï¼Œä½†å®ƒæ˜¯åŠ åœ¨æ¯ä¸ªå‘½ä»¤è¡Œçš„æœ€å‰é¢ï¼Œè¡¨ç¤ºè¿è¡Œæ—¶ä¸æ˜¾ç¤ºè¿™ä¸€è¡Œçš„å‘½ä»¤è¡Œï¼ˆåªèƒ½å½±å“å½“å‰è¡Œï¼‰ã€‚
+call è°ƒç”¨å¦ä¸€ä¸ªæ‰¹å¤„ç†æ–‡ä»¶ï¼ˆå¦‚æžœä¸ç”¨callè€Œç›´æŽ¥è°ƒç”¨åˆ«çš„æ‰¹å¤„ç†æ–‡ä»¶ï¼Œé‚£ä¹ˆæ‰§è¡Œå®Œé‚£ä¸ªæ‰¹å¤„ç†æ–‡ä»¶åŽå°†æ— æ³•è¿”å›žå½“å‰æ–‡ä»¶å¹¶æ‰§è¡Œå½“å‰æ–‡ä»¶çš„åŽç»­å‘½ä»¤ï¼‰ã€‚
+pause è¿è¡Œæ­¤å¥ä¼šæš‚åœæ‰¹å¤„ç†çš„æ‰§è¡Œå¹¶åœ¨å±å¹•ä¸Šæ˜¾ç¤ºPress any key to continue...çš„æç¤ºï¼Œç­‰å¾…ç”¨æˆ·æŒ‰ä»»æ„é”®åŽç»§ç»­
+rem è¡¨ç¤ºæ­¤å‘½ä»¤åŽçš„å­—ç¬¦ä¸ºè§£é‡Šè¡Œï¼ˆæ³¨é‡Šï¼‰ï¼Œä¸æ‰§è¡Œï¼Œåªæ˜¯ç»™è‡ªå·±ä»ŠåŽå‚è€ƒç”¨çš„ï¼ˆç›¸å½“äºŽç¨‹åºä¸­çš„æ³¨é‡Šï¼‰ã€‚
 
-&  Ë³ÐòÖ´ÐÐ¶àÌõÃüÁî£¬¶ø²»¹ÜÃüÁîÊÇ·ñÖ´ÐÐ³É¹¦
-Àý£ºcopy nul 5.txt & echo 666 >>5.txt & more 5.txt
-´´½¨5.txtÎÄµµ£¬Ïò5.txtÎÄµµÖÐÐ´ÈëÄÚÈÝ¡°666¡±£¬Êä³ö5.txtµÄÄÚÈÝ¡£
-&& Ë³ÐòÖ´ÐÐ¶àÌõÃüÁî£¬µ±Åöµ½Ö´ÐÐ³ö´íµÄÃüÁîºó½«²»Ö´ÐÐºóÃæµÄÃüÁî
-|| Ë³ÐòÖ´ÐÐ¶àÌõÃüÁî£¬µ±Åöµ½Ö´ÐÐÕýÈ·µÄÃüÁîºó½«²»Ö´ÐÐºóÃæµÄÃüÁî£¨¼´£ºÖ»ÓÐÇ°ÃæÃüÁîÖ´ÐÐ´íÎóÊ±²ÅÖ´ÐÐºóÃæÃüÁî£©
-|  ¹ÜµÀÃüÁî Ç°Ò»¸öÃüÁîµÄÖ´ÐÐ½á¹ûÊä³öµ½ºóÒ»¸öÃüÁî Èç£ºhelp|more
-> Çå³ýÎÄ¼þÖÐÔ­ÓÐµÄÄÚÈÝºóÔÙÐ´Èë
->> ×·¼ÓÄÚÈÝµ½ÎÄ¼þÄ©Î²£¬¶ø²»»áÇå³ýÔ­ÓÐµÄÄÚÈÝÖ÷Òª½«±¾À´ÏÔÊ¾ÔÚÆÁÄ»ÉÏµÄÄÚÈÝÊä³öµ½Ö¸¶¨ÎÄ¼þÖÐÖ¸¶¨ÎÄ¼þÈç¹û²»´æÔÚ£¬Ôò×Ô¶¯Éú³É¸ÃÎÄ¼þ
- 
-Àý1£ºÓÃedit±à¼­a.batÎÄ¼þ£¬ÊäÈëÏÂÁÐÄÚÈÝºó´æÅÌÎªc:\a.bat£¬Ö´ÐÐ¸ÃÅú´¦ÀíÎÄ¼þºó¿ÉÊµÏÖ£º½«¸ùÄ¿Â¼ÖÐËùÓÐÎÄ¼þÐ´Èë a.txtÖÐ£¬Æô¶¯UCDOS£¬½øÈëWPSµÈ¹¦ÄÜ¡£ 
- ¡¡¡¡Åú´¦ÀíÎÄ¼þµÄÄÚÈÝÎª: ¡¡¡¡¡¡¡¡¡¡¡¡¡¡ ÃüÁî×¢ÊÍ£º  
-¡¡¡¡¡¡¡¡@echo off¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡²»ÏÔÊ¾ºóÐøÃüÁîÐÐ¼°µ±Ç°ÃüÁîÐÐ 
-¡¡¡¡¡¡¡¡dir c:\*.* >a.txt¡¡¡¡¡¡¡¡¡¡¡¡¡¡½«cÅÌÎÄ¼þÁÐ±íÐ´Èëa.txt 
-¡¡¡¡¡¡¡¡call c:\ucdos\ucdos.bat¡¡¡¡¡¡¡¡µ÷ÓÃucdos 
-¡¡¡¡¡¡¡¡echo ÄãºÃ ¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡ ÏÔÊ¾"ÄãºÃ" 
-¡¡¡¡¡¡¡¡pause ¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡ ÔÝÍ£,µÈ´ý°´¼ü¼ÌÐø 
-¡¡¡¡¡¡¡¡rem ×¼±¸ÔËÐÐwps ¡¡¡¡¡¡¡¡¡¡¡¡¡¡ ×¢ÊÍ£º×¼±¸ÔËÐÐwps 
-¡¡¡¡¡¡¡¡cd ucdos¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡ ½øÈëucdosÄ¿Â¼ 
-¡¡¡¡¡¡¡¡wps ¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡ ÔËÐÐwps¡¡¡¡ 
- 
-Åú´¦ÀíÎÄ¼þµÄ²ÎÊý  
-Åú´¦ÀíÎÄ¼þ»¹¿ÉÒÔÏñCÓïÑÔµÄº¯ÊýÒ»ÑùÊ¹ÓÃ²ÎÊý£¨Ïàµ±ÓÚDOSÃüÁîµÄÃüÁîÐÐ²ÎÊý£©£¬ÕâÐèÒªÓÃµ½Ò»¸ö²ÎÊý±íÊ¾·û"%"¡£  
-%[1-9]±íÊ¾²ÎÊý£¬²ÎÊýÊÇÖ¸ÔÚÔËÐÐÅú´¦ÀíÎÄ¼þÊ±ÔÚÎÄ¼þÃûºó¼ÓµÄÒÔ¿Õ¸ñ£¨»òÕßTab£©·Ö¸ôµÄ×Ö·û´®¡£±äÁ¿¿ÉÒÔ´Ó%0µ½%9£¬%0±íÊ¾Åú´¦ÀíÃüÁî±¾Éí£¬ÆäËü²ÎÊý×Ö·û´®ÓÃ%1µ½%9Ë³Ðò±íÊ¾¡£ 
- 
-Àý2£ºC:¸ùÄ¿Â¼ÏÂÓÐÒ»Åú´¦ÀíÎÄ¼þÃûÎªf.bat£¬ÄÚÈÝÎª£º
-@echo off 
+&  é¡ºåºæ‰§è¡Œå¤šæ¡å‘½ä»¤ï¼Œè€Œä¸ç®¡å‘½ä»¤æ˜¯å¦æ‰§è¡ŒæˆåŠŸ
+ä¾‹ï¼šcopy nul 5.txt & echo 666 >>5.txt & more 5.txt
+åˆ›å»º5.txtæ–‡æ¡£ï¼Œå‘5.txtæ–‡æ¡£ä¸­å†™å…¥å†…å®¹â€œ666â€ï¼Œè¾“å‡º5.txtçš„å†…å®¹ã€‚
+&& é¡ºåºæ‰§è¡Œå¤šæ¡å‘½ä»¤ï¼Œå½“ç¢°åˆ°æ‰§è¡Œå‡ºé”™çš„å‘½ä»¤åŽå°†ä¸æ‰§è¡ŒåŽé¢çš„å‘½ä»¤
+|| é¡ºåºæ‰§è¡Œå¤šæ¡å‘½ä»¤ï¼Œå½“ç¢°åˆ°æ‰§è¡Œæ­£ç¡®çš„å‘½ä»¤åŽå°†ä¸æ‰§è¡ŒåŽé¢çš„å‘½ä»¤ï¼ˆå³ï¼šåªæœ‰å‰é¢å‘½ä»¤æ‰§è¡Œé”™è¯¯æ—¶æ‰æ‰§è¡ŒåŽé¢å‘½ä»¤ï¼‰
+|  ç®¡é“å‘½ä»¤ å‰ä¸€ä¸ªå‘½ä»¤çš„æ‰§è¡Œç»“æžœè¾“å‡ºåˆ°åŽä¸€ä¸ªå‘½ä»¤ å¦‚ï¼šhelp|more
+> æ¸…é™¤æ–‡ä»¶ä¸­åŽŸæœ‰çš„å†…å®¹åŽå†å†™å…¥
+>> è¿½åŠ å†…å®¹åˆ°æ–‡ä»¶æœ«å°¾ï¼Œè€Œä¸ä¼šæ¸…é™¤åŽŸæœ‰çš„å†…å®¹ä¸»è¦å°†æœ¬æ¥æ˜¾ç¤ºåœ¨å±å¹•ä¸Šçš„å†…å®¹è¾“å‡ºåˆ°æŒ‡å®šæ–‡ä»¶ä¸­æŒ‡å®šæ–‡ä»¶å¦‚æžœä¸å­˜åœ¨ï¼Œåˆ™è‡ªåŠ¨ç”Ÿæˆè¯¥æ–‡ä»¶
+
+ä¾‹1ï¼šç”¨editç¼–è¾‘a.batæ–‡ä»¶ï¼Œè¾“å…¥ä¸‹åˆ—å†…å®¹åŽå­˜ç›˜ä¸ºc:\a.batï¼Œæ‰§è¡Œè¯¥æ‰¹å¤„ç†æ–‡ä»¶åŽå¯å®žçŽ°ï¼šå°†æ ¹ç›®å½•ä¸­æ‰€æœ‰æ–‡ä»¶å†™å…¥ a.txtä¸­ï¼Œå¯åŠ¨UCDOSï¼Œè¿›å…¥WPSç­‰åŠŸèƒ½ã€‚
+ ã€€ã€€æ‰¹å¤„ç†æ–‡ä»¶çš„å†…å®¹ä¸º: ã€€ã€€ã€€ã€€ã€€ã€€ã€€ å‘½ä»¤æ³¨é‡Šï¼š
+ã€€ã€€ã€€ã€€@echo offã€€ã€€ã€€ã€€ã€€ã€€ã€€ã€€ã€€ã€€ã€€ä¸æ˜¾ç¤ºåŽç»­å‘½ä»¤è¡ŒåŠå½“å‰å‘½ä»¤è¡Œ
+ã€€ã€€ã€€ã€€dir c:\*.* >a.txtã€€ã€€ã€€ã€€ã€€ã€€ã€€å°†cç›˜æ–‡ä»¶åˆ—è¡¨å†™å…¥a.txt
+ã€€ã€€ã€€ã€€call c:\ucdos\ucdos.batã€€ã€€ã€€ã€€è°ƒç”¨ucdos
+ã€€ã€€ã€€ã€€echo ä½ å¥½ ã€€ã€€ã€€ã€€ã€€ã€€ã€€ã€€ã€€ã€€ æ˜¾ç¤º"ä½ å¥½"
+ã€€ã€€ã€€ã€€pause ã€€ã€€ã€€ã€€ã€€ã€€ã€€ã€€ã€€ã€€ã€€ã€€ æš‚åœ,ç­‰å¾…æŒ‰é”®ç»§ç»­
+ã€€ã€€ã€€ã€€rem å‡†å¤‡è¿è¡Œwps ã€€ã€€ã€€ã€€ã€€ã€€ã€€ æ³¨é‡Šï¼šå‡†å¤‡è¿è¡Œwps
+ã€€ã€€ã€€ã€€cd ucdosã€€ã€€ã€€ã€€ã€€ã€€ã€€ã€€ã€€ã€€ã€€ è¿›å…¥ucdosç›®å½•
+ã€€ã€€ã€€ã€€wps ã€€ã€€ã€€ã€€ã€€ã€€ã€€ã€€ã€€ã€€ã€€ã€€ã€€ è¿è¡Œwpsã€€ã€€
+
+æ‰¹å¤„ç†æ–‡ä»¶çš„å‚æ•°
+æ‰¹å¤„ç†æ–‡ä»¶è¿˜å¯ä»¥åƒCè¯­è¨€çš„å‡½æ•°ä¸€æ ·ä½¿ç”¨å‚æ•°ï¼ˆç›¸å½“äºŽDOSå‘½ä»¤çš„å‘½ä»¤è¡Œå‚æ•°ï¼‰ï¼Œè¿™éœ€è¦ç”¨åˆ°ä¸€ä¸ªå‚æ•°è¡¨ç¤ºç¬¦"%"ã€‚
+%[1-9]è¡¨ç¤ºå‚æ•°ï¼Œå‚æ•°æ˜¯æŒ‡åœ¨è¿è¡Œæ‰¹å¤„ç†æ–‡ä»¶æ—¶åœ¨æ–‡ä»¶ååŽåŠ çš„ä»¥ç©ºæ ¼ï¼ˆæˆ–è€…Tabï¼‰åˆ†éš”çš„å­—ç¬¦ä¸²ã€‚å˜é‡å¯ä»¥ä»Ž%0åˆ°%9ï¼Œ%0è¡¨ç¤ºæ‰¹å¤„ç†å‘½ä»¤æœ¬èº«ï¼Œå…¶å®ƒå‚æ•°å­—ç¬¦ä¸²ç”¨%1åˆ°%9é¡ºåºè¡¨ç¤ºã€‚
+
+ä¾‹2ï¼šC:æ ¹ç›®å½•ä¸‹æœ‰ä¸€æ‰¹å¤„ç†æ–‡ä»¶åä¸ºf.batï¼Œå†…å®¹ä¸ºï¼š
+@echo off
 format %1
-Èç¹ûÖ´ÐÐC:\>f a: 
-ÄÇÃ´ÔÚÖ´ÐÐf.batÊ±£¬%1¾Í±íÊ¾a:£¬ÕâÑùformat %1¾ÍÏàµ±ÓÚformat a:£¬ÓÚÊÇÉÏÃæµÄÃüÁîÔËÐÐÊ±Êµ¼ÊÖ´ÐÐµÄÊÇformat a: 
- 
-Àý3£ºC:¸ùÄ¿Â¼ÏÂÒ»Åú´¦ÀíÎÄ¼þÃûÎªt.bat£¬ÄÚÈÝÎª: 
-@echo off 
-type %1 
-type %2
-ÄÇÃ´ÔËÐÐC:\>t a.txt b.txt 
-%1 : ±íÊ¾a.txt 
-%2 : ±íÊ¾b.txt> 
-ÓÚÊÇÉÏÃæµÄÃüÁî½«Ë³ÐòµØÏÔÊ¾a.txtºÍb.txtÎÄ¼þµÄÄÚÈÝ¡£ 
-  
-ÌØÊâÃüÁî  
-if goto choice forÊÇÅú´¦ÀíÎÄ¼þÖÐ±È½Ï¸ß¼¶µÄÃüÁî£¬Èç¹ûÕâ¼¸¸öÄãÓÃµÃºÜÊìÁ·£¬Äã¾ÍÊÇÅú´¦ÀíÎÄ¼þµÄ×¨¼ÒÀ²¡£  
-Ò»¡¢if ÊÇÌõ¼þÓï¾ä£¬ÓÃÀ´ÅÐ¶ÏÊÇ·ñ·ûºÏ¹æ¶¨µÄÌõ¼þ£¬´Ó¶ø¾ö¶¨Ö´ÐÐ²»Í¬µÄÃüÁî¡£ÓÐÈýÖÖ¸ñÊ½:  
-1¡¢if [not] "²ÎÊý" == "×Ö·û´®" ´ýÖ´ÐÐµÄÃüÁî  
-²ÎÊýÈç¹ûµÈÓÚ(not±íÊ¾²»µÈ£¬ÏÂÍ¬)Ö¸¶¨µÄ×Ö·û´®£¬ÔòÌõ¼þ³ÉÁ¢£¬ÔËÐÐÃüÁî£¬·ñÔòÔËÐÐÏÂÒ»¾ä¡£  
-Àý£ºif "%1"=="a" format a: 
- 
-2¡¢if [not] exist [Â·¾¶\]ÎÄ¼þÃû ´ýÖ´ÐÐµÄÃüÁî 
-Èç¹ûÓÐÖ¸¶¨µÄÎÄ¼þ£¬ÔòÌõ¼þ³ÉÁ¢£¬ÔËÐÐÃüÁî£¬·ñÔòÔËÐÐÏÂÒ»¾ä¡£  
-Èç: if exist c:\config.sys type c:\config.sys 
-±íÊ¾Èç¹û´æÔÚc:\config.sysÎÄ¼þ£¬ÔòÏÔÊ¾ËüµÄÄÚÈÝ¡£ 
- 
-3¡¢if errorlevel <Êý×Ö> ´ýÖ´ÐÐµÄÃüÁî  
-ºÜ¶àDOS³ÌÐòÔÚÔËÐÐ½áÊøºó»á·µ»ØÒ»¸öÊý×ÖÖµÓÃÀ´±íÊ¾³ÌÐòÔËÐÐµÄ½á¹û(»òÕß×´Ì¬)£¬Í¨¹ýif errorlevelÃüÁî¿ÉÒÔÅÐ¶Ï³ÌÐòµÄ·µ»ØÖµ£¬¸ù¾Ý²»Í¬µÄ·µ»ØÖµÀ´¾ö¶¨Ö´ÐÐ²»Í¬µÄÃüÁî(·µ»ØÖµ±ØÐë°´ÕÕ´Ó´óµ½Ð¡µÄË³ÐòÅÅÁÐ)¡£Èç¹û·µ»ØÖµµÈÓÚÖ¸¶¨µÄÊý×Ö£¬ÔòÌõ¼þ³ÉÁ¢£¬ÔËÐÐÃüÁî£¬·ñÔòÔËÐÐÏÂÒ»¾ä¡£  
-Èçif errorlevel 2 goto x2 
- 
-¶þ¡¢goto Åú´¦ÀíÎÄ¼þÔËÐÐµ½ÕâÀï½«Ìøµ½gotoËùÖ¸¶¨µÄ±êºÅ(±êºÅ¼´label£¬±êºÅÓÃ:ºó¸ú±ê×¼×Ö·û´®À´¶¨Òå)´¦£¬gotoÓï¾äÒ»°ãÓëifÅäºÏÊ¹ÓÃ£¬¸ù¾Ý²»Í¬µÄÌõ¼þÀ´Ö´ÐÐ²»Í¬µÄÃüÁî×é¡£  
-Èç:  
-goto end
-:end 
-echo this is the end 
-±êºÅÓÃ":×Ö·û´®"À´¶¨Òå£¬±êºÅËùÔÚÐÐ²»±»Ö´ÐÐ¡£ 
- 
-Èý¡¢choice Ê¹ÓÃ´ËÃüÁî¿ÉÒÔÈÃÓÃ»§ÊäÈëÒ»¸ö×Ö·û£¨ÓÃÓÚÑ¡Ôñ£©£¬´Ó¶ø¸ù¾ÝÓÃ»§µÄÑ¡Ôñ·µ»Ø²»Í¬µÄerrorlevel£¬È»ºóÓÚif errorlevelÅäºÏ£¬¸ù¾ÝÓÃ»§µÄÑ¡ÔñÔËÐÐ²»Í¬µÄÃüÁî¡£ 
-×¢Òâ£ºchoiceÃüÁîÎªDOS»òÕßWindowsÏµÍ³Ìá¹©µÄÍâ²¿ÃüÁî£¬²»Í¬°æ±¾µÄchoiceÃüÁîÓï·¨»áÉÔÓÐ²»Í¬£¬ÇëÓÃchoice /?²é¿´ÓÃ·¨¡£ 
-choiceµÄÃüÁîÓï·¨£¨¸ÃÓï·¨ÎªWindows 2003ÖÐchoiceÃüÁîµÄÓï·¨£¬ÆäËü°æ±¾µÄchoiceµÄÃüÁîÓï·¨Óë´Ë´óÍ¬Ð¡Òì£©£º 
-CHOICE [/C choices] [/N] [/CS] [/T timeout /D choice] [/M text]  
-ÃèÊö: 
-¡¡ ¸Ã¹¤¾ßÔÊÐíÓÃ»§´ÓÑ¡ÔñÁÐ±íÑ¡ÔñÒ»¸öÏîÄ¿²¢·µ»ØËùÑ¡ÏîÄ¿µÄË÷Òý¡£ 
- 
-²ÎÊýÁÐ±í: 
-¡¡/C¡¡¡¡choices¡¡¡¡¡¡ Ö¸¶¨Òª´´½¨µÄÑ¡ÏîÁÐ±í¡£Ä¬ÈÏÁÐ±íÊÇ "YN"¡£  
-¡¡/N¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡ÔÚÌáÊ¾·ûÖÐÒþ²ØÑ¡ÏîÁÐ±í¡£ÌáÊ¾Ç°ÃæµÄÏûÏ¢µÃµ½ÏÔÊ¾£¬Ñ¡ÏîÒÀ¾É´¦ÓÚÆôÓÃ×´Ì¬¡£ 
-¡¡/CS¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡ÔÊÐíÑ¡Ôñ·Ö´óÐ¡Ð´µÄÑ¡Ïî¡£ÔÚÄ¬ÈÏÇé¿öÏÂ£¬Õâ¸ö¹¤¾ßÊÇ²»·Ö´óÐ¡Ð´µÄ¡£  
-¡¡/T¡¡¡¡timeout¡¡¡¡¡¡ ×ö³öÄ¬ÈÏÑ¡ÔñÖ®Ç°£¬ÔÝÍ£µÄÃëÊý¡£¿É½ÓÊÜµÄÖµÊÇ´Ó 0 µ½ 9999¡£Èç¹ûÖ¸¶¨ÁË 0£¬¾Í²»»áÓÐÔÝÍ££¬Ä¬ÈÏÑ¡Ïî»áµÃµ½Ñ¡Ôñ¡£  
-¡¡/D¡¡¡¡choice¡¡¡¡¡¡¡¡ÔÚ nnnn ÃëÖ®ºóÖ¸¶¨Ä¬ÈÏÑ¡Ïî¡£×Ö·û±ØÐëÔÚÓÃ /C Ñ¡ÏîÖ¸¶¨µÄÒ»×éÑ¡ÔñÖÐ; Í¬Ê±£¬±ØÐëÓÃ /T Ö¸¶¨ nnnn¡£  
-¡¡/M¡¡¡¡text¡¡¡¡¡¡¡¡¡¡Ö¸¶¨ÌáÊ¾Ö®Ç°ÒªÏÔÊ¾µÄÏûÏ¢¡£Èç¹ûÃ»ÓÐÖ¸¶¨£¬¹¤¾ßÖ»ÏÔÊ¾ÌáÊ¾¡£  
-¡¡/?¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡ÏÔÊ¾°ïÖúÏûÏ¢¡£  
-¡¡×¢Òâ: 
-¡¡ERRORLEVEL »·¾³±äÁ¿±»ÉèÖÃÎª´ÓÑ¡Ôñ¼¯Ñ¡ÔñµÄ¼üË÷Òý¡£ÁÐ³öµÄµÚÒ»¸öÑ¡Ôñ·µ»Ø 1£¬µÚ¶þ¸öÑ¡Ôñ·µ»Ø 2£¬µÈµÈ¡£Èç¹ûÓÃ»§°´µÄ¼ü²»ÊÇÓÐÐ§µÄÑ¡Ôñ£¬¸Ã¹¤¾ß»á·¢³ö¾¯¸æÏìÉù¡£Èç¹û¸Ã¹¤¾ß¼ì²âµ½´íÎó×´Ì¬£¬Ëü»á·µ»Ø 255 µÄERRORLEVEL Öµ¡£Èç¹ûÓÃ»§°´ Ctrl+Break »ò Ctrl+C ¼ü£¬¸Ã¹¤¾ß»á·µ»Ø 0 µÄ ERRORLEVEL Öµ¡£ÔÚÒ»¸öÅú³ÌÐòÖÐÊ¹ÓÃ ERRORLEVEL ²ÎÊýÊ±£¬½«²ÎÊý½µÐòÅÅÁÐ¡£ 
- 
-Ê¾Àý: 
-¡¡CHOICE /? 
-¡¡CHOICE /C YNC /M "È·ÈÏÇë°´ Y£¬·ñÇë°´ N£¬»òÕßÈ¡ÏûÇë°´ C¡£" 
-¡¡CHOICE /T 10 /C ync /CS /D y 
-¡¡CHOICE /C ab /M "Ñ¡Ïî 1 ÇëÑ¡Ôñ a£¬Ñ¡Ïî 2 ÇëÑ¡Ôñ b¡£" 
-¡¡CHOICE /C ab /N /M "Ñ¡Ïî 1 ÇëÑ¡Ôñ a£¬Ñ¡Ïî 2 ÇëÑ¡Ôñ b¡£" 
-¡¡ 
-Èç¹ûÎÒÔËÐÐÃüÁî£ºCHOICE /C YNC /M "È·ÈÏÇë°´ Y£¬·ñÇë°´ N£¬»òÕßÈ¡ÏûÇë°´ C¡£" 
-ÆÁÄ»ÉÏ»áÏÔÊ¾£º 
-È·ÈÏÇë°´ Y£¬·ñÇë°´ N£¬»òÕßÈ¡ÏûÇë°´ C¡£ [Y,N,C]? 
-¡¡ 
-¡¡ 
-Àý£ºtest.batµÄÄÚÈÝÈçÏÂ£¨×¢Òâ£¬ÓÃif errorlevelÅÐ¶Ï·µ»ØÖµÊ±£¬Òª°´·µ»ØÖµ´Ó¸ßµ½µÍÅÅÁÐ£©: 
-@echo off 
-choice /C dme /M "defrag,mem,end"
-if errorlevel 3 goto end 
-if errorlevel 2 goto mem 
-if errotlevel 1 goto defrag 
-  
-:defrag 
-c:\dos\defrag 
-goto end 
-  
-:mem 
-mem 
-goto end 
-  
-:end 
-echo good bye
-´ËÅú´¦ÀíÔËÐÐºó£¬½«ÏÔÊ¾"defrag,mem,end[D,M,E]?" £¬ÓÃ»§¿ÉÑ¡Ôñd m e £¬È»ºóifÓï¾ä¸ù¾ÝÓÃ»§µÄÑ¡Ôñ×÷³öÅÐ¶Ï£¬d±íÊ¾Ö´ÐÐ±êºÅÎªdefragµÄ³ÌÐò¶Î£¬m±íÊ¾Ö´ÐÐ±êºÅÎªmemµÄ³ÌÐò¶Î£¬e±íÊ¾Ö´ÐÐ±êºÅÎªendµÄ³ÌÐò¶Î£¬Ã¿¸ö³ÌÐò¶Î×îºó¶¼ÒÔgoto end½«³ÌÐòÌøµ½end±êºÅ´¦£¬È»ºó³ÌÐò½«ÏÔÊ¾good bye£¬Åú´¦ÀíÔËÐÐ½áÊø¡£ 
- 
-ËÄ¡¢for Ñ­»·ÃüÁî£¬Ö»ÒªÌõ¼þ·ûºÏ£¬Ëü½«¶à´ÎÖ´ÐÐÍ¬Ò»ÃüÁî¡£  
-Óï·¨£º
-¶ÔÒ»×éÎÄ¼þÖÐµÄÃ¿Ò»¸öÎÄ¼þÖ´ÐÐÄ³¸öÌØ¶¨ÃüÁî¡£  
-FOR %%variable IN (set) DO command [command-parameters]  
-%%variable¡¡¡¡¡¡¡¡Ö¸¶¨Ò»¸öµ¥Ò»×ÖÄ¸¿ÉÌæ»»µÄ²ÎÊý¡£ 
-(set)¡¡¡¡¡¡¡¡¡¡¡¡Ö¸¶¨Ò»¸ö»òÒ»×éÎÄ¼þ¡£¿ÉÒÔÊ¹ÓÃÍ¨Åä·û¡£ 
-command¡¡¡¡¡¡¡¡¡¡Ö¸¶¨¶ÔÃ¿¸öÎÄ¼þÖ´ÐÐµÄÃüÁî¡£ 
-command-parameters ÎªÌØ¶¨ÃüÁîÖ¸¶¨²ÎÊý»òÃüÁîÐÐ¿ª¹Ø¡£ 
- 
-ÀýÈçÒ»¸öÅú´¦ÀíÎÄ¼þÖÐÓÐÒ»ÐÐ: 
-for %%c in (*.bat *.txt) do type %%c  
-Ôò¸ÃÃüÁîÐÐ»áÏÔÊ¾µ±Ç°Ä¿Â¼ÏÂËùÓÐÒÔbatºÍtxtÎªÀ©Õ¹ÃûµÄÎÄ¼þµÄÄÚÈÝ¡£  
- 
-Åú´¦ÀíÊ¾Àý  
-1. IF-EXIST  
-1)  
-Ê×ÏÈÓÃ¼ÇÊÂ±¾ÔÚC:\½¨Á¢Ò»¸ötest1.batÅú´¦ÀíÎÄ¼þ£¬ÎÄ¼þÄÚÈÝÈçÏÂ£º 
-@echo off 
-IF EXIST \AUTOEXEC.BAT TYPE \AUTOEXEC.BAT 
-IF NOT EXIST \AUTOEXEC.BAT ECHO \AUTOEXEC.BAT does not exist 
- 
-È»ºóÔËÐÐËü£º 
-C:\>TEST1.BAT  
-Èç¹ûC:\´æÔÚAUTOEXEC.BATÎÄ¼þ£¬ÄÇÃ´ËüµÄÄÚÈÝ¾Í»á±»ÏÔÊ¾³öÀ´£¬Èç¹û²»´æÔÚ£¬Åú´¦Àí¾Í»áÌáÊ¾Äã¸ÃÎÄ¼þ²»´æÔÚ¡£ 
- 
-2)  
-½Ó×ÅÔÙ½¨Á¢Ò»¸ötest2.batÎÄ¼þ£¬ÄÚÈÝÈçÏÂ£º 
-@ECHO OFF 
-IF EXIST \%1 TYPE \%1 
-IF NOT EXIST \%1 ECHO \%1 does not exist 
- 
-Ö´ÐÐ: 
-C:\>TEST2 AUTOEXEC.BAT 
-¸ÃÃüÁîÔËÐÐ½á¹ûÍ¬ÉÏ¡£ 
- 
-ËµÃ÷£º 
-(1) IF EXIST ÊÇÓÃÀ´²âÊÔÎÄ¼þÊÇ·ñ´æÔÚµÄ£¬¸ñÊ½Îª 
-IF EXIST [Â·¾¶+ÎÄ¼þÃû] ÃüÁî 
-(2) test2.batÎÄ¼þÖÐµÄ%1ÊÇ²ÎÊý£¬DOSÔÊÐí´«µÝ9¸öÅú²ÎÊýÐÅÏ¢¸øÅú´¦ÀíÎÄ¼þ£¬·Ö±ðÎª%1~%9(%0±íÊ¾test2ÃüÁî±¾Éí) £¬ÕâÓÐµãÏó±à³ÌÖÐµÄÊµ²ÎºÍÐÎ²ÎµÄ¹ØÏµ£¬%1ÊÇÐÎ²Î£¬AUTOEXEC.BATÊÇÊµ²Î¡£ 
- 
-3) ¸ü½øÒ»²½µÄ£¬½¨Á¢Ò»¸öÃûÎªTEST3.BATµÄÎÄ¼þ£¬ÄÚÈÝÈçÏÂ£º 
-@echo off 
-IF "%1" == "A" ECHO XIAO 
-IF "%2" == "B" ECHO TIAN 
-IF "%3" == "C" ECHO XIN 
- 
-Èç¹ûÔËÐÐ£º 
-C:\>TEST3 A B C 
-ÆÁÄ»ÉÏ»áÏÔÊ¾: 
-XIAO 
-TIAN 
-XIN 
- 
-Èç¹ûÔËÐÐ£º 
-C:\>TEST3 A B 
-ÆÁÄ»ÉÏ»áÏÔÊ¾ 
-XIAO 
-TIAN 
- 
-ÔÚÕâ¸öÃüÁîÖ´ÐÐ¹ý³ÌÖÐ£¬DOS»á½«Ò»¸ö¿Õ×Ö·û´®Ö¸¶¨¸ø²ÎÊý%3¡£ 
- 
-2¡¢IF-ERRORLEVEL 
- 
-½¨Á¢TEST4.BAT£¬ÄÚÈÝÈçÏÂ£º 
-@ECHO OFF 
-XCOPY C:\AUTOEXEC.BAT D:IF ERRORLEVEL 1 ECHO ÎÄ¼þ¿½±´Ê§°Ü 
-IF ERRORLEVEL 0 ECHO ³É¹¦¿½±´ÎÄ¼þ 
- 
-È»ºóÖ´ÐÐÎÄ¼þ: 
-C:\>TEST4 
- 
-Èç¹ûÎÄ¼þ¿½±´³É¹¦£¬ÆÁÄ»¾Í»áÏÔÊ¾"³É¹¦¿½±´ÎÄ¼þ"£¬·ñÔò¾Í»áÏÔÊ¾"ÎÄ¼þ¿½±´Ê§°Ü"¡£ 
- 
-IF ERRORLEVEL ÊÇÓÃÀ´²âÊÔËüµÄÉÏÒ»¸öDOSÃüÁîµÄ·µ»ØÖµµÄ£¬×¢ÒâÖ»ÊÇÉÏÒ»¸öÃüÁîµÄ·µ»ØÖµ£¬¶øÇÒ·µ»ØÖµ±ØÐëÒÀÕÕ´Ó´óµ½Ð¡´ÎÐòË³ÐòÅÐ¶Ï¡£Òò´ËÏÂÃæµÄÅú´¦ÀíÎÄ¼þÊÇ´íÎóµÄ£º 
-@ECHO OFF 
-XCOPY C:\AUTOEXEC.BAT D:\ 
-IF ERRORLEVEL 0 ECHO ³É¹¦¿½±´ÎÄ¼þ 
-IF ERRORLEVEL 1 ECHO Î´ÕÒµ½¿½±´ÎÄ¼þ 
-IF ERRORLEVEL 2 ECHO ÓÃ»§Í¨¹ýctrl-cÖÐÖ¹¿½±´²Ù×÷ 
-IF ERRORLEVEL 3 ECHO Ô¤ÖÃ´íÎó×èÖ¹ÎÄ¼þ¿½±´²Ù×÷ 
-IF ERRORLEVEL 4 ECHO ¿½±´¹ý³ÌÖÐÐ´ÅÌ´íÎó 
- 
-ÎÞÂÛ¿½±´ÊÇ·ñ³É¹¦£¬ºóÃæµÄ£º 
- 
-Î´ÕÒµ½¿½±´ÎÄ¼þ 
-ÓÃ»§Í¨¹ýctrl-cÖÐÖ¹¿½±´²Ù×÷ 
-Ô¤ÖÃ´íÎó×èÖ¹ÎÄ¼þ¿½±´²Ù×÷ 
-¿½±´¹ý³ÌÖÐÐ´ÅÌ´íÎó 
- 
-¶¼½«ÏÔÊ¾³öÀ´¡£ 
- 
-ÒÔÏÂ¾ÍÊÇ¼¸¸ö³£ÓÃÃüÁîµÄ·µ»ØÖµ¼°Æä´ú±íµÄÒâÒå£º 
-backup 
-0 ±¸·Ý³É¹¦ 
-1 Î´ÕÒµ½±¸·ÝÎÄ¼þ 
-2 ÎÄ¼þ¹²Ïí³åÍ»×èÖ¹±¸·ÝÍê³É 
-3 ÓÃ»§ÓÃctrl-cÖÐÖ¹±¸·Ý 
-4 ÓÉÓÚÖÂÃüµÄ´íÎóÊ¹±¸·Ý²Ù×÷ÖÐÖ¹ 
- 
-diskcomp 
-0 ÅÌ±È½ÏÏàÍ¬ 
-1 ÅÌ±È½Ï²»Í¬ 
-2 ÓÃ»§Í¨¹ýctrl-cÖÐÖ¹±È½Ï²Ù×÷ 
-3 ÓÉÓÚÖÂÃüµÄ´íÎóÊ¹±È½Ï²Ù×÷ÖÐÖ¹ 
-4 Ô¤ÖÃ´íÎóÖÐÖ¹±È½Ï 
- 
-diskcopy 
-0 ÅÌ¿½±´²Ù×÷³É¹¦ 
-1 ·ÇÖÂÃüÅÌ¶Á/Ð´´í 
-2 ÓÃ»§Í¨¹ýctrl-c½áÊø¿½±´²Ù×÷ 
-3 ÒòÖÂÃüµÄ´¦Àí´íÎóÊ¹ÅÌ¿½±´ÖÐÖ¹ 
-4 Ô¤ÖÃ´íÎó×èÖ¹¿½±´²Ù×÷ 
- 
-format 
-0 ¸ñÊ½»¯³É¹¦ 
-3 ÓÃ»§Í¨¹ýctrl-cÖÐÖ¹¸ñÊ½»¯´¦Àí 
-4 ÒòÖÂÃüµÄ´¦Àí´íÎóÊ¹¸ñÊ½»¯ÖÐÖ¹ 
-5 ÔÚÌáÊ¾"proceed with format£¨y/n£©?"ÏÂÓÃ»§¼üÈën½áÊø 
- 
-xcopy 
-0 ³É¹¦¿½±´ÎÄ¼þ 
-1 Î´ÕÒµ½¿½±´ÎÄ¼þ 
-2 ÓÃ»§Í¨¹ýctrl-cÖÐÖ¹¿½±´²Ù×÷ 
-4 Ô¤ÖÃ´íÎó×èÖ¹ÎÄ¼þ¿½±´²Ù×÷ 
-5 ¿½±´¹ý³ÌÖÐÐ´ÅÌ´íÎó 
- 
-3¡¢IF STRING1 == STRING2 
- 
-½¨Á¢TEST5.BAT£¬ÎÄ¼þÄÚÈÝÈçÏÂ£º 
-@echo off 
-IF "%1" == "A" formAT A: 
- 
-Ö´ÐÐ£º 
-C:\>TEST5 A 
-ÆÁÄ»ÉÏ¾Í³öÏÖÊÇ·ñ½«A:ÅÌ¸ñÊ½»¯µÄÄÚÈÝ¡£ 
- 
-×¢Òâ£ºÎªÁË·ÀÖ¹²ÎÊýÎª¿ÕµÄÇé¿ö£¬Ò»°ã»á½«×Ö·û´®ÓÃË«ÒýºÅ£¨»òÕßÆäËü·ûºÅ£¬×¢Òâ²»ÄÜÊ¹ÓÃ±£Áô·ûºÅ£©À¨ÆðÀ´¡£ 
-Èç£ºif [%1]==[A] »òÕß if %1*==A* 
- 
-5¡¢GOTO 
- 
-½¨Á¢TEST6.BAT£¬ÎÄ¼þÄÚÈÝÈçÏÂ£º 
-@ECHO OFF 
-IF EXIST C:\AUTOEXEC.BAT GOTO _COPY 
-GOTO _DONE 
-:_COPY 
-COPY C:\AUTOEXEC.BAT D:\ 
-:_DONE 
- 
-×¢Òâ£º 
-(1) ±êºÅÇ°ÊÇASCII×Ö·ûµÄÃ°ºÅ":"£¬Ã°ºÅÓë±êºÅÖ®¼ä²»ÄÜÓÐ¿Õ¸ñ¡£ 
-(2) ±êºÅµÄÃüÃû¹æÔòÓëÎÄ¼þÃûµÄÃüÃû¹æÔòÏàÍ¬¡£ 
-(3) DOSÖ§³Ö×î³¤°ËÎ»×Ö·ûµÄ±êºÅ£¬µ±ÎÞ·¨Çø±ðÁ½¸ö±êºÅÊ±£¬½«Ìø×ªÖÁ×î½üµÄÒ»¸ö±êºÅ¡£ 
- 
-6¡¢FOR 
- 
-½¨Á¢C:\TEST7.BAT£¬ÎÄ¼þÄÚÈÝÈçÏÂ£º 
-@ECHO OFF 
-FOR %%C IN (*.BAT *.TXT *.SYS) DO TYPE %%C 
- 
-ÔËÐÐ£º 
-C:>TEST7 
- 
-Ö´ÐÐÒÔºó£¬ÆÁÄ»ÉÏ»á½«C:ÅÌ¸ùÄ¿Â¼ÏÂËùÓÐÒÔBAT¡¢TXT¡¢SYSÎªÀ©Õ¹ÃûµÄÎÄ¼þÄÚÈÝÏÔÊ¾³öÀ´£¨²»°üÀ¨Òþ²ØÎÄ¼þ£©¡£
+å¦‚æžœæ‰§è¡ŒC:\>f a:
+é‚£ä¹ˆåœ¨æ‰§è¡Œf.batæ—¶ï¼Œ%1å°±è¡¨ç¤ºa:ï¼Œè¿™æ ·format %1å°±ç›¸å½“äºŽformat a:ï¼ŒäºŽæ˜¯ä¸Šé¢çš„å‘½ä»¤è¿è¡Œæ—¶å®žé™…æ‰§è¡Œçš„æ˜¯format a:
 
-7¡¢±éÀúÎÄ¼þ¼ÐºÍ×ÓÎÄ¼þ¼ÐÏÂËùÓÐÎÄ¼þ
+ä¾‹3ï¼šC:æ ¹ç›®å½•ä¸‹ä¸€æ‰¹å¤„ç†æ–‡ä»¶åä¸ºt.batï¼Œå†…å®¹ä¸º:
+@echo off
+type %1
+type %2
+é‚£ä¹ˆè¿è¡ŒC:\>t a.txt b.txt
+%1 : è¡¨ç¤ºa.txt
+%2 : è¡¨ç¤ºb.txt>
+äºŽæ˜¯ä¸Šé¢çš„å‘½ä»¤å°†é¡ºåºåœ°æ˜¾ç¤ºa.txtå’Œb.txtæ–‡ä»¶çš„å†…å®¹ã€‚
+
+ç‰¹æ®Šå‘½ä»¤
+if goto choice foræ˜¯æ‰¹å¤„ç†æ–‡ä»¶ä¸­æ¯”è¾ƒé«˜çº§çš„å‘½ä»¤ï¼Œå¦‚æžœè¿™å‡ ä¸ªä½ ç”¨å¾—å¾ˆç†Ÿç»ƒï¼Œä½ å°±æ˜¯æ‰¹å¤„ç†æ–‡ä»¶çš„ä¸“å®¶å•¦ã€‚
+ä¸€ã€if æ˜¯æ¡ä»¶è¯­å¥ï¼Œç”¨æ¥åˆ¤æ–­æ˜¯å¦ç¬¦åˆè§„å®šçš„æ¡ä»¶ï¼Œä»Žè€Œå†³å®šæ‰§è¡Œä¸åŒçš„å‘½ä»¤ã€‚æœ‰ä¸‰ç§æ ¼å¼:
+1ã€if [not] "å‚æ•°" == "å­—ç¬¦ä¸²" å¾…æ‰§è¡Œçš„å‘½ä»¤
+å‚æ•°å¦‚æžœç­‰äºŽ(notè¡¨ç¤ºä¸ç­‰ï¼Œä¸‹åŒ)æŒ‡å®šçš„å­—ç¬¦ä¸²ï¼Œåˆ™æ¡ä»¶æˆç«‹ï¼Œè¿è¡Œå‘½ä»¤ï¼Œå¦åˆ™è¿è¡Œä¸‹ä¸€å¥ã€‚
+ä¾‹ï¼šif "%1"=="a" format a:
+
+2ã€if [not] exist [è·¯å¾„\]æ–‡ä»¶å å¾…æ‰§è¡Œçš„å‘½ä»¤
+å¦‚æžœæœ‰æŒ‡å®šçš„æ–‡ä»¶ï¼Œåˆ™æ¡ä»¶æˆç«‹ï¼Œè¿è¡Œå‘½ä»¤ï¼Œå¦åˆ™è¿è¡Œä¸‹ä¸€å¥ã€‚
+å¦‚: if exist c:\config.sys type c:\config.sys
+è¡¨ç¤ºå¦‚æžœå­˜åœ¨c:\config.sysæ–‡ä»¶ï¼Œåˆ™æ˜¾ç¤ºå®ƒçš„å†…å®¹ã€‚
+
+3ã€if errorlevel <æ•°å­—> å¾…æ‰§è¡Œçš„å‘½ä»¤
+å¾ˆå¤šDOSç¨‹åºåœ¨è¿è¡Œç»“æŸåŽä¼šè¿”å›žä¸€ä¸ªæ•°å­—å€¼ç”¨æ¥è¡¨ç¤ºç¨‹åºè¿è¡Œçš„ç»“æžœ(æˆ–è€…çŠ¶æ€)ï¼Œé€šè¿‡if errorlevelå‘½ä»¤å¯ä»¥åˆ¤æ–­ç¨‹åºçš„è¿”å›žå€¼ï¼Œæ ¹æ®ä¸åŒçš„è¿”å›žå€¼æ¥å†³å®šæ‰§è¡Œä¸åŒçš„å‘½ä»¤(è¿”å›žå€¼å¿…é¡»æŒ‰ç…§ä»Žå¤§åˆ°å°çš„é¡ºåºæŽ’åˆ—)ã€‚å¦‚æžœè¿”å›žå€¼ç­‰äºŽæŒ‡å®šçš„æ•°å­—ï¼Œåˆ™æ¡ä»¶æˆç«‹ï¼Œè¿è¡Œå‘½ä»¤ï¼Œå¦åˆ™è¿è¡Œä¸‹ä¸€å¥ã€‚
+å¦‚if errorlevel 2 goto x2
+
+äºŒã€goto æ‰¹å¤„ç†æ–‡ä»¶è¿è¡Œåˆ°è¿™é‡Œå°†è·³åˆ°gotoæ‰€æŒ‡å®šçš„æ ‡å·(æ ‡å·å³labelï¼Œæ ‡å·ç”¨:åŽè·Ÿæ ‡å‡†å­—ç¬¦ä¸²æ¥å®šä¹‰)å¤„ï¼Œgotoè¯­å¥ä¸€èˆ¬ä¸Žifé…åˆä½¿ç”¨ï¼Œæ ¹æ®ä¸åŒçš„æ¡ä»¶æ¥æ‰§è¡Œä¸åŒçš„å‘½ä»¤ç»„ã€‚
+å¦‚:
+goto end
+:end
+echo this is the end
+æ ‡å·ç”¨":å­—ç¬¦ä¸²"æ¥å®šä¹‰ï¼Œæ ‡å·æ‰€åœ¨è¡Œä¸è¢«æ‰§è¡Œã€‚
+
+ä¸‰ã€choice ä½¿ç”¨æ­¤å‘½ä»¤å¯ä»¥è®©ç”¨æˆ·è¾“å…¥ä¸€ä¸ªå­—ç¬¦ï¼ˆç”¨äºŽé€‰æ‹©ï¼‰ï¼Œä»Žè€Œæ ¹æ®ç”¨æˆ·çš„é€‰æ‹©è¿”å›žä¸åŒçš„errorlevelï¼Œç„¶åŽäºŽif errorlevelé…åˆï¼Œæ ¹æ®ç”¨æˆ·çš„é€‰æ‹©è¿è¡Œä¸åŒçš„å‘½ä»¤ã€‚
+æ³¨æ„ï¼šchoiceå‘½ä»¤ä¸ºDOSæˆ–è€…Windowsç³»ç»Ÿæä¾›çš„å¤–éƒ¨å‘½ä»¤ï¼Œä¸åŒç‰ˆæœ¬çš„choiceå‘½ä»¤è¯­æ³•ä¼šç¨æœ‰ä¸åŒï¼Œè¯·ç”¨choice /?æŸ¥çœ‹ç”¨æ³•ã€‚
+choiceçš„å‘½ä»¤è¯­æ³•ï¼ˆè¯¥è¯­æ³•ä¸ºWindows 2003ä¸­choiceå‘½ä»¤çš„è¯­æ³•ï¼Œå…¶å®ƒç‰ˆæœ¬çš„choiceçš„å‘½ä»¤è¯­æ³•ä¸Žæ­¤å¤§åŒå°å¼‚ï¼‰ï¼š
+CHOICE [/C choices] [/N] [/CS] [/T timeout /D choice] [/M text]
+æè¿°:
+ã€€ è¯¥å·¥å…·å…è®¸ç”¨æˆ·ä»Žé€‰æ‹©åˆ—è¡¨é€‰æ‹©ä¸€ä¸ªé¡¹ç›®å¹¶è¿”å›žæ‰€é€‰é¡¹ç›®çš„ç´¢å¼•ã€‚
+
+å‚æ•°åˆ—è¡¨:
+ã€€/Cã€€ã€€choicesã€€ã€€ã€€ æŒ‡å®šè¦åˆ›å»ºçš„é€‰é¡¹åˆ—è¡¨ã€‚é»˜è®¤åˆ—è¡¨æ˜¯ "YN"ã€‚
+ã€€/Nã€€ã€€ã€€ã€€ã€€ã€€ã€€ã€€ã€€åœ¨æç¤ºç¬¦ä¸­éšè—é€‰é¡¹åˆ—è¡¨ã€‚æç¤ºå‰é¢çš„æ¶ˆæ¯å¾—åˆ°æ˜¾ç¤ºï¼Œé€‰é¡¹ä¾æ—§å¤„äºŽå¯ç”¨çŠ¶æ€ã€‚
+ã€€/CSã€€ã€€ã€€ã€€ã€€ã€€ã€€ã€€å…è®¸é€‰æ‹©åˆ†å¤§å°å†™çš„é€‰é¡¹ã€‚åœ¨é»˜è®¤æƒ…å†µä¸‹ï¼Œè¿™ä¸ªå·¥å…·æ˜¯ä¸åˆ†å¤§å°å†™çš„ã€‚
+ã€€/Tã€€ã€€timeoutã€€ã€€ã€€ åšå‡ºé»˜è®¤é€‰æ‹©ä¹‹å‰ï¼Œæš‚åœçš„ç§’æ•°ã€‚å¯æŽ¥å—çš„å€¼æ˜¯ä»Ž 0 åˆ° 9999ã€‚å¦‚æžœæŒ‡å®šäº† 0ï¼Œå°±ä¸ä¼šæœ‰æš‚åœï¼Œé»˜è®¤é€‰é¡¹ä¼šå¾—åˆ°é€‰æ‹©ã€‚
+ã€€/Dã€€ã€€choiceã€€ã€€ã€€ã€€åœ¨ nnnn ç§’ä¹‹åŽæŒ‡å®šé»˜è®¤é€‰é¡¹ã€‚å­—ç¬¦å¿…é¡»åœ¨ç”¨ /C é€‰é¡¹æŒ‡å®šçš„ä¸€ç»„é€‰æ‹©ä¸­; åŒæ—¶ï¼Œå¿…é¡»ç”¨ /T æŒ‡å®š nnnnã€‚
+ã€€/Mã€€ã€€textã€€ã€€ã€€ã€€ã€€æŒ‡å®šæç¤ºä¹‹å‰è¦æ˜¾ç¤ºçš„æ¶ˆæ¯ã€‚å¦‚æžœæ²¡æœ‰æŒ‡å®šï¼Œå·¥å…·åªæ˜¾ç¤ºæç¤ºã€‚
+ã€€/?ã€€ã€€ã€€ã€€ã€€ã€€ã€€ã€€ã€€æ˜¾ç¤ºå¸®åŠ©æ¶ˆæ¯ã€‚
+ã€€æ³¨æ„:
+ã€€ERRORLEVEL çŽ¯å¢ƒå˜é‡è¢«è®¾ç½®ä¸ºä»Žé€‰æ‹©é›†é€‰æ‹©çš„é”®ç´¢å¼•ã€‚åˆ—å‡ºçš„ç¬¬ä¸€ä¸ªé€‰æ‹©è¿”å›ž 1ï¼Œç¬¬äºŒä¸ªé€‰æ‹©è¿”å›ž 2ï¼Œç­‰ç­‰ã€‚å¦‚æžœç”¨æˆ·æŒ‰çš„é”®ä¸æ˜¯æœ‰æ•ˆçš„é€‰æ‹©ï¼Œè¯¥å·¥å…·ä¼šå‘å‡ºè­¦å‘Šå“å£°ã€‚å¦‚æžœè¯¥å·¥å…·æ£€æµ‹åˆ°é”™è¯¯çŠ¶æ€ï¼Œå®ƒä¼šè¿”å›ž 255 çš„ERRORLEVEL å€¼ã€‚å¦‚æžœç”¨æˆ·æŒ‰ Ctrl+Break æˆ– Ctrl+C é”®ï¼Œè¯¥å·¥å…·ä¼šè¿”å›ž 0 çš„ ERRORLEVEL å€¼ã€‚åœ¨ä¸€ä¸ªæ‰¹ç¨‹åºä¸­ä½¿ç”¨ ERRORLEVEL å‚æ•°æ—¶ï¼Œå°†å‚æ•°é™åºæŽ’åˆ—ã€‚
+
+ç¤ºä¾‹:
+ã€€CHOICE /?
+ã€€CHOICE /C YNC /M "ç¡®è®¤è¯·æŒ‰ Yï¼Œå¦è¯·æŒ‰ Nï¼Œæˆ–è€…å–æ¶ˆè¯·æŒ‰ Cã€‚"
+ã€€CHOICE /T 10 /C ync /CS /D y
+ã€€CHOICE /C ab /M "é€‰é¡¹ 1 è¯·é€‰æ‹© aï¼Œé€‰é¡¹ 2 è¯·é€‰æ‹© bã€‚"
+ã€€CHOICE /C ab /N /M "é€‰é¡¹ 1 è¯·é€‰æ‹© aï¼Œé€‰é¡¹ 2 è¯·é€‰æ‹© bã€‚"
+ã€€
+å¦‚æžœæˆ‘è¿è¡Œå‘½ä»¤ï¼šCHOICE /C YNC /M "ç¡®è®¤è¯·æŒ‰ Yï¼Œå¦è¯·æŒ‰ Nï¼Œæˆ–è€…å–æ¶ˆè¯·æŒ‰ Cã€‚"
+å±å¹•ä¸Šä¼šæ˜¾ç¤ºï¼š
+ç¡®è®¤è¯·æŒ‰ Yï¼Œå¦è¯·æŒ‰ Nï¼Œæˆ–è€…å–æ¶ˆè¯·æŒ‰ Cã€‚ [Y,N,C]?
+ã€€
+ã€€
+ä¾‹ï¼štest.batçš„å†…å®¹å¦‚ä¸‹ï¼ˆæ³¨æ„ï¼Œç”¨if errorlevelåˆ¤æ–­è¿”å›žå€¼æ—¶ï¼Œè¦æŒ‰è¿”å›žå€¼ä»Žé«˜åˆ°ä½ŽæŽ’åˆ—ï¼‰:
+@echo off
+choice /C dme /M "defrag,mem,end"
+if errorlevel 3 goto end
+if errorlevel 2 goto mem
+if errotlevel 1 goto defrag
+
+:defrag
+c:\dos\defrag
+goto end
+
+:mem
+mem
+goto end
+
+:end
+echo good bye
+æ­¤æ‰¹å¤„ç†è¿è¡ŒåŽï¼Œå°†æ˜¾ç¤º"defrag,mem,end[D,M,E]?" ï¼Œç”¨æˆ·å¯é€‰æ‹©d m e ï¼Œç„¶åŽifè¯­å¥æ ¹æ®ç”¨æˆ·çš„é€‰æ‹©ä½œå‡ºåˆ¤æ–­ï¼Œdè¡¨ç¤ºæ‰§è¡Œæ ‡å·ä¸ºdefragçš„ç¨‹åºæ®µï¼Œmè¡¨ç¤ºæ‰§è¡Œæ ‡å·ä¸ºmemçš„ç¨‹åºæ®µï¼Œeè¡¨ç¤ºæ‰§è¡Œæ ‡å·ä¸ºendçš„ç¨‹åºæ®µï¼Œæ¯ä¸ªç¨‹åºæ®µæœ€åŽéƒ½ä»¥goto endå°†ç¨‹åºè·³åˆ°endæ ‡å·å¤„ï¼Œç„¶åŽç¨‹åºå°†æ˜¾ç¤ºgood byeï¼Œæ‰¹å¤„ç†è¿è¡Œç»“æŸã€‚
+
+å››ã€for å¾ªçŽ¯å‘½ä»¤ï¼Œåªè¦æ¡ä»¶ç¬¦åˆï¼Œå®ƒå°†å¤šæ¬¡æ‰§è¡ŒåŒä¸€å‘½ä»¤ã€‚
+è¯­æ³•ï¼š
+å¯¹ä¸€ç»„æ–‡ä»¶ä¸­çš„æ¯ä¸€ä¸ªæ–‡ä»¶æ‰§è¡ŒæŸä¸ªç‰¹å®šå‘½ä»¤ã€‚
+FOR %%variable IN (set) DO command [command-parameters]
+%%variableã€€ã€€ã€€ã€€æŒ‡å®šä¸€ä¸ªå•ä¸€å­—æ¯å¯æ›¿æ¢çš„å‚æ•°ã€‚
+(set)ã€€ã€€ã€€ã€€ã€€ã€€æŒ‡å®šä¸€ä¸ªæˆ–ä¸€ç»„æ–‡ä»¶ã€‚å¯ä»¥ä½¿ç”¨é€šé…ç¬¦ã€‚
+commandã€€ã€€ã€€ã€€ã€€æŒ‡å®šå¯¹æ¯ä¸ªæ–‡ä»¶æ‰§è¡Œçš„å‘½ä»¤ã€‚
+command-parameters ä¸ºç‰¹å®šå‘½ä»¤æŒ‡å®šå‚æ•°æˆ–å‘½ä»¤è¡Œå¼€å…³ã€‚
+
+ä¾‹å¦‚ä¸€ä¸ªæ‰¹å¤„ç†æ–‡ä»¶ä¸­æœ‰ä¸€è¡Œ:
+for %%c in (*.bat *.txt) do type %%c
+åˆ™è¯¥å‘½ä»¤è¡Œä¼šæ˜¾ç¤ºå½“å‰ç›®å½•ä¸‹æ‰€æœ‰ä»¥batå’Œtxtä¸ºæ‰©å±•åçš„æ–‡ä»¶çš„å†…å®¹ã€‚
+
+æ‰¹å¤„ç†ç¤ºä¾‹
+1. IF-EXIST
+1)
+é¦–å…ˆç”¨è®°äº‹æœ¬åœ¨C:\å»ºç«‹ä¸€ä¸ªtest1.batæ‰¹å¤„ç†æ–‡ä»¶ï¼Œæ–‡ä»¶å†…å®¹å¦‚ä¸‹ï¼š
+@echo off
+IF EXIST \AUTOEXEC.BAT TYPE \AUTOEXEC.BAT
+IF NOT EXIST \AUTOEXEC.BAT ECHO \AUTOEXEC.BAT does not exist
+
+ç„¶åŽè¿è¡Œå®ƒï¼š
+C:\>TEST1.BAT
+å¦‚æžœC:\å­˜åœ¨AUTOEXEC.BATæ–‡ä»¶ï¼Œé‚£ä¹ˆå®ƒçš„å†…å®¹å°±ä¼šè¢«æ˜¾ç¤ºå‡ºæ¥ï¼Œå¦‚æžœä¸å­˜åœ¨ï¼Œæ‰¹å¤„ç†å°±ä¼šæç¤ºä½ è¯¥æ–‡ä»¶ä¸å­˜åœ¨ã€‚
+
+2)
+æŽ¥ç€å†å»ºç«‹ä¸€ä¸ªtest2.batæ–‡ä»¶ï¼Œå†…å®¹å¦‚ä¸‹ï¼š
+@ECHO OFF
+IF EXIST \%1 TYPE \%1
+IF NOT EXIST \%1 ECHO \%1 does not exist
+
+æ‰§è¡Œ:
+C:\>TEST2 AUTOEXEC.BAT
+è¯¥å‘½ä»¤è¿è¡Œç»“æžœåŒä¸Šã€‚
+
+è¯´æ˜Žï¼š
+(1) IF EXIST æ˜¯ç”¨æ¥æµ‹è¯•æ–‡ä»¶æ˜¯å¦å­˜åœ¨çš„ï¼Œæ ¼å¼ä¸º
+IF EXIST [è·¯å¾„+æ–‡ä»¶å] å‘½ä»¤
+(2) test2.batæ–‡ä»¶ä¸­çš„%1æ˜¯å‚æ•°ï¼ŒDOSå…è®¸ä¼ é€’9ä¸ªæ‰¹å‚æ•°ä¿¡æ¯ç»™æ‰¹å¤„ç†æ–‡ä»¶ï¼Œåˆ†åˆ«ä¸º%1~%9(%0è¡¨ç¤ºtest2å‘½ä»¤æœ¬èº«) ï¼Œè¿™æœ‰ç‚¹è±¡ç¼–ç¨‹ä¸­çš„å®žå‚å’Œå½¢å‚çš„å…³ç³»ï¼Œ%1æ˜¯å½¢å‚ï¼ŒAUTOEXEC.BATæ˜¯å®žå‚ã€‚
+
+3) æ›´è¿›ä¸€æ­¥çš„ï¼Œå»ºç«‹ä¸€ä¸ªåä¸ºTEST3.BATçš„æ–‡ä»¶ï¼Œå†…å®¹å¦‚ä¸‹ï¼š
+@echo off
+IF "%1" == "A" ECHO XIAO
+IF "%2" == "B" ECHO TIAN
+IF "%3" == "C" ECHO XIN
+
+å¦‚æžœè¿è¡Œï¼š
+C:\>TEST3 A B C
+å±å¹•ä¸Šä¼šæ˜¾ç¤º:
+XIAO
+TIAN
+XIN
+
+å¦‚æžœè¿è¡Œï¼š
+C:\>TEST3 A B
+å±å¹•ä¸Šä¼šæ˜¾ç¤º
+XIAO
+TIAN
+
+åœ¨è¿™ä¸ªå‘½ä»¤æ‰§è¡Œè¿‡ç¨‹ä¸­ï¼ŒDOSä¼šå°†ä¸€ä¸ªç©ºå­—ç¬¦ä¸²æŒ‡å®šç»™å‚æ•°%3ã€‚
+
+2ã€IF-ERRORLEVEL
+
+å»ºç«‹TEST4.BATï¼Œå†…å®¹å¦‚ä¸‹ï¼š
+@ECHO OFF
+XCOPY C:\AUTOEXEC.BAT D:IF ERRORLEVEL 1 ECHO æ–‡ä»¶æ‹·è´å¤±è´¥
+IF ERRORLEVEL 0 ECHO æˆåŠŸæ‹·è´æ–‡ä»¶
+
+ç„¶åŽæ‰§è¡Œæ–‡ä»¶:
+C:\>TEST4
+
+å¦‚æžœæ–‡ä»¶æ‹·è´æˆåŠŸï¼Œå±å¹•å°±ä¼šæ˜¾ç¤º"æˆåŠŸæ‹·è´æ–‡ä»¶"ï¼Œå¦åˆ™å°±ä¼šæ˜¾ç¤º"æ–‡ä»¶æ‹·è´å¤±è´¥"ã€‚
+
+IF ERRORLEVEL æ˜¯ç”¨æ¥æµ‹è¯•å®ƒçš„ä¸Šä¸€ä¸ªDOSå‘½ä»¤çš„è¿”å›žå€¼çš„ï¼Œæ³¨æ„åªæ˜¯ä¸Šä¸€ä¸ªå‘½ä»¤çš„è¿”å›žå€¼ï¼Œè€Œä¸”è¿”å›žå€¼å¿…é¡»ä¾ç…§ä»Žå¤§åˆ°å°æ¬¡åºé¡ºåºåˆ¤æ–­ã€‚å› æ­¤ä¸‹é¢çš„æ‰¹å¤„ç†æ–‡ä»¶æ˜¯é”™è¯¯çš„ï¼š
+@ECHO OFF
+XCOPY C:\AUTOEXEC.BAT D:\
+IF ERRORLEVEL 0 ECHO æˆåŠŸæ‹·è´æ–‡ä»¶
+IF ERRORLEVEL 1 ECHO æœªæ‰¾åˆ°æ‹·è´æ–‡ä»¶
+IF ERRORLEVEL 2 ECHO ç”¨æˆ·é€šè¿‡ctrl-cä¸­æ­¢æ‹·è´æ“ä½œ
+IF ERRORLEVEL 3 ECHO é¢„ç½®é”™è¯¯é˜»æ­¢æ–‡ä»¶æ‹·è´æ“ä½œ
+IF ERRORLEVEL 4 ECHO æ‹·è´è¿‡ç¨‹ä¸­å†™ç›˜é”™è¯¯
+
+æ— è®ºæ‹·è´æ˜¯å¦æˆåŠŸï¼ŒåŽé¢çš„ï¼š
+
+æœªæ‰¾åˆ°æ‹·è´æ–‡ä»¶
+ç”¨æˆ·é€šè¿‡ctrl-cä¸­æ­¢æ‹·è´æ“ä½œ
+é¢„ç½®é”™è¯¯é˜»æ­¢æ–‡ä»¶æ‹·è´æ“ä½œ
+æ‹·è´è¿‡ç¨‹ä¸­å†™ç›˜é”™è¯¯
+
+éƒ½å°†æ˜¾ç¤ºå‡ºæ¥ã€‚
+
+ä»¥ä¸‹å°±æ˜¯å‡ ä¸ªå¸¸ç”¨å‘½ä»¤çš„è¿”å›žå€¼åŠå…¶ä»£è¡¨çš„æ„ä¹‰ï¼š
+backup
+0 å¤‡ä»½æˆåŠŸ
+1 æœªæ‰¾åˆ°å¤‡ä»½æ–‡ä»¶
+2 æ–‡ä»¶å…±äº«å†²çªé˜»æ­¢å¤‡ä»½å®Œæˆ
+3 ç”¨æˆ·ç”¨ctrl-cä¸­æ­¢å¤‡ä»½
+4 ç”±äºŽè‡´å‘½çš„é”™è¯¯ä½¿å¤‡ä»½æ“ä½œä¸­æ­¢
+
+diskcomp
+0 ç›˜æ¯”è¾ƒç›¸åŒ
+1 ç›˜æ¯”è¾ƒä¸åŒ
+2 ç”¨æˆ·é€šè¿‡ctrl-cä¸­æ­¢æ¯”è¾ƒæ“ä½œ
+3 ç”±äºŽè‡´å‘½çš„é”™è¯¯ä½¿æ¯”è¾ƒæ“ä½œä¸­æ­¢
+4 é¢„ç½®é”™è¯¯ä¸­æ­¢æ¯”è¾ƒ
+
+diskcopy
+0 ç›˜æ‹·è´æ“ä½œæˆåŠŸ
+1 éžè‡´å‘½ç›˜è¯»/å†™é”™
+2 ç”¨æˆ·é€šè¿‡ctrl-cç»“æŸæ‹·è´æ“ä½œ
+3 å› è‡´å‘½çš„å¤„ç†é”™è¯¯ä½¿ç›˜æ‹·è´ä¸­æ­¢
+4 é¢„ç½®é”™è¯¯é˜»æ­¢æ‹·è´æ“ä½œ
+
+format
+0 æ ¼å¼åŒ–æˆåŠŸ
+3 ç”¨æˆ·é€šè¿‡ctrl-cä¸­æ­¢æ ¼å¼åŒ–å¤„ç†
+4 å› è‡´å‘½çš„å¤„ç†é”™è¯¯ä½¿æ ¼å¼åŒ–ä¸­æ­¢
+5 åœ¨æç¤º"proceed with formatï¼ˆy/nï¼‰?"ä¸‹ç”¨æˆ·é”®å…¥nç»“æŸ
+
+xcopy
+0 æˆåŠŸæ‹·è´æ–‡ä»¶
+1 æœªæ‰¾åˆ°æ‹·è´æ–‡ä»¶
+2 ç”¨æˆ·é€šè¿‡ctrl-cä¸­æ­¢æ‹·è´æ“ä½œ
+4 é¢„ç½®é”™è¯¯é˜»æ­¢æ–‡ä»¶æ‹·è´æ“ä½œ
+5 æ‹·è´è¿‡ç¨‹ä¸­å†™ç›˜é”™è¯¯
+
+3ã€IF STRING1 == STRING2
+
+å»ºç«‹TEST5.BATï¼Œæ–‡ä»¶å†…å®¹å¦‚ä¸‹ï¼š
+@echo off
+IF "%1" == "A" formAT A:
+
+æ‰§è¡Œï¼š
+C:\>TEST5 A
+å±å¹•ä¸Šå°±å‡ºçŽ°æ˜¯å¦å°†A:ç›˜æ ¼å¼åŒ–çš„å†…å®¹ã€‚
+
+æ³¨æ„ï¼šä¸ºäº†é˜²æ­¢å‚æ•°ä¸ºç©ºçš„æƒ…å†µï¼Œä¸€èˆ¬ä¼šå°†å­—ç¬¦ä¸²ç”¨åŒå¼•å·ï¼ˆæˆ–è€…å…¶å®ƒç¬¦å·ï¼Œæ³¨æ„ä¸èƒ½ä½¿ç”¨ä¿ç•™ç¬¦å·ï¼‰æ‹¬èµ·æ¥ã€‚
+å¦‚ï¼šif [%1]==[A] æˆ–è€… if %1*==A*
+
+5ã€GOTO
+
+å»ºç«‹TEST6.BATï¼Œæ–‡ä»¶å†…å®¹å¦‚ä¸‹ï¼š
+@ECHO OFF
+IF EXIST C:\AUTOEXEC.BAT GOTO _COPY
+GOTO _DONE
+:_COPY
+COPY C:\AUTOEXEC.BAT D:\
+:_DONE
+
+æ³¨æ„ï¼š
+(1) æ ‡å·å‰æ˜¯ASCIIå­—ç¬¦çš„å†’å·":"ï¼Œå†’å·ä¸Žæ ‡å·ä¹‹é—´ä¸èƒ½æœ‰ç©ºæ ¼ã€‚
+(2) æ ‡å·çš„å‘½åè§„åˆ™ä¸Žæ–‡ä»¶åçš„å‘½åè§„åˆ™ç›¸åŒã€‚
+(3) DOSæ”¯æŒæœ€é•¿å…«ä½å­—ç¬¦çš„æ ‡å·ï¼Œå½“æ— æ³•åŒºåˆ«ä¸¤ä¸ªæ ‡å·æ—¶ï¼Œå°†è·³è½¬è‡³æœ€è¿‘çš„ä¸€ä¸ªæ ‡å·ã€‚
+
+6ã€FOR
+
+å»ºç«‹C:\TEST7.BATï¼Œæ–‡ä»¶å†…å®¹å¦‚ä¸‹ï¼š
+@ECHO OFF
+FOR %%C IN (*.BAT *.TXT *.SYS) DO TYPE %%C
+
+è¿è¡Œï¼š
+C:>TEST7
+
+æ‰§è¡Œä»¥åŽï¼Œå±å¹•ä¸Šä¼šå°†C:ç›˜æ ¹ç›®å½•ä¸‹æ‰€æœ‰ä»¥BATã€TXTã€SYSä¸ºæ‰©å±•åçš„æ–‡ä»¶å†…å®¹æ˜¾ç¤ºå‡ºæ¥ï¼ˆä¸åŒ…æ‹¬éšè—æ–‡ä»¶ï¼‰ã€‚
+
+7ã€éåŽ†æ–‡ä»¶å¤¹å’Œå­æ–‡ä»¶å¤¹ä¸‹æ‰€æœ‰æ–‡ä»¶
 echo off & color 0A
-::Ö¸¶¨ÆðÊ¼ÎÄ¼þ¼Ð
+::æŒ‡å®šèµ·å§‹æ–‡ä»¶å¤¹
 set DIR="%cd%"
 echo DIR=%DIR%
 
-:: ²ÎÊý /R ±íÊ¾ÐèÒª±éÀú×ÓÎÄ¼þ¼Ð,È¥µô±íÊ¾²»±éÀú×ÓÎÄ¼þ¼Ð
-:: %%f ÊÇÒ»¸ö±äÁ¿,ÀàËÆÓÚµü´úÆ÷,µ«ÊÇÕâ¸ö±äÁ¿Ö»ÄÜÓÉÒ»¸ö×ÖÄ¸×é³É,Ç°Ãæ´øÉÏ%%
-:: À¨ºÅÖÐÊÇÍ¨Åä·û,¿ÉÒÔÖ¸¶¨ºó×ºÃû,*.*±íÊ¾ËùÓÐÎÄ¼þ
-for /R %DIR% %%f in (*.txt) do ( 
+:: å‚æ•° /R è¡¨ç¤ºéœ€è¦éåŽ†å­æ–‡ä»¶å¤¹,åŽ»æŽ‰è¡¨ç¤ºä¸éåŽ†å­æ–‡ä»¶å¤¹
+:: %%f æ˜¯ä¸€ä¸ªå˜é‡,ç±»ä¼¼äºŽè¿­ä»£å™¨,ä½†æ˜¯è¿™ä¸ªå˜é‡åªèƒ½ç”±ä¸€ä¸ªå­—æ¯ç»„æˆ,å‰é¢å¸¦ä¸Š%%
+:: æ‹¬å·ä¸­æ˜¯é€šé…ç¬¦,å¯ä»¥æŒ‡å®šåŽç¼€å,*.*è¡¨ç¤ºæ‰€æœ‰æ–‡ä»¶
+for /R %DIR% %%f in (*.txt) do (
 echo %%f
 )
 pause
 
-8¡¢COLOR [attr]
-  attr        Ö¸¶¨¿ØÖÆÌ¨Êä³öµÄÑÕÉ«ÊôÐÔ¡£
-ÑÕÉ«ÊôÐÔÓÉÁ½¸öÊ®Áù½øÖÆÊý×ÖÖ¸¶¨ -- µÚÒ»¸ö
-¶ÔÓ¦ÓÚ±³¾°£¬µÚ¶þ¸ö¶ÔÓ¦ÓÚÇ°¾°¡£Ã¿¸öÊý×Ö
-¿ÉÒÔÎªÒÔÏÂÈÎºÎÖµ:
-    0 = ºÚÉ«       8 = »ÒÉ«
-    1 = À¶É«       9 = µ­À¶É«
-    2 = ÂÌÉ«       A = µ­ÂÌÉ«
-    3 = Ç³ÂÌÉ«     B = µ­Ç³ÂÌÉ«
-    4 = ºìÉ«       C = µ­ºìÉ«
-    5 = ×ÏÉ«       D = µ­×ÏÉ«
-    6 = »ÆÉ«       E = µ­»ÆÉ«
-    7 = °×É«       F = ÁÁ°×É«
-Èç¹ûÃ»ÓÐ¸ø¶¨ÈÎºÎ²ÎÊý£¬´ËÃüÁî»á½«ÑÕÉ«»¹Ô­µ½ CMD.EXE Æô¶¯Ê±
-µÄÑÕÉ«¡£Õâ¸öÖµÀ´×Ôµ±Ç°¿ØÖÆÌ¨
-´°¿Ú¡¢/T ÃüÁîÐÐ¿ª¹Ø»ò DefaultColor ×¢²á±íÖµ¡£
-Èç¹û³¢ÊÔÊ¹ÓÃÏàÍ¬µÄ
-Ç°¾°ºÍ±³¾°ÑÕÉ«À´Ö´ÐÐ
- COLOR ÃüÁî£¬COLOR ÃüÁî»á½« ERRORLEVEL ÉèÖÃÎª 1¡£
-Ê¾Àý: "COLOR fc" ÔÚÁÁ°×É«ÉÏ²úÉúµ­ºìÉ«     
+8ã€COLOR [attr]
+  attr        æŒ‡å®šæŽ§åˆ¶å°è¾“å‡ºçš„é¢œè‰²å±žæ€§ã€‚
+é¢œè‰²å±žæ€§ç”±ä¸¤ä¸ªåå…­è¿›åˆ¶æ•°å­—æŒ‡å®š -- ç¬¬ä¸€ä¸ª
+å¯¹åº”äºŽèƒŒæ™¯ï¼Œç¬¬äºŒä¸ªå¯¹åº”äºŽå‰æ™¯ã€‚æ¯ä¸ªæ•°å­—
+å¯ä»¥ä¸ºä»¥ä¸‹ä»»ä½•å€¼:
+    0 = é»‘è‰²       8 = ç°è‰²
+    1 = è“è‰²       9 = æ·¡è“è‰²
+    2 = ç»¿è‰²       A = æ·¡ç»¿è‰²
+    3 = æµ…ç»¿è‰²     B = æ·¡æµ…ç»¿è‰²
+    4 = çº¢è‰²       C = æ·¡çº¢è‰²
+    5 = ç´«è‰²       D = æ·¡ç´«è‰²
+    6 = é»„è‰²       E = æ·¡é»„è‰²
+    7 = ç™½è‰²       F = äº®ç™½è‰²
+å¦‚æžœæ²¡æœ‰ç»™å®šä»»ä½•å‚æ•°ï¼Œæ­¤å‘½ä»¤ä¼šå°†é¢œè‰²è¿˜åŽŸåˆ° CMD.EXE å¯åŠ¨æ—¶
+çš„é¢œè‰²ã€‚è¿™ä¸ªå€¼æ¥è‡ªå½“å‰æŽ§åˆ¶å°
+çª—å£ã€/T å‘½ä»¤è¡Œå¼€å…³æˆ– DefaultColor æ³¨å†Œè¡¨å€¼ã€‚
+å¦‚æžœå°è¯•ä½¿ç”¨ç›¸åŒçš„
+å‰æ™¯å’ŒèƒŒæ™¯é¢œè‰²æ¥æ‰§è¡Œ
+ COLOR å‘½ä»¤ï¼ŒCOLOR å‘½ä»¤ä¼šå°† ERRORLEVEL è®¾ç½®ä¸º 1ã€‚
+ç¤ºä¾‹: "COLOR fc" åœ¨äº®ç™½è‰²ä¸Šäº§ç”Ÿæ·¡çº¢è‰²
 
 
 
-setÖ¸Áî ×Ö·û´®µÄÔöÉ¾²é¸Ä£¬»¹ÓÐÊýÖµµÄÔöÉ¾²é¸Ä¡£
+setæŒ‡ä»¤ å­—ç¬¦ä¸²çš„å¢žåˆ æŸ¥æ”¹ï¼Œè¿˜æœ‰æ•°å€¼çš„å¢žåˆ æŸ¥æ”¹ã€‚
 set [<variable>=[<string>]]
 set [/p] <variable>=[<promptString>]
 set /a <variable>=<expression>
 
-ÉèÖÃÖµ
-²»Îª¿ÕÔòÊÇÐÞ¸Ä»òÔö¼Ó
-Îª¿ÕÔòÊÇÉ¾³ý
+è®¾ç½®å€¼
+ä¸ä¸ºç©ºåˆ™æ˜¯ä¿®æ”¹æˆ–å¢žåŠ 
+ä¸ºç©ºåˆ™æ˜¯åˆ é™¤
 set var=value
 
-p ÔòÊÇ prompt ,¼´ÌáÊ¾ÊäÈëÓÃ»§ÊäÈë±äÁ¿Öµ
-set /p var="please input something" 
+p åˆ™æ˜¯ prompt ,å³æç¤ºè¾“å…¥ç”¨æˆ·è¾“å…¥å˜é‡å€¼
+set /p var="please input something"
 
-a ÔòÊÇ algorithm¡£
-¶Ôexp×Ö·û´®½øÐÐ±í´ïÊ½ÇóÖµ¡£
-¿ÕÔòÎª0.
-ºÍÇ°ÃæµÄÂÔÓÐ²îÒì¡£
+a åˆ™æ˜¯ algorithmã€‚
+å¯¹expå­—ç¬¦ä¸²è¿›è¡Œè¡¨è¾¾å¼æ±‚å€¼ã€‚
+ç©ºåˆ™ä¸º0.
+å’Œå‰é¢çš„ç•¥æœ‰å·®å¼‚ã€‚
 set /a var=expr
 
-set sss=hello	¾ÍÊÇÉèÖÃ´úÂë
-set | find "sss"	²é¿´´úÂë£¬Ê¹ÓÃ find Ö¸Áî¹ýÂË£¬¿´µ½¹ýÂËµÄ½á¹û¡£ sss=hello
-set sss=	Èç¹ûÎª¿ÕÔòÊÇÉ¾³ý£¬ÆäËûÖµÔòÊÇÐÞ¸Ä¡£
-set | find "sss"	Ôò¿ÉÒÔ¿´µ½£¬É¾³ýºó¾ÍÃ»ÓÐÕâ¸ö±äÁ¿ÁË¡£
+set sss=hello	å°±æ˜¯è®¾ç½®ä»£ç 
+set | find "sss"	æŸ¥çœ‹ä»£ç ï¼Œä½¿ç”¨ find æŒ‡ä»¤è¿‡æ»¤ï¼Œçœ‹åˆ°è¿‡æ»¤çš„ç»“æžœã€‚ sss=hello
+set sss=	å¦‚æžœä¸ºç©ºåˆ™æ˜¯åˆ é™¤ï¼Œå…¶ä»–å€¼åˆ™æ˜¯ä¿®æ”¹ã€‚
+set | find "sss"	åˆ™å¯ä»¥çœ‹åˆ°ï¼Œåˆ é™¤åŽå°±æ²¡æœ‰è¿™ä¸ªå˜é‡äº†ã€‚
 
-ÊýÖµÀàÐÍ
+æ•°å€¼ç±»åž‹
 set a=1
 set b=2
-set /a c=%a% + %b%     »òÕß set /a c=a + b
+set /a c=%a% + %b%     æˆ–è€… set /a c=a + b
 echo   a + b
 echo = %a% + %b%
 echo = %c%
 
-µ÷ÓÃ±äÁ¿ £º   %name%     ----ÓÃ%½«Òªµ÷ÓÃµÄ±äÁ¿°üÆðÀ´¾Í¿ÉÒÔµ÷ÓÃ´Ë±äÁ¿
-%%name±íÊ¾nameÎª for ÀïÃæµÄÑ­»·±äÁ¿
-£¡name£¡±íÊ¾ÑÓ³Ù±äÁ¿£¨ÔÚ¸´ºÏÓï¾äÖÐÓÃµ½£¬ÍÚ¿Ó£©
+è°ƒç”¨å˜é‡ ï¼š   %name%     ----ç”¨%å°†è¦è°ƒç”¨çš„å˜é‡åŒ…èµ·æ¥å°±å¯ä»¥è°ƒç”¨æ­¤å˜é‡
+%%nameè¡¨ç¤ºnameä¸º for é‡Œé¢çš„å¾ªçŽ¯å˜é‡
+ï¼nameï¼è¡¨ç¤ºå»¶è¿Ÿå˜é‡ï¼ˆåœ¨å¤åˆè¯­å¥ä¸­ç”¨åˆ°ï¼ŒæŒ–å‘ï¼‰
 
 
-ÏµÍ³±äÁ¿:
-1. %ALLUSERSPROFILE%   ±¾µØ ·µ»Ø¡°ËùÓÐÓÃ»§¡±ÅäÖÃÎÄ¼þµÄÎ»ÖÃ¡£ 
-2. %APPDATA%   ±¾µØ ·µ»ØÄ¬ÈÏÇé¿öÏÂÓ¦ÓÃ³ÌÐò´æ´¢Êý¾ÝµÄÎ»ÖÃ¡£ 
-3. %CD%   ±¾µØ ·µ»Øµ±Ç°Ä¿Â¼×Ö·û´®¡£ 
-4. %CMDCMDLINE%   ±¾µØ ·µ»ØÓÃÀ´Æô¶¯µ±Ç°µÄ Cmd.exe µÄ×¼È·ÃüÁîÐÐ¡£ 
-5. %CMDEXTVERSION%   ÏµÍ³ ·µ»Øµ±Ç°µÄ¡°ÃüÁî´¦Àí³ÌÐòÀ©Õ¹¡±µÄ°æ±¾ºÅ¡£ 
-6. %COMPUTERNAME%  ÏµÍ³ ·µ»Ø¼ÆËã»úµÄÃû³Æ¡£ 
-7. %COMSPEC%  ÏµÍ³ ·µ»ØÃüÁîÐÐ½âÊÍÆ÷¿ÉÖ´ÐÐ³ÌÐòµÄ×¼È·Â·¾¶¡£ 
-8. %DATE%  ÏµÍ³ ·µ»Øµ±Ç°ÈÕÆÚ¡£Ê¹ÓÃÓë date /t ÃüÁîÏàÍ¬µÄ¸ñÊ½¡£ÓÉ Cmd.exe Éú³É¡£ÓÐ¹Ødate ÃüÁîµÄÏêÏ¸ÐÅÏ¢£¬Çë²ÎÔÄ Date¡£ 
-9. %ERRORLEVEL%     ÏµÍ³ ·µ»ØÉÏÒ»ÌõÃüÁîµÄ´íÎó´úÂë¡£Í¨³£ÓÃ·ÇÁãÖµ±íÊ¾´íÎó¡£ 
-10. %HOMEDRIVE%     ÏµÍ³ ·µ»ØÁ¬½Óµ½ÓÃ»§Ö÷Ä¿Â¼µÄ±¾µØ¹¤×÷Õ¾Çý¶¯Æ÷ºÅ¡£»ùÓÚÖ÷Ä¿Â¼Öµ¶øÉèÖÃ¡£ÓÃ»§Ö÷Ä¿Â¼ÊÇÔÚ¡°±¾µØÓÃ»§ºÍ×é¡±ÖÐÖ¸¶¨µÄ¡£ 
-11. %HOMEPATH%     ÏµÍ³ ·µ»ØÓÃ»§Ö÷Ä¿Â¼µÄÍêÕûÂ·¾¶¡£»ùÓÚÖ÷Ä¿Â¼Öµ¶øÉèÖÃ¡£ÓÃ»§Ö÷Ä¿Â¼ÊÇÔÚ¡°±¾µØÓÃ»§ºÍ×é¡±ÖÐÖ¸¶¨µÄ¡£ 
-12. %HOMESHARE%     ÏµÍ³ ·µ»ØÓÃ»§µÄ¹²ÏíÖ÷Ä¿Â¼µÄÍøÂçÂ·¾¶¡£»ùÓÚÖ÷Ä¿Â¼Öµ¶øÉèÖÃ¡£ÓÃ»§Ö÷Ä¿Â¼ÊÇÔÚ¡°±¾µØÓÃ»§ºÍ×é¡±ÖÐÖ¸¶¨µÄ¡£ 
-13. %LOGONSERVER%     ±¾µØ ·µ»ØÑéÖ¤µ±Ç°µÇÂ¼»á»°µÄÓò¿ØÖÆÆ÷µÄÃû³Æ¡£ 
-14. %NUMBER_OF_PROCESSORS%     ÏµÍ³ Ö¸¶¨°²×°ÔÚ¼ÆËã»úÉÏµÄ´¦ÀíÆ÷µÄÊýÄ¿¡£ 
-15. %OS%     ÏµÍ³ ·µ»Ø²Ù×÷ÏµÍ³Ãû³Æ¡£Windows 2000 ÏÔÊ¾Æä²Ù×÷ÏµÍ³Îª Windows_NT¡£ 
-16. %PATH% ÏµÍ³ Ö¸¶¨¿ÉÖ´ÐÐÎÄ¼þµÄËÑË÷Â·¾¶¡£ 
-17. %PATHEXT% ÏµÍ³ ·µ»Ø²Ù×÷ÏµÍ³ÈÏÎª¿ÉÖ´ÐÐµÄÎÄ¼þÀ©Õ¹ÃûµÄÁÐ±í¡£ 
-18. %PROCESSOR_ARCHITECTURE%     ÏµÍ³ ·µ»Ø´¦ÀíÆ÷µÄÐ¾Æ¬ÌåÏµ½á¹¹¡£Öµ£ºx86 »ò IA64 »ùÓÚItanium 
-19. %PROCESSOR_IDENTFIER% ÏµÍ³ ·µ»Ø´¦ÀíÆ÷ËµÃ÷¡£ 
-20. %PROCESSOR_LEVEL%     ÏµÍ³ ·µ»Ø¼ÆËã»úÉÏ°²×°µÄ´¦ÀíÆ÷µÄÐÍºÅ¡£ 
-21. %PROCESSOR_REVISION% ÏµÍ³ ·µ»Ø´¦ÀíÆ÷µÄ°æ±¾ºÅ¡£ 
-22. %PROMPT% ±¾µØ ·µ»Øµ±Ç°½âÊÍ³ÌÐòµÄÃüÁîÌáÊ¾·ûÉèÖÃ¡£ÓÉ Cmd.exe Éú³É¡£ 
-23. %RANDOM% ÏµÍ³ ·µ»Ø 0 µ½ 32767 Ö®¼äµÄÈÎÒâÊ®½øÖÆÊý×Ö¡£ÓÉ Cmd.exe Éú³É¡£ 
-24. %SYSTEMDRIVE% ÏµÍ³ ·µ»Ø°üº¬ Windows server operating system ¸ùÄ¿Â¼£¨¼´ÏµÍ³¸ùÄ¿Â¼£©Çý¶¯Æ÷¡£ 
-25. %SYSTEMROOT%     ÏµÍ³ ·µ»Ø Windows server operating system ¸ùÄ¿Â¼µÄÎ»ÖÃ¡£ 
-26. %TEMP% ºÍ %TMP% ÏµÍ³ºÍÓÃ»§ ·µ»Ø¶Ôµ±Ç°µÇÂ¼ÓÃ»§¿ÉÓÃµÄÓ¦ÓÃ³ÌÐòËùÊ¹ÓÃµÄÄ¬ÈÏÁÙÊ±Ä¿Â¼¡£ÓÐÐ©Ó¦ÓÃ³ÌÐòÐèÒª TEMP£¬¶øÆäËûÓ¦ÓÃ³ÌÐòÔòÐèÒª TMP¡£ 
-27. %TIME% ÏµÍ³ ·µ»Øµ±Ç°Ê±¼ä¡£Ê¹ÓÃÓë time /t ÃüÁîÏàÍ¬µÄ¸ñÊ½¡£ÓÉ Cmd.exe Éú³É¡£ÓÐ¹Øtime ÃüÁîµÄÏêÏ¸ÐÅÏ¢£¬Çë²ÎÔÄ Time¡£ 
-28. %USERDOMAIN% ±¾µØ ·µ»Ø°üº¬ÓÃ»§ÕÊ»§µÄÓòµÄÃû³Æ¡£ 
-29. %USERNAME% ±¾µØ ·µ»Øµ±Ç°µÇÂ¼µÄÓÃ»§µÄÃû³Æ¡£ 
-30. %USERPROFILE% ±¾µØ ·µ»Øµ±Ç°ÓÃ»§µÄÅäÖÃÎÄ¼þµÄÎ»ÖÃ¡£ 
-31. %WINDIR% ÏµÍ³ ·µ»Ø²Ù×÷ÏµÍ³Ä¿Â¼µÄÎ»ÖÃ¡£
+ç³»ç»Ÿå˜é‡:
+1. %ALLUSERSPROFILE%   æœ¬åœ° è¿”å›žâ€œæ‰€æœ‰ç”¨æˆ·â€é…ç½®æ–‡ä»¶çš„ä½ç½®ã€‚
+2. %APPDATA%   æœ¬åœ° è¿”å›žé»˜è®¤æƒ…å†µä¸‹åº”ç”¨ç¨‹åºå­˜å‚¨æ•°æ®çš„ä½ç½®ã€‚
+3. %CD%   æœ¬åœ° è¿”å›žå½“å‰ç›®å½•å­—ç¬¦ä¸²ã€‚
+4. %CMDCMDLINE%   æœ¬åœ° è¿”å›žç”¨æ¥å¯åŠ¨å½“å‰çš„ Cmd.exe çš„å‡†ç¡®å‘½ä»¤è¡Œã€‚
+5. %CMDEXTVERSION%   ç³»ç»Ÿ è¿”å›žå½“å‰çš„â€œå‘½ä»¤å¤„ç†ç¨‹åºæ‰©å±•â€çš„ç‰ˆæœ¬å·ã€‚
+6. %COMPUTERNAME%  ç³»ç»Ÿ è¿”å›žè®¡ç®—æœºçš„åç§°ã€‚
+7. %COMSPEC%  ç³»ç»Ÿ è¿”å›žå‘½ä»¤è¡Œè§£é‡Šå™¨å¯æ‰§è¡Œç¨‹åºçš„å‡†ç¡®è·¯å¾„ã€‚
+8. %DATE%  ç³»ç»Ÿ è¿”å›žå½“å‰æ—¥æœŸã€‚ä½¿ç”¨ä¸Ž date /t å‘½ä»¤ç›¸åŒçš„æ ¼å¼ã€‚ç”± Cmd.exe ç”Ÿæˆã€‚æœ‰å…³date å‘½ä»¤çš„è¯¦ç»†ä¿¡æ¯ï¼Œè¯·å‚é˜… Dateã€‚
+9. %ERRORLEVEL%     ç³»ç»Ÿ è¿”å›žä¸Šä¸€æ¡å‘½ä»¤çš„é”™è¯¯ä»£ç ã€‚é€šå¸¸ç”¨éžé›¶å€¼è¡¨ç¤ºé”™è¯¯ã€‚
+10. %HOMEDRIVE%     ç³»ç»Ÿ è¿”å›žè¿žæŽ¥åˆ°ç”¨æˆ·ä¸»ç›®å½•çš„æœ¬åœ°å·¥ä½œç«™é©±åŠ¨å™¨å·ã€‚åŸºäºŽä¸»ç›®å½•å€¼è€Œè®¾ç½®ã€‚ç”¨æˆ·ä¸»ç›®å½•æ˜¯åœ¨â€œæœ¬åœ°ç”¨æˆ·å’Œç»„â€ä¸­æŒ‡å®šçš„ã€‚
+11. %HOMEPATH%     ç³»ç»Ÿ è¿”å›žç”¨æˆ·ä¸»ç›®å½•çš„å®Œæ•´è·¯å¾„ã€‚åŸºäºŽä¸»ç›®å½•å€¼è€Œè®¾ç½®ã€‚ç”¨æˆ·ä¸»ç›®å½•æ˜¯åœ¨â€œæœ¬åœ°ç”¨æˆ·å’Œç»„â€ä¸­æŒ‡å®šçš„ã€‚
+12. %HOMESHARE%     ç³»ç»Ÿ è¿”å›žç”¨æˆ·çš„å…±äº«ä¸»ç›®å½•çš„ç½‘ç»œè·¯å¾„ã€‚åŸºäºŽä¸»ç›®å½•å€¼è€Œè®¾ç½®ã€‚ç”¨æˆ·ä¸»ç›®å½•æ˜¯åœ¨â€œæœ¬åœ°ç”¨æˆ·å’Œç»„â€ä¸­æŒ‡å®šçš„ã€‚
+13. %LOGONSERVER%     æœ¬åœ° è¿”å›žéªŒè¯å½“å‰ç™»å½•ä¼šè¯çš„åŸŸæŽ§åˆ¶å™¨çš„åç§°ã€‚
+14. %NUMBER_OF_PROCESSORS%     ç³»ç»Ÿ æŒ‡å®šå®‰è£…åœ¨è®¡ç®—æœºä¸Šçš„å¤„ç†å™¨çš„æ•°ç›®ã€‚
+15. %OS%     ç³»ç»Ÿ è¿”å›žæ“ä½œç³»ç»Ÿåç§°ã€‚Windows 2000 æ˜¾ç¤ºå…¶æ“ä½œç³»ç»Ÿä¸º Windows_NTã€‚
+16. %PATH% ç³»ç»Ÿ æŒ‡å®šå¯æ‰§è¡Œæ–‡ä»¶çš„æœç´¢è·¯å¾„ã€‚
+17. %PATHEXT% ç³»ç»Ÿ è¿”å›žæ“ä½œç³»ç»Ÿè®¤ä¸ºå¯æ‰§è¡Œçš„æ–‡ä»¶æ‰©å±•åçš„åˆ—è¡¨ã€‚
+18. %PROCESSOR_ARCHITECTURE%     ç³»ç»Ÿ è¿”å›žå¤„ç†å™¨çš„èŠ¯ç‰‡ä½“ç³»ç»“æž„ã€‚å€¼ï¼šx86 æˆ– IA64 åŸºäºŽItanium
+19. %PROCESSOR_IDENTFIER% ç³»ç»Ÿ è¿”å›žå¤„ç†å™¨è¯´æ˜Žã€‚
+20. %PROCESSOR_LEVEL%     ç³»ç»Ÿ è¿”å›žè®¡ç®—æœºä¸Šå®‰è£…çš„å¤„ç†å™¨çš„åž‹å·ã€‚
+21. %PROCESSOR_REVISION% ç³»ç»Ÿ è¿”å›žå¤„ç†å™¨çš„ç‰ˆæœ¬å·ã€‚
+22. %PROMPT% æœ¬åœ° è¿”å›žå½“å‰è§£é‡Šç¨‹åºçš„å‘½ä»¤æç¤ºç¬¦è®¾ç½®ã€‚ç”± Cmd.exe ç”Ÿæˆã€‚
+23. %RANDOM% ç³»ç»Ÿ è¿”å›ž 0 åˆ° 32767 ä¹‹é—´çš„ä»»æ„åè¿›åˆ¶æ•°å­—ã€‚ç”± Cmd.exe ç”Ÿæˆã€‚
+24. %SYSTEMDRIVE% ç³»ç»Ÿ è¿”å›žåŒ…å« Windows server operating system æ ¹ç›®å½•ï¼ˆå³ç³»ç»Ÿæ ¹ç›®å½•ï¼‰é©±åŠ¨å™¨ã€‚
+25. %SYSTEMROOT%     ç³»ç»Ÿ è¿”å›ž Windows server operating system æ ¹ç›®å½•çš„ä½ç½®ã€‚
+26. %TEMP% å’Œ %TMP% ç³»ç»Ÿå’Œç”¨æˆ· è¿”å›žå¯¹å½“å‰ç™»å½•ç”¨æˆ·å¯ç”¨çš„åº”ç”¨ç¨‹åºæ‰€ä½¿ç”¨çš„é»˜è®¤ä¸´æ—¶ç›®å½•ã€‚æœ‰äº›åº”ç”¨ç¨‹åºéœ€è¦ TEMPï¼Œè€Œå…¶ä»–åº”ç”¨ç¨‹åºåˆ™éœ€è¦ TMPã€‚
+27. %TIME% ç³»ç»Ÿ è¿”å›žå½“å‰æ—¶é—´ã€‚ä½¿ç”¨ä¸Ž time /t å‘½ä»¤ç›¸åŒçš„æ ¼å¼ã€‚ç”± Cmd.exe ç”Ÿæˆã€‚æœ‰å…³time å‘½ä»¤çš„è¯¦ç»†ä¿¡æ¯ï¼Œè¯·å‚é˜… Timeã€‚
+28. %USERDOMAIN% æœ¬åœ° è¿”å›žåŒ…å«ç”¨æˆ·å¸æˆ·çš„åŸŸçš„åç§°ã€‚
+29. %USERNAME% æœ¬åœ° è¿”å›žå½“å‰ç™»å½•çš„ç”¨æˆ·çš„åç§°ã€‚
+30. %USERPROFILE% æœ¬åœ° è¿”å›žå½“å‰ç”¨æˆ·çš„é…ç½®æ–‡ä»¶çš„ä½ç½®ã€‚
+31. %WINDIR% ç³»ç»Ÿ è¿”å›žæ“ä½œç³»ç»Ÿç›®å½•çš„ä½ç½®ã€‚
 
 
-º¯Êý
-::º¯ÊýÅÐ¶ÏÇ°Ò»¸öÃüÁîÊÇ·ñÖ´ÐÐ³É¹¦ %0º¯Êý±¾Éí %1 µÚÒ»¸ö²ÎÊý %2µÚ¶þ¸ö
+å‡½æ•°
+::å‡½æ•°åˆ¤æ–­å‰ä¸€ä¸ªå‘½ä»¤æ˜¯å¦æ‰§è¡ŒæˆåŠŸ %0å‡½æ•°æœ¬èº« %1 ç¬¬ä¸€ä¸ªå‚æ•° %2ç¬¬äºŒä¸ª
 :myfunc1
-if %ERRORLEVEL% == 0 (echo copy  %1 success & set /a %2=%2+1) else (echo copy %1 failed & set /a %3=%3+1) 
+if %ERRORLEVEL% == 0 (echo copy  %1 success & set /a %2=%2+1) else (echo copy %1 failed & set /a %3=%3+1)
 goto :EOF
 
-º¯Êýµ÷ÓÃ
+å‡½æ•°è°ƒç”¨
 set numsuccess=0
 set numfailed=0
 call :myfunc1 BSSession.dll numsuccess numfailed
 
 
 exit [/B][exitCode]
-/B Ö¸¶¨ÒªÍË³öµ±Ç°Åú´¦Àí½Å±¾¶ø·Çcmd.exe Èç¹û´ÓÒ»¸öÅú´¦Àí½Å±¾ÍâÖ´ÐÐ Ôò»áÍË³öcmd.exe
-exitCode  Ö¸¶¨Ò»¸öÊý×Ö´úÂë Èç¹ûÖ¸¶¨ÁË/B ½«ERRORLEVELÉè³ÉÄÇ¸öÊý×Ö Èç¹ûÍË³öcmd.exe ÔòÄÇ¸öÊý×ÖÉèÖÃ¹ý³ÌÍË³ö´úÂë
+/B æŒ‡å®šè¦é€€å‡ºå½“å‰æ‰¹å¤„ç†è„šæœ¬è€Œéžcmd.exe å¦‚æžœä»Žä¸€ä¸ªæ‰¹å¤„ç†è„šæœ¬å¤–æ‰§è¡Œ åˆ™ä¼šé€€å‡ºcmd.exe
+exitCode  æŒ‡å®šä¸€ä¸ªæ•°å­—ä»£ç  å¦‚æžœæŒ‡å®šäº†/B å°†ERRORLEVELè®¾æˆé‚£ä¸ªæ•°å­— å¦‚æžœé€€å‡ºcmd.exe åˆ™é‚£ä¸ªæ•°å­—è®¾ç½®è¿‡ç¨‹é€€å‡ºä»£ç 
 
-exit /B     ÍË³öµ±Ç°½Å±¾
-exit        ÍË³ö½âÊÍÆ÷
-¿ÉÒÔÕâÃ´Àí½â£¬exit /b ÍË³ö×Ó½ø³Ì£¬¶øexitÔòÍË³ö¸¸½ø³Ì£¬×Ó½ø³Ì½áÊø²»Ó°Ïì¸¸½ø³ÌµÄÖ´ÐÐ£¬µ«ÊÇ¸¸½ø³Ì½áÊøÄÇ¾ÍÊÇ³¹µ×µÄ½áÊø¡£
-exit /b Ò»°ãºÍcall Ò»ÆðÊ¹ÓÃ¡£
+exit /B     é€€å‡ºå½“å‰è„šæœ¬
+exit        é€€å‡ºè§£é‡Šå™¨
+å¯ä»¥è¿™ä¹ˆç†è§£ï¼Œexit /b é€€å‡ºå­è¿›ç¨‹ï¼Œè€Œexitåˆ™é€€å‡ºçˆ¶è¿›ç¨‹ï¼Œå­è¿›ç¨‹ç»“æŸä¸å½±å“çˆ¶è¿›ç¨‹çš„æ‰§è¡Œï¼Œä½†æ˜¯çˆ¶è¿›ç¨‹ç»“æŸé‚£å°±æ˜¯å½»åº•çš„ç»“æŸã€‚
+exit /b ä¸€èˆ¬å’Œcall ä¸€èµ·ä½¿ç”¨ã€‚
 
-Àý×Ó
+ä¾‹å­
 a.bat
 @echo off
 echo a.bat
-exit             --- 1  4 Óï¾äÖ®ºó È«²¿ÍË³ö ²»»áÖ´ÐÐ56
-exit /B          --- 2  4 Óï¾äÖ®ºó %ERRORLEVEL% Îª 0  ¼ÌÐøÖ´ÐÐ56
-exit /B 12       --- 3  4 Óï¾äÖ®ºó %ERRORLEVEL% Îª 12 ¼ÌÐøÖ´ÐÐ56
+exit             --- 1  4 è¯­å¥ä¹‹åŽ å…¨éƒ¨é€€å‡º ä¸ä¼šæ‰§è¡Œ56
+exit /B          --- 2  4 è¯­å¥ä¹‹åŽ %ERRORLEVEL% ä¸º 0  ç»§ç»­æ‰§è¡Œ56
+exit /B 12       --- 3  4 è¯­å¥ä¹‹åŽ %ERRORLEVEL% ä¸º 12 ç»§ç»­æ‰§è¡Œ56
 
 b.bat
 @echo off

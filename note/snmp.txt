@@ -1,35 +1,35 @@
 
 
 snmp
-1.°²×° snmp·şÎñ
-  [root@localhost] rpm -qa|grep snmp  ÏÈ¼ì²éÊÇ·ñ°²×°ÁËsnmp
-  [root@localhost] yum install -y net-snmp net-snmp-utils Èç¹ûÎ´°²×°Ôòyum°²×°
-2.ÅäÖÃsnmp·şÎñ
-  yum°²×°snmpdµÄÅäÖÃÎÄ¼şÎª/etc/snmp/snmpd.conf 
-  com2sec notConfigUser default public            ¹²Í¬Ìåpublic
-  view    systemview    included   .1   Ìí¼ÓÕâĞĞ ·ÃÎÊ ËùÓĞµÄÏµÍ³½Úµã
-3.ÔËĞĞsnmp·şÎñ
-  [root@localhost] service snmpd start   »òÕßcentos7 systemctl start  snmpd.service
-  [root@localhost] service snmpd stop    »òÕßcentos7 systemctl stop   snmpd.service
-  [root@localhost] service snmpd status  »òÕßcentos7 systemctl status snmpd.service
-4.ÉèÖÃ³É¿ª»ú×Ô¶¯ÔËĞĞsnmpd·şÎñ
+1.å®‰è£… snmpæœåŠ¡
+  [root@localhost] rpm -qa|grep snmp  å…ˆæ£€æŸ¥æ˜¯å¦å®‰è£…äº†snmp
+  [root@localhost] yum install -y net-snmp net-snmp-utils å¦‚æœæœªå®‰è£…åˆ™yumå®‰è£…
+2.é…ç½®snmpæœåŠ¡
+  yumå®‰è£…snmpdçš„é…ç½®æ–‡ä»¶ä¸º/etc/snmp/snmpd.conf
+  com2sec notConfigUser default public            å…±åŒä½“public
+  view    systemview    included   .1   æ·»åŠ è¿™è¡Œ è®¿é—® æ‰€æœ‰çš„ç³»ç»ŸèŠ‚ç‚¹
+3.è¿è¡ŒsnmpæœåŠ¡
+  [root@localhost] service snmpd start   æˆ–è€…centos7 systemctl start  snmpd.service
+  [root@localhost] service snmpd stop    æˆ–è€…centos7 systemctl stop   snmpd.service
+  [root@localhost] service snmpd status  æˆ–è€…centos7 systemctl status snmpd.service
+4.è®¾ç½®æˆå¼€æœºè‡ªåŠ¨è¿è¡ŒsnmpdæœåŠ¡
   [root@localhost] chkconfig snmpd on
-  [root@localhost] chkconfig ¨Clist|grep snmpd
+  [root@localhost] chkconfig â€“list|grep snmpd
   snmpd           0:off   1:off   2:on    3:on    4:on    5:on    6:off
-5.Èç¹ûÎŞ·¨ÁªÍø°²×°£¬¾ÍĞèÒªÏÂÔØÏà¹Ørpm£¬µ«ÊÇ°²×°¹ı³ÌÖĞÒª×¢ÒâË³Ğò
-  rpm -ivh °²×°Ë³ĞòÈçÏÂ£º
-  lm_sensors-libs-3.1.1-17.el6.x86_64.rpm  
+5.å¦‚æœæ— æ³•è”ç½‘å®‰è£…ï¼Œå°±éœ€è¦ä¸‹è½½ç›¸å…³rpmï¼Œä½†æ˜¯å®‰è£…è¿‡ç¨‹ä¸­è¦æ³¨æ„é¡ºåº
+  rpm -ivh å®‰è£…é¡ºåºå¦‚ä¸‹ï¼š
+  lm_sensors-libs-3.1.1-17.el6.x86_64.rpm
   net-snmp-libs-5.5-60.el6.x86_64.rpm
   net-snmp-5.5-60.el6.x86_64.rpm
   net-snmp-utils-5.5-60.el6.x86_64.rpm
 
-7.ÖØÆôsnmpd·şÎñ
+7.é‡å¯snmpdæœåŠ¡
    #/etc/rc.d/init.d/snmpd restart
-   Íê³ÉsnmpdµÄÅäÖÃ
+   å®Œæˆsnmpdçš„é…ç½®
 
-8.È·±£linuxµÄiptables·À»ğÇ½¶ÔÎÒÃÇµÄÁ÷Á¿¼à¿Ø·şÎñÆ÷¿ª·ÅÁËudp 161¶Ë¿ÚµÄ·ÃÎÊÈ¨ÏŞ£¨ÎªÁË°²È«Æğ¼û£¬Ò²¿ÉÒÔĞŞ¸Ä161¶Ë¿Ú£©
-   ¿ÉÊ¹ÓÃiptables -L -n ²é¿´µ±Ç°iptables¹æÔò
-   ¿É±à¼­/etc/sysconfig/iptablesÎÄ¼şÀ´ĞŞ¸Äiptables¹æÔò
+8.ç¡®ä¿linuxçš„iptablesé˜²ç«å¢™å¯¹æˆ‘ä»¬çš„æµé‡ç›‘æ§æœåŠ¡å™¨å¼€æ”¾äº†udp 161ç«¯å£çš„è®¿é—®æƒé™ï¼ˆä¸ºäº†å®‰å…¨èµ·è§ï¼Œä¹Ÿå¯ä»¥ä¿®æ”¹161ç«¯å£ï¼‰
+   å¯ä½¿ç”¨iptables -L -n æŸ¥çœ‹å½“å‰iptablesè§„åˆ™
+   å¯ç¼–è¾‘/etc/sysconfig/iptablesæ–‡ä»¶æ¥ä¿®æ”¹iptablesè§„åˆ™
 
 
 
@@ -39,22 +39,22 @@ snmp
 
 snmp++ --------------------------------
 Pdu pdu;
-Vb vb;  
+Vb vb;
 Oid oid(strOid.GetBuffer());
 vb.set_oid(oid);
 
-Àà¹ØÏµ
+ç±»å…³ç³»
                OpaqueStr->    OctetStr->
-               GenAddress->    
-UdpAddress->   IpAddress->    Address->       SnmpSyntax  //¼Ì³Ğ¹ØÏµ
+               GenAddress->
+UdpAddress->   IpAddress->    Address->       SnmpSyntax  //ç»§æ‰¿å…³ç³»
 output_buffer  output_buffer  address_buffer  SmiLPVALUE
 
-CTarget->SnmpTarget   //SNMPv1 SNMPv2c Ê¹ÓÃ
-UTarget->SnmpTarget   //SNMPv3 Ê¹ÓÃ
+CTarget->SnmpTarget   //SNMPv1 SNMPv2c ä½¿ç”¨
+UTarget->SnmpTarget   //SNMPv3 ä½¿ç”¨
 
 enum snmp_version
 {
-  version1,         ///< (0) SNMPv1 
+  version1,         ///< (0) SNMPv1
   version2c         ///< (1) SNMPv2c
 #ifdef _SNMPv3
   ,version2stern,   ///< (2) Dont use this!
@@ -63,32 +63,32 @@ enum snmp_version
 };
 
 
-Snmp::socket_startup();         //³õÊ¼»¯     ¿ªÊ¼
-Snmp::socket_cleanup();         //ÇåÀí       ½áÊø
-Snmp snmp(status, 0, false);    //´´½¨¶ÔÏó   status != SNMP_CLASS_SUCCESS Ôò´´½¨Ê§°Ü ²ÎÊı1½á¹û 2¶Ë¿Ú 3ÊÇ·ñÊ¹ÓÃIPv6
+Snmp::socket_startup();         //åˆå§‹åŒ–     å¼€å§‹
+Snmp::socket_cleanup();         //æ¸…ç†       ç»“æŸ
+Snmp snmp(status, 0, false);    //åˆ›å»ºå¯¹è±¡   status != SNMP_CLASS_SUCCESS åˆ™åˆ›å»ºå¤±è´¥ å‚æ•°1ç»“æœ 2ç«¯å£ 3æ˜¯å¦ä½¿ç”¨IPv6
     Snmp(int &status, const unsigned short port = 0, const bool bind_ipv6 = false)
     Snmp(int &status, const UdpAddress &addr);
     Snmp(int &status,  const UdpAddress& addr_v4, const UdpAddress& addr_v6);
-UdpAddress address(m_strIp.GetBuffer());  //´´½¨µØÖ·
+UdpAddress address(m_strIp.GetBuffer());  //åˆ›å»ºåœ°å€
     UdpAddress(const char *inaddr);
     UdpAddress(const UdpAddress &udpaddr);
     UdpAddress(const IpAddress &ipaddr);
-    address.valid()             //¼ì²âµØÖ·ÓĞĞ§ĞÔ
-    address.set_port(161)       //¶Ë¿Ú¸³Öµ
+    address.valid()             //æ£€æµ‹åœ°å€æœ‰æ•ˆæ€§
+    address.set_port(161)       //ç«¯å£èµ‹å€¼
 
-SnmpTarget *target=NULL;        //ÉèÖÃÄ¿µÄ²ÎÊı
-    v2°æ±¾ÉèÖÃ
-    CTarget ctarget;                                        //v1 v2°æ±¾
-    OctetStr community(m_strRComm.GetBuffer());             //¹²Í¬Ìå
-		ctarget.set_version( (snmp_version)m_nSnmpVer);         //ÉèÖÃ°æ±¾ SNMP version SNMPV1 or V2
-		ctarget.set_retry(2);                                   //×Ô¶¯ÖØÊÔ´ÎÊı  2
-		ctarget.set_timeout(100);                               //³¬Ê±Ê±¼ä      100 ±íÊ¾1Ãë
-		ctarget.set_readcommunity( community);                  //ÉèÖÃÖ»¶Á¹²Í¬Ìå
+SnmpTarget *target=NULL;        //è®¾ç½®ç›®çš„å‚æ•°
+    v2ç‰ˆæœ¬è®¾ç½®
+    CTarget ctarget;                                        //v1 v2ç‰ˆæœ¬
+    OctetStr community(m_strRComm.GetBuffer());             //å…±åŒä½“
+		ctarget.set_version( (snmp_version)m_nSnmpVer);         //è®¾ç½®ç‰ˆæœ¬ SNMP version SNMPV1 or V2
+		ctarget.set_retry(2);                                   //è‡ªåŠ¨é‡è¯•æ¬¡æ•°  2
+		ctarget.set_timeout(100);                               //è¶…æ—¶æ—¶é—´      100 è¡¨ç¤º1ç§’
+		ctarget.set_readcommunity( community);                  //è®¾ç½®åªè¯»å…±åŒä½“
 		target = &ctarget;
 
-    v3°æ±¾ÉèÖÃ ²»È«xxxxxxxxxxx
-    UTarget utarget                                         //v3°æ±¾
-    utarget.set_version((snmp_version)this->m_nSnmpVer);    //ÉèÖÃ°æ±¾ SNMP version SNMPV3
+    v3ç‰ˆæœ¬è®¾ç½® ä¸å…¨xxxxxxxxxxx
+    UTarget utarget                                         //v3ç‰ˆæœ¬
+    utarget.set_version((snmp_version)this->m_nSnmpVer);    //è®¾ç½®ç‰ˆæœ¬ SNMP version SNMPV3
     utarget.set_retry(3);
     utarget.set_timeout(300);
     utarget.set_security_model( this->m_nSecurityModel);
@@ -98,63 +98,63 @@ SnmpTarget *target=NULL;        //ÉèÖÃÄ¿µÄ²ÎÊı
 get
     SnmpTarget *target;
     CString strRet;
-    Pdu pdu;                                                //¹¹Ôì Pdu ¶ÔÏó
-    Vb vb;  
+    Pdu pdu;                                                //æ„é€  Pdu å¯¹è±¡
+    Vb vb;
     Oid oid(strOid.GetBuffer());
     vb.set_oid(oid);
-    pdu += vb;                                              //vb Ìí¼Óµ½ Pdu
-    if(nVersion==version3)                                  //v3°æ±¾
+    pdu += vb;                                              //vb æ·»åŠ åˆ° Pdu
+    if(nVersion==version3)                                  //v3ç‰ˆæœ¬
     {
         pdu.set_security_level( securityLevel);
         pdu.set_context_name (contextName);
         pdu.set_context_engine_id(contextEngineID);
     }
-    int status = pSnmp->get( pdu, *target);                 //getÈ¡Öµ
-    if (status != SNMP_CLASS_SUCCESS)                       //Ê§°Ü
+    int status = pSnmp->get( pdu, *target);                 //getå–å€¼
+    if (status != SNMP_CLASS_SUCCESS)                       //å¤±è´¥
     {
         strRet.Format("%s", pSnmp->error_msg( status) );
 		    return FALSE;
 		}
-    pdu.get_vb( vb,0);                                      //È¡µÚ0¸öÖµ
-    if (pdu.get_type() == REPORT_MSG)                       //³ö´í
+    pdu.get_vb( vb,0);                                      //å–ç¬¬0ä¸ªå€¼
+    if (pdu.get_type() == REPORT_MSG)                       //å‡ºé”™
     {
-        strRet=pSnmp->error_msg(vb.get_printable_oid());    //·µ»Ø´íÎóÖµ
+        strRet=pSnmp->error_msg(vb.get_printable_oid());    //è¿”å›é”™è¯¯å€¼
         return FALSE;
-    }    
-    if((vb.get_syntax()!=sNMP_SYNTAX_ENDOFMIBVIEW)||(vb.get_syntax()!=sNMP_SYNTAX_NOSUCHINSTANCE)||(vb.get_syntax()!=sNMP_SYNTAX_NOSUCHOBJECT)) ÕıÈ·
-		{    
+    }
+    if((vb.get_syntax()!=sNMP_SYNTAX_ENDOFMIBVIEW)||(vb.get_syntax()!=sNMP_SYNTAX_NOSUCHINSTANCE)||(vb.get_syntax()!=sNMP_SYNTAX_NOSUCHOBJECT)) æ­£ç¡®
+		{
         OctetStr val;
-        int nRet= vb.get_value(val);                        //×ª»¯ÎªOctetStr
-        if (nRet==SNMP_CLASS_SUCCESS)                       //×ª»¯³É¹¦
+        int nRet= vb.get_value(val);                        //è½¬åŒ–ä¸ºOctetStr
+        if (nRet==SNMP_CLASS_SUCCESS)                       //è½¬åŒ–æˆåŠŸ
         {
-            return val.get_printable_hex();                 //16½øÖÆ½á¹û
+            return val.get_printable_hex();                 //16è¿›åˆ¶ç»“æœ
         }
         else
-            return vb.get_printable_value();                //·µ»Ø¿ÉÏÔÊ¾½á¹û
+            return vb.get_printable_value();                //è¿”å›å¯æ˜¾ç¤ºç»“æœ
     }
 
 bulk
     int status=SNMP_CLASS_SUCCESS;
     int non_reps=SNMPREPS;
-    Pdu pdu;                                                //¹¹Ôì Pdu ¶ÔÏó
-    Vb vb;  
+    Pdu pdu;                                                //æ„é€  Pdu å¯¹è±¡
+    Vb vb;
     Oid oid(strOid.GetBuffer());
     vb.set_oid(oid);
-    pdu += vb;    
-    
+    pdu += vb;
+
     if(nVersion==version3)
     {
         pdu.set_security_level( securityLevel);
         pdu.set_context_name (contextName);
         pdu.set_context_engine_id(contextEngineID);
     }
-    
-    if (( status = pSnmp->get_bulk( pdu,*target,non_reps,nMaxCout))== SNMP_CLASS_SUCCESS)    //bulkÈ¡Öµ
+
+    if (( status = pSnmp->get_bulk( pdu,*target,non_reps,nMaxCout))== SNMP_CLASS_SUCCESS)    //bulkå–å€¼
     {
-        for ( int z=0;z<pdu.get_vb_count();z++)             //vbµÄÊıÁ¿
+        for ( int z=0;z<pdu.get_vb_count();z++)             //vbçš„æ•°é‡
         {
-            pdu.get_vb( vb,z);                              //È¡µÚz¸övb
-            if (pdu.get_type() == REPORT_MSG)               //Ê§°Ü
+            pdu.get_vb( vb,z);                              //å–ç¬¬zä¸ªvb
+            if (pdu.get_type() == REPORT_MSG)               //å¤±è´¥
             {
                 return FALSE;
             }
@@ -162,20 +162,20 @@ bulk
             	||(vb.get_syntax()!=sNMP_SYNTAX_NOSUCHINSTANCE)
             	||(vb.get_syntax()!=sNMP_SYNTAX_NOSUCHOBJECT))
             {
-                CString strOid1=vb.get_printable_oid();     //È¡oid
+                CString strOid1=vb.get_printable_oid();     //å–oid
                 CString strOidVal;
                 if(IsCiscoAddr(strOid1.GetBuffer()))
                 {
                     strOidVal=CiscoAddrToString(vb.get_printable_value());
                 }
                 else
-                    strOidVal=GetVbValue(vb).c_str();       //È¡value
+                    strOidVal=GetVbValue(vb).c_str();       //å–value
                 mapRet.SetAt(strOid1 ,strOidVal );
                 strLastOid=strOid1;
             }
         }
         return TRUE;
-        
+
     }
     else
     {
@@ -186,29 +186,26 @@ bulk
 
 
 
-ÏÔÊ¾Ä£Ê½(¶ş½øÖÆ) Æä½á¹ûºóÃæ»áÓĞ¸ö¶îÍâµÄ»»ĞĞ·û
+æ˜¾ç¤ºæ¨¡å¼(äºŒè¿›åˆ¶) å…¶ç»“æœåé¢ä¼šæœ‰ä¸ªé¢å¤–çš„æ¢è¡Œç¬¦
 -----------------[1]OutputHex------------------    -[2]OutputClear-
 09 4F 63 74 65 74 53 74 72 3A 3A 67 65 74 5F 70    .OctetStr::get_p
 72 69 6E 74 61 62 6C 65 5F 68 65 78 28 29          rintable_hex()
-OctetStr::OutputHexAndClear [1][2]¶¼ÏÔÊ¾
-OctetStr::OutputHex         [1]ÏÔÊ¾ ÕâÖÖÄ£Ê½ÏÂ ºóÃæ¿ÉÄÜÓĞ¿Õ¸ñÕ¼Î»·û ÎªÁË¶ÔÆë
-OctetStr::OutputClear       [2]ÏÔÊ¾ Æä²»¿ÉÏÔÊ¾×Ö·ûÒÔ . ´úÌæ
+OctetStr::OutputHexAndClear [1][2]éƒ½æ˜¾ç¤º
+OctetStr::OutputHex         [1]æ˜¾ç¤º è¿™ç§æ¨¡å¼ä¸‹ åé¢å¯èƒ½æœ‰ç©ºæ ¼å ä½ç¬¦ ä¸ºäº†å¯¹é½
+OctetStr::OutputClear       [2]æ˜¾ç¤º å…¶ä¸å¯æ˜¾ç¤ºå­—ç¬¦ä»¥ . ä»£æ›¿
 
-È¡oid
-    vb.get_oid().get_printable()  ÏÔÊ¾oidÖµ ÏÂÍ¬
+å–oid
+    vb.get_oid().get_printable()  æ˜¾ç¤ºoidå€¼ ä¸‹åŒ
     vb.get_printable_oid()
-È¡value
-    vb.get_printable_value()          1¿ÉÏÔÊ¾×Ö·û ÏÔÊ¾valueÖµ(×Ö·û´®ĞÎÊ½) 2¶ş½øÖÆĞÎÊ½ ÒÔ16½øÖÆ[1]ĞÎÊ½ÏÔÊ¾(¼«¸ö±ğÇé¿ö²»Ò»ÖÂ »³ÒÉÊÇÓë1»ìÏıÁË)
+å–value
+    vb.get_printable_value()          1å¯æ˜¾ç¤ºå­—ç¬¦ æ˜¾ç¤ºvalueå€¼(å­—ç¬¦ä¸²å½¢å¼) 2äºŒè¿›åˆ¶å½¢å¼ ä»¥16è¿›åˆ¶[1]å½¢å¼æ˜¾ç¤º(æä¸ªåˆ«æƒ…å†µä¸ä¸€è‡´ æ€€ç–‘æ˜¯ä¸1æ··æ·†äº†)
     OctetStr val;
-    int nRet = vb.get_value(val);     »ñÈ¡value ÈôÄÜ×ª»¯Îª OctetStr Ôò·µ»Ø SNMP_CLASS_SUCCESS ·ñÔò SNMP_CLASS_INVALID
+    int nRet = vb.get_value(val);     è·å–value è‹¥èƒ½è½¬åŒ–ä¸º OctetStr åˆ™è¿”å› SNMP_CLASS_SUCCESS å¦åˆ™ SNMP_CLASS_INVALID
     if (nRet == SNMP_CLASS_SUCCESS)
     {
-    	val.set_hex_output_type(OctetStr::OutputHex);    ÉèÖÃÊä³öÄ£Ê½ OutputHexAndClear OutputHex OutputClear 
-    	return val.get_printable_hex();                  16½øÖÆÏÔÊ¾ ×îºó»áÓĞ¸ö»Ø³µ·û
-    	return val.get_printable_clear();                Ö»ÏÔÊ¾[2]²¿·Ö
+    	val.set_hex_output_type(OctetStr::OutputHex);    è®¾ç½®è¾“å‡ºæ¨¡å¼ OutputHexAndClear OutputHex OutputClear
+    	return val.get_printable_hex();                  16è¿›åˆ¶æ˜¾ç¤º æœ€åä¼šæœ‰ä¸ªå›è½¦ç¬¦
+    	return val.get_printable_clear();                åªæ˜¾ç¤º[2]éƒ¨åˆ†
     }
     else
     	return vb.get_printable_value();
-
-
-

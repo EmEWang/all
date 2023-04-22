@@ -1,45 +1,45 @@
 
-Ö÷Òª°üº¬ÈıÖÖÀàĞÍValue¡¢Reader¡¢Writer¡£ËùÓĞ¶ÔÏó¡¢ÀàÃû¶¼ÔÚ namespace Json ÖĞ£¬°üº¬ json.h ¼´¿É¡£
-Json::Value ÊÇjsoncpp ÖĞ×î»ù±¾¡¢×îÖØÒªµÄÀà£¬ÓÃÓÚ±íÊ¾¸÷ÖÖÀàĞÍµÄ¶ÔÏó£¬jsoncpp Ö§³ÖµÄ¶ÔÏóÀàĞÍ¿É¼û Json::ValueType Ã¶¾ÙÖµ¡£
-¡¡¡¡Json::Value root;  // ±íÊ¾Õû¸ö json ¶ÔÏó
-¡¡¡¡root["key_string"] = Json::Value("value_string");   // ĞÂ½¨Ò»¸ö Key£¨ÃûÎª£ºkey_string£©£¬¸³Óè×Ö·û´®Öµ£º"value_string"¡£ Í¬ root["key_string"]=¡°value_string¡± ÏÂÍ¬
-¡¡¡¡root["key_number"] = Json::Value(12345);            // ĞÂ½¨Ò»¸ö Key£¨ÃûÎª£ºkey_number£©£¬¸³ÓèÊıÖµ£º12345¡£
-¡¡¡¡root["key_boolean"] = Json::Value(false);           // ĞÂ½¨Ò»¸ö Key£¨ÃûÎª£ºkey_boolean£©£¬¸³ÓèboolÖµ£ºfalse¡£
-¡¡¡¡root["key_double"] = Json::Value(12.345);           // ĞÂ½¨Ò»¸ö Key£¨ÃûÎª£ºkey_double£©£¬¸³Óè double Öµ£º12.345¡£
-¡¡¡¡root["key_object"] = Json_temp;                     // ĞÂ½¨Ò»¸ö Key£¨ÃûÎª£ºkey_object£©£¬¸³Óè json::Value ¶ÔÏóÖµ¡£
-¡¡¡¡root["key_array"].append("array_string");           // ĞÂ½¨Ò»¸ö Key£¨ÃûÎª£ºkey_array£©£¬ÀàĞÍÎªÊı×é£¬¶ÔµÚÒ»¸öÔªËØ¸³ÖµÎª×Ö·û´®£º"array_string"¡£
-¡¡¡¡root["key_array"].append(1234);                     // ÎªÊı×é key_array ¸³Öµ£¬¶ÔµÚ¶ş¸öÔªËØ¸³ÖµÎª£º1234¡£
-¡¡¡¡Json::ValueType type = root.type();                 // »ñµÃ root µÄÀàĞÍ£¬´Ë´¦Îª objectValue ÀàĞÍ¡£
-    root["v3"].resize(0);                               ÉèÖÃÒ»¸ö¿ÕµÄÊı×éÒ²¾ÍÊÇ"v3":[]
-Jsoncpp µÄ Json::Writer ÀàÊÇÒ»¸ö´¿ĞéÀà£¬²¢²»ÄÜÖ±½ÓÊ¹ÓÃ¡£ÔÚ´ËÎÒÃÇÊ¹ÓÃ Json::Writer µÄ×ÓÀà£ºJson::FastWriter¡¢Json::StyledWriter¡¢Json::StyledStreamWriter¡£
-¡¡¡¡¹ËÃûË¼Òå£¬ÓÃ Json::FastWriter À´´¦Àí json Ó¦¸ÃÊÇ×î¿ìµÄ£¬ÏÂÃæÎÒÃÇÀ´ÊÔÊÔ¡£
-¡¡¡¡Json::FastWriter fast_writer;
-¡¡¡¡std::cout << fast_writer.write(root) << std::endl;
-¡¡¡¡Êä³ö½á¹ûÎª£º
-¡¡¡¡{"key_array":["array_string",1234],"key_boolean":false,"key_double":12.3450,"key_number":12345,"key_object":{"age":26,"name":"huchao"},"key_string":"value_string"}
-¡¡¡¡ÔÙ´Î¹ËÃûË¼Òå£¬ÓÃ Json::StyledWriter ÊÇ¸ñÊ½»¯ºóµÄ json£¬ÏÂÃæÎÒÃÇÀ´¿´¿´ Json::StyledWriter ÊÇÔõÑù¸ñÊ½»¯µÄ¡£
-¡¡¡¡Json::StyledWriter styled_writer;
-¡¡¡¡std::cout << styled_writer.write(root) << std::endl;
-¡¡¡¡Êä³ö½á¹ûÎª£º
-¡¡¡¡{
-¡¡¡¡   "key_array" : [ "array_string", 1234 ],
-¡¡¡¡   "key_boolean" : false,
-¡¡¡¡   "key_double" : 12.3450,
-¡¡¡¡   "key_number" : 12345,
-¡¡¡¡   "key_object" : {
-¡¡¡¡      "age" : 26,
-¡¡¡¡      "name" : "huchao"
-¡¡¡¡   },
-¡¡¡¡   "key_string" : "value_string"
-¡¡¡¡}
-Json::Reader ÊÇÓÃÓÚ¶ÁÈ¡µÄ£¬ËµµÄÈ·ÇĞµã£¬ÊÇÓÃÓÚ½«×Ö·û´®×ª»»Îª Json::Value ¶ÔÏóµÄ¡£
-¡¡¡¡  Json::Reader reader;
-¡¡¡¡  Json::Value json_object;
-¡¡¡¡  const char* json_document = "{/"age/" : 26,/"name/" : /"huchao/"}";
-¡¡¡¡  if (!reader.parse(json_document, json_object))
-¡¡¡¡    return 0;
-¡¡¡¡  std::cout << json_object["name"] << std::endl;
-¡¡¡¡  std::cout << json_object["age"] << std::endl;
-¡¡¡¡Êä³ö½á¹ûÎª£º
-¡¡¡¡"huchao"
-¡¡¡¡26
+ä¸»è¦åŒ…å«ä¸‰ç§ç±»å‹Valueã€Readerã€Writerã€‚æ‰€æœ‰å¯¹è±¡ã€ç±»åéƒ½åœ¨ namespace Json ä¸­ï¼ŒåŒ…å« json.h å³å¯ã€‚
+Json::Value æ˜¯jsoncpp ä¸­æœ€åŸºæœ¬ã€æœ€é‡è¦çš„ç±»ï¼Œç”¨äºè¡¨ç¤ºå„ç§ç±»å‹çš„å¯¹è±¡ï¼Œjsoncpp æ”¯æŒçš„å¯¹è±¡ç±»å‹å¯è§ Json::ValueType æšä¸¾å€¼ã€‚
+ã€€ã€€Json::Value root;  // è¡¨ç¤ºæ•´ä¸ª json å¯¹è±¡
+ã€€ã€€root["key_string"] = Json::Value("value_string");   // æ–°å»ºä¸€ä¸ª Keyï¼ˆåä¸ºï¼škey_stringï¼‰ï¼Œèµ‹äºˆå­—ç¬¦ä¸²å€¼ï¼š"value_string"ã€‚ åŒ root["key_string"]=â€œvalue_stringâ€ ä¸‹åŒ
+ã€€ã€€root["key_number"] = Json::Value(12345);            // æ–°å»ºä¸€ä¸ª Keyï¼ˆåä¸ºï¼škey_numberï¼‰ï¼Œèµ‹äºˆæ•°å€¼ï¼š12345ã€‚
+ã€€ã€€root["key_boolean"] = Json::Value(false);           // æ–°å»ºä¸€ä¸ª Keyï¼ˆåä¸ºï¼škey_booleanï¼‰ï¼Œèµ‹äºˆboolå€¼ï¼šfalseã€‚
+ã€€ã€€root["key_double"] = Json::Value(12.345);           // æ–°å»ºä¸€ä¸ª Keyï¼ˆåä¸ºï¼škey_doubleï¼‰ï¼Œèµ‹äºˆ double å€¼ï¼š12.345ã€‚
+ã€€ã€€root["key_object"] = Json_temp;                     // æ–°å»ºä¸€ä¸ª Keyï¼ˆåä¸ºï¼škey_objectï¼‰ï¼Œèµ‹äºˆ json::Value å¯¹è±¡å€¼ã€‚
+ã€€ã€€root["key_array"].append("array_string");           // æ–°å»ºä¸€ä¸ª Keyï¼ˆåä¸ºï¼škey_arrayï¼‰ï¼Œç±»å‹ä¸ºæ•°ç»„ï¼Œå¯¹ç¬¬ä¸€ä¸ªå…ƒç´ èµ‹å€¼ä¸ºå­—ç¬¦ä¸²ï¼š"array_string"ã€‚
+ã€€ã€€root["key_array"].append(1234);                     // ä¸ºæ•°ç»„ key_array èµ‹å€¼ï¼Œå¯¹ç¬¬äºŒä¸ªå…ƒç´ èµ‹å€¼ä¸ºï¼š1234ã€‚
+ã€€ã€€Json::ValueType type = root.type();                 // è·å¾— root çš„ç±»å‹ï¼Œæ­¤å¤„ä¸º objectValue ç±»å‹ã€‚
+    root["v3"].resize(0);                               è®¾ç½®ä¸€ä¸ªç©ºçš„æ•°ç»„ä¹Ÿå°±æ˜¯"v3":[]
+Jsoncpp çš„ Json::Writer ç±»æ˜¯ä¸€ä¸ªçº¯è™šç±»ï¼Œå¹¶ä¸èƒ½ç›´æ¥ä½¿ç”¨ã€‚åœ¨æ­¤æˆ‘ä»¬ä½¿ç”¨ Json::Writer çš„å­ç±»ï¼šJson::FastWriterã€Json::StyledWriterã€Json::StyledStreamWriterã€‚
+ã€€ã€€é¡¾åæ€ä¹‰ï¼Œç”¨ Json::FastWriter æ¥å¤„ç† json åº”è¯¥æ˜¯æœ€å¿«çš„ï¼Œä¸‹é¢æˆ‘ä»¬æ¥è¯•è¯•ã€‚
+ã€€ã€€Json::FastWriter fast_writer;
+ã€€ã€€std::cout << fast_writer.write(root) << std::endl;
+ã€€ã€€è¾“å‡ºç»“æœä¸ºï¼š
+ã€€ã€€{"key_array":["array_string",1234],"key_boolean":false,"key_double":12.3450,"key_number":12345,"key_object":{"age":26,"name":"huchao"},"key_string":"value_string"}
+ã€€ã€€å†æ¬¡é¡¾åæ€ä¹‰ï¼Œç”¨ Json::StyledWriter æ˜¯æ ¼å¼åŒ–åçš„ jsonï¼Œä¸‹é¢æˆ‘ä»¬æ¥çœ‹çœ‹ Json::StyledWriter æ˜¯æ€æ ·æ ¼å¼åŒ–çš„ã€‚
+ã€€ã€€Json::StyledWriter styled_writer;
+ã€€ã€€std::cout << styled_writer.write(root) << std::endl;
+ã€€ã€€è¾“å‡ºç»“æœä¸ºï¼š
+ã€€ã€€{
+ã€€ã€€   "key_array" : [ "array_string", 1234 ],
+ã€€ã€€   "key_boolean" : false,
+ã€€ã€€   "key_double" : 12.3450,
+ã€€ã€€   "key_number" : 12345,
+ã€€ã€€   "key_object" : {
+ã€€ã€€      "age" : 26,
+ã€€ã€€      "name" : "huchao"
+ã€€ã€€   },
+ã€€ã€€   "key_string" : "value_string"
+ã€€ã€€}
+Json::Reader æ˜¯ç”¨äºè¯»å–çš„ï¼Œè¯´çš„ç¡®åˆ‡ç‚¹ï¼Œæ˜¯ç”¨äºå°†å­—ç¬¦ä¸²è½¬æ¢ä¸º Json::Value å¯¹è±¡çš„ã€‚
+ã€€ã€€  Json::Reader reader;
+ã€€ã€€  Json::Value json_object;
+ã€€ã€€  const char* json_document = "{/"age/" : 26,/"name/" : /"huchao/"}";
+ã€€ã€€  if (!reader.parse(json_document, json_object))
+ã€€ã€€    return 0;
+ã€€ã€€  std::cout << json_object["name"] << std::endl;
+ã€€ã€€  std::cout << json_object["age"] << std::endl;
+ã€€ã€€è¾“å‡ºç»“æœä¸ºï¼š
+ã€€ã€€"huchao"
+ã€€ã€€26

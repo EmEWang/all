@@ -2,114 +2,114 @@
 
 
 
-MFC Ӧ�ó�����
-1�� MFC ��飺
-����MFC �� Microsoft Foundation Class ������΢����˾��д��һ��ר������ Windows ��̵� C++ ������⣬ VC++ ��̻����϶���Χ���� MFC ��������еġ�����װ�� Windows API �ľ���������ܣ�Ϊ�û����� Windows Ӧ�ó�������һ���ǳ�����Ӧ�ó����ܡ�
-����CObject �� MFC ���ĸ��ࡣ
-MFC ��������
-��1��CCmdTarget �ࣺ�� CObject ������࣬���� MFC �������о�����Ϣӳ�����Ե���Ĺ������ࡣ���������� CWinThread �࣬ CWnd �ࡢ CDocument �࣬�� CCndTarget �������������ڳ�������ʱ��̬�������󣬲�����������Ϣ��
-��2��  CWinThread �ࣺ�� CCmdTarget �����ࡣ CWinThread �������߳���Ļ��࣬��װ��Ӧ�ó�������Ķ��̹߳��ܡ�Ӧ�ó����� CWinApp �� CWinThread �����࣬��װ�˳�ʼ�������С���ֹӦ�ó���Ĵ��롣
-��3��  CWnd �ࣺ�����࣬�� CcmdTarget ������࣬�� CWnd �����������ӵ���Լ��Ĵ��ڣ����������п��ơ����ڿ���� CFrameWnd �� CView ���� CWnd �����࣬ǰ�ߴ�����ά�����ڵı߿򡢲˵�������������״̬����������ʾ�������û�������߸���Ϊ�ĵ��ṩһ���򼸸���ͼ����ͼ��������Ϊ�޸ġ���ѯ�ĵ��������ṩ�˻������Ľ��档
-��4��  �ĵ��� CDocument �ࣺ�� CCmdTarget ������࣬�����װ��ά���ĵ����ĵ�����Ӧ�ó���Ĺ����ɹ��򻷾��������ݵȣ������ǳ�����Ҫ������κ����ݡ�
- 
-����һ�� MFC Ӧ�ó��򲢲�ֱ�Ӳ��������࣬������������Ϊ���������µ��࣬���� Windows Ӧ�ó���Ļ�����ܡ�
-2������ Windows Ӧ�ó���Ļ�����
-�������㴴����һ����Ϊ Exam1_1 �� MFC Ӧ�ó���ʱ���ʹ����˱�Ҫ���ࡣ
-��1�� Ӧ�ó����ࣺ CExam1_1App ��
-���������Ǵ���Ӧ�ó������Ļ����� CWinApp ������ Windows Ӧ�ó��򣬲���ÿһ�����򶼿���һ������Ӧ�ó����ཫ������� MFC һЩӦ�ó����һЩ���г�ʼ������������ CWinApp �ĵĻ����� CwinThread �������ҲҪ�����������̵߳����С�
-����AppWizard ������һ���� CwinApp �̳е��ࡡ Cexam1_1App �������ʵ���ļ��а�����
-?  Ӧ�ó������Ϣӳ�䡣
-?  һ���յ�Ӧ�ó�����Ĺ��캯����
-?  һ�� Cexam1_1APP ���ȫ�ֶ��� theApp ��
-?  һ�� InitInstance �����ı�׼���塣
-����ȫ�ֶ��� theApp �� WinMain() ����ִ��֮ǰ�Ѿ���ʼ���� ���� MFC �汾�� WinMain() ������ theApp �ܿ����˹���Ȩ������ Windows �����һЩ���г�ʼ��������
-����CwinApp ���п����صĳ�Ա�����У�
-����InitInstance() ����������Ӧ�ó���ĳ�ʼ�������������ĵ�ģ�塢�ĵ�����ͼ�������ڣ��ú�����Ψһһ���������صĺ�����
-����Run() ��ʼ���������� WinMain() �������ô�����Ϣѭ����һ���ĵ� / ��ͼӦ�ó���������ʱ�䴦�� Run() ������ִ�й����С�
-����ExitInstance() ���������û��˳�����ʱ���ú��������á�
-����OnIdle() ��������û�д�����Ϣ��Ҫ����ʱ�ɴ��ڿ�ܵ��ã�ͨ������ִ�к�̨����
-��2�� ������ࣺ CMainFrame
-����CmainFrame �������ǳ��򶮵�����ܴ��ڣ�һ�� Windows Ӧ�ó�����˰�ɫ���ֵ���ͼ�⣬����������ڵ��������ֶ��� CMAinFrame ������
-�������ĵ����������ܴ������ڵ��� ProcessShellCommand() ����ʱ�����ģ�������ܴ��ڴ���֮ǰ�� CmainFrame::PreCreateWindow() ���������Զ����á�����������п��Ը�������ܴ��ڵķ�񣬻��߶Դ������һЩ���Խ����޸ģ���ʱ���ھ���������á�
-������ Windows ͨ�� Win32 ���� CreateWindowEx() ���յ���������ܴ��ڵ�����ʱ��������ϵͳ�ڲ�Ϊ���ڷ�����Դ��������һЩ���ù�������ʱ���ھ���Ϳ���ʹ���ˣ��� Windows �� CreateWindowEx() ��������֮ǰ����������� WM_CREATE ��Ϣ���ó������һЩ��Ҫ�ĳ�ʼ�������� CMainFrame::OnCreate() �������� WM_CREATE ��Ϣ�Ĵ�������������������ȵ����˻��� Cframewrd �Ĵ����������û�����ɳ�ʼ��������Ȼ��Ϊ����ܴ��ڴ�����������״̬����
-����CmainFrame ��������Ա���� m_wndToolBar �� m_wndStatusBar �ֱ��Ӧ�ų����������еĹ�������״̬���� CToolBar::LoadToolBar() ��������װ�ع�������Դ���� CToolBar::CreateEx() �������𹤾����Ĵ�����״̬����ʹ����Ҫһ������������״̬������������ ID ������������ indicators �� CstatusBar::Create() ��������״̬���Ĵ����� CstatusBar::SetIndicators() ������������״̬���ϵĴ���
-?  �ĵ� / ��ͼ�ṹ
-�����ĵ� / ��ͼ�ṹ�� MFC Ӧ�ó�������ĵĸ������Ӧ�ó�������ݺ�������������ݵķ������롣���仰���ĵ�����ͨ������һ���Ѿ��򿪵��ļ�������ͼ�����ʾ�ĵ��е����ݵĿ��ӻ���ʾ�����ṩ���ӻ��������������û��鿴���༭���ݡ�
-?  �ĵ� / ��ͼ�ṹ��
-����Ӧ�ó�������ݴ洢���ĵ������У���������ʾ����ͼ���ĵ�����ͼ�Ĺ�ϵ�� 1 �Զ�Ĺ�ϵ��һ�� MFC Ӧ�ó���ʼ���к�Ӧ�ó����𴫵���Ϣ�����ڿ�ܶ������ͼ�����ĵ�������������ݣ���ͼ�����ض��ķ�ʽ��ӳ��ǰ�ĵ����������ݣ���ͼ�Ϳ��ͬʱ�ṩ���ӻ��Ľ������û�ʵ�ֽ������û�ʹ�����ͼ��̲���Ӧ�ó���Ĳ˵������������ؼ�������������Ϣ��������Ϣ��Ӧ�ó��������Ϣ������������Ϣ������Ԥ�ȶ���ķ�ʽ��Ӧ�û��Ĳ�����
-��3��  �ĵ���
-����Ӧ�ó����е��ĵ����� CDocument ��������࣬ Cdocument ����Ҫ�ĳ�Ա�������������£�
-OnNewDocument() ��������ʼ��һ���µ��ĵ����󣬵�����һ�����ĵ�ʱ��ϵͳ�Զ����øú�����Ĭ�����ء�
-OnOpenDocument() ���������Ӵ��̴�һ���ļ�ʱ��ϵͳ�Զ����ã������ء�
-DeleteContents() ������ɾ���ĵ���������ݡ����ĵ����ر�ʱϵͳ�Զ����ã������ء�
-Serialize() �������ĵ����л����������ڴ�һ���ļ��ж�ȡ���ݵ��ĵ����󣬻��߽��ĵ���������ݱ��浽�ļ���Ĭ�����ء�
-UpdateAllView() �������������ĵ����������������ͼ���ú����Զ�����ÿ����ص���ͼ����� OnUpdate() ����ʵ�ָ��²�����
-SetModifiedFlag() ���������û�����ĵ��������Ƿ��ѱ��޸ĵı�־���ñ�־����ִ��Ӧ�ó���رղ���ʱ���Ƿ�ᵯ���Ի���ȷ�����û��Ƿ���Ҫ�����ļ���
-IsModified() ����������ĵ��������δ�������ݣ��򷵻�һ������ֵ�����򷵻�һ����ֵ��
-GetTitle() ���������ر�ʾ�ĵ�������ı���������ĵ�û�б��ⷵ�ؿմ���
-GetFirstViewPosition() ����������һ�� Cview ���͵�ָ�룬ָ���뵱ǰ�ĵ�������ص�һ����ͼ��λ�á�
-GetNextView() ����������һ�� Cview ���͵�ָ�룬ָ���뵱ǰ�ĵ�������ص�һ����ͼ�е���һ����ͼ��
-GetPathName() �������������ĵ���ص��ļ������ƺ�·����
-Serialize() ���������ļ��е�����װ�뵽�ĵ�������ĵ���������ݱ��浽�ļ��С�
-��4����ͼ�ࣺ
-������ͼ��������ʾ�洢���ĵ�������е����ݣ��������û��༭��Щ���ݡ�Ӧ�ó����У���ͼ���� CView ��������࣬ Cview �����Ҫ��Ա���£�
-GetDocument() ����������һ��ָ������ĵ������ָ�룬ͨ����ָ�룬��������ͼ��ĳ�Ա�����в����ĵ���������ݣ�ʵ�������
-OnDraw() ������֧�ִ�ӡ����ӡԤ������Ļ�����
-OnInitialUpdate() ��������һ����ͼ��һ�����ĵ����������ʱ����ϵͳ�Զ����á�
-OnUpdate() ���������ĵ���������ݸ��º���Ҫ������ͼʱ���á�Ĭ�϶�������ͼ���и��£��ɱ�д�������ظú����������²�����ͼ��
-����Ӧ�ó������ͼ�����ֱ�Ӵ� Cview ���м̳У�Ҳ���Դ���ͼ����������м̳С���Ҫ�У�
-?  CsrollView �ࣺ���й������ܵ���ͼ��Ļ��ࡣ
-?  CformView �ࣺ�䲼���ڶԻ���Դ�ж���Ĺ�����ͼ�ࡣ
-?  CeditView �ࣺ��ʾһ���༭�ؼ����ṩ�����ı��ı༭�������ı��༭�����ҡ��滻�͹������ܡ�
-?  CrichEditView �ࣺ��ʾһ��ֱͨ�ı��༭�ؼ�����ͼ�ࡣ
-?  ClistView �ࣺ��ʾһ���б��ؼ����ࡣ
-?  CtreeView �ࣺ��ʾһ�����ؼ����ࡣ
-?  CrecordView �ࣺ֧�ֶԻ������ݽ������ࡣ
-?  CctrlView �ࣺ֧��ֱ�ӻ��ڿؼ�����ͼ��
-��5��  �ĵ�ģ���ࣺ
-����AppWizard �������ɿ����ڹ�������չʾ��Ӧ�ó����࣬���ڿ���ࡢ�ĵ������ͼ�����⣬���������ĵ�ģ���� CDocTemplate ���ĵ�ģ���ඨ�����ĵ�ģ��Ļ������ܣ��ǳ�����࣬ͨ������Ҫ����Ա�����������У������ڹ�������û���г��ĵ�ģ���ࡣ
-?  ���� MFC SDI ���ļ��ṹ��
-�������ݴ�����Ŀʱ�ṩ�Ŀ�ѡ� AppWizard ���������ļ������в�ͬ����׼�� AppWizard �ļ�������
-?  �������ļ�����Ŀ�ļ���
-�� 1 �� .dsw �ļ����� MFC �Զ����ɵĹ������ļ��������˵�ǰ����������������Ŀ����Ϣ��
-�� 2 �� .dsp �ļ��� MFC ���ɵ���Ŀ�ļ�����й����ļ���������ǰ��Ŀ�����á���Ŀ�а������ļ�����Ϣ��
-�� 3 �� .clw �ļ�������Ϣ�ļ���
-3 ��Ӧ�ó���Դ�ļ���ͷ�ļ�
-��������Ӧ�ó�������� --- ���ĵ������ĵ�����ڶԻ��� AppWizard ���Զ�����һЩӦ�ó���Դ�ļ���ͷ�ļ�����Щ�ļ��ֱ���Ӧ�ó����ࡢ�ĵ��ࡢ�����������ͼ��������ļ���ʵ���ļ���
-�������ڵ��ĵ�Ӧ�ó������ɣ�
-?  Ӧ�ó����ͷ�ļ�����������ȫ�ֱ��������ڰ�������ͷ�ļ��� ��i nclude αָ�
-?  Ӧ�ó�����Դ�ļ����������� Cexam1_1App ���һ�����󣬲����� InitInstance() ��Ա������
-?  MainFrm.cpp �� MainFrm.h
-4 ����Դ�ļ���
-������Դ�ļ��������¸����ļ���
-?  һ�� MFC Ӧ�ó����Ĭ�ϲ˵����塢���ټ������ַ�������
-?  ����Ĭ�ϵ� About �Ի����һ��ͼ���ļ���
-?  ��׼�� MFC �����Դ��
-5 ��Ԥ����ͷ�ļ���
-����StdAfx.cpp,StdAfx.h ���ڽ���һ��Ԥ���˵�ͷ�ļ� Exam1_1.PCH ��һ��Ԥ����������ļ� StdAfx.obj ��
+MFC 应用程序框架
+1、 MFC 简介：
+���鸐FC （ Microsoft Foundation Class ）是由微软公司编写的一套专门用于 Windows 编程的 C++ 基础类库， VC++ 编程基本上都是围绕着 MFC 类库来进行的。它封装了 Windows API 的绝大多数功能，为用户开发 Windows 应用程序建立了一个非常灵活的应用程序框架。
+���鸆Object 是 MFC 类库的根类。
+MFC 类库包括：
+（1）CCmdTarget 类：是 CObject 类的子类，它是 MFC 库中所有具有消息映射属性的类的公共基类。它的子类有 CWinThread 类， CWnd 类、 CDocument 类，从 CCndTarget 类派生的类能在程序运行时动态创建对象，并处理命令消息。
+（2）  CWinThread 类：是 CCmdTarget 的子类。 CWinThread 是所有线程类的基类，封装了应用程序操作的多线程功能。应用程序类 CWinApp 是 CWinThread 的子类，封装了初始化、运行、终止应用程序的代码。
+（3）  CWnd 类：窗口类，是 CcmdTarget 类的子类，从 CWnd 派生的类可以拥有自己的窗口，并对它进行控制。窗口框架类 CFrameWnd 和 CView 类是 CWnd 的子类，前者创建和维护窗口的边框、菜单栏、工具栏、状态栏，负责显示和搜索用户命令，后者负责为文档提供一个或几个视图。视图的作用是为修改、查询文档等任务提供人机交互的界面。
+（4）  文档类 CDocument 类：是 CCmdTarget 类的子类，负责封装和维护文档。文档包括应用程序的工作成果或环境设置数据等，可以是程序需要保存的任何内容。
+
+����一个 MFC 应用程序并不直接操作上述类，而是以上述类为基类派生新的类，构建 Windows 应用程序的基本框架。
+2、构建 Windows 应用程序的基本类
+����当你创建了一个名为 Exam1_1 的 MFC 应用程序时，就创建了必要的类。
+（1） 应用程序类： CExam1_1App 类
+����该类是代表应用程序，它的基类是 CWinApp 代表了 Windows 应用程序，并把每一个程序都看做一个对象。应用程序类将负责完成 MFC 一些应用程序的一些例行初始化工作。另外 CWinApp 的的基类是 CwinThread ，因此它也要管理工序主线程的运行。
+���鸄ppWizard 声明了一个由 CwinApp 继承的类　 Cexam1_1App ，在类的实现文件中包含：
+?  应用程序的消息映射。
+?  一个空的应用程序类的构造函数。
+?  一个 Cexam1_1APP 类的全局对象 theApp 。
+?  一个 InitInstance 函数的标准定义。
+����全局对象 theApp 在 WinMain() 函数执行之前已经初始化， 进入 MFC 版本的 WinMain() 函数后， theApp 很快获得了管理权，进行 Windows 程序的一些例行初始化工作。
+���鸆winApp 类中可重载的成员函数有：
+���鸌nitInstance() 函数：负责应用程序的初始化工作，创建文档模板、文档、视图和主窗口，该函数是唯一一个必须重载的函数。
+���鸕un() 初始化结束后，由 WinMain() 函数调用处理消息循环，一个文档 / 视图应用程序绝大多数时间处于 Run() 函数的执行过程中。
+���鸈xitInstance() 函数：当用户退出程序时，该函数被调用。
+���鸒nIdle() 函数：当没有窗口消息需要处理时由窗口框架调用，通常用于执行后台任务。
+（2） 主框架类： CMainFrame
+���鸆mainFrame 代表的是程序懂得主框架窗口，一个 Windows 应用程序除了白色部分的视图外，程序的主窗口的其他部分都归 CMAinFrame 管理。
+����单文档程序的主框架窗口是在调用 ProcessShellCommand() 函数时创建的，在主框架窗口创建之前， CmainFrame::PreCreateWindow() 函数将被自动调用。在这个函数中可以更改主框架窗口的风格，或者对窗口类的一些属性进行修改，此时窗口句柄还不可用。
+����当 Windows 通过 Win32 函数 CreateWindowEx() 接收到创建主框架窗口的请求时，它会在系统内部为窗口分配资源，并进行一些设置工作，此时窗口句柄就可以使用了，当 Windows 从 CreateWindowEx() 函数返回之前，它向程序发送 WM_CREATE 消息，让程序完成一些必要的初始化工作， CMainFrame::OnCreate() 函数就是 WM_CREATE 消息的处理函数，这个函数首先调用了基类 Cframewrd 的处理函数，让基类完成初始化工作，然后为主框架窗口创建工具栏和状态栏。
+���鸆mainFrame 的两个成员变量 m_wndToolBar 和 m_wndStatusBar 分别对应着程序主窗口中的工具栏和状态栏。 CToolBar::LoadToolBar() 函数负责装载工具栏资源，而 CToolBar::CreateEx() 函数负责工具栏的创建。状态栏的使用需要一个数组来定义状态栏类各个窗格的 ID ，这个数组就是 indicators 。 CstatusBar::Create() 函数负责状态栏的创建， CstatusBar::SetIndicators() 函数负责设置状态栏上的窗格。
+?  文档 / 视图结构
+����文档 / 视图结构是 MFC 应用程序最核心的概念，它将应用程序的数据和浏览、操作数据的方法分离。换句话，文档对象通常代表一个已经打开的文件，而视图对象表示文档中的数据的可视化表示，并提供可视化交互界面允许用户查看、编辑数据。
+?  文档 / 视图结构：
+����应用程序的数据存储在文档对象中，并可以显示在视图。文档与视图的关系是 1 对多的关系。一个 MFC 应用程序开始运行后，应用程序负责传递消息到窗口框架对象和视图对象。文档对象负责管理数据，视图对象按特定的方式反映当前文档对象中数据，视图和框架同时提供可视化的界面与用户实现交互，用户使用鼠标和键盘操作应用程序的菜单、工具栏及控件，发出命令消息，输入消息，应用程序接收消息，接收输入消息，并以预先定义的方式响应用户的操作。
+（3）  文档类
+����应用程序中的文档类是 CDocument 类的派生类， Cdocument 类主要的成员函数及功能如下：
+OnNewDocument() 函数：初始化一个新的文档对象，当创建一个新文档时，系统自动调用该函数，默认重载。
+OnOpenDocument() 函数：当从磁盘打开一个文件时被系统自动调用，可重载。
+DeleteContents() 函数：删除文档对象的内容。当文档被关闭时系统自动调用，可重载。
+Serialize() 函数：文档序列化函数，用于从一个文件中读取内容到文档对象，或者将文档对象的内容保存到文件。默认重载。
+UpdateAllView() 函数：更新与文档对象关联的所有视图，该函数自动调用每个相关的视图对象的 OnUpdate() 函数实现更新操作。
+SetModifiedFlag() 函数：设置或清除文档的数据是否已被修改的标志，该标志决定执行应用程序关闭操作时，是否会弹出对话框确认让用户是否需要保存文件。
+IsModified() 函数：如果文档对象包含未保存数据，则返回一个非零值，否则返回一个零值。
+GetTitle() 函数：返回表示文档标题的文本串，如果文档没有标题返回空串。
+GetFirstViewPosition() 函数：返回一个 Cview 类型的指针，指向与当前文档对象相关的一组视图的位置。
+GetNextView() 函数：返回一个 Cview 类型的指针，指向与当前文档对象相关的一组视图中的下一个视图。
+GetPathName() 函数：返回与文档相关的文件的名称和路径。
+Serialize() 函数：将文件中的数据装入到文档对象或将文档对象的数据保存到文件中。
+（4）视图类：
+����视图类用于显示存储在文档类对象中的数据，并允许用户编辑这些数据。应用程序中，视图类是 CView 类的派生类， Cview 类的主要成员如下：
+GetDocument() 函数：返回一个指向相关文档对象的指针，通过该指针，可以在视图类的成员函数中操作文档对象的数据，实现输出。
+OnDraw() 函数：支持打印，打印预览和屏幕输出。
+OnInitialUpdate() 函数：当一个视图第一次与文档对象相关联时，由系统自动调用。
+OnUpdate() 函数：当文档对象的数据更新后，需要更新视图时调用。默认对整个视图进行更新，可编写代码重载该函数，仅更新部分视图。
+����应用程序的视图类可以直接从 Cview 类中继承，也可以从视图类的派生类中继承。主要有：
+?  CsrollView 类：具有滚动功能的视图类的基类。
+?  CformView 类：其布局在对话资源中定义的滚动视图类。
+?  CeditView 类：显示一个编辑控件，提供多行文本的编辑，具有文本编辑、查找、替换和滚动功能。
+?  CrichEditView 类：显示一个直通文本编辑控件的视图类。
+?  ClistView 类：显示一个列表控件的类。
+?  CtreeView 类：显示一个树控件的类。
+?  CrecordView 类：支持对话框数据交换的类。
+?  CctrlView 类：支持直接基于控件的视图。
+（5）  文档模板类：
+���鸄ppWizard 除了生成可以在工作区中展示的应用程序类，窗口框架类、文档类和视图类以外，还生成了文档模板类 CDocTemplate ，文档模板类定义了文档模板的基本功能，是抽象基类，通常不需要程序员干涉它的运行，所以在工作区中没有列出文档模板类。
+?  剖析 MFC SDI 的文件结构：
+����根据创建项目时提供的可选项， AppWizard 所创建的文件会略有不同，标准的 AppWizard 文件包括：
+?  工作区文件、项目文件：
+（ 1 ） .dsw 文件：由 MFC 自动生成的工作区文件，保存了当前工作区所包含的项目的信息。
+（ 2 ） .dsp 文件： MFC 生成的项目文件，或叫工程文件，包含当前项目的设置、项目中包含的文件等信息。
+（ 3 ） .clw 文件：类信息文件。
+3 、应用程序源文件和头文件
+����根据应用程序的类型 --- 单文档、多文档或基于对话框， AppWizard 将自动创建一些应用程序源文件和头文件，这些文件分别是应用程序类、文档类、主窗口类和视图类的声明文件和实现文件。
+����对于单文档应用程序将生成：
+?  应用程序的头文件：含有所有全局变量和用于包含其他头文件的 ＃i nclude 伪指令。
+?  应用程序主源文件：它将创建 Cexam1_1App 类的一个对象，并重载 InitInstance() 成员函数。
+?  MainFrm.cpp ， MainFrm.h
+4 、资源文件：
+����资源文件包含以下各类文件：
+?  一般 MFC 应用程序的默认菜单定义、加速键表和字符串表。
+?  程序默认的 About 对话框和一个图标文件。
+?  标准的 MFC 类的资源。
+5 、预编译头文件：
+���鸖tdAfx.cpp,StdAfx.h 用于建立一个预便宜的头文件 Exam1_1.PCH 和一个预定义的类型文件 StdAfx.obj 。
 
 
 
 
 
 Cmap
-1������
+1、定义
 template <class KEY,class ARG_KEY,class VALUE, class ARG_VALUE> class CMap:public CObject
-class KEY��������
-class ARG_KEY������С
-class VALUE��ֵ����
-class ARG_VALUE��ֵ��С
-2����ʼ��( �Զ˿ںŶ�Ӧ�׽���Ϊ��)
+class KEY：键类型
+class ARG_KEY：键大小
+class VALUE：值类型
+class ARG_VALUE：值大小
+2、初始化( 以端口号对应套接字为例)
 typedef CMap<int, int, SocketS*, SocketS*> CMapsocks;
 CMapsocks clientsocks;
-3�����Ӽ�ֵ��
+3、增加键值对
 clientsocks.SetAt(client_port_uint, psocks);
-4��ɾ����ֵ��
+4、删除键值对
 clientsocks.RemoveKey(client_port_uint);
-5������Ԫ��
-SocketS* tempsock;//��ʱ�׽���,������������
+5、查找元素
+SocketS* tempsock;//临时套接字,用来发送数据
 clientsocks.Lookup(current_port, tempsock);
-6������
+6、遍历
 POSITION postion = clientsocks.GetStartPosition();
 while (postion)
 {
@@ -121,67 +121,65 @@ sock->Close();
 
 
 
-ʹ��MFC�������
-    ʹ�� Afxtempl.h ͷ�ļ�
-    VS������ ��Ŀ->��������->C/C++->��������->���п�->ʹ��/MT����/MTd
-    �������� cl /GX /MD test.cpp
+使用MFC定义的类
+    使用 Afxtempl.h 头文件
+    VS中设置 项目->配置属性->C/C++->代码生成->运行库->使用/MT或者/MTd
+    用命令行 cl /GX /MD test.cpp
 
 CList
-    template< class TYPE, class ARG_TYPE >class CList : public CObject  TYPE��Ҫ�洢�Ķ������� ARG_TYPE�����б����������ö��������
-    CList<CString, CString&> list; //��������1
-    CList<CString, CString>  list2;//��������2
-    ����ĵ�һ������CString��ʵ���������ͣ��ڶ�����������ĳ�Ա�����Ĳ����ĵ�����ʽ��ͨ�����������ã���ȻҲ�����Ƕ��󣬶��������á�
-    1 GetHeadPosition()  POSITION GetHeadPosition() const;  �����б���ͷԪ�ص�λ�á�����б�Ϊ�շ���NULL������ֵPOSITION�����ڵ������߶���ָ��ļ�����
+    template< class TYPE, class ARG_TYPE >class CList : public CObject  TYPE：要存储的对象类型 ARG_TYPE：在列表中用于引用对象的类型
+    CList<CString, CString&> list; //链表对象1
+    CList<CString, CString>  list2;//链表对象2
+    这里的第一个参数CString是实例化的类型，第二个参数是类的成员函数的参数的调用形式，通常是类型引用，当然也可以是对象，而不是引用。
+    1 GetHeadPosition()  POSITION GetHeadPosition() const;  返回列表中头元素的位置。如果列表为空返回NULL；返回值POSITION可用于迭代或者对象指针的检索。
         CList<CString, CString&> mylist;
         mylist.AddHead(CString("ABC"));
         POSTION pos=mylist.GetHeadPosition();
         ASSERT(CString("ABC"))
-    2 GetTailPosition()  POSITION GetTailPosition() const;  ���β��Ԫ�ص�λ�ã�����б�Ϊ�գ�����NULL��
-    3 GetNext()  TYPE& GetNext(POSITION& rPosition); TYPE GetNext(POSITION& rPosition) const;������б�Ϊ����������ֵΪͷԪ�صĿ�������������Ϊ����������ͷԪ�ص�����
-    TYPE �б��ж������� rPosition ��ǰ��GetNext��GetHeadPosition�������ص�һ��λ��ֵ���ã���������Ա�������÷��ص����á�
-    �������̿��ô�ѭ��
-    ����Position pos = m_list.GetHeadPosition();
-     �� do
+    2 GetTailPosition()  POSITION GetTailPosition() const;  获得尾部元素的位置，如果列表为空，返回NULL。
+    3 GetNext()  TYPE& GetNext(POSITION& rPosition); TYPE GetNext(POSITION& rPosition) const;　如果列表为常量，返回值为头元素的拷贝。如果类表不为常量，返回头元素的引用
+    TYPE 列表中对象类型 rPosition 先前的GetNext，GetHeadPosition函数返回的一个位置值引用，或其他成员函数调用返回的引用。
+    迭代过程可用此循环
+    　　Position pos = m_list.GetHeadPosition();
+     　 do
         {
-      ���� lpConnect = m_list.GetNext(Position);
-       ����lpConnect->lpInterface->Draw(hDC);
+      　　 lpConnect = m_list.GetNext(Position);
+       　　lpConnect->lpInterface->Draw(hDC);
         } while (Position);
-    
-    4 GetPrev() ͬGetNext���������б���ǰһ��λ������
+
+    4 GetPrev() 同GetNext，但返回列表中前一个位置引用
 
 
 CMap
     template<class KEY, class ARG_KEY, class VALUE, class ARG_VALUE >class CMap : public CObject
-    Key������Key�����ͣ��������͡������͵ȣ�
-    ARG_KEY��Key��ֵ
-    VALUE: ����VALUE������
-    ARG_VALUE������VALUE��ֵ
-��Ա����
-    Lookup	ͨ�������Ĺؼ��ֲ�����Ӧ��Ԫ��ֵ��
-    SetAt	��Map�в���һ��Ԫ�ص�Ԫ��������ƥ����֣������֮��
-    operator []	��Map�в���һ��Ԫ�� -SetAt���Ӳ���
-    RemoveKey	�Ƴ��ɹؼ��ֱ�ʾ��Ԫ�ص�Ԫ
-    RemoveAll	�Ƴ�Map�е�����Ԫ�ص�Ԫ
-    GetStartPosition	���ص�һ��Ԫ�ص�Ԫ��λ��
-    GetNextAssoc	��ȡ��һ��Ԫ�ص�Ԫ
-    GetHashTableSize	���ع�ϣ���Ĵ�С��Ԫ�ص�Ԫ����Ŀ��
-    InitHashTable	��ʼ����ϣ������ָ�����Ĵ�С
-    GetCount	����Map��Ԫ�ص���Ŀ
-    IsEmpty	���Map�Ƿ�Ϊ�գ���Ԫ�ص�Ԫ��
+    Key：用作Key的类型（比如整型、浮点型等）
+    ARG_KEY：Key的值
+    VALUE: 用作VALUE的类型
+    ARG_VALUE：用作VALUE的值
+成员函数
+    Lookup	通过给定的关键字查找相应的元素值。
+    SetAt	向Map中插入一个元素单元；若存在匹配键字，则替代之。
+    operator []	向Map中插入一个元素 -SetAt的子操作
+    RemoveKey	移除由关键字标示的元素单元
+    RemoveAll	移除Map中的所有元素单元
+    GetStartPosition	返回第一个元素单元的位置
+    GetNextAssoc	读取下一个元素单元
+    GetHashTableSize	返回哈希表的大小（元素单元的数目）
+    InitHashTable	初始化哈希表，并指定它的大小
+    GetCount	返回Map中元素的数目
+    IsEmpty	检查Map是否为空（无元素单元）
 
            string                  string str="abc";
-      1�J�L2    4�I�K3             CString cstr="abc";     CString cstr(str.c_str()) or CString cstr(str.data()); 
-CString    6��  ��5    char*         char* p=NULL:
-1. string��CString  cstr.format("%s", str.c_str()); cstr=str.c_str()��cstr=str.data()  c_str()��data()����:ǰ�߷��ش�'/0'���ַ���,�����򷵻ز���'/0'���ַ���
-2. CString��string  str=cstr.GetBuffer(0) �� str=LPCSTR(cstr);
-3. string��char *   char *p = string.c_str();
-4. char *��string   string str(char*) ;
-5. CString��char*   strcpy(pstr, cstr.GetBuffer(0));  pstr=cstr.GetBuffer(0); cstr.releasebuffer(-1);
-6. char*��CString   cstr.format("%s", pstr); cstr=pstr;
-   CString��int     i=atoi(cstr)
-   int��CString     str.format("%s", i)
-CString��format��string��c_str()�Ƿǳ����õģ���Ҫע����ǣ���char *ת��ʱ��Ҫ��char����Ϊconst char *���������ȫ�ġ�
-���Ϻ���UNICODE����Ҳû���⣺��Ҫ��_T()�꣬��_T("%s");
-CString������CStringW / CStringA������stringת��ʱ�������CStringW�����漰�������ת�����⡣
-
-
+      1↗↙2    4↖↘3             CString cstr="abc";     CString cstr(str.c_str()) or CString cstr(str.data());
+CString    6←  →5    char*         char* p=NULL:
+1. string→CString  cstr.format("%s", str.c_str()); cstr=str.c_str()或cstr=str.data()  c_str()和data()区别:前者返回带'/0'的字符串,后者则返回不带'/0'的字符串
+2. CString→string  str=cstr.GetBuffer(0) 或 str=LPCSTR(cstr);
+3. string→char *   char *p = string.c_str();
+4. char *→string   string str(char*) ;
+5. CString→char*   strcpy(pstr, cstr.GetBuffer(0));  pstr=cstr.GetBuffer(0); cstr.releasebuffer(-1);
+6. char*→CString   cstr.format("%s", pstr); cstr=pstr;
+   CString→int     i=atoi(cstr)
+   int→CString     str.format("%s", i)
+CString的format和string的c_str()是非常常用的；需要注意的是：和char *转换时，要把char定义为const char *，这样是最安全的。
+以上函数UNICODE编码也没问题：需要加_T()宏，即_T("%s");
+CString可能是CStringW / CStringA，在与string转换时，如果是CStringW，会涉及到编码的转换问题。

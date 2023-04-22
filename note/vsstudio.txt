@@ -1,227 +1,225 @@
 
 
-windows����dll  1�������� 2����Ŀ¼ 3��ǰĿ¼
+windows查找dll  1环境变量 2工作目录 3当前目录
 $(ProjectDir)
 
-�鿴��̬��(.lib)�Ͷ�̬��(.dll)�ĵ�����������Ϣ
-��window�²鿴��̬��ĵ�������������vs�Դ���Dependenc���ߣ�
-�鿴��̬�����ϢҪ����������ʵ�֣�dumpbin   /LINKERMEMBER   Test.lib   >   1.txt
-�鿴��̬�����ϢҪ����������ʵ�֣�dumpbin -exports Test.dll  >  1.txt
-����Ĺ����ǽ���/��̬�����Ϣ����������1.txt�ļ��У������Ϳ�����1.txt�ļ��в鿴��ص���Ϣ��
-�ڱ��뾲̬���ʱ�����Ҫʹ��C���Է�ʽ���룬Ҫ������������
-extern "C" BOOL Delete(VOID);//����C���Է�ʽ����
-�������������д��ͷ�ļ��У����ڳ�����Ҫ�������¸�ͷ�ļ�
-��ʹ��dumpbin����������Կ���������������
+查看静态库(.lib)和动态库(.dll)的导出函数的信息
+在window下查看动态库的导出函数可以用vs自带的Dependenc工具；
+查看静态库的信息要用命令行来实现：dumpbin   /LINKERMEMBER   Test.lib   >   1.txt
+查看动态库的信息要用命令行来实现：dumpbin -exports Test.dll  >  1.txt
+上面的功能是将静/动态库的信息导出保存在1.txt文件中，这样就可以在1.txt文件中查看相关的信息了
+在编译静态库的时候如果要使用C语言方式编译，要声明函数如下
+extern "C" BOOL Delete(VOID);//按照C语言方式编译
+如果上述声明是写在头文件中，则在程序中要包含以下该头文件
+在使用dumpbin上述命令可以看到导出函数如下
 1 _Delete
-���û��C���Ա����������򿴵�������������
+如果没有C语言编译声明，则看到导出函数如下
 1 ?Delete@@YAHXZ
 
-�����кŶԲ��� ������һ��AlertRun\AlertMonitor.cpp �Ż�ȥ���� ȥ����β���Ҳ�Բ��� �޸���β������Ϊͳһ ����
-  1 �������Ż�    ��Ŀ->����->��������->C/C++->�Ż� �Ż��ѽ���(/Od) ����������չ Ĭ��ֵ ����ѡ��Ϊ ���
-  2 �ļ���β��һ��
-  ����취��ȥ��ȥ��β�ļ�飬�����޸���β������Ϊͳһ��
-    ȥ����β�������ã��ڹ���->ѡ��->����->�ĵ�����һ��"����ʱ���һ�µ���β"��ȥ���Ͳ������ˡ�
-    ��Ȼ������������������Ϊ��������⣬��������UTF-8�ļ�⣬�ڹ���->ѡ��->�ı��༭��->�Զ���ⲻ��ǩ����UTF-8���룬��ѡ��
-  �޸���β������Ϊͳһ
-    �ļ�->����Ϊ->���水ťС��ͷ->���뱣��->��β->Windows(CR LF) ����GB2312 UTF8������ǩ�������� �ɲ��õ�
-    �� ���ļ�������ȫ�����Ƶ����±������ı����빤��(��editplus)�У�Ȼ���ٸ��Ƶ�vs��
+调试行号对不上 碰到过一次AlertRun\AlertMonitor.cpp 优化去除了 去掉行尾检查也对不上 修改行尾的内容为统一 才行
+  1 启用了优化    项目->属性->配置属性->C/C++->优化 优化已禁用(/Od) 内联函数扩展 默认值 其他选项为 否或不
+  2 文件行尾不一致
+  解决办法：去掉去行尾的检查，或者修改行尾的内容为统一。
+    去掉行尾检查的配置：在工具->选项->环境->文档中有一个"加载时检查一致的行尾"钩去掉就不会检查了。
+    当然如果出现乱码可能是因为编码的问题，可以启用UTF-8的检测，在工具->选项->文本编辑器->自动检测不带签名的UTF-8编码，勾选。
+  修改行尾的内容为统一
+    文件->另存为->保存按钮小箭头->编码保存->行尾->Windows(CR LF) 编码GB2312 UTF8带不带签名都可以 可不用调
+    或 把文件的内容全部复制到记事本或者文本编码工具(如editplus)中，然后再复制到vs里
 
-LNK2001	�޷��������ⲿ���� __imp__RpcStringFreeA@4	testTool	D:\CodeTest\Test\testTool\mxcomlib.lib(MxUtil.obj)	1	
-LNK2001	�޷��������ⲿ���� __imp__UuidCreate@4	testTool	D:\CodeTest\Test\testTool\mxcomlib.lib(MxUtil.obj)	1	
-LNK2001	�޷��������ⲿ���� __imp__UuidToStringA@8	testTool	D:\CodeTest\Test\testTool\mxcomlib.lib(MxUtil.obj)	1	
-��Ŀ->����->��������->������->����->���������� ��ʼ����Rpcrt4.lib;
+LNK2001	无法解析的外部符号 __imp__RpcStringFreeA@4	testTool	D:\CodeTest\Test\testTool\mxcomlib.lib(MxUtil.obj)	1
+LNK2001	无法解析的外部符号 __imp__UuidCreate@4	testTool	D:\CodeTest\Test\testTool\mxcomlib.lib(MxUtil.obj)	1
+LNK2001	无法解析的外部符号 __imp__UuidToStringA@8	testTool	D:\CodeTest\Test\testTool\mxcomlib.lib(MxUtil.obj)	1
+项目->属性->配置属性->连接器->输入->附加依赖项 开始添加Rpcrt4.lib;
 
-error LNK2001: �޷��������ⲿ���� _Delete
-����������
-д��lib����exe���õ�ʱ���������Ĵ��󣬺���ԭ��ΪBOOL Delete(VOID);
-��lib���ͷ�ļ���������������:
-extern "C" BOOL Delete(VOID);//����C���Է�ʽ����
+error LNK2001: 无法解析的外部符号 _Delete
+问题描述：
+写的lib中在exe调用的时候出现上面的错误，函数原型为BOOL Delete(VOID);
+在lib库的头文件中做了如下声明:
+extern "C" BOOL Delete(VOID);//按照C语言方式编译
 
-C4996 'itoa': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _itoa. See online help for details.	stlTest	D:\CodeTest\Test\stlTest\func.cpp	193	
-  0.��Ŀ->����->��������->C/C++ ->����->SDL��� ѡ���
-  1.�ĳɴ�����ʾ����������ʹ�õĺ���
-  2.����ͷ�����Ӻ궨�壺 #define _CRT_SECURE_NO_DEPRECATE
-  3.����Ԥ�������壺 ��Ŀ->����->��������->C/C++ -> Ԥ������ -> Ԥ���������壬���� _CRT_SECURE_NO_DEPRECATE _CRT_NONSTDC_NO_DEPRECATE _CRT_SECURE_NO_WARNINGS
+C4996 'itoa': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _itoa. See online help for details.	stlTest	D:\CodeTest\Test\stlTest\func.cpp	193
+  0.项目->属性->配置属性->C/C++ ->常规->SDL检查 选择否
+  1.改成错误提示后面所建议使用的函数
+  2.在最头部添加宏定义： #define _CRT_SECURE_NO_DEPRECATE
+  3.更改预处理定义： 项目->属性->配置属性->C/C++ -> 预处理器 -> 预处理器定义，增加 _CRT_SECURE_NO_DEPRECATE _CRT_NONSTDC_NO_DEPRECATE _CRT_SECURE_NO_WARNINGS
 
-C2664 VS2019��Ŀ����"const char *" ���͵�ʵ���� ��char *�� ���͵��ββ����ݴ���Ľ������
-  ��Ŀ->project ����->��������->�߼�->�ַ��� ˫���ַ������棬�ĳ�ʹ�ö��ֽ��ַ���
+C2664 VS2019项目出现"const char *" 类型的实参与 “char *” 类型的形参不兼容错误的解决方法
+  项目->project 属性->配置属性->高级->字符集 双击字符集后面，改成使用多字节字符集
 
-E0167	"const char *" ���͵�ʵ���� "char *" ���͵��ββ�����
-  ��Visual Studio 2019ʱ���������const char* ���͵�ʵ����char* ���͵��ββ����ݡ��Դ������ֽ���취��
-  1 ���������� char* ʱ�ĳ� const char *���ɣ� ���� ����ǿ������ת�� (char*) ���� (const char*)
-  2 ��Ŀ��>���ԡ�>C/C++��>���ԣ��� ����ģʽ ��Ϊ �� ���ɡ�
+E0167	"const char *" 类型的实参与 "char *" 类型的形参不兼容
+  用Visual Studio 2019时经常会出现const char* 类型的实参与char* 类型的形参不兼容。对此有两种解决办法。
+  1 在声明变量 char* 时改成 const char *即可， 或者 是用强制类型转化 (char*) 或者 (const char*)
+  2 项目—>属性—>C/C++—>语言，将 符合模式 改为 否 即可。
 
-��ǰ�������жϵ� ��û��Ϊ���ĵ������κη���
-  ��Ŀ->project ����->��������->������->����->���ɵ�����Ϣ
+当前不会命中断点 还没有为该文档加载任何符号
+  项目->project 属性->配置属性->连接器->调试->生成调试信息
 
-�����ļ�·��׷��:���� ѡ�� ��Ŀ�ͽ������ ���� �ڽ��������Դ��������׷�ٻ��
-vs2019���۱�̱���ɫ
-���� -> ѡ�� -> -> �������ɫ����ʾ��Ϊ�����ı������������ɫ��ɫ��=85�����Ͷ�=123������=205������ rgbΪ199��238��206���������ó�consolas,���ǵȿ�����
-����֮�󣬷���������ɫ����Э����ԭ������ɫ����Ϊ��ɫ��Ҫ�Ƚ���ɫ��������Ϊǳɫ(���� -> ѡ�� -> ���� -> ���棬)��ȷ��֮�����ظ�����������
+代码文件路径追踪:工具 选项 项目和解决方案 常规 在解决方案资源管理器中追踪活动项
+vs2019护眼编程背景色
+工具 -> 选项 -> -> 字体和颜色，显示项为“纯文本”，设置项背景色：色调=85，饱和度=123，亮度=205，或者 rgb为199，238，206。字体设置成consolas,这是等宽字体
+设置之后，发现字体颜色不够协调，原因是颜色主题为深色，要先将颜色主题设置为浅色(工具 -> 选项 -> 环境 -> 常规，)，确定之后，再重复上述操作，
 
-alt+��� ��ģʽѡȡ��
-alt+shift ��ģʽ
+alt+鼠标 列模式选取快
+alt+shift 列模式
 
-VS2019�Զ��������� ������ȫ��ѡ��->Ȼ��ͬʱ����Ctrl+K+F ->��ʱ���������Ŀո񲻼��ˣ�����Ҳȫ���Զ�����
-ɾ�������У�����ctrl+H������(?<=\r\n)\r\n���������ʽ��ȫ���滻
+VS2019自动整理代码 将他们全部选中->然后同时按下Ctrl+K+F ->这时代码里多余的空格不见了，括号也全部自动对齐
+删除空余行，按下ctrl+H，输入(?<=\r\n)\r\n，正则表达式，全部替换
 
-VS2019��Ʒ��Կ
+VS2019产品密钥
 Visual Studio 2019 Professional
 NYWVH-HT4XC-R2WYW-9Y3CM-X4V3Y
 
 Visual Studio 2019 Enterprise
 BF8Y8-GN2QH-T84XB-QVY3B-RC4DF
 
-Visual Studio �����ͬʱע�Ͷ��к�ȡ��ע�Ͷ���
-ע�Ͷ��У��Ȱ� Ctrl - K ��ϼ����ٰ� Ctrl - C ��ϼ�		 ����CTRL+K+C��ע��
-ȡ��ע�Ͷ��У��Ȱ� Ctrl - K ��ϼ����ٰ� Ctrl - U ��ϼ�	 ����CTRL+K+U��ȡ��ע��
+Visual Studio 中如何同时注释多行和取消注释多行
+注释多行：先按 Ctrl - K 组合键，再按 Ctrl - C 组合键		 或者CTRL+K+C来注释
+取消注释多行：先按 Ctrl - K 组合键，再按 Ctrl - U 组合键	 或者CTRL+K+U来取消注释
 
-cpp�ļ���h�ļ�����
-�Ȱ� Ctrl - K ��ϼ����ٰ� Ctrl - O ��ϼ�
+cpp文件和h文件跳动
+先按 Ctrl - K 组合键，再按 Ctrl - O 组合键
 
-VS�д��������ƶ�
-��������������ֻ��ѡ�д��밴Tab�����ɡ�
-������Ҳ�ܼ򵥣�ѡ��֮���� shift+Tab�� ���ɡ�
+VS中代码整体移动
+代码整体往右移只需选中代码按Tab键即可。
+往左移也很简单：选中之后按下 shift+Tab键 即可。
 
-��λ�� Ctrl + G
+定位行 Ctrl + G
 
-�ϵ��� ��ɫ��ͷ�η��� ��ʾ��ǩ  Ctrl + K Ctrl + K
+断点栏 黑色箭头形符号 表示标签  Ctrl + K Ctrl + K
 
 C26812
-���� C26812����ѡ "enum class" over "enum" (Enum)
-ö������ �������� δ���ַ�Χ�� ����ʹ�� "enum class" (Enum)
+警告 C26812：首选 "enum class" over "enum" (Enum)
+枚举类型 类型名称 未区分范围。 优先使用 "enum class" (Enum)
 
 C4996
-���� unsafe �������ַ���ѡ��һ��
-    �����м���
+错误 unsafe 以下两种方法选择一种
+    代码中加入
         1. #define _CRT_SECURE_NO_WARNINGS
         2. #pragma warning (disable: 4996)
-    �����м���
-        1.(�����Ŀ)-->�Ҽ� --> ���ԣ� ��ȥ�Ժ���C++  --> �߼�  -->  �����ض�����  �����ӣ�4996
-        2.(�����Ŀ)-->�Ҽ� --> ���ԣ� ��ȥ�Ժ���C++  --> Ԥ������  -->  Ԥ����������  �����ӣ�_CRT_SECURE_NO_WARNINGS
+    配置中加入
+        1.(你的项目)-->右键 --> 属性， 进去以后，在C++  --> 高级  -->  禁用特定警告  中添加：4996
+        2.(你的项目)-->右键 --> 属性， 进去以后，在C++  --> 预处理器  -->  预处理器定义  中添加：_CRT_SECURE_NO_WARNINGS
 
-visual studio��ָ��dll���Ŀ¼�ļ��ַ���
-��1��ѡ��ǰ���̣��һ�"����" -> "��������" -> "����"����"����Ŀ¼"����dll��·��
-�ŵ㣺��ƽ̨������������ƽ̨���øĶ���
-ȱ�㣺Ŀ¼���ܸܺɾ�����Ϊ���ɵ��ļ����Զ��ŵ����Ŀ¼��
-��2������һ���ļ���lib���������������Ҫ��dll�ļ�,�һ�"����" -> "�����¼�" -> "Ԥ�������¼�"����������xcopy $(SolutionDir)httpclient/bin $(OutDir) /a /F /I /Y /C",��Ԥ������ʱ���dll�ļ�������DebugĿ¼�¡�
-�ŵ㣺��ƽ̨������������ƽ̨���øĶ���
-ȱ�㣺dll�ļ�̫�࣬�ļ�̫�������£�������ܷ�ʱ��
-��3����dll�ļ�Ŀ¼���õ������������߰�dll�ļ�������system32Ŀ¼��(64λϵͳ�����ǿ�����system64��)
-�ŵ㣺��Ŀ����̫��Ķ�
-ȱ�㣺���ܿ�ƽ̨��ϵͳ����
-��4��������Ŀ�Ļ���������ѡ��ǰ���̣��һ�"����" -> "��������" -> "����"����"����"����dll·�����磺path=%path%;../httpclient/bin
-
-
-
-vs�µ����Ŀ¼/����ļ�/����Ŀ¼-�ܽ�https://blog.csdn.net/weixin_41821317/article/details/107640638
-һ��vs��������¸��ļ��еİ�����ϵ
-                  |��   ������������ļ�sln           |�� c++Դ�ļ�ͷ�ļ�
-[����������ļ���]|��   ��Ŀ���ļ���    --------------|�� ��Ŀ�����ļ�
-                  |��   Debug�ļ���                   |�� Debug�ļ���
-                  |��   Release�ļ���                 |�� Release�ļ���
-һ����˵��vs�е�c++��Ŀ�Ľ���������ļ����°���������������ļ�sln��һ����Ŀ���ļ��к�һ��Debug�ļ����Լ�һ��Release�ļ��У����ĸ��ļ��У�>>>>����Debug��Release�ļ����д���������ɵĽ��exe��dll�������ʹ��Release���ɣ��򲻴���Release�ļ��У���
-�������������Ŀ�ļ��а�����ϵ�°���C++Դ�ļ�ͷ�ļ�����Ŀ�����ļ���һ��Debug�ļ����Լ�һ��Release�ļ��У�ע�⣬>>>>�˴���Debug��Release�ļ��н�������м������obj�������exe��dll֮��Ķ����������ʹ��Release���룬��û�ж�Ӧ��Release�ļ��У���
-Debug�����԰汾������������Ϣ������������Release��ܶ࣬���Ҳ������κ��Ż����Ż���ʹ���Ը��ӻ�����ΪԴ��������ɵ�ָ����ϵ������ӣ������ڳ���Ա���ԡ�Debugģʽ�����������ļ�������.exe��.dll�ļ��⣬����һ��.pdb�ļ������ļ���¼�˴����жϵ�ȵ�����Ϣ
-Release�������汾������Դ������е��ԣ�����ʱ��Ӧ�ó�����ٶȽ����Ż���ʹ�ó����ڴ����С�������ٶ��϶������ŵġ���������Ϣ���ڵ�����PDB�ļ������ɣ���Releaseģʽ������һ���ļ�.exe��.dll�ļ�
-�������Ŀ¼/����ļ�/����Ŀ¼
-1�����Ŀ¼-����$(OutDir)   <<<<
-��������VS�ġ����Ŀ¼�����Ծ��൱��������$(OutDir)��ֵ��
-������ǽ���һ��Ĭ�ϵ�vc��Ŀssyy������Ĭ�ϡ����桰��Ŀ�У������Ŀ¼��Ϊ$(SolutionDir)$(ConfigurationName)�����Ե���ʱ���ڽ�������ļ����½���һ��debug��ConfigurationName��ֵΪdebug���ļ��У����ڴ��ļ��������� ssyy.lik������ ��ssyy.exe�ļ�(Ĭ�������) ��
-Ĭ�ϡ��м�Ŀ¼��Ϊ$(ConfigurationName)�����Ի���ssyy��Ŀ�ļ����£���ssyy.vcproj����Ŀ�����ļ�����λ�ã�����һ��debug�ļ��У����ڸ��ļ���������ssyy.obj�������ļ���
-Ĭ�ϡ�����������Ŀ�µġ����桱ѡ���µġ�����ļ���ѡ��Ϊ?$(OutDir)$(ProjectName).exe������$(OutDir)���Ѿ��ڡ����桱��Ŀ�ġ����Ŀ¼��ѡ�ֵ�ˡ�
-ע�⣺ʵ�������Ŀ¼���������exe�ļ���λ�á�
-2������ļ�-����$(TargetDir)
-$(TargetDir)��ֵ��������exe�ļ����Զ�����ֵΪexe�ļ�����λ�á����Կ���˵��������ļ������վ���exe�ļ����ڵ�λ�á�
-Ĭ������¡����Ŀ¼���͡�����ļ����������Զ�Ӧ��Ŀ¼��һ���ģ��������ŷ��㣨��Ȼ������ļ���ֵ�����Ŀ¼��ֵ�Ļ����ϻ�������exe�ļ����������������һ�������м����ɵ��������õ���xx.ilk��xx.pdb�ļ��������Ŀ¼�����������ɵ�xx.exe�ļ��ڡ�����ļ����������õ�Ŀ¼�С�
-�����Գ���ʱ��ϵͳ����$(OutDir)��ֵ������ȷ���ģ���$(TargetDir)��$(TargetPath)��ֵ����exe�ļ����ɺ��ȷ���ġ�Ҳ����˵ϵͳ����$(OutDir)��ֵ��VS��Ŀ�ġ����Ŀ¼�����Ծ�������$(TargetDir)��$(TargetPath)��ֵ��VS��Ŀ�ġ�����ļ������Ծ�����
-3������Ŀ¼
-�����ԡ���Ŀ�еġ�����Ŀ¼����������Ĭ��������ǿյģ�����ʾ����Ŀ¼�ǹ���Ŀ¼��Ҳ���ǹ��������ļ�ssyy.vcproj����Ŀ¼��
-������Ŀ¼�����������ǳ������к�Ψһʶ���Ĭ��Ŀ¼����������ֻ��ʶ���Ŀ¼��
-����������й���������һ��txt�ı��ļ�������ڴ����ļ�������δָ������·����ָֻ�������ļ����ļ�������ô����ı��ļ�Ĭ�ϾͻὨ���ڹ���Ŀ¼�У���Ȼ��ȡһЩ�����ļ�Ҳ�ڹ���Ŀ¼�в��ң���Ҫ˵��һ�£����ɵ�exe�ļ�������Ŀ¼û�κι�ϵ��Ҳ������ڹ���Ŀ¼�С��ܵ���˵������Ŀ¼���ǳ������й�����Ĭ�϶�ȡ��Ŀ¼��
-���Թ���Ŀ¼�Ĳ��䣺
-vs�й���Ŀ¼�������Ǹ������õģ�Ҳ�����������Ժ�����һ���½��̣��Զ�������½��̵Ĺ���Ŀ¼����Ϊvs��Ŀ�����еĹ���Ŀ¼��Ȼ���½���������Ӧ��exe����
-���������ʹ��vs�ĵ�������exe������ֱ��˫��exe�ļ�����һ���½���ʱ�����Զ�������½��̵Ĺ���Ŀ¼����Ϊexe�ļ����ڵ�Ŀ¼�����Ǻ�vs�������Բ�ͬ�ĵط����������������ʱ�򲻰ѹ���Ŀ¼�ڵĶ�������exe���ڵ�Ŀ¼�ڣ��ͻ����г�������Ϊ��ʱ����Ŀ¼������vs�����õ��ˣ�����exe�ļ����ڵ�Ŀ¼��
-������˵�ġ����ԡ���ָvs������exe������debugģʽ��releaseģʽ����Ҫ�ѵ��Ծ�����Ϊֻ��debugģʽ����
-����������õ����ļ�����Ĭ�ϵĹ���Ŀ¼�£�����������ֱ��ʹ�������·������Ӧ�޸Ĺ���Ŀ¼��
-��������������������������������
-
-
-VS2019Զ�̵���
-1�����ߣ����ӵ��Ե���������ԵĹ��ػ�
-2������vs2019Զ�̵��Թ��ߣ�https://visualstudio.microsoft.com/zh-hans/downloads/?rr=https://docs.microsoft.com/en-us/visualstudio/debugger/remote-debugging?view=vs-2019������װ�����ػ��ϡ�
-3������vs2019Զ�̵��Թ��ߣ���װ��ɺ��ڹ��ػ��Ͽ�ʼ->���г���->Visual Studio 2019->Remote Debuger�������á� ����->ѡ�� �˿� ������֤ģʽ
-4����װ��vs2019 �ĵ���������Զ�̵���������Ŀ->����->���� Զ��windows������ [Զ������]\\192.168.1.118\FXDMounter\MFCApplication.exe [����Ŀ¼]\\192.168.1.118\FXDMounter[Զ�̷���������]192.168.1.118[����]ͬ�ϵ�������֤
-����\\192.168.1.118�ǹ��ػ�ip,FXDMounter��D����Ŀ¼����Ȼ����Ŀ���ơ�
-5������Ŀ���ɵ�Debug�汾���򿽱������ػ�D��FXDMounterĿ¼�£���Debug�µĶ���һ�𿽹�ȥ���ܲ�����ģ�
-6��ֱ������Զ�̵���  Զ��Windows������
-7���������Զ�̵��Ա������´�����ʾ��������Ч�Ĺ���Ŀ¼������Ҫ�ѹ��ػ��´����Ե��ļ�Ŀ¼��������   ��ʾ�޷���������"xxx\xx.exe"  "xxx"������Ч�Ĺ���Ŀ¼
-8������Ŀ¼�Ĺ����������ļ���Ŀ¼�����и�����־�ģ���������ļ��д�������־
-9��ѡ�д��������ļ��Ҽ�->����->�ض��û�,�������´��ڣ�ֱ�ӵ������������ɣ������ٻص����Ե�������Զ�̵��ԡ�
-��ע:���ػ��ϲ�������MFC����Ľ���취 ��Ŀ->����->�߼� MFC��ʹ�� > �ھ�̬����ʹ��MFC
+visual studio中指定dll存放目录的几种方法
+（1）选择当前工程，右击"属性" -> "配置属性" -> "调试"，在"工作目录"设置dll的路径
+优点：跨平台（拷贝到其他平台不用改动）
+缺点：目录不能很干净，因为生成的文件会自动放到这个目录下
+（2）创建一个文件夹lib，里面放入所有需要的dll文件,右击"属性" -> "生成事件" -> "预先生成事件"，输入命令xcopy $(SolutionDir)httpclient/bin $(OutDir) /a /F /I /Y /C",在预处理的时候把dll文件拷贝到Debug目录下。
+优点：跨平台（拷贝到其他平台不用改动）
+缺点：dll文件太多，文件太大的情况下，拷贝会很费时。
+（3）把dll文件目录设置到环境变量或者把dll文件拷贝到system32目录下(64位系统好像是拷贝到system64中)
+优点：项目无需太多改动
+缺点：不能跨平台，系统侵入
+（4）设置项目的环境变量，选择当前工程，右击"属性" -> "配置属性" -> "调试"，在"环境"添加dll路径，如：path=%path%;../httpclient/bin
 
 
 
-
-���ɸ㶨VS����sdf��ipch�ļ�̫��ռ�ÿռ�����
-
-��VS���½�һ����Ŀ��ͬʱ����һ��ipch�ļ��к�һ��sdf�ļ���
-��ʹ��ɾ�������ٴδ򿪹���ʱ���ǻ����½�����������ʮM�ϰ�M�Ĵ���ռ�����������Ǻܲ�ˬ����
-��ʵ����VS���¹��ܣ���������ʾ��������ʾ������ָ����Ŷӱ��βֿ��ϢϢ��ء�
-�����Ҷ��������ļ��о��ܲ�ˬ�Ļ����������취���Ը㶨����
-
-����һ��
-  ͨ���������ݿ�ķ�ʽ�ﵽ�ر��������ļ����ɵ�Ŀ�ģ��������ַ�������������һЩ���⣬���ܵ���VS��һЩ���ܲ����á�
-  [����]��>[ѡ��]��>[�ı��༭��]��>C/C++]��>[�߼�]��>[�������ݿ�]������������ΪTrue
-
-��������(�Ƽ�)
-  [����]��>[ѡ��]��>[�ı��༭��]��>C/C++]��>[�߼�]��>[����λ��]�������������ֵ����ͼ�����޸ģ����л���·��������á�
-    ʼ��ʹ�û���λ��           true
-    ����λ������ʹ��ʱ ������  true
-    ����λ��                   D:\vs2019����
-  ���ø�����·�������ɱȽϺù�����Щ�Ӵ��ӷ�׵��ļ������Զ����������ǣ��ͷŴ��̿ռ�
-
-ע�⣬��ɾ������ļ��е�ʱ�򣬻ᶪʧ��
-  ѡ������������
-  ���ص������ã���������Ŀ
-���ᶪʧ��
-  �������/��Ŀ�ṹ
-  �������ö���
-  ��Ŀ������ϵ
-  ��������չ���õ�
-.vs folder ��������ΪVisual studio "Intellisense" ��������һЩ��̨��¼����ǿ����ʹ�����顣����ͨ����������ùر����ֺ�̨��¼��
-����2
-Visual Studio | Tools | Options | Text Editor | C/C++ | Under ��Intellisense�� category set ��Disable Automatic Precompiled Header�� to true.
-���İ�: ����-ѡ��-�ı��༭��-c/c+��-�߼�-Intellisense (�������5120��һ��ѡ�� ) Ҳ���� ��ֹ�Զ������ͷ  true
-
-
-
-VS2019 linux g++ ���˳�������Ϊ 1
-  error : g++ ���˳�������Ϊ 1����鿴������� - ����������˽���ϸ��Ϣ(ע��: ��Ҫ����������в鿴��ϸ��Ϣ���������Ҫ�ڹ���ѡ���и������������ϸ��Ϣ)��
-  ���� - ѡ�� - ��Ŀ�ͽ������ - ���ɲ����У�����MSBuild��Ŀ���������ϸ���𡱺͡�MSBuild��Ŀ������־�ļ���ϸ���𡱵���Ϊ����ͨ���������ڱ���linux����ʱ���������������Կ�����ϸ�Ĵ�����Ϣ��
+vs下的输出目录/输出文件/工作目录-总结https://blog.csdn.net/weixin_41821317/article/details/107640638
+一、vs解决方案下各文件夹的包含关系
+                  |→   解决方案配置文件sln           |→ c++源文件头文件
+[解决方案总文件夹]|→   项目总文件夹    --------------|→ 项目配置文件
+                  |→   Debug文件夹                   |→ Debug文件夹
+                  |→   Release文件夹                 |→ Release文件夹
+一般来说，vs中的c++项目的解决方案总文件夹下包含解决方案配置文件sln和一个项目总文件夹和一个Debug文件夹以及一个Release文件夹（共四个文件夹，>>>>其中Debug和Release文件夹中存放最终生成的结果exe或dll，如果不使用Release生成，则不存在Release文件夹）。
+而解决方案和项目文件夹包含关系下包含C++源文件头文件、项目配置文件和一个Debug文件夹以及一个Release文件夹（注意，>>>>此处的Debug和Release文件夹仅仅存放中间编译结果obj，不存放exe和dll之类的东西。如果不使用Release编译，则没有对应的Release文件夹）。
+Debug：调试版本，包含调试信息，所以容量比Release大很多，并且不进行任何优化（优化会使调试复杂化，因为源代码和生成的指令间关系会更复杂），便于程序员调试。Debug模式下生成两个文件，除了.exe或.dll文件外，还有一个.pdb文件，该文件记录了代码中断点等调试信息
+Release：发布版本，不对源代码进行调试，编译时对应用程序的速度进行优化，使得程序在代码大小和运行速度上都是最优的。（调试信息可在单独的PDB文件中生成）。Release模式下生成一个文件.exe或.dll文件
+二、输出目录/输出文件/工作目录
+1、输出目录-决定$(OutDir)   <<<<
+即设置了VS的“输出目录”属性就相当于设置了$(OutDir)的值。
+如果我们建立一个默认的vc项目ssyy，他的默认“常规“栏目中，“输出目录”为$(SolutionDir)$(ConfigurationName)，所以调试时会在解决方案文件夹下建立一个debug（ConfigurationName的值为debug）文件夹，并在此文件夹下生成 ssyy.lik链接器 和ssyy.exe文件(默认情况下) 。
+默认“中间目录”为$(ConfigurationName)，所以会在ssyy项目文件夹下（即ssyy.vcproj的项目配置文件所在位置）建立一个debug文件夹，并在该文件夹下生成ssyy.obj二进制文件。
+默认“链接器”栏目下的“常规”选项下的“输出文件”选项为?$(OutDir)$(ProjectName).exe，其中$(OutDir)就已经在“常规”栏目的“输出目录”选项赋值了。
+注意：实际上输出目录不决定输出exe文件的位置。
+2、输出文件-决定$(TargetDir)
+$(TargetDir)的值是在生成exe文件后自动赋予值为exe文件所在位置。所以可以说，“输出文件”最终决定exe文件所在的位置。
+默认情况下“输出目录”和“输出文件”两个属性对应的目录是一样的，这样用着方便（当然，输出文件的值在输出目录的值的基础上还包含有exe文件名）。如果两个不一样，则中间生成的链接器用的如xx.ilk和xx.pdb文件等在输出目录，而最终生成的xx.exe文件在“输出文件”属性设置的目录中。
+当调试程序时，系统变量$(OutDir)的值是最先确定的，而$(TargetDir)和$(TargetPath)的值是在exe文件生成后才确定的。也就是说系统变量$(OutDir)的值由VS项目的“输出目录”属性决定，而$(TargetDir)和$(TargetPath)的值由VS项目的“输出文件”属性决定。
+3、工作目录
+“调试”栏目中的“工作目录”项，这个属性默认情况下是空的，但表示工作目录是工程目录，也就是工程配置文件ssyy.vcproj所在目录。
+“工作目录”属性作用是程序运行后唯一识别的默认目录，即工作后只认识这个目录。
+例如程序运行过程中生成一个txt文本文件，如果在创建文件过程中未指定绝对路径，只指定创建文件的文件名，那么这个文本文件默认就会建立在工作目录中，当然读取一些配置文件也在工作目录中查找，但要说明一下，生成的exe文件跟工作目录没任何关系，也不会放在工作目录中。总的来说，工作目录就是程序运行过程中默认读取的目录。
+【对工作目录的补充：
+vs中工作目录的设置是给调试用的，也即你启动调试后，启动一个新进程，自动把这个新进程的工作目录设置为vs项目属性中的工作目录，然后新进程启动对应的exe程序。
+但是如果不使用vs的调试启动exe，而是直接双击exe文件启动一个新进程时，会自动把这个新进程的工作目录设置为exe文件所在的目录，这是和vs启动调试不同的地方。所以如果发布的时候不把工作目录内的东西拷到exe所在的目录内，就会运行出错，因为此时工作目录不再是vs中设置的了，而是exe文件所在的目录。
+上面所说的“调试”是指vs下启动exe，包括debug模式和release模式，不要把调试就理解为只有debug模式。】
+如果工程中用到的文件不在默认的工作目录下，而程序中又直接使用了相对路径，则应修改工作目录。
+————————————————
 
 
+VS2019远程调试
+1、网线，连接调试电脑与待调试的工控机
+2、下载vs2019远程调试工具（https://visualstudio.microsoft.com/zh-hans/downloads/?rr=https://docs.microsoft.com/en-us/visualstudio/debugger/remote-debugging?view=vs-2019），安装到工控机上。
+3、启动vs2019远程调试工具，安装完成后在工控机上开始->所有程序->Visual Studio 2019->Remote Debuger。并设置。 工具->选项 端口 身份验证模式
+4、在装了vs2019 的电脑上设置远程调试器。项目->属性->调试 远程windows调试器 [远程命令]\\192.168.1.118\FXDMounter\MFCApplication.exe [工作目录]\\192.168.1.118\FXDMounter[远程服务器名称]192.168.1.118[连接]同上的身份验证
+其中\\192.168.1.118是工控机ip,FXDMounter是D盘下目录，再然后项目名称。
+5、把项目生成的Debug版本程序拷贝到工控机D盘FXDMounter目录下（把Debug下的东西一起拷过去，总不会错的）
+6、直接启动远程调试  远程Windows调试器
+7、如果启动远程调试报出以下错误提示，不是有效的工作目录，则需要把工控机下待调试的文件目录共享出来   提示无法启动程序"xxx\xx.exe"  "xxx"不是有效的工作目录
+8、工作目录的共享，正常文件夹目录不会有个锁标志的，共享后的文件夹带个锁标志
+9、选中待共享的文件右键->共享->特定用户,出现如下窗口，直接点击共享即可完成，现在再回到调试电脑启动远程调试。
+备注:工控机上不能运行MFC程序的解决办法 项目->属性->高级 MFC的使用 > 在静态库中使用MFC
 
-��ʹ��visual studio 2013�����е���ִ�д���ʱ���������´���
+
+
+
+轻松搞定VS生成sdf和ipch文件太大占用空间问题
+
+在VS中新建一个项目会同时建立一个ipch文件夹和一个sdf文件，
+即使你删掉它，再次打开工程时还是会重新建立，动辄几十M上百M的磁盘占用量，让我们很不爽啊。
+其实这是VS的新功能，与智能提示、错误提示、代码恢复、团队本次仓库等息息相关。
+如果大家对这两个文件感觉很不爽的话，有两个办法可以搞定它。
+
+方法一：
+  通过禁用数据库的方式达到关闭这两个文件生成的目的，但是这种方法会产生另外的一些问题，可能导致VS的一些功能不可用。
+  [工具]—>[选项]—>[文本编辑器]—>C/C++]—>[高级]—>[禁用数据库]将其属性设置为True
+
+方法二：(推荐)
+  [工具]—>[选项]—>[文本编辑器]—>C/C++]—>[高级]—>[回退位置]里面的三项属性值按下图进行修改，其中回退路径随便设置。
+    始终使用回退位置           true
+    回退位置已在使用时 不警告  true
+    回退位置                   D:\vs2019缓存
+  设置个回退路径这样可比较好管理这些庞大的臃肿的文件，可以定期清理它们，释放磁盘空间
+
+注意，当删除这个文件夹的时候，会丢失：
+  选定的生成配置
+  本地调试设置，如启动项目
+不会丢失：
+  解决方案/项目结构
+  生成配置定义
+  项目依赖关系
+  第三方扩展设置等
+.vs folder 过大是因为Visual studio "Intellisense" 功能在做一些后台记录来增强我们使用体验。可以通过下面的设置关闭这种后台记录：
+方法2
+Visual Studio | Tools | Options | Text Editor | C/C++ | Under “Intellisense” category set “Disable Automatic Precompiled Header” to true.
+中文版: 工具-选项-文本编辑器-c/c+±-高级-Intellisense (缓存配额5120上一个选项 ) 也就是 禁止自动编译标头  true
+
+
+
+VS2019 linux g++ 已退出，代码为 1
+  error : g++ 已退出，代码为 1，请查看输出窗口 - 生成输出，了解详细信息(注意: 若要在输出窗口中查看详细信息，则可能需要在工具选项中更改生成输出详细信息)。
+  工具 - 选项 - 项目和解决方案 - 生成并运行，将“MSBuild项目生成输出详细级别”和“MSBuild项目生成日志文件详细级别”调整为“普通”，这样在编译linux程序时如果编译出错，可以看到详细的错误信息。
+
+
+
+在使用visual studio 2013，进行调试执行代码时，出现如下错误：
 error C4996: 'strupr': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant
 name: _strupr. See online help for details.
-����취��
-��ͷ�ļ�β������ ����cpp�ļ�ͷ��
+解决办法：
+在头文件尾部添加 或者cpp文件头部
 #pragma warning(disable:4996)
 
 
-VS2015��� error C4996: 'strdup': The POSIX name for this item is deprecated.
- 
+VS2015解决 error C4996: 'strdup': The POSIX name for this item is deprecated.
 
-�� �������� -> c/c++ -> Ԥ������ -> Ԥ���������� �����ӣ�
 
- DEBUGģʽ�£�
+在 工程属性 -> c/c++ -> 预处理器 -> 预处理器定义 中添加：
+
+ DEBUG模式下：
 _CRT_SECURE_NO_DEPRECATE
 _CRT_SECURE_NO_WARNINGS
 _CRT_NONSTDC_NO_DEPRECATE
- 
-RELEASE ģʽ�£�
+
+RELEASE 模式下：
 _CRT_SECURE_NO_WARNINGS
 _CRT_NONSTDC_NO_DEFPRECATES
- 
- 
