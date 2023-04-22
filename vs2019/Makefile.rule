@@ -1,0 +1,113 @@
+
+VERPATH:=
+# debug | release
+ifeq ($(RELEASE),0)
+    # debug
+	CFLAGS += -O0 -g3 -DDEBUG -ggdb -gstabs+ -fno-omit-frame-pointer
+	VERPATH = Debug
+else
+    # release
+    CFLAGS += -O2 -DNDEBUG
+    VERPATH = Release
+endif
+
+ifeq ($(BITS),32)
+    CFLAGS += -D__i386__
+    LFLAGS += -Xlinker --unresolved-symbols=ignore-in-shared-libs -Xlinker -export-dynamic
+    override BITS = 322
+else
+    CFLAGS += -D__x86_64__
+    LFLAGS += 
+    override BITS = 644
+endif
+
+ifeq ($(ASAN),1)
+    CFLAGS += -O0 -fsanitize=address -fno-omit-frame-pointer
+	LASAN = -fsanitize=address
+else
+	LASAN =
+endif
+
+ifeq ($(CENTOS),6)
+    CFLAGS += -D__CENTOS6__
+	CENTOS_P = $(OUTPUT_PATH)/../base/lib/c6
+else ifeq ($(CENTOS),7)
+    CFLAGS += -D__CENTOS7__
+	CENTOS_P = $(OUTPUT_PATH)/../base/lib/c7
+else
+    CFLAGS += -D__UOS__
+	CENTOS_P = $(OUTPUT_PATH)/../base/lib/uos
+endif
+
+# CC:=g++
+WARNINGS := -Wno-deprecated -Wno-sign-compare -Wno-unused-but-set-variable -Wno-unused-variable -Wno-comment -Wno-unused-local-typedefs -Wno-write-strings -Wno-parentheses -Wno-reorder -Wno-conversion-null -Wno-unused-function -Wno-unused-value
+CFLAGS += -shared -fPIC -Wall -std=c++0x -pthread -fno-strict-aliasing $(WARNINGS)   
+
+ifeq ($(BITS),32)
+	EXECUTABLE := $(OUTPUT_PATH)/linux_bin32/$(VERPATH)/$(OUTPUT_NAME)    # 目标文件名      
+	LIBDIR:=  $(OUTPUT_PATH)/linux_bin32/$(VERPATH) $(OUTPUT_PATH)/linux_bin64/lib $(CENTOS_P)  # 库目录   
+else
+	EXECUTABLE := $(OUTPUT_PATH)/linux_bin64/$(VERPATH)/$(OUTPUT_NAME)    # 目标文件名      
+	LIBDIR:=  $(OUTPUT_PATH)/linux_bin64/$(VERPATH) $(OUTPUT_PATH)/linux_bin64/lib $(CENTOS_P)   # 库目录   
+endif
+
+#include $(OUTPUT_PATH)/../base/config/Linux
+include $(OUTPUT_PATH)/../../Code/base/config/Linux
+
+CPPFLAGS :=  $(CFLAGS) 
+CPPFLAGS += $(addprefix -I,$(INCLUDES))
+CPPFLAGS += -MMD
+#
+# # The next bit checks to see whether rm is in your djgpp bin
+# # directory; if not it uses del instead, but this can cause (harmless)
+# # `File not found' error messages. If you are not using DOS at all,
+# # set the variable to something which will unquestioningly remove
+# # files.
+#
+
+RM-F := rm -f 
+
+
+# # You shouldn't need to change anything below this point.
+#
+SRCS := $(wildcard *.cpp) $(wildcard $(addsuffix /*.cpp, $(SRCDIR))) $(SRCFILES)
+
+OBJS := $(patsubst %.cpp,%.o,$(SRCS))
+DEPS := $(patsubst %.o,%.d,$(OBJS))
+MISSING_DEPS := $(filter-out $(wildcard $(DEPS)),$(DEPS))
+MISSING_DEPS_SOURCES := $(wildcard $(patsubst %.d,%.cpp,$(MISSING_DEPS)))
+
+
+.PHONY : all deps objs clear clean rebuild info
+
+all: $(EXECUTABLE)
+
+abc :
+	@echo 123
+
+info:
+	@echo 123
+	@echo DEPS=$(DEPS)
+#	@echo $(SRCS)
+#	@echo $(OBJS)
+#	@echo $(DEPS)
+#	@echo $(MISSING_DEPS)
+#	@echo $(MISSING_DEPS_SOURCES)
+
+
+deps : $(DEPS)
+
+objs : $(OBJS)
+
+clear :
+	@$(RM-F) $(OBJS)
+	@$(RM-F) $(DEPS)
+clean: clear
+	@$(RM-F) $(EXECUTABLE)
+
+rebuild: clean all 
+ifneq ($(MISSING_DEPS),)
+$(MISSING_DEPS) :  
+	@$(RM-F) $(patsubst %.d,%.o,$@)
+endif
+-include $(DEPS)

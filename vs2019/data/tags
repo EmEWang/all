@@ -1,0 +1,74 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.6	//
+array	array.cpp	/^	array<type>::array(int size, int step)$/;"	f	class:wjg::array
+array	array.h	/^	class array$/;"	c	namespace:wjg
+b	makefile	/^override vb=111$/;"	m
+clear	tree.cpp	/^	bool tree<type>::clear(){$/;"	f	class:wjg::tree
+erase	tree.cpp	/^	bool tree<type>::erase(type key){$/;"	f	class:wjg::tree
+expand	array.cpp	/^bool wjg::array<type>::expand(int step ){$/;"	f	class:wjg::array
+find	array.cpp	/^int wjg::array<type>::find(type key){$/;"	f	class:wjg::array
+get	array.cpp	/^type wjg::array<type>::get(int index){$/;"	f	class:wjg::array
+insert	list.cpp	/^	bool list<type>::insert(node<type> nd){$/;"	f	class:wjg::list
+insert	tree.cpp	/^	bool tree<type>::insert(type key){$/;"	f	class:wjg::tree
+list	list.cpp	/^	list<type>::list(){$/;"	f	class:wjg::list
+list	list.h	/^	class list {$/;"	c	namespace:wjg
+m_balance	tree.h	/^		int m_balance;$/;"	m	class:wjg::node_t_b
+m_cur	tree.h	/^		node_t<type> *m_cur;$/;"	m	class:wjg::tree
+m_cur	tree.h	/^		node_t<type>* m_cur;$/;"	m	class:wjg::tree_b
+m_head	list.h	/^		node<type>* m_head;$/;"	m	class:wjg::list
+m_head	tree.h	/^		node_t<type> *m_head;$/;"	m	class:wjg::tree
+m_head	tree.h	/^		node_t<type>* m_head;$/;"	m	class:wjg::tree_b
+m_key	list.h	/^		type m_key;$/;"	m	class:wjg::node
+m_key	tree.h	/^		type m_key;$/;"	m	class:wjg::node_t
+m_left	tree.h	/^		node_t* m_left;$/;"	m	class:wjg::node_t
+m_next	list.h	/^		node* m_next;$/;"	m	class:wjg::node
+m_next	list.h	/^		node<type>* m_next;$/;"	m	class:wjg::list
+m_pt	array.h	/^		type *m_pt;$/;"	m	class:wjg::array
+m_right	tree.h	/^		node_t* m_right;$/;"	m	class:wjg::node_t
+m_size	array.h	/^		int m_size;$/;"	m	class:wjg::array
+m_size	list.h	/^		int m_size;$/;"	m	class:wjg::list
+m_size	tree.h	/^		int m_size;$/;"	m	class:wjg::tree
+m_size	tree.h	/^		int m_size;$/;"	m	class:wjg::tree_b
+m_step	array.h	/^		int m_step;$/;"	m	class:wjg::array
+m_tail	list.h	/^		node<type>* m_tail;$/;"	m	class:wjg::list
+m_total	array.h	/^		int m_total;$/;"	m	class:wjg::array
+main	data.cpp	/^int main()$/;"	f
+next	list.cpp	/^	node<type>* node<type>::next(){$/;"	f	class:wjg::node
+next	tree.cpp	/^	node_t<type>* tree<type>::next(){$/;"	f	class:wjg::tree
+node	list.cpp	/^	node<type>::node(){$/;"	f	class:wjg::node
+node	list.cpp	/^	node<type>::node(const type &key){$/;"	f	class:wjg::node
+node	list.h	/^	class node{$/;"	c	namespace:wjg
+node_t	tree.cpp	/^	node_t<type>::node_t()$/;"	f	class:wjg::node_t
+node_t	tree.h	/^	class node_t$/;"	c	namespace:wjg
+node_t_b	tree.cpp	/^	node_t_b<type>::node_t_b()$/;"	f	class:wjg::node_t_b
+node_t_b	tree.h	/^	class node_t_b :public node_t<type> {$/;"	c	namespace:wjg
+operator []	array.cpp	/^type wjg::array<type>::operator[](int index)$/;"	f	class:wjg::array
+print	array.cpp	/^void wjg::array<type>::print(int size)$/;"	f	class:wjg::array
+push	array.cpp	/^bool wjg::array<type>::push(type key, int index){$/;"	f	class:wjg::array
+pushback	array.cpp	/^	bool array<type>::pushback(type key)$/;"	f	class:wjg::array
+pushfront	array.cpp	/^bool wjg::array<type>::pushfront(type key)$/;"	f	class:wjg::array
+remove	array.cpp	/^bool wjg::array<type>::remove(int index){$/;"	f	class:wjg::array
+removeback	array.cpp	/^bool wjg::array<type>::removeback(){$/;"	f	class:wjg::array
+removefront	array.cpp	/^bool wjg::array<type>::removefront(){$/;"	f	class:wjg::array
+size	tree.cpp	/^	int tree<type>::size(){$/;"	f	class:wjg::tree
+sortbubble	array.cpp	/^bool wjg::array<type>::sortbubble(){$/;"	f	class:wjg::array
+sortinsert	array.cpp	/^bool wjg::array<type>::sortinsert()$/;"	f	class:wjg::array
+sortquick	array.cpp	/^bool wjg::array<type>::sortquick(){$/;"	f	class:wjg::array
+testarray	data.cpp	/^void testarray()$/;"	f
+testarray2	data.cpp	/^void testarray2()$/;"	f
+testarray3	data.cpp	/^void testarray3()$/;"	f
+testarray4	data.cpp	/^void testarray4()$/;"	f
+tree	tree.cpp	/^	tree<type>::tree(){$/;"	f	class:wjg::tree
+tree	tree.h	/^	class tree$/;"	c	namespace:wjg
+tree_b	tree.h	/^	class tree_b : public tree<type>$/;"	c	namespace:wjg
+va	makefile	/^va=123$/;"	m
+wjg	array.cpp	/^namespace wjg {$/;"	n	file:
+wjg	array.h	/^namespace wjg$/;"	n
+wjg	list.cpp	/^namespace wjg{$/;"	n	file:
+wjg	list.h	/^namespace wjg{$/;"	n
+wjg	tree.cpp	/^namespace wjg$/;"	n	file:
+wjg	tree.h	/^namespace wjg {$/;"	n
