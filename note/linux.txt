@@ -1,4 +1,12 @@
-
+一般linux系统分为两大类
+1 RedHat系列 RedHat RHEL Centos Fedora "Oracle Linux" 等
+  常用的安装包为 rpm 包 安装命令为 "rpm -参数"
+  包管理工具 yum
+  支持tar包
+2 Debian系列 Debian Ubuntu 等
+  常用的安装包为 deb 包 安装命令为 "dpkg -参数"
+  包管理工具 apt-get
+  支持tar包
 
 环境变量---------------------------------------------------------------------
 Linux 修改环境变量设置的三种方式

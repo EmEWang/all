@@ -216,3 +216,198 @@
     }
     # func1
 }
+
+# 优雅处理参数
+{
+    func1()
+    {
+        origin=$*
+        while getopts ":n:ho::" optname
+        do
+            case "$optname" in
+            "n")
+                echo "参数数量[$#] 参数[$OPTARG] 位置[$OPTIND]"
+                shift $(($OPTIND - 1))     # 从索引位置截取参数 赋给 $*
+                echo remaining parameters=[$*]
+                echo \$1=[$1]
+                echo \$2=[$2]
+
+                shift $((1))
+                echo remaining parameters=[$*]
+                echo \$1=[$1]
+                echo \$2=[$2]
+                ;;
+            "h")
+                echo "参数数量[$#] 参数[$OPTARG] 位置[$OPTIND]"
+                ;;
+            "o")
+                echo "参数数量[$#] 参数[$OPTARG] 位置[$OPTIND]"
+                ;;
+            ":")
+                echo "参数数量[$#] 参数[$OPTARG] 位置[$OPTIND]"
+                ;;
+            "?")
+                echo "未知 $OPTARG"
+                ;;
+            *)
+                echo "出错"
+                ;;
+            esac
+        done
+    }
+    # func1 $*
+
+
+    func2()
+    {
+        echo 原始参数=[$@]
+
+        # -o或--options选项后面是可接受的短选项，
+        # 如ab:c::，表示可接受的短选项为-a -b -c，其中-a选项不接参数，-b选项后必须接参数，-c选项的参数为可选的
+        # -l或--long选项后面是可接受的长选项，用逗号分开，冒号的意义同短选项。
+        # -n选项后接选项解析错误时提示的脚本名字
+        # 格式
+        # getopt optstring parameters
+        # getopt [options] [--] optstring parameters
+        # getopt [options] -o|--options optstring [options] [--] parameters
+        # 第一部分是命令名。
+        # 第二部分optstring（选项字符串），是这个命令解析的格式。
+        # 第三部分parameters（getopt命令的参数），就是需要解析的内容。
+        # 如果添加了双破折线，那么无轮后面是什么，都会作为参数而不是选项来处理
+        #ARGS=`getopt -o ab:c:: --long along,blong:,clong:: -n "$0" -- "$@"`
+        ARGS=`getopt -o ab:c:: --long along,blong:,clong:: -n "$0脚本参数错误" -- $@ `
+        if [ $? != 0 ]; then
+            echo "解析错误..."
+            exit 1
+        fi
+
+        echo getopt处理后参数=$ARGS
+        #将规范化后的命令行参数分配至位置参数（$1,$2,...)
+        # eval 表示 将剩下的字符串拼接成一个命令并执行
+        # set -- 表示 任何剩余的参数会被赋值给位置参数。如果没有剩余的参数，位置参数不会被设置。
+        eval set -- "${ARGS}"
+        echo 格式化后参数=$@
+
+        while true
+        do
+            case "$1" in
+                -a|--along)
+                    echo "选项 a";
+                    shift
+                    ;;
+                -b|--blong)
+                    echo "选项 b, 参数 $2";
+                    shift 2
+                    ;;
+                -c|--clong)
+                    case "$2" in
+                        "")
+                            echo "选项 c, 没有参数";
+                            shift 2
+                            ;;
+                        *)
+                            echo "选项 c, 参数 $2";
+                            shift 2;
+                            ;;
+                    esac
+                    ;;
+                --)
+                    shift
+                    break
+                    ;;
+                *)
+                    echo "Internal error!"
+                    exit 1
+                    ;;
+            esac
+        done
+
+        #处理剩余的参数
+        echo 剩余的参数=[$@]
+        # echo \$1=[$1]
+        # echo \$2=[$2]
+    }
+    # ./0.sh -a -b 123 -czz --along --blong=bbb --clong --clong=xx
+    # func2 $*
+}
+
+# 缺省值
+{
+    func1()
+    {
+        {
+            name=
+            # echo name:-xxx--\>${name:-xxx}
+            # echo name--\>${name}
+            # echo name-xxx--\>${name-xxx}
+            # echo name--\>${name}
+
+            # echo name=xxx--\>${name=xxx}
+            # echo name--\>${name}
+            # echo name:=xxx--\>${name:=xxx}
+            # echo name--\>${name}
+
+            # name=
+            # echo name:=xxx--\>${name?xxx}   #若name不存在则 打印错误
+            # echo name--\>${name}
+
+            # name=aa
+            # echo name+xxx--\>${name+xxx}
+            # echo name--\>${name}
+            # name=bb
+            # echo name:+xxx--\>${name:+xxx}
+            # echo name--\>${name}
+
+            # name=123456
+            # echo name+xxx--\>${name:2}
+            # echo name--\>${name}
+            # name=123456
+            # echo name:+xxx--\>${name:2:2}
+            # echo name--\>${name}
+
+            # name=123123
+            # echo name/2/b--\>${name/2/b}
+            # echo name--\>${name}
+            # name=123123
+            # echo name//2/b--\>${name//2/b}
+            # echo name--\>${name}
+
+            # name=123123
+            # echoname/#1/b--\>${name/#1/b}
+            # echo name--\>${name}
+            # name=123123
+            # echo name/%1/b--\>${name/%3/b}
+            # echo name--\>${name}
+
+            # name=123123
+            # echo name/1--\>${name/1}
+            # echo name--\>${name}
+            # name=123123
+            # echo name//2--\>${name//2}
+            # echo name--\>${name}
+
+            # name=1,2!3.123
+            # echo name/[13]--\>${name/[[:punct:]]}
+            # echo name--\>${name}
+            # name=1,2!3.123
+            # echo name//[13]--\>${name//[[:punct:]]}
+            # echo name--\>${name}
+
+            # name=123123
+            # echo name/[13]--\>${name/*}
+            # echo name--\>${name}
+            # name=123123
+            # echo name//[13]--\>${name//*}
+            # echo name--\>${name}
+
+            # name=123123
+            # echo name/[13]--\>${name/*/xx}
+            # echo name--\>${name}
+            # name=123123
+            # echo name//[13]--\>${name//*/xx}
+            # echo name--\>${name}
+        }
+
+    }
+    func1
+}
