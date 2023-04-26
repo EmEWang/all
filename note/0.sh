@@ -336,78 +336,91 @@
     func1()
     {
         {
-            name=
-            # echo name:-xxx--\>${name:-xxx}
-            # echo name--\>${name}
-            # echo name-xxx--\>${name-xxx}
-            # echo name--\>${name}
+            name=1
+            name2=2
+            # echo [name:-xxx][${name:-xxx}];echo [name][${name}]
+            # echo [name-xxx][${name-xxx}];echo [name][${name}]
 
-            # echo name=xxx--\>${name=xxx}
-            # echo name--\>${name}
-            # echo name:=xxx--\>${name:=xxx}
-            # echo name--\>${name}
+            # echo [name=xxx][${name=xxx}];echo [name][${name}]
+            # echo [name:=xxx]${name:=xxx};echo [name][${name}]
 
-            # name=
-            # echo name:=xxx--\>${name?xxx}   #若name不存在则 打印错误
-            # echo name--\>${name}
+            # echo [name?xxx][${name?xxx}];echo [name][${name}]
+            # echo [name:?xxx][${name:?xxx}];echo [name][${name}]
 
-            # name=aa
-            # echo name+xxx--\>${name+xxx}
-            # echo name--\>${name}
-            # name=bb
-            # echo name:+xxx--\>${name:+xxx}
-            # echo name--\>${name}
+            # echo [name+xxx][${name+xxx}];echo [name][${name}]
+            # echo [name:+xxx][${name:+xxx}];echo [name][${name}]
+
+            # echo ${!nam*}
+            # echo ${!nam@}
 
             # name=123456
-            # echo name+xxx--\>${name:2}
-            # echo name--\>${name}
-            # name=123456
-            # echo name:+xxx--\>${name:2:2}
-            # echo name--\>${name}
+            # echo [name:2][${name:2}]; echo [name][${name}]
+            # echo [{name:2:2][${name:2:2}];echo [name][${name}]
 
             # name=123123
-            # echo name/2/b--\>${name/2/b}
-            # echo name--\>${name}
-            # name=123123
-            # echo name//2/b--\>${name//2/b}
-            # echo name--\>${name}
+            # echo name/2/b--\>${name/2/b};echo [name][${name}]
+            # echo name//2/b--\>${name//2/b};echo [name][${name}]
 
             # name=123123
-            # echoname/#1/b--\>${name/#1/b}
-            # echo name--\>${name}
+            # echoname/#1/b--\>${name/#1/b};echo [name][${name}]
             # name=123123
-            # echo name/%1/b--\>${name/%3/b}
-            # echo name--\>${name}
+            # echo name/%1/b--\>${name/%3/b};echo [name][${name}]
 
             # name=123123
-            # echo name/1--\>${name/1}
-            # echo name--\>${name}
-            # name=123123
-            # echo name//2--\>${name//2}
-            # echo name--\>${name}
+            # echo name/1--\>${name/1};echo [name][${name}]
+            # echo name//2--\>${name//2};echo [name][${name}]
 
             # name=1,2!3.123
-            # echo name/[13]--\>${name/[[:punct:]]}
-            # echo name--\>${name}
-            # name=1,2!3.123
-            # echo name//[13]--\>${name//[[:punct:]]}
-            # echo name--\>${name}
+            # echo name/[13]--\>${name/[[:punct:]]};echo [name][${name}]
+            # echo name//[13]--\>${name//[[:punct:]]};echo [name][${name}]
 
             # name=123123
-            # echo name/[13]--\>${name/*}
-            # echo name--\>${name}
-            # name=123123
-            # echo name//[13]--\>${name//*}
-            # echo name--\>${name}
+            # echo name/[13]--\>${name/*};echo [name][${name}]
+            # echo name//[13]--\>${name//*};echo [name][${name}]
 
             # name=123123
-            # echo name/[13]--\>${name/*/xx}
-            # echo name--\>${name}
-            # name=123123
-            # echo name//[13]--\>${name//*/xx}
-            # echo name--\>${name}
+            # echo name/[13]--\>${name/*/xx};echo [name][${name}]
+            # echo name//[13]--\>${name//*/xx};echo [name][${name}]
+
+            # name=a1234b1234c
+            # echo -n [name#*23][${name#*23}];echo [name][${name}]
+            # echo -n [name##*23][${name##*23}];echo [name][${name}]
+            # echo -n [name%23*][${name%23*}];echo [name][${name}]
+            # echo -n [name%%23*][${name%%23*}];echo [name][${name}]
         }
 
     }
     func1
+
+    func2()
+    {
+        via1="\[\e]\n \055 \r \""
+        via2='\[\e]\n \055 \r \" '
+
+        echo  $via1
+        echo  $via2
+
+        var1=a
+        var2=b
+
+        var=1
+        var0=var$var
+
+# 变量的值作为新的变量名
+        eval echo \${var$var}
+
+        aa=25
+        bb=aa
+        echo \$$bb  #$aa 普通shell只对命令做一次解析
+        eval echo \$$bb   #25
+        # 执行过程：
+        # 一次扫描时(同上)：$bb获取到了bb的值aa成功替换 ，替换后整个命令变成了
+        # echo $aa
+        # 第二次扫描时： 发现命令$aa ,执行替换获取到25，执行echo 25 ,输出 25
+    }
+    # func2
+
+
+ }
+
 }
