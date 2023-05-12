@@ -1,0 +1,1 @@
+#include "stltemplate.h"

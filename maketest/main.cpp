@@ -13,7 +13,12 @@
 #include "module1_5.h"
 #include "module2.h"
 
+#include "utility1.h"
+#include "stltemplate.h"
+#include "stlclass.h"
+
 demo getdemo(){return demo();}
+void testaddr();
 void test1();
 void teststruct();
 void testdemo();
@@ -28,19 +33,40 @@ void testbacktrace();
 using namespace std;
 int main()
 {
-    test1();
-    teststruct();
-    testdemo();
-    testtype();
-    testreference();
-    testperfect();
-    testtemplate();
-    testweeak();
-    testvari();
-    testcpp17();
-    testbacktrace();
+    // test1();
+    // teststruct();
+    // testdemo();
+    // testtype();
+    // testreference();
+    // testperfect();
+    // testtemplate();
+    // testweeak();
+    // testvari();
+    // testcpp17();
+    // testbacktrace();
+    // printcolor();
+
+    // sync_with_stdiotest();
+    // printenum();
+    // bindtest();
+    // placeholderstest();
+    // reftest();
+    // enable_iftest();
+
+    // mytestclsX();
+    // binarytest();
+    // binarytest2();
+
 
     return 0;
+}
+void testaddr()
+{
+    int i = 12;
+    int *pi = &i;
+    std::cout << reinterpret_cast<size_t>(pi) << std::endl;  //将指针解释为size_t类型
+    //    4字节16进制 8字节16进制  16进制地址 int型  长整型
+    printf("%x       %llx         %p        %d     %lld \n", pi, pi, pi, pi, pi);
 }
 
 void test1()

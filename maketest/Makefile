@@ -1,10 +1,12 @@
 
 
 dirtmp=tmp
-dirinc=module1/inc module2/inc
+dirinc=module1/inc module2/inc module3/inc module4/inc
 dirsrc1=module1/src
 dirsrc2=module2/src
-dirsrc=$(dirsrc1) $(dirsrc2) .
+dirsrc3=module3/src
+dirsrc4=module4/src
+dirsrc=$(dirsrc1) $(dirsrc2) $(dirsrc3) $(dirsrc4) .
 #objs=$(addprefix $(dirtmp)/,$(notdir $(patsubst %.cpp, %.o, $(wildcard *.cpp $(dirsrc1)/*.cpp  $(dirsrc2)/*.cpp))))
 objs=$(addprefix $(dirtmp)/,$(notdir $(patsubst %.cpp, %.o, $(wildcard $(addsuffix /*.cpp,$(dirsrc))))))
 
@@ -15,9 +17,12 @@ target=$(dirtmp)/main
 vpath %.h $(dirinc)
 vpath %.cpp $(dirsrc1)
 vpath %.cpp $(dirsrc2)
+vpath %.cpp $(dirsrc3)
+vpath %.cpp $(dirsrc4)
 vpath %.cpp .
 CFLAGS+=$(addprefix -I, $(dirinc))
-override CXXFLAGS+=-fno-elide-constructors -std=c++17 -rdynamic -g
+#override CXXFLAGS+=-fno-elide-constructors -std=c++17 -rdynamic -g
+override CXXFLAGS+=-fno-elide-constructors -std=c++2a -rdynamic -g
 
 .PHONEY:
 all:$(target)
