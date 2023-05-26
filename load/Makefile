@@ -38,3 +38,37 @@ preload:
 .PHONE: clean
 clean:
 	@-rm server *.gcno *.gcda
+
+
+
+
+
+
+srcroot := @srcroot@
+
+show:
+	$(info srcroot:$(srcroot))
+
+#export LD_LIBRARY_PATH=.:$LD_LIBRARY_PATH
+testlib:
+#	g++ -fPIC -shared -o libzzztest.so zzztest1.cpp
+	gcc -shared -fPIC -o libtestlib1.so testlib1.c  -ldl -D_GNU_SOURCE
+testlib2:
+	g++ -fPIC -shared -o libtestlib12.so testlib2.cpp
+testa:
+	g++ -c testlib1.c -o testlib1.o
+	ar  cqs  libtestlib.a  testlib1.o
+
+.PHONEY:
+test:
+#	那个-lib 在前面 就优先调用那个lib的方法 如果两个lib的方法一样的话 如下优先调用lzzztest2
+#	gcc test.c -o test -L./ -ltestlib1
+	gcc test.c -o test
+	LD_PRELOAD=./libtestlib1.so ./test
+#	./test
+test2:
+	gcc -o test test.c
+	LD_PRELOAD=./libtestlib1.so ./test
+
+testclean:
+	rm testlib1.o libtestlib.a libtestlib1.so libtestlib2.so test

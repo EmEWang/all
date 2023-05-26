@@ -26,3 +26,27 @@ dpkg软件包相关文件介绍
 /var/lib/dpkg/available 存放系统所有安装过的软件包信息【List of available packages.】
 /var/lib/dpkg/status 存放系统现在所有安装软件的状态信息
 /var/lib/dpkg/info 记安装软件包控制目录的控制信息文件
+
+
+Ubuntu下安装和卸载软件的3种方式
+
+1、apt-get
+前导步骤	sudo apt-get update（更新索引）
+安装	sudo apt-get install xxx（xxx指代待安装包名）
+卸载	sudo apt-get purge xxx（xxx指代安装时的包名）
+apt-get --purge remove 同上 删除已安装包（不保留配置文件)。如软件包a，依赖软件包b，则执行该命令会删除a，而且不保留配置文件
+sudo apt-get autoremove（很有可能一些依赖包从此不再需要，自动删除） 删除为了满足依赖而安装的，但现在不再需要的软件包（包括已安装包），保留配置文件。
+apt-get remove  删除已安装的软件包（保留配置文件），不会删除依赖软件包，且保留配置文件。
+apt-get autoclean APT的底层包是dpkg, 而dpkg 安装Package时, 会将 *.deb 放在 /var/cache/apt/archives/中，apt-get autoclean 只会删除 /var/cache/apt/archives/ 已经过期的deb。
+apt-get clean  使用 apt-get clean 会将 /var/cache/apt/archives/ 的 所有 deb 删掉，可以理解为 rm /var/cache/apt/archives/*.deb。
+2、dpkg
+安装	sudo dpkg -i xxx.deb（xxx.deb指代待安装Deb包名）
+sudo apt-get -f install（很有可能一些依赖包并未安装，自动安装）
+卸载	sudo dpkg-query -W "*chrome*"（由于安装后得到的DPKG包名一般与安装时候的Deb包名不同，在卸载的时候首先要找到相应的DPKG包名，以chrome浏览器为例）
+sudo dpkg -P google-chrome-stable（1步骤中找到的DPKG包名）
+sudo apt-get autoremove（很有可能一些依赖包从此不再需要，自动删除）
+3、从源码编译安装
+安装（3步曲）	./configure
+make
+make install
+卸载	make uninstall（卸载时的源码目录所在路径与安装时的源码目录所在路径不同，不影响最终结果）

@@ -1,4 +1,12 @@
 
+Shell重定向 ＆>file、2>&1、1>&2 、/dev/null的区别
+在shell脚本中，默认情况下，总是有三个文件处于打开状态，标准输入(键盘输入)、标准输出（输出到屏幕）、标准错误（也是输出到屏幕），它们分别对应的文件描述符是0，1，2 。
+>  默认为标准输出重定向，与 1> 相同
+2>&1  意思是把 标准错误输出 重定向到 标准输出.
+&>file  意思是把标准输出 和 标准错误输出 都重定向到文件file中
+/dev/null是一个文件，这个文件比较特殊，所有传给它的东西它都丢弃掉
+
+
 Shell 是一个程序，一般都是放在 /bin 或者 /usr/bin 目录下，当前 Linux 系统可用的 Shell 都记录在 /etc/shells 文件中
 echo $SHELL   查看系统默认shell
 Linux Shell 默认的命令提示符的格式为：[username@host directory]$  root下 提示符为 #
@@ -135,6 +143,7 @@ rm -rf dir                  #递归地删除目录 递归选项-r或-R，-f 强�
 ifconfig                    #网络
 ip a                        #网络
 top -Hp pid                 #查看某个进程的线程信息 -H线程模式，-p指定pid d每隔几秒刷新默认5 c显示命令行参数
+top -Hp   ` ps -ef | grep gvfs-goa  | awk 'NR==3 {print $2}' `  #过滤某个进程ID并top显示 用管道不行
 UID启动进程的用户 PID进程的进程号 PPID父进程进程号 C cpu使用率 STIME进程启动时的系统时间 TTY进程启动时终端设备 TIME运行进程需要的累积CPU时间 CMD启动程序名称或命令
 ps aux                      #进程 同下
 ps -ef                      #进程 -e显示运行在系统上的所有进程  -f扩展显示输出
@@ -150,6 +159,7 @@ gzip  file.txt                    #压缩文件 只能用来压缩文件，不�
 gunzip file.txt.gz                #解压缩文件
 ls -S大小排序 -t时间 -r反序 -l名字 -X扩展名 -h人类可读大小 -i inode号 -d只看当前目录的信息 -a显示所有文件 -A除了"."和".."以外的文件
 which xx                          #xx的位置
+whereis xx                        #xx的位置
 alias #查看别名 alias 别名=’原命令 -选项/参数’ 设置别名  alias -p1查看已经设置的别名列表  unalias 别名1 删除别名  alias命令存放在 ~/.bashrc 文件中
 man man                           #man 分页格式
 strings ~/code/base/lib/c7/libMxHandlePool.a | grep WriteKeyMap   #在对象文件或二进制文件中查找可打印的字符串
@@ -301,7 +311,7 @@ ldconfig [参数]  通常在系统启动时运行，而当用户安装了一个�
   注意:以下4种方法 择一即可 最后调用ldconfig 其实就是系统刷新下so文件
     1 在/lib和/usr/lib里面添加库文件，但是需要使用命令sudo ldconfig,否则无法找到库文件。 sudo ldconfig -v
     2 在上述两个目录之外的路径添加库文件，需要先将将库文件的路径追加入/etc/ld.so.conf。 echo "/usr/local/mysql/lib" >> /etc/ld.so.conf
-    3 还可以用添加环境变量LD_LIBRARY_PATH的做法让系统识别到库文件。   export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/mysql/lib
+    3 还可以用添加环境变量LD_LIBRARY_PATH的做法让系统识别到库文件 目录之间用冒号分隔开。 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/mysql/lib
     4 还可以在/etc/ld.so.conf.d/目录下创建.conf文件来添加库路径。touch opencv.conf;echo "/user/local/lib" > opencv.conf;sudo ldconfig
 
 Linux使用cp命令复制不提示直接覆盖
@@ -390,7 +400,68 @@ section number	description                                                      
 man -f xxx      查询有那些条目  然后再用 man n xxx 查询
 
 
+top命令作用，各列的意义
+前五行是系统整体的统计信息，称为汇总区（Summary Area）。
+
+第一行是时间相关和任务队列信息，同 uptime 命令的执行结果。
+16:07:48                        当前时间
+up 442 days,  2:51                系统运行的总时长，单位分
+3 users                            当前登录用户数
+load average: 0.00, 0.01, 0.05    系统负载，即任务队列的平均长度。三个数值分别为最近 1 分钟、5 分钟、15 分钟的平均值。
+
+第二行是进程信息统计数据。
+217 total        总的进程数
+1 running        正在运行的进程数
+216 sleeping    　　　　睡眠的进程数
+0 stopped        停止的进程数
+0 zombie        僵尸进程数
+
+第三行是 CPU 统计数据。
+0.6 us    用户空间占用CPU百分比
+0.3 sy    内核空间占用CPU百分比
+0.0 ni    用户进程空间内改变过优先级的进程占用CPU百分比
+99.1 id    空闲CPU百分比
+0.0 wa    等待输入输出的CPU时间百分比
+0.0 hi    硬中断（Hardware IRQ）占用CPU百分比
+0.0 si    软中断（Software IRQ）占用CPU百分比
+0.0 st    虚拟机（虚拟化技术）占用百分比
+
+第四行为物理内存的统计数据。
+15140452 total         物理内存总量
+598296 free            空闲内存总量
+383764 used            已使用的物理内存总量
+14158392 buff/cache    用作内核缓存的内存量
+
+第五行为交换分区（即虚拟内存）的统计数据。
+2104508 total          交换区总量
+1550372 free           空闲交换区总量
+554136 used            已使用的交换区总量
+12974597 avail Mem     实际可用物理内存总量
+
+这里要说明的是不能用 Windows 的内存概念来理解这些数据，如果按 Windows 的方式来理解，此服务器共只剩下 598MB 的内存，实际上系统可用的物理内存远不止这些。free 内存表示尚未被内核占用的空闲内存，但是被内核占用用于 buffer 和 cache 的内存，实际上是可以被进程使用的，内核并不把这些可被重新使用的内存算到 free 中，因此在 Linux 上 free 内存会越来越少，但不用为此担心。
+
+第六行是空行。从第七行开始，显示了各个进程的状态信息，称为任务区（Task Area）。各列含义如下：
+PID        进程id
+USER       进程所有者
+PR         进程优先级，范围为0-31，数值越低，优先级越高
+NI         nice值。范围-20到+19，用于调整进程优先级，新的进程优先级 PR(new)=PR(old)+nice，所以nice负值表示高优先级，正值表示低优先级
+VIRT       进程使用的虚拟内存总量，单位 KB
+RES        Resident Memory Size，进程使用的、未被换出的物理内存大小，单位 KB
+SHR        共享内存大小，单位 KB
+S          进程状态。D=不可中断的睡眠状态 R=运行 S=睡眠 T=停止 t=跟踪 Z=僵尸进程
+%CPU       上次更新到现在的 CPU 时间占用百分比。注意，在多核或多 CPU 环境中，如果进程是多线程的，而 top 不是在线程模式下运行的，该值由多个核的值累加，可能会大于 100%
+%MEM       进程使用的物理内存百分比
+TIME+      进程使用的 CPU 时间总计，单位 1/100 秒
+COMMAND    进程名称（命令名/命令行）
+
+top 可输出的全部进程指标可以使用命令top -O查看，其它指标的介绍这里不再赘述，具体可参见 top manual。
+
+
+
+
+
 find-----------------------------------------------------------------------------
+find / -name "xxx" 2>/dev/null 权限不够的文件不显示
 find  -path XXX -prune 排除XXX目录 -o or表示或  -a and表示与 -not或! 表示非
   -prune 不进入目录，所以可用于忽略目录，但不会忽略普通文件。
   -print 打印文件名
@@ -621,8 +692,8 @@ MAILTO=root
     select-editor
 
   命令
-    crontab –e :  修改 crontab 文件. 如果文件不存在会自动创建。
-    crontab –l :  显示 crontab 文件。
+    crontab -e :  修改 crontab 文件. 如果文件不存在会自动创建。
+    crontab -l :  显示 crontab 文件。
     crontab -r :  删除 crontab 文件。
     crontab -ir : 删除 crontab 文件前提醒用户。
 
@@ -677,6 +748,9 @@ MAILTO=root
     man 1 crontab
     man 5 crontab
     man 8 cron
+
+例如
+  0-59/10 * * * * echo `date` >> ~/12345.log   每十分钟写日期到指定文件
 
 
 ulimit-----------------------------------------------------------------------------
@@ -1417,6 +1491,32 @@ done
 
 
 
+
+
+ANSI 转义码
+ANSI 转义序列是命令行终端下用来控制光标位置、字体颜色以及其他终端选项的一项 in-bind signaling 标准。通常是在文本中嵌入确定的字节序列（符合带内信令的定义），大部分以 ESC 转义字符和 "[" 字符开始，终端会把这些字节序列解释为相应的指令，而不是普通的字符编码。
+在终端中，ASCII编码中有些字符是不能用来打印显示的，比如 '\a' ( 0x7 ) 代表响铃，'\n' (0x0A)  代表换行，这些字符被称为控制符。控制符 '\e' (0x1B)，这个字符代表 ESC ，即键盘上 ESC 按键的作用。ESC 是单词 escape 的缩写，即逃逸的意思。文本中出现这个转义字符，代表其后方的字符是 ANSI Escape code 编码。
+
+ANSI color
+ANSI Escape code编码中有专门控制字符颜色的控制符，例如：
+shell复制代码\e[37;44;3;1m
+
+
+\e 代表开始ANSI Escape code
+[ 代表转义序列开始符 CSI，Control Sequence Introducer
+37;44;4;1 代表以; 分隔的文本样式控制符，其中 37 代表文本前景色为白色，44代表背景为蓝色，3代表斜体，1代表加粗
+m 代表结束控制符序列
+
+比如在终端命令行中执行
+shell复制代码echo -e "\e[37;44;3;1mLYL\e[0m"
+
+-e 参数用于启用 echo 命令控制符转码，结尾的 \e[0m 代表重置文本样式。
+因为 \e 控制符的16进制码为0x1B ， 8 进制码为 033 ，所以以下表示方式等价：
+\e[0m
+\x1b[0m
+\x1B[0m
+\033[0m
+\u001b[0m
 
 
 

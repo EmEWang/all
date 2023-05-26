@@ -1,0 +1,57 @@
+
+编译选项设置--------
+在CMakeLists.txt中可以通过修改CMake内置的环境变量来改变C或C++的编译选项.
+编译选项相关的CMake 变量如下：
+
+CMAKE_C_FLAGS =
+CMAKE_C_FLAGS_DEBUG = -g
+CMAKE_C_FLAGS_MINSIZEREL = -Os -DNDEBUG
+CMAKE_C_FLAGS_RELEASE = -O3 -DNDEBUG
+CMAKE_C_FLAGS_RELWITHDEBINFO = -O2 -g -DNDEBUG
+
+CMAKE_CXX_FLAGS =
+CMAKE_CXX_FLAGS_DEBUG = -g
+CMAKE_CXX_FLAGS_MINSIZEREL = -Os -DNDEBUG
+CMAKE_CXX_FLAGS_RELEASE = -O3 -DNDEBUG
+CMAKE_CXX_FLAGS_RELWITHDEBINFO = -O2 -g -DNDEBUG
+
+对于C语言设置CMAKE_C_FLAGS相关参数，C++语言设置CMAKE_CXX_FLAGS相关参数。并且分为DEBUG，RELEASE，MINSIZEREL和RELWITHDEBINFO四种类型。
+
+以C++语言编译选项为例：
+CMAKE_CXX_FLAGS_DEBUG：编译Debug版本的时候会采用的编译选项，默认只有一个-g选项，包含调试信息；
+CMAKE_CXX_FLAGS_RELEASE：编译Release版本的时候采用的编译选项，默认包-O3选项，该选项表示优化等级；
+CMAKE_CXX_FLAGS_MINSIZEREL：主要减小目标文件大小，选项-Os就是这个作用；
+CMAKE_CXX_FLAGS_RELWITHDEBINFO：包含调试信息的Release版本，-O2和-g，优化的同时也包含了调试信息；
+CMAKE_CXX_FLAGS：这个选项没有默认值；
+
+顾名思义，当CMake在编译项目的时候，选项为Debug则会采用CMAKE_CXX_FLAGS_DEBUG选项，编译Release则会采用CMAKE_CXX_FLAGS_RELEASE选项，因此，需要设置编译选项的时候，在CMakeLists.txt中设置这些变量就可以了。
+
+实际上可以分别设置CMAKE_CXX_FLAGS_DEBUG和CMAKE_CXX_FLAGS_RELEASE，如下：
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -std=c++11 -Wl,-rpath=../lib")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -std=c++11 -g")
+
+上面的设置两个都有-std=c++11，这个选项是一个公共的选项，不管是Release还是Debug都需要设置。这种情况还可以把公共的设置放在CMAKE_CXX_FLAGS变量里面，如下：
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG}  -Wl,-rpath=../lib")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -g")
+因为在最终编译的时候的编译选项不管是Release还是Debug都包含了CMAKE_CXX_FLAGS这个变量。
+
+打印消息---------------
+message方法
+message([<mode>] "message to display" ...)
+message：消息名字，可在CMakeLists.txt或者.cmake脚本文件中输入，且有提示，不区分大小写
+mode：打印消息的类别，有FATAL_ERROR，SEND_ERROR，WARNING，AUTHOR_WARNING，DEPRECATION，(none) or NOTICE，STATUS，VERBOSE，DEBUG，TRACE共10种
+“message to display”：输出消息的内容，是字符串类型
+…：表示可变参数，可连接多个输出
+
+mode说明
+FATAL_ERROR：cmake出错，停止编译和生成(信息红色)
+SEND_ERROR：cmake出错，继续编译，但是停止生成(信息红色)
+WARNING：cmake警告，继续编译(信息红色)
+AUTHOR_WARNING：开发者警告，继续编译(信息红色)
+DEPRECATION：如果使用set方法设置CMAKE_ERROR_DEPRECATED为true(不区分大小写)，编译出错，否则继续编译
+(none) or NOTICE：不设置mode，默认是NOTICE模式，不影响编译和生成，用于打印消息(信息白色)
+STATUS：编译时状态信息，左边以--开头(信息白色)
+DEBUG：针对开发人员的调试信息(信息白色)
+TRACE：日志级别的临时信息(信息白色)

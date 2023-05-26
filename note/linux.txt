@@ -35,8 +35,16 @@ echo $PATH  #查看单个环境变量
 env         #显示当前用户的变量 即环境变量
 set         #显示当前shell的定义的私有变量，包括用户的环境变量，按变量名称排序
 export      #显示当前导出成用户变量的shell变量，并显示变量的属性(是否只读)，按变量名称排序
+export -n xxx  #删除xxx的导出属性 并没有删除此变量 只是它的属性由环境变量变为本地变量
 declare     #同set
 unset       #删除指定的shell变量或环境变量
+
+
+              [env环境变量]  撤销导出属性
+                  ↑  |   export -n aaa
+                  |  |                     export aaa=123  定义本地变量的同时导出
+  export aaa      |  ↓                     aaa=123         定义本地变量
+   导出变量    [set本地变量]                unset aaa        删除变量 不管有没导出
 
 进程的维度理解
 set设置了当前shell进程的本地变量，本地变量只在当前shell的进程内有效，不会被子进程继承和传递。
