@@ -201,8 +201,18 @@ int params(int argc, char**argv)
     {
         if (strcmp(argv[i], "-h") == 0)
         {
-            printf("调用格式\n");
-            printf("xxx [thread num] [count num] [count2 num] [mallocsize num] [newsize num] [malloc] [vector] [list] [map]\n");
+            printf("调用格式:\n");
+            printf("xxx [选项1 [参数1] ] [选项2 [参数2] ] ...\n");
+            printf("选项 参数说明:\n");
+            printf("[thread num] 启动线程数 num表示线程数量\n");
+            printf("[malloc] 启动malloc方式测试\n");
+            printf("[mallocsize num] 调整malloc申请内存大小\n");
+            printf("[vector] 启动vector方式测试\n");
+            printf("[list] 启动list方式测试\n");
+            printf("[map] 启动map方式测试\n");
+            printf("[newsize num] 调整new申请内存大小\n");
+            printf("[count num] 主循环次数 num表示数量\n");
+            printf("[count2 num] 次循环次数 num表示数量\n");
             return -1;
         }
         else if (strcmp(argv[i], "thread") == 0)

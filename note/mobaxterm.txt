@@ -2,7 +2,7 @@ mobaxterm V22.1 不同版本可能略有不同
 多窗口同时输入 terminal->write commands on all terminals
 xserver 将linux端的gui程序 显示在当前windows客户端 输入 xclock,那么将在当前windows桌面显示 linux的 xclock 程序界面
 MobaXterm /home/mobaxterm
-  位置 C:\Users\xxx\AppData\Local\Temp\Mxt221\tmp\xxx
+  位置 C:\Users\xxx\AppData\Local\Temp\Mxt221\tmp\xxx    每次重启都删除Mxt221文件夹 若要保留则 settings->configuration中设置
   直接命令登陆远程服务器，并且使用scp命令传输文件
   可以直接apt-get安装vim等常用功能(或者官网下载插件)，实现在windows下模拟linux环境，这样就可以使用vi命令准备INCAR文件，也可以使用Gnuplot进行绘图。
   通过for循环在windows下实现批量操作

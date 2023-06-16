@@ -7,6 +7,12 @@ Shell重定向 ＆>file、2>&1、1>&2 、/dev/null的区别
 /dev/null是一个文件，这个文件比较特殊，所有传给它的东西它都丢弃掉
 
 
+[Tab]按键—具有『命令补全』和『档案补齐』的功能
+[Ctrl]-c按键—让当前的程序『停掉』
+[Ctrl]-d按键—通常代表着：『键盘输入结束(End Of File, EOF 戒 End OfInput)』的意思；另外，他也可以用来取代exit
+[Ctrl]-r按键,可以寻找到你历史输入过得指令。
+
+
 Shell 是一个程序，一般都是放在 /bin 或者 /usr/bin 目录下，当前 Linux 系统可用的 Shell 都记录在 /etc/shells 文件中
 echo $SHELL   查看系统默认shell
 Linux Shell 默认的命令提示符的格式为：[username@host directory]$  root下 提示符为 #
@@ -106,12 +112,16 @@ file  xxx  查看文件格式
 netstat -a ip               #查询主机名 netbios 协议 137端口 win
 lsof（list open files）     #列出当前系统打开文件的工具
 lsof -p 127129 | wc -l      #查看某个进程的打开文件数
+
 测试端口通不通
-  telnet ip port
+  telnet ip port    #telnet是windows标准服务，可以直接用；如果是linux机器，需要安装telnet
   ssh -v -p port username@ip   -v 调试模式(会打印日志) -p 指定端口 username可以随意
-  wget ip:port
+  wget ip:port      #wget是linux下的下载工具，需要先安装
   nmap ... -p
 
+chmod     #修改文件权限
+chown     #修改文件的拥有者
+chgrp     #修改文件的所属组
 fuser -mv /mnt/volume1/  找出正在使用设备的进程
 pgrep的p表明了这个命令是专门用于进程查询的grep  例:pgrep httpd
 pidof WebExpress     查询进程的pid 和pgrep相比稍显不足的是，pidof必须给出进程的全名
@@ -158,8 +168,8 @@ unzip mybatis.zip -d ./newdir     #将mybatis.zip 文件解压缩到目录 ./new
 gzip  file.txt                    #压缩文件 只能用来压缩文件，不能压缩目录 r进入目录递归压缩 一个文件一个gz
 gunzip file.txt.gz                #解压缩文件
 ls -S大小排序 -t时间 -r反序 -l名字 -X扩展名 -h人类可读大小 -i inode号 -d只看当前目录的信息 -a显示所有文件 -A除了"."和".."以外的文件
-which xx                          #xx的位置
-whereis xx                        #xx的位置
+which xx                          #xx的位置 在指令路径下查找指令
+whereis xx                        #xx的位置 在系统特定的路径下查找，既可以找到可执行程序，又可以找到手册，安装包压缩包等之类
 alias #查看别名 alias 别名=’原命令 -选项/参数’ 设置别名  alias -p1查看已经设置的别名列表  unalias 别名1 删除别名  alias命令存放在 ~/.bashrc 文件中
 man man                           #man 分页格式
 strings ~/code/base/lib/c7/libMxHandlePool.a | grep WriteKeyMap   #在对象文件或二进制文件中查找可打印的字符串
@@ -917,6 +927,7 @@ time_total:  %{time_total} \n
 
 
 shell编程--- 示例 0.sh  -----------------------------------------------------------------
+https://haicoder.net/shell/shell-function-return.html
 执行一个 Shell 脚本，有四种方式，即使用点，.、使用绝对路径或相对路径执行、使用 sh 执行和使用 source 执行。
 变量
 在 Bash shell 中，每一个变量的值都是字符串，无论你给变量赋值时有没有使用引号，值都会以字符串的形式存储。
@@ -1168,10 +1179,10 @@ echo $?                       #函数返回值 $? 是一个特殊变量 用来�
 函数参数 类似脚本参数 ./xx.sh p1 p2 p3
 函数内部可以使用 $n 来接收，例如，$0 当前脚本的文件名./xx.sh $1 表示第一个参数 p1，$2 表示第二个参数 p2，依次类推。
 $# 获取传递的参数的个数        #3
-$* 一次性获取所有的参数        "p1 p2 p3"      #以一个单字符串显示所有向脚本传递的参数
+$* 一次性获取所有的参数        "p1" "p2" "p3"  #将接收到的每个参数看做一份数据 彼此之间以空格来分隔 （传递了n个参数）
 "$*" 一次性获取所有的参数      "p1 p2 p3"      #以"$1 $2 … $n"的形式输出所有参数 （传递了一个参数）
 $@ 一次性获取所有的参数        同$*
-"$@" 一次性获取所有的参数      "p1" "p2" "p3"  #以"$1" "$2" … "$n" 的形式输出所有参数 （传递了n个参数）
+"$@" 一次性获取所有的参数      "p1" "p2" "p3"  #以"$1" "$2" … "$n" 的形式输出所有参数 （传递了n个参数）同$@
 $$	                          #脚本运行的当前进程ID号
 $!	                          #后台运行的最后一个进程的ID号
 $-	                          #显示Shell使用的当前选项，与set命令功能相同

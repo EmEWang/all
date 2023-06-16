@@ -1,4 +1,12 @@
 
+win11 poweshell
+C:\Windows\System32\WindowsPowerShell\v1.0    #目录下
+C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe       #不带工具栏
+C:\Windows\System32\WindowsPowerShell\v1.0\powershell_ise.exe   #带工具栏
+
+wmic csproduct get name    #查看主机型号
+wmic bios get serialnumber #查看主机序列号
+
 
 创建线程后马上CloseHandle(threadhandle)起什么作用
 HANDLE threadhandle = CreateThread(NULL, 0, RecvThreadProc, NULL, NULL, NULL);

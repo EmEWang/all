@@ -1,8 +1,10 @@
 
-github
-ssh -T git@github.com   配置好ssh之后 验证
-github 默认分支修改 切换到要修改的库->settings->branches->Default branch下的双箭头
+https://blog.csdn.net/qq_35246620/article/details/66973794    #史上最简单的 GitHub 教程
 
+github
+ssh -T git@github.com   配置好ssh keys之后 验证绑定是否成功
+github 默认分支修改 切换到要修改的库->settings->branches->Default branch下的双箭头
+github 修改ssh keys 个人头像->Settins->SSH and GPG keys->SSH keys中增删改
 
 本地文件上传/同步到github
 1 git init   建立git仓库，cd到你的本地项目根目录下，执行git命令
@@ -19,6 +21,7 @@ github 默认分支修改 切换到要修改的库->settings->branches->Default 
 git config --global user.name 'your_name'
 git config --global user.email 'your_email'
 
+https://stackoverflow.com/questions/29933918/ssh-key-permissions-0644-for-id-rsa-pub-are-too-open-on-mac
 本地生成的或者是远程上传的密钥文件 在连接github时 有错误 是权限问题
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @         WARNING: UNPROTECTED PRIVATE KEY FILE!          @
@@ -29,6 +32,13 @@ This private key will be ignored.
 bad permissions: ignore key: /Users/tudouya/.ssh/vm/vm_id_rsa.pub
 Permission denied (publickey,password).
 chmod 400 ~/.ssh/id_rsa             设置只读权限
+
+配置文件
+https://git-scm.com/book/zh/v2/%E8%87%AA%E5%AE%9A%E4%B9%89-Git-%E9%85%8D%E7%BD%AE-Git
+/etc/gitconfig  #系统配置文件  传递 --system 选项给 git config 就会读写该文件。含有系统里每位用户及他们所拥有的仓库的配置值。
+~/.gitconfig 或 ~/.config/git/config  #全局配置文件 传递 --global 选项让 Git 读写该文件。对应每一个用户。
+.git/config  #本都配置文件 它对应于向 git config 传递 --local 选项。这个文件中的值只对当前仓库有效。
+以上三个层次中每层的配置（系统、全局、本地）都会覆盖掉上一层次的配置，所以 .git/config 中的值会覆盖掉 /etc/gitconfig 中所对应的值。
 
 git mv OLD-FILENAME NEW-FILENAME    文件重命名
 git add -u                          只暂存已修改的文件 不管未追踪的文件
@@ -54,17 +64,41 @@ git push -u origin master                     1 设置上游分支 2 push
 [branch "master"]
     remote = origin
     merge = refs/heads/develop
+
+https://segmentfault.com/a/1190000002783245  详细解释
+1 git push的默认行为
+在git的全局配置中，有一个push.default属性，其决定了git push操作的默认行为。
 git config --global push.default 'option'   可选值 nothing, current, upstream, simple, matching
 nothing - push操作无效，除非显式指定远程分支，例如git push origin develop。
 current - push当前分支到远程同名分支，如果远程同名分支不存在则自动创建同名分支。
-upstream - push当前分支到它的upstream分支上（这一项其实用于经常从本地分支push/pull到同一远程仓库的情景，
-  这种模式叫做central workflow）。
-simple - simple和upstream是相似的，只有一点不同，simple必须保证本地分支和它的远程
-upstream分支同名，否则会拒绝push操作。
+upstream - push当前分支到它的upstream分支上（这一项其实用于经常从本地分支push/pull到同一远程仓库的情景，这种模式叫做central workflow）。
+simple - simple和upstream是相似的，只有一点不同，simple必须保证本地分支和它的远程upstream分支同名，否则会拒绝push操作。
 matching - push所有本地和远程两端都存在的同名分支。
 因此如果我们使用了git2.0之前的版本，push.default = matching，git push后则会推送当前分支代码到远程分支，
   而2.0之后，push.default = simple，如果没有指定当前分支的upstream分支，就会收到上文的fatal提示。
 
+git中存在upstream和downstream，简言之，当我们把仓库A中某分支x的代码push到仓库B分支y，此时仓库B的这个分支y就叫做A中x分支的upstream，而x则被称作y的downstream，这是一个相对关系，每一个本地分支都相对地可以有一个远程的upstream分支（注意这个upstream分支可以不同名，但通常我们都会使用同名分支作为upstream）。
+
+初次提交本地分支，例如git push origin develop操作，并不会定义当前本地分支的upstream分支，我们可以通过git push --set-upstream origin develop，关联本地develop分支的upstream分支，另一个更为简洁的方式是初次push时，加入-u参数，例如git push -u origin develop，这个操作在push的同时会指定当前分支的upstream。
+
+注意push.default = current可以在远程同名分支不存在的情况下自动创建同名分支，有些时候这也是个极其方便的模式，比如初次push你可以直接输入 git push 而不必显示指定远程分支。
+
+2 git pull的默认行为
+当我们执行git pull的时候，实际上是做了git fetch + git merge操作，fetch操作将会更新本地仓库的remote tracking，也就是refs/remotes中的代码，并不会对refs/heads中本地当前的代码造成影响。
+当我们进行pull的第二个行为merge时，对git来说，如果我们没有设定当前分支的upstream，它并不知道我们要合并哪个分支到当前分支，所以我们需要通过下面的代码指定当前分支的upstream：
+git branch --set-upstream-to=origin/<branch> develop
+// 或者git push --set-upstream origin develop
+
+实际上，如果我们没有指定upstream，git在merge时会访问git config中当前分支(develop)merge的默认配置，我们可以通过配置下面的内容指定某个分支的默认merge操作
+[branch "develop"]
+    remote = origin
+    merge = refs/heads/develop // [1]为什么不是refs/remotes/develop?
+或者通过command-line直接设置：
+git config branch.develop.merge refs/heads/develop
+这样当我们在develop分支git pull时，如果没有指定upstream分支，git将根据我们的config文件去merge origin/develop；如果指定了upstream分支，则会忽略config中的merge默认配置。
+
+[1]为什么merge = refs/heads/develop 而不是refs/remotes/develop?
+因为这里merge指代的是我们想要merge的远程分支，是remote上的refs/heads/develop，文中即是origin上的refs/heads/develop，这和我们在本地直接执行git merge是不同的(本地执行git merge origin/develop则是直接merge refs/remotes/develop)。
 
 
 改变远程库的地址
@@ -173,7 +207,7 @@ git reset --hard commit_id  #撤销 commit, 同时本地删除该 commit 修改
     git config --local --list  显示当前project设置
     git 修改当前的project的用户名的命令为：git config user.name 你的目标用户名;
     git 修改当前的project提交邮箱的命令为：git config user.email 你的目标邮箱名;
-  
+
   2 直接修改git的配置文件的方式来进行修改
     1 全局.gitconfig文件的命令为：$  vi ~/.gitconfig  然后在文件中直接修改即可
     2 当前project的config文件在每个project中的.git目录下 vi ./.git/config
@@ -221,13 +255,13 @@ git clean
   git clean -df   删除当前目录下没有被 track 过的文件和文件夹
   git clean -xf   删除当前目录下所有没有 track 过的文件 不管是否是 .gitignore 文件里面指定的文件夹和文件
   git clean       对于刚编译过的项目也非常有用  如, 他能轻易删除掉编译后生成的 .o 和 .exe 等文件. 这个在打包要发布一个 release 的时候非常有用
-   
+
   git reset --hard
   git clean -df
   git status
   运行后, 工作目录和缓存区回到最近一次 commit 时候一摸一样的状态。
   此时建议运行 git status，会告诉你这是一个干净的工作目录, 又是一个新的开始了！
-  
+
   还有一个 very important 要说
     git add .  git commit  后一定要记得 git push ，不然你又找不回来了。
 
@@ -251,7 +285,7 @@ git log  --pretty=oneline BSmod/gather.cpp   一行展示某个任务的提交�
   TortoiseGit->推送
   TortoiseGit->切换     f_ipmgmmod
   命令方式下对于新分支先拉去在切换
-  
+
   删除分支TortoiseGit
   1删除dev_1分支前 要将本地代码库切换到其它分支 比如:dev_2 右键 switch/checkout
   2右键 Browsereferences，或者1的时候选择branch后面的单个点按钮 "..."
@@ -272,7 +306,7 @@ git log  --pretty=oneline BSmod/gather.cpp   一行展示某个任务的提交�
     git branch 		  查看本地分支				输出结果中，前面带* 的是当前分支
     git branch  -a  查看所有分支
     git branch  -r  查看远程
-    
+
   分支改名
   假设分支名称为oldName 想要修改为 newName
     1. 本地分支重命名(还没有推送到远程) git branch -m oldName newName
@@ -294,7 +328,7 @@ git log  --pretty=oneline BSmod/gather.cpp   一行展示某个任务的提交�
       git branch --set-upstream-to=origin/remote_branch  your_branch        本地关联远程分支  其中，origin/remote_branch是你本地分支对应的远程分支；your_branch是你当前的本地分支 例:git branch --set-upstream-to=origin/dev dev
     git branch --unset-upstream                        撤销本地分支与远程分支的映射关系
       git branch --unset-upstream <branchname>         撤销本地某个分支与远程分支的映射关系
-  分支状态  
+  分支状态
     git status                                      查看状态
     git add xxx                                     将想要快照的内容写入缓存区
     git commit  主要是将暂存区里的改动给提交到本地的版本库。每次使用git commit 命令我们都会在本地版本库生成一个40位的哈希值，这个哈希值也叫commit-id，commit-id在版本回退的时候是非常有用的，它相当于一个快照,可以在未来的任何时候通过与git reset的组合命令回到这里.
@@ -317,7 +351,7 @@ message3
     git clone <版本库的网址> <本地目录名>           如果要指定不同的目录名，可以将目录名作为git clone命令的第二个参数
     git remote -v                                   查看当前文件夹git地址
   上传分支
-    git push origin :分支                      上传一个分支到仓库 origin 
+    git push origin :分支                      上传一个分支到仓库 origin
     git push origin HEAD                       用来上传当前的分支
     git push origin [远程分支名]:[本地分支名]  推送到远程分支
     git config --global push.default current   设置默认使用git push上传当前分支 可以设置 push.default 的值为 nothing 不上传任何分支 matching 上传所有分支 upstream/tracking 上传当前跟踪分支 current 上传当前分支
@@ -340,7 +374,7 @@ message3
     git tag v1.0.1                           轻量级标签（Lightweight Git tags） 只保存引用的commit的名字和hash  默认为HEAD，也可以指定一个commit id
     git tag <tag_name> <commit_sha>          在某个commit 上打tag
     git push origin <tag_name>               本地tag推送到线上
-    git push origin --tags                   推送全部未推送过的本地标签到远程版本库 
+    git push origin --tags                   推送全部未推送过的本地标签到远程版本库
     git tag -d <tag_name>                    本地删除标签
     git push origin :refs/tags/<tag_name>    本地tag删除了，再执行该句，删除远程tag
     git fetch --tags                         拉取标签  使用这个命令可以将远程仓库的标签拉取（同步）到当前分支
@@ -360,7 +394,7 @@ message3
     git diff branch1 branch2 --stat           //显示出所有有差异的文件列表
     git diff branch1 branch2 文件名(带路径)   //显示指定文件的详细差异
     git diff branch1 branch2                  //显示出所有有差异的文件的详细差异
-	
+
 	提交修改的文件
 	仓库区 <-- 暂存区 <-- 工作区
 	git add xxx                                     将想要快照的内容写入缓存区  暂存区 <-- 工作区
@@ -371,7 +405,7 @@ message3
     1 只是修改了文件，没有任何 git 操作
     2 修改了文件，并提交到暂存区（即编辑之后，gitadd但没有 git commit -m ....）
     3 修改了文件，并提交到仓库区（即编辑之后，gitadd和 git commit -m ....）
-    
+
     1 只是修改了文件，没有任何 git 操作，直接一个命令就可回退：
       $ git checkout -- aaa.txt # aaa.txt为文件名 丢弃某个文件
       $ git checkout -- .       # 丢弃全部
@@ -388,8 +422,8 @@ message3
       $ git log --oneline    # 可以省略 得到你需要回退一次提交的commit id
       $ git reset HEAD^    # 回退到上一个版本
       $ git checkout -- aaa.txt    # aaa.txt为文件名
-     
-    
+
+
     注1 情况2 和 情况3 只有回退的版本不一样
       对于情况2，并没有 $ git commit，仓库版本也就不会更新和记录，所以回退的是当前版本
         [root@localhost SearchDevice]#git log --oneline
@@ -414,7 +448,7 @@ message3
     1取消这次合并
       git  merge --abort   #丢弃当前合并
     2回退该分支的正确的版本号
-      git  reflog   #查询回退到的版本号 
+      git  reflog   #查询回退到的版本号
       git  reset  --hard  f82cfd2 #回退到这个版本号
 
 
@@ -426,7 +460,7 @@ message3
     4.选中你所有的提交，右键，Cherry pick selected commits
     5.选中你的提交记录
     这里要注意的一点就是：你想合并到哪个分支上，就要首先切换到该分支！
-    
+
     此操作与上面的一样
     1.切换到要修改的分支
     2.显示日志
@@ -437,25 +471,25 @@ message3
 
     如果采用
     右键 merge commit 某个提交 可能合并多个提交进来
-    
+
   还原
-    1.没有commit的 右键 revert 选择文件 
+    1.没有commit的 右键 revert 选择文件
     2.已经commit的 右键 log 对某个提交 reset "XXX" to this 然后在执行上一步
 
 
 
 合并某个提交commit到指定的分支上
   git log 查看提交的信息 记住commit id
-  git checkout 到要修改的分支     //git checkout master  
+  git checkout 到要修改的分支     //git checkout master
   git cherry-pick 某个commit id   //git cherry-pick 62ecb3 把某个commit id的提交合并到当前分支
   cherry-pick 和merge比较类似 如果git不能合并代码改动（比如遇到合并冲突） git需要你自己来解决冲突并手动添加commit
 
 合并某个分支上的一系列commits
   这种情况下就不要选择cherry-pick了，rebase 更适合
   首先需要基于feature创建一个新的分支，并指明新分支的最后一个commit 假设你需要合并feature分支的commit76cada ~62ecb3 到master分支
-  git checkout -b newbranch 62ecb3 
+  git checkout -b newbranch 62ecb3
   然后，rebase这个新分支的commit到master（--ontomaster）。76cada^ 指明你想从哪个特定的commit开始。
-  git rebase --ontomaster 76cada^  
+  git rebase --ontomaster 76cada^
   得到的结果就是feature分支的commit 76cada ~ 62ecb3 都被合并到了master分支。
 
 
@@ -477,10 +511,9 @@ git 查看分支创建时间
 
 
 使用Tortoise结合Git比较两个版本的差异
-1、右键项目，TortoiseGit -------> Diff with previous version 
+1、右键项目，TortoiseGit -------> Diff with previous version
 2、单击出分支选择弹窗，进行选择要比较的两个分支
 3、比较同个分支的两个不同的版本
     show log ----->通过按Shift 和鼠标左键, 可以选中两个版本, 接着再按鼠标右键, 选中Compare revisions, 就可以比较两个revision 了.
 
 git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative --all
-

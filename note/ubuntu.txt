@@ -1,11 +1,533 @@
 
+https://ubuntu.com/download/desktop    官网
+https://cn.ubuntu.com/download/desktop 官网中文
+
+Ubuntu 20.4版本镜像下载国内地址 http://mirrors.aliyun.com/ubuntu-releases/20.04/
+       其他版本                http://mirrors.aliyun.com/ubuntu-releases/
+
+ubuntu/debian    apt-get   #软件包管理工具
+
+Linux查看系统开机时间
+who -b          #查看最后一次系统启动的时间。
+who -r          #查看当前系统运行时间
+last reboot     #查看Linux系统历史启动的时间
+TOP             #up后表示系统到目前运行了多久时间。
+W               #up后表示系统到目前运行了多久时间。
+uptime          #命令查看
+/proc/uptime    #查看
+
+
+重启命令：
+1、reboot
+2、shutdown -r now 立刻重启(root用户使用)
+3、shutdown -r 10 过10分钟自动重启(root用户使用)
+4、shutdown -r 20:35 在时间为20:35时候重启(root用户使用)
+如果是通过shutdown命令设置重启的话，可以用shutdown -c命令取消重启
+
+关机命令：
+1、halt   立刻关机
+2、poweroff 立刻关机
+3、shutdown -h now 立刻关机(root用户使用)
+4、shutdown -h 10 10分钟后自动关机
+
+
 ubuntu版本
   cat /etc/issue             例如 Ubuntu 20.04.4 LTS \n \l
   sudo lsb_release -a        与上个方法相比，内容更为详细
 
+Ubuntu 查看cpu个数及核心数
+总核数 = 物理CPU个数 X 每颗物理CPU的核数
+总逻辑CPU数 = 物理CPU个数 X 每颗物理CPU的核数 X 超线程数
+cat /proc/cpuinfo   #查看linux系统和CPU型号，类型和大小
+cat /proc/cpuinfo| grep "physical id"| sort| uniq| wc -l  #查看物理CPU个数
+cat /proc/cpuinfo| grep "cpu cores"| uniq    #查看每个物理CPU中core的个数(即核数)
+cat /proc/cpuinfo| grep "processor"| wc -l   #查看逻辑CPU的个数
+grep 'processor' /proc/cpuinfo | sort -u | wc -l  #查看线程数 此处查看的线程数是总的线程数，可以理解为逻辑cpu的数量
+cat /proc/cpuinfo | grep name | cut -f2 -d: | uniq -c  #查看CPU信息（型号）
+
+cat /proc/meminfo     #查看内存信息 系统内存大小的信息，可以查看总内存，剩余内存，可使用内存等信息
+lscpu                 #查看cpu信息 型号 架构 大小端 等等
+
+如何查看linux 系统版本
+cat /etc/redhat-release
+lsb_release -a
+cat  /etc/issue
+
+如何查看Linux 内核
+uname -a
+cat /proc/version
+
+
+sudo dmidecode                            #查看机器硬件型号
+sudo dmidecode | grep "Product Name"      #查看主机型号
+sudo dmidecode -t 2 | grep Serial         #查看主机序列号
+sudo dmidecode -t 4 | grep ID             #查看 CPU ID
+sudo lshw -c network | grep serial | head -n 1  #查看MAC地址
+
+
+
+Linux一句命令之判断大小端序
+1 echo -n I | od -o | head -n1 | cut -f2 -d" " | cut -c6
+输出：1为小端模式，0为大端模式；
+解析：od命令的作用为将指定内容以八进制、十进制、十六进制、浮点格式或ASCII编码字符方式显示；
+
+2 echo -n I | od -o | head -n1 | awk '{print $2}'| cut -c6
+输出：1为小端模式，0为大端模式；
+解析：awk命令为文本处理。
+
+3 lscpu | grep -i byte
+输出：Byte Order:            Little Endian；
+解析：grep -i 为不区分大小写匹配；
+注意：在低版本的Linux可能不支持lscpu命令。
+
+4 dpkg-architecture | grep -i end
+输出：
+      DEB_BUILD_ARCH_ENDIAN=little
+      DEB_HOST_ARCH_ENDIAN=little
+      DEB_TARGET_ARCH_ENDIAN=little
+解析：dpkg-architecture命令是列出dpkg打包的一些环境参数；
+
+
+CPU核数/线程（非常实用）
+
+# lscpu | grep -E '^Thread|^Core|^Socket|^CPU\('
+
+系统
+uname -a               # 查看内核/操作系统/CPU信息
+lsb_release -a         # 查看操作系统版本 (适用于所有的linux，包括Redhat、SuSE、Debian等发行版，但是在debian下要安装lsb)
+cat /proc/cpuinfo      # 查看CPU信息
+hostname               # 查看计算机名
+lspci -tv              # 列出所有PCI设备
+lsusb -tv              # 列出所有USB设备
+lsmod                  # 列出加载的内核模块
+env                    # 查看环境变量
+
+资源
+free -m                # 查看内存使用量和交换区使用量
+df -h                  # 查看各分区使用情况
+du -sh <目录名>        # 查看指定目录的大小
+grep MemTotal /proc/meminfo   # 查看内存总量
+grep MemFree /proc/meminfo    # 查看空闲内存量
+uptime                 # 查看系统运行时间、用户数、负载
+cat /proc/loadavg      # 查看系统负载
+
+磁盘和分区
+mount | column -t      # 查看挂接的分区状态
+fdisk -l               # 查看所有分区
+swapon -s              # 查看所有交换分区
+hdparm -i /dev/hda     # 查看磁盘参数(仅适用于IDE设备)
+dmesg | grep IDE       # 查看启动时IDE设备检测状况
+
+网络
+ifconfig               # 查看所有网络接口的属性
+iptables -L            # 查看防火墙设置
+route -n               # 查看路由表
+netstat -lntp          # 查看所有监听端口
+netstat -antp          # 查看所有已经建立的连接
+netstat -s             # 查看网络统计信息
+
+进程
+ps -ef                 # 查看所有进程
+top                    # 实时显示进程状态
+
+用户
+w                      # 查看活动用户
+id <用户名>            # 查看指定用户信息
+last                   # 查看用户登录日志
+cut -d: -f1 /etc/passwd   # 查看系统所有用户
+cut -d: -f1 /etc/group    # 查看系统所有组
+crontab -l             # 查看当前用户的计划任务
+
+服务
+chkconfig --list       # 列出所有系统服务
+chkconfig --list | grep on    # 列出所有启动的系统服务
+
+程序
+rpm -qa                # 查看所有安装的软件包
+查看CPU信息（型号）
+cat /proc/cpuinfo | grep name | cut -f2 -d: | uniq -c
+    8  Intel(R) Xeon(R) CPU            E5410   @ 2.33GHz  (看到有8个逻辑CPU, 也知道了CPU型号)
+cat /proc/cpuinfo | grep physical | uniq -c
+    4 physical id      : 0             (说明实际上是两颗4核的CPU)
+    4 physical id      : 1
+getconf LONG_BIT
+ 32         (说明当前CPU运行在32bit模式下, 但不代表CPU不支持64bit)
+cat /proc/cpuinfo | grep flags | grep ' lm ' | wc -l
+   8
+(结果大于0, 说明支持64bit计算. lm指long mode, 支持lm则是64bit)
+
+
+再完整看cpu详细信息, 不过大部分我们都不关心而已.
+dmidecode | grep 'Processor Information'
+
+查看内 存信息
+cat /proc/meminfo
+
+uname -a
+Linux euis1 2.6.9-55.ELsmp #1 SMP Fri Apr 20 17:03:35 EDT 2007 i686 i686 i386 GNU/Linux
+(查看当前操作系统内核信息)
+
+cat /etc/issue | grep Linux
+Red Hat Enterprise Linux AS release 4 (Nahant Update 5)
+(查看当前操作系统发行版信息)
+
+查看机器型号
+dmidecode | grep "Product Name"
+
+查看网卡信息
+dmesg | grep -i eth
+
+
+
+编译gperftools
+https://github.com/gperftools/gperftools
+1 cmake方式
+  mkdir build; cd build ;cmake .. ; make
+  注意 CMakeLists.txt 中没有优化 开头需要添加 打开优化
+  set(CMAKE_CXX_FLAGS " -O2 ")
+  set(CMAKE_C_FLAGS " -O2 ")
+
+  set(default_tcmalloc_pagesize 8)  为设置页大小 默认为8K
+
+2 configure 方式
+  1 ./autogen.sh
+  2 ./configure
+  3 make            #lib 放到 .libs/ 下
+  4 make install    #可省
+  注意 可能需要安装
+  sudo apt-get install autoconf         #Command 'autoconf' not found, but can be installed with
+  sudo apt-get install libunwind8-dev   #configure.ac:179: error: possibly undefined macro: AC_PROG_LIBTOOL
+  sudo apt-get install libtool          #error: Libtool library used but 'LIBTOOL' is undefined
+
+  #config.status: error: cannot find input file: `Makefile.in  出现这个错误可能需要如下操作
+  aclocal                     #1  有的说只需要 1 3 步骤
+  libtoollize-force           #2
+  automake --add-missing      #3  若提示你缺少一些文件 根据提示自己手动创建缺少的文件，然后在再执行一遍3就可以了
+  autoconf                    #4
+
+  说明:
+  以下都是在2中选项说明 也就是 ./configure
+  1 交叉编译模式下需要添加 --host=xxxx 如:--host=aarch64-linux-gnu 实际使用 aarch64-linux-gnu-g++ 编译
+  2 在默认情况下自动 开启 -O2 -g选项 可以 添加 CFLAGS=-O0 CPPFLAGS=-O0 更改选项
+  3 tcmalloc默认page=8k 可以通过 --with-tcmalloc-pagesize=xx 更改
+    xx 一般取 4 8 16 32 64 128 256
+    page越大，TCMalloc的速度相对越快，但其占用的内存也会越高。简单说，就是空间换时间的道理。默认的page大小通过减少内存碎片  来最小化内存使用，但跟踪这些page会花费更多的时间。使用更大的page则会带来更多的内存碎片，但速度上会有所提升
+
+3 Install "google-perftools" Package on Ubuntu   #安装成品
+sudo apt-get update -y
+sudo apt-get install -y google-perftools
+
+
+
+如何去除configure的默认选择-g O2
+1 在生成的Makefile中
+  CFLAGS = -g -O2                      <--            直接改之 更方便
+  CXX = g++ -std=gnu++11
+  CXXCPP = g++ -std=gnu++11 -E
+  CXXDEPMODE = depmode=gcc3
+  CXXFLAGS = -g -O2                    <--            直接改之 更方便
+
+2 ./configure CC=gcc CFLAGS=-O0 CXXFLAGS=-O0   个选项根据需求更改
+  CC 为编译器 CFLAGS C编译选项 CXXFLAGS c++编译选项 CPPFLAGS 预处理选项 等等  效果同1
+
+3  https://www.cnblogs.com/tfanalysis/p/4093400.html   个人测试没效果
+autoconf生成的编译选项默认是"-g -O2"。这个"-g"选项将我迷惑了，以为生成了GDB调试所需的信息，所以也就没有管后面的"-O2“选项。
+实际上在用GDB进行调试的时候，单步跟踪代码，GDB显示的代码非常混乱。要么某些代码行未显示，要么中间插入了很多看起来像库函数的代码。甚至有时检查变量值都不对，但是根据此变量生成的后续结果却是正确的。
+查看GCC文档，发现-g与-O选项虽然允许同时使用，但是会产生"surprise”的结果。
+为了方便开发阶段的调试工作，需要给autoconf添加一个调试选项来控制其生成的编译选项。这可以通过在configure.ac中使用AC_ARG_ENABLE宏来实现。
+
+AC_ARG_ENABLE宏的格式为：
+    AC_ARG_ENABLE(feature, help-string, [action-if-given], [action-if-not-given])
+
+在configure.ac中添加如下配置：
+# enable debug or not
+AC_ARG_ENABLE(debug, AS_HELP_STRING([--enable-debug], [enable DEBUG mode(default=no)]),
+              [],
+              [enable_debug=no])
+AS_IF([test "x$enable_debug" = "xyes"], [CXXFLAGS="-g2 -O0 -DDEBUG -Wall"],
+    [test "x$enable_debug" = "xno"], [CXXFLAGS="-O2 -Wall"],
+    [])
+
+上面配置的意思是：给最后生成的configure脚本添加一个--enable-debug选项，如果指定了此选项，则CXXFLAGS="-g2 -O0 -DDEBUG -Wall"，否则CXXFLAGS="-O2 -Wall"。
+
+每一个enable选项都有一个enable_feature变量与之对应，可以通过此变量取得用户指定的值。以上面的场景为例：
+（1）如果指定--enable-debug，不带参数，则enable_debug变量值为"yes"。
+（2）如果指定--enable-debug=no，则enable_debug变量值为"no"。
+（3）如果指定--disable-debug，则与--enable-debug=no效果相同。
+
+AS_IF宏与C语言中的if语句功能相似，格式为：
+    AS_IF (test1, [run-if-true1], . . . , [run-if-false])
+
+例：
+AS_IF([test "xfoo"=xyes],[HANDLEFOO([yes])],[test"x
+foo" != xno], [HANDLE_FOO([maybe])],
+        [echo foo not specified])
+
+AS_IF的行为是：首先检查第一个条件，如果成立，执行相应操作；如果第一个条件不成立，继续检查下一个条件；如果所有条件都不成立，则执行run-if-false。
+
+添加了debug选项以后，执行./configure --help可以看到我们指定的文档字串：
+ --enable-debug          enable debug mode(default=no)
+
+这样我们就可以通过configure的选项来控制编译出的可执行文件是否带有调试信息了。
+
+
+
+gcc for arm几个版本区别
+区别无外乎几个：大端 or 小端、ARMv7 or ARMv8、32位 or 64位、裸机 or 嵌入式Linux
+multiarch name             syscall ABI  instruction set  endian-ness  word size  description             spec documents
+aarch64-linux-gnu          linux        ARMv8            little       64         aarch64 Linux Platform  AAPCS64 (ARM IHI 005A)1ELF for the ARM 64-bit Architecture2
+aarch64_be-linux-gnu       linux        ARMv8            big          64         aarch64 Linux Platform  AAPCS64 (ARM IHI 005A)1ELF for the ARM 64-bit Architecture2
+aarch64-linux-gnu_ilp32    linux        ARMv8            little       32         aarch64 Linux Platform
+aarch64_be-linux-gnu_ilp32 linux        ARMv8            big          32         aarch64 Linux Platform
+arm-linux-gnu              linux        ARMv7            little       32         Old ARM ABI             APCS (ARM DUI 0041 chapter 9)4
+arm-linux-gnueabi          linux        ARMv7            little       32         ARM EABI, soft-float    AAPCS (ARM IHI 0042D)5ARM GNU/Linux ABI Supplement6
+arm-linux-gnueabihf        linux        ARMv7            little       32         ARM EABI, hard-float    AAPCS (ARM IHI 0042D)5 andXXXXX (TBD)
+armeb-linux-gnueabi        linux        ARMv7            big          32         ARM EABI, soft-float    AAPCS (ARM IHI 0042D)5ARM GNU/Linux ABI Supplement6
+armeb-linux-gnueabihf      linux        ARMv7            big          32         ARM EABI, hard-float    AAPCS (ARM IHI 0042D)5 andXXXXX (TBD)
+armv8l-linux-gnueabihf     linux        ARMv8            little       32         ARMv8 EABI, hard-float
+arm-eabi                   Bare-Metal   ARMv7            little       32         ARM EABI, soft-float
+armeb-eabi                 Bare-Metal   ARMv7            big          32         ARM EABI, soft-float
+aarch64-elf                Bare-Metal   ARMv8            little       64         ARMv8 EABI, hard-float
+aarch64_be-elf             Bare-Metal   ARMv8            big          64         ARMv8 EABI, hard-float
+————————————————
+
+Ubuntu 20.04安装arm-linux-gcc交叉编译器
+https://blog.csdn.net/wu10188/article/details/86542418
+https://blog.csdn.net/weixin_45866346/article/details/121765262
+方法一：
+sudo apt-get install gcc-arm-linux-gnueabihf    #arm-linux-gcc的安装 编译的台架上不能运行
+sudo apt-get install g++-arm-linux-gnueabihf    #arm-linux-g++的安装 安装的是 arm-linux-gnueabihf 系列
+sudo apt-get remove gcc-arm-linux-gnueabihf     #arm-linux-gcc的卸载
+sudo apt-get remove g++-arm-linux-gnueabihf     #arm-linux-g++的卸载
+
+apt-cache search aarch64
+# 找到合适的版本安装，带版本号的
+sudo apt install gcc-8-aarch64-linux-gnu
+sudo apt install g++-8-aarch64-linux-gnu
+# 安装一个不带版本号的
+sudo apt install gcc-aarch64-linux-gnu          #编译的台架上能运行
+sudo apt install g++-aarch64-linux-gnu          #安装的是 aarch64-linux-gnu 系列
+# 测试是否安装成功
+aarch64-linux-gnu-gcc -v
+aarch64-linux-gnu-g++ -v
+方法二：
+arm-linux-gcc-4.4.3.tar.gz  32位
+下载地址：https://pan.baidu.com/s/1rAIBASIRZAXl-P1UOW9JVg
+提取码：mgrb
+arm-linux-gcc-4.6.4-arm-x86_64.tar.bz2  64位
+下载地址：https://pan.baidu.com/s/1xuh8M8bQHfZt_w6h4vRKeg
+提取码：uk85
+1.先把下载好的安装包移动到根目录下的tmp目录中（/tmp）
+2.使用tar命令解压安装包，即在Terminal中输入以下命令：（前面的sudo表示使用root权限执行该命令）
+sudo tar -xjvf /tmp/arm-linux-gcc-4.6.4-arm-x86_64.tar.bz2 -C /
+注意是大写的字母C，此命令会把安装包解压到根目录下的opt的TuxamitoSoftToolchains里面（/opt/TuxamitoSoftToolchains）
+如图逐层查看找到gcc-4.6.4所在的位置：/opt/TuxamitoSoftToolchains/arm-arm1176jzfssf-linux-gnueabi
+3.解压完成后，再在（/usr/local）中创建一个新目录arm，即在Terminal中输入以下命令：sudo mkdir /usr/local/arm
+创建arm目录成功后，还需要给它解放全部权限，即在Terminal中输入以下命令：sudo chmod 777 /usr/local/arm
+4.在解压出来的目录中找到并把整个gcc-4.6.4目录复制到刚刚建好的arm目录中，命令如下：
+先cd切换到gcc-4.6.4所在目录（切换后先ls看一下有没有gcc-4.6.4目录）：cd /opt/TuxamitoSoftToolchains/arm-arm1176jzfssf-linux-gnueabi/
+再执行 cp 复制命令，-r 表示整个目录以及里面的任何东西： sudo cp -r gcc-4.6.4 /usr/local/arm
+5.打开（/etc/profile）配置环境变量和库变量，目的是以后可以在任何位置使用该交叉编译器，命令如下：
+sudo vi /etc/profile
+用vi或者vim打开后，在文件最后添加两行，并输入以下代码：第一行是添加执行程序的环境变量，第二行是库文件的路径
+export PATH=$PATH:/usr/local/arm/gcc-4.6.4/bin
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/arm/gcc-4.6.4/lib
+然后保存退出即可。
+6.使用source命令重新加载生效该配置文件
+source /etc/profile
+7.检验是否安装成功，在 Terminal 输入以下命令输出版本信息：
+ arm-linux-gcc -v
+
+再随便写一个1.c文件，能编译成功说明已经完美安装。例如：
+arm-linux-gcc 1.c -o pp
+再file命令查看编译后的是不是arm的可执行文件：
+file pp
+
+注意：有些做完上述步骤还是不能用arm-linux-gcc的话，出现如下图所示错误：
+error while loading shared libraries: libmpfe.so.4 cannot open shared object file:No such file or directory
+这和时候需要在 “/home/用户名” 目录下的 ".bashrc" 隐藏文件下加上和 “/etc/profile” 一样的两句
+export PATH=$PATH:/usr/local/arm/gcc-4.6.4/bin
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/arm/gcc-4.6.4/lib
+这个 ".bashrc" 是一个隐藏文件，需要  ls -a 命令才能看见！用户名就是你自己的linux登录账号。
+同样用 vi或者vim打开它，在最后添加两行：
+
+
+编译的时候
+1 命令方式 aarch64-linux-gnu-g++ demo.cpp -o xxx
+2 configure方式 ./configure --host=aarch64-linux-gnu     其实编译器为(aarch64-linux-gnu-g++) host中为前缀
+  确保交叉编译工具链的bin文件在PATH环境变量里 echo $PATH 没有路径则添加
+
+machine `aarch64' not recognized
+https://github.com/li3tuo4/rc-fpga-zcu/issues/6
+A quick fix is to insert a newline "| aarch64 \ " after this line in config.sub
+
+
+configure交叉编译 说明
+https://blog.csdn.net/u010871058/article/details/71173501
+交叉编译某个应用程序时，通常需要 ./configure 来生成对应的 Makefile
+./configure 最关键的三个选项是：
+--host=HOST      #指定软件运行的系统平台.如果没有指定,将会运行`config.guess'来检测.
+--build=BUILD    #指定软件包安装的系统平台.如果没有指定,默认值将是'--host'选项的值.
+--target=GARGET  #指定软件面向(target to)的系统平台.这主要在程序语言工具如编译器和汇编器上下文中起作用.如果没有指定,默认将使用'--host'选项的值.
+
+--prefix=/work/gaoht/gsoap/target  #指定软件安装的位置
+一般而言，我们只要指定 --host 就可以了  记住： --host 指定的是交叉编译工具链的前缀
+LDFLAGS="-L/usr/non-standard-path/python/lib"  #指定动态库的路径
+
+举例 在 i686 开发机上交叉编译出 ethtool，让其在powerpc开发板上运行
+1.下载源代码并解压
+#cd /home/wanghui/
+#tar xvfz ethtool-6.tar.gz
+#cd ethtool-6
+
+2.交叉编译
+确保交叉编译工具链的bin文件在PATH环境变量里
+#echo $PATH
+/usr/local/bin:/bin:/usr/bin: /opt/montavista41/montavista/cge/devkit/ppc/85xx/bin/ :/home/wanghui/bin
+#./configure --host= ppc-linux
+#make
+
+3.查看生成文件
+#file ethtool
+ethtool: ELF 32-bit LSB executable, Intel 80386, version 1 (SYSV), for GNU/Linux 2.2.5, dynamically linked (uses shared libs), not stripped
+
+shit! 交叉编译失败，肿么还是X86的bin文件，肯定是configure出了问题，导致Makefile用的不是交叉编译工具链的gcc
+
+4.查看config.log
+
+有这么一句：
+configure:1790: checking for ppc-linux-gcc
+configure:1819: result: no
+configure:1828: checking for gcc
+configure:1844: found /usr/bin/gcc
+
+我擦，没找到ppc-linux-gcc
+cd /opt/montavista41/montavista/cge/devkit/ppc/85xx/bin
+到里面一看，崩溃了，原来是 ppc_85xx-gcc,所有bin文件前缀是 ppc_85xx
+
+5.重新交叉编译
+#./configure --host= ppc_85xx
+#make
+
+6.查看生成文件
+#file ethtool
+ethtool: ELF 32-bit MSB executable, PowerPC or cisco 4500, version 1 (SYSV), for GNU/Linux 2.4.17, dynamically linked (uses shared libs), not stripped
+
+查看cofig.log
+configure:1662: checking for ppc_85xx-strip
+configure:1678: found /opt/montavista41/montavista/cge/devkit/ppc/85xx/bin//ppc_85xx-strip
+configure:1688: result: ppc_85xx-strip
+configure:1757: checking whether to enable maintainer-specific portions of Makefiles
+configure:1766: result: no
+configure:1790: checking for ppc_85xx-gcc
+configure:1806: found /opt/montavista41/montavista/cge/devkit/ppc/85xx/bin//ppc_85xx-gcc
+configure:1816: result: ppc_85xx-gcc
+
+注意：
+今天在交叉编译时犯了一个错误，纠结了好久，以前交叉编译器的前缀基本上都是用arm-Linux-,这次换了一个新环境是arm-none-linux-gnueabi-，于是想当然的把configure中的host参数设置为--host arm-linux，于是就犯了一些错误。把它改为--host arm-none-linux-gnueabi就可以了。详细请看：
+http://blog.chinaunix.net/uid-24148050-id-2213969.html
+
+
+
+ubuntu 源更新 sources.list
+https://cizixs.com/2014/04/10/ubuntu_repository_format_explained/
+1 源格式
+  deb uri distribution [component1] [component2] […]   #基本格式 举例如下
+  deb http://mirrors.163.com/ubuntu/ focal main restricted universe multiverse
+  deb-src http://mirrors.163.com/ubuntu/ focal main restricted universe multiverse
+  第一部分 软件包格式               deb/deb-src 分别表示 二进制包/源码包
+  第二部分 软件包url  ARCHIVE_ROOT  http://mirrors.163.com/ubuntu/
+  第三部分 发行版  DISCTRIBUTION    位于 dists下面的子文件夹。 focal/focal-updates/focal-focal/focal-backports/focal-proposed 严格来说不算是发行版版本代号，它应该是Ubuntu系统发布之后，在此基础上进行的安全性更新的分类。
+  第四部分 组件 软件包自由度分类目录  ubuntu的组件: main、restricted、universe、multiverse  debian组件：main、contrib、non-free、non-us
+  main:ubuntu官方支持免费软件包  包括了自由软件、可以被自由发布的软件和被Ubuntu团队完全支持的软件。其中包括了大多数流行的和稳定的开源软件，当您安装Ubuntu时默认安装的就是这些软件。
+  restricted:有限所有权  不免费，但是正规支持的,是专供普遍用途，而且没有自由软件版权，但依然被Ubuntu团队支持的软件。请注意，因为不能直接修改软件，因而我们可能不能提供完全的技术支持，即便如此，我们还能向实际作者反馈Bug报告。
+  universe: 社区提供支持自由软件 免费，但不是正规支持的, 是整个自由、开源Linux世界的缩影。在“universe”组件中，你可以找到大多数开源软件，以及在开源版权下的软件，所 有这些都是在公共源的基础上建立的。这些软件都是使用“main”中的组件编写的，它们能与“main”组件相安无事地共同运行，但它们没有安全升级的保 障。“universe”组件包含了数以千计的软件。虽然是公共的，用户必须明白它们与稳定的Ubuntu核心的软件的差异和不稳定。
+  multiverse:版权限制  不免费，不支持,包含了“不自由”的软件，这意味着这些软件不满足 Ubuntu相对于“main”组件的各种版权政策。当您使用这些软件时，如何调整各种权力以及遵重版权所有者的问题，就完全依靠您自己把握了。 这些软件不被我们支持，而且通常不能被修改和更新，您将自己承担任何风险。 现在，作为以上位置的新增功能，实际上新的软件包都存储在pool目录中
+
+  main: Debian 里最基本及主要且符合自由软件规范的软件 ( packages )。
+  contrib: 软件本身免费，但依赖的软件包不免费。
+  non-free: 非自由软件
+  non-us: 非美国地区，可能有加密、专利等
+
+  访问http://mirrors.163.com/ubuntu 会发现一个资源目录,重要的文件(夹)和解释
+  dists:发行版目录（distributions），此处是获得 Ubuntu 发布版本（releases）和已发布版本（pre-releases）的软件包的正规途径。文件夹里存储的是关于软件包的信息数据，包括：文件名称、大小、位置、校验码等。有些旧软件包及 Contens-*.gz Packages.gz 等文件仍在其中。存在于dists目录下的物理目录名，例如focal-updates和focal-security，就是“附加的仓库”。当某个Ubuntu发行版处于维护阶段。将包的必要升级和安全更新放在附加的仓库里。其附加仓库通常有“版本代号-updates”、“版本代号-security”、“版本代号-proposed”等等。dists目录包含的全是Ubuntu发行版目录及其附加仓库目录（如：focal、focal-update、focal-security、focal-backports就是Ubuntu focal发行版目录及其附加仓库目录）。
+
+  pool:具体的软件包存放目录，单独把文件放在pool文件夹里是为了防止文件的重复。所有 Ubuntu 发布版及已发布版的软件包的物理地址。软件包均放进一个巨大的“池子（pool）”，按照源码包名称分类存放。为了方便管理，pool目录下按属性再分类（main、restricted、 universe和multiverse），分类下面再按源码包名称的首字母归档。这些目录包含的文件有：运行于各种系统架构的二进制软件包，生成这些二进制软件包的源码包。
+
+  通常一个源应包括focal/focal-updates/focal-security/focal-backports/focal-proposed多条语句,相应处替换即可.如果需要源码,在重复一边deb-src即可
+  我们知道Ubuntu还有其他的附加仓库，Ubuntu附加仓库的命名格式是“版本代号-限定词”，限定词是这update、security、proposed、backports四个词中的一个，比方说版本代号focal和限定词update组合就是focal-update附加仓库，focal和security组合就是focal-security附加仓库，以此类推可以自行写出Ubuntu所有的附加仓库的目录名称。
+  在sources.list文件里只有一条包含发行版仓库focal的软件源还不够，我们还要写出包含其他4个附加仓库的软件源，只要把已经写好的软件源中的focal依次替换成focal-update、focal-security、focal-proposed、focal-backports即可，下面是完整的包含所有附加仓库的软件源
+
+  Release/InReleas
+  文件位于$ARVHIVE_ROOT/dists/$DISCTRIBUTION 文件夹内，InRelease文件是内部自认证的，而Release文件需要伴随Release.gpg文件出现。这个文件包含该发布版（所在的文件夹）的索引文件和对应的hash。内部所列文件的位置是相对该文件的。比如上面的的source.list内容，为了获取main组件，apt会扫描http://mirrors.163.com/ubuntu/dists/precise/Release 文件得到main/binary-amd64/Packages.gz组合成最终的地址http://mirrors.163.com/ubuntu/dists/precise/main/binary-amd64/Packages.gz。这里面就是precise发布版里main组件的所有软件索引。
+
+  以binary-$arch命名的文件夹里是二进制文件的目录，源文件的目录在source文件夹。
+  Package列出的文件是相对于$ARCHIVE_ROOT的。
+  Packages 和 Sources目录是是控制文件，包括索引、翻译和差异等。
+
+  .deb文件是debian的包文件
+  .dsc是debian的源码描述文件
+  .tar是打包的文件
+  .gz和.bz2是压缩的文件
+
+2 更新/etc/apt/sources.list文件
+  sudo cp /etc/apt/sources.list /etc/apt/sources.list_backup #备份源列表
+  sudo vim /etc/apt/sources.list   #用vim或其他编辑器打开
+
+Ubuntu 官方更新服务器
+deb http://archive.ubuntu.com/ubuntu/ trusty main restricted universe multiverse
+deb http://archive.ubuntu.com/ubuntu/ trusty-security main restricted universe multiverse
+deb http://archive.ubuntu.com/ubuntu/ trusty-updates main restricted universe multiverse
+deb http://archive.ubuntu.com/ubuntu/ trusty-proposed main restricted universe multiverse
+deb http://archive.ubuntu.com/ubuntu/ trusty-backports main restricted universe multiverse
+deb-src http://archive.ubuntu.com/ubuntu/ trusty main restricted universe multiverse
+deb-src http://archive.ubuntu.com/ubuntu/ trusty-security main restricted universe multiverse
+deb-src http://archive.ubuntu.com/ubuntu/ trusty-updates main restricted universe multiverse
+deb-src http://archive.ubuntu.com/ubuntu/ trusty-proposed main restricted universe multiverse
+deb-src http://archive.ubuntu.com/ubuntu/ trusty-backports main restricted universe multiverse
+
+Ubuntu官方提供的其他软件（第三方闭源软件等）：
+deb http://archive.canonical.com/ubuntu/ trusty partner
+deb http://extras.ubuntu.com/ubuntu/ trusty main
+
+网易163更新服务器 http://mirrors.163.com/ubuntu/
+阿里云更新服务器  http://mirrors.aliyun.com/ubuntu/
+LupaWorld 更新服务器  http://mirror.lupaworld.com/ubuntu        X
+Linux Story 更新服务器  http://mirrors.linuxstory.org/ubuntu/   X
+贝特康姆软件技术有限公司  http://centos.bitcomm.cn/ubuntu
+中国科学技术大学更新服务器  http://debian.ustc.edu.cn/ubuntu/    X
+清华大学更新服务器  http://mirrors.tuna.tsinghua.edu.cn/ubuntu/
+北京交通大学更新服务器  http://mirror.bjtu.edu.cn/ubuntu/
+北京理工大学更新服务器  http://mirror.bit.edu.cn/ubuntu/         X
+大连理工大学更新服务器  http://mirror.dlut.edu.cn/ubuntu/        X
+上海交通大学更新服务器  http://ftp.sjtu.edu.cn/ubuntu/
+华中科技大学更新服务器  http://mirrors.hust.edu.cn/ubuntu/       X
+香港中文大学更新服务器  http://ftp.cuhk.edu.hk/pub/Linux/ubuntu  X
+注 只需要替换掉 官方更新服务器中的 url即可 其他相同   X表示测试不通
+
+
+
 apt和apt-get区别
+https://itlanyan.com/apt-vs-apt-get-difference/
   apt是新出的工具，用于取代apt-get和apt-cache，目的是更友好、易用的包管理工具；
   apt-get没有被废弃也没有过时，依然可以放心使用，但普通用户建议转向apt。
+
+apt command       the command it replaces   function of the command
+apt install       apt-get install            Installs a package
+apt remove        apt-get remove             Removes a package
+apt purge         apt-get purge              Removes package with configuration
+apt update        apt-get update             Refreshes repository index
+apt upgrade       apt-get upgrade            Upgrades all upgradable packages
+apt autoremove    apt-get autoremove         Removes unwanted packages
+apt full-upgrade  apt-get dist-upgrade       Upgrades packages with auto-handling of dependencies
+apt search        apt-cache search           Searches for the program
+apt show          apt-cache show             Shows package details
+
+apt has a few commands of its own as well.
+new apt command   function of the command
+apt list          Lists packages with criteria (installed, upgradable etc)
+apt edit-sources  Edits sources list
+
 
 sudo apt update                    更新软件包列表
 sudo apt install cmake             Ubuntu中安装Cmake
@@ -14,27 +536,174 @@ sudo apt install gcc               安装 gcc    gcc --version
 sudo apt-get install build-essential  gcc,g++,make的安装。build-essential是一整套工具,gcc,libc等 未测
 
 
-apt相关文件
-/var/lib/dpkg/available 文件的内容是软件包的描述信息, 该软件包括当前系统所使用的Debian 安装源中的所有软件包,其中包括当前系统中已安装的和未安装的软件包.
-/etc/apt/sources.list   记录软件源的地址（当你执行 sudo apt-get install xxx 时，Ubuntu 就去这些站点下载软件包到本地并执行安装）
-/var/cache/apt/archives 已经下载到的软件包都放在这里（用 apt-get install 安装软件时，软件包的临时存放路径）
-/var/lib/apt/lists      使用apt-get update命令会从/etc/apt/sources.list中下载软件列表，并保存到该目录
+dpkg介绍
+https://segmentfault.com/a/1190000011463440
+1 dpkg - package manager for Debian （debian系统的包管理工具）。
+dpkg is a tool to install, build, remove and manage Debian packages，dpkg是Debian的一个底层包管理工具，主要用于对已下载到本地和已安装的软件包进行管理。
+dpkg 本身是一个底层的工具。上层的工具，像是 APT，被用于从远程获取软件包以及处理复杂的软件包关系。
 
-dpkg软件包相关文件介绍
+2 deb软件包名规则
+格式为：Package_Version-Build_Architecture.deb
+如：nano_1.3.10-2_i386.deb
+软件包名称(Package Name): nano
+版本(Version Number):1.3.10
+修订号(Build Number):2
+平台(Architecture):i386
+
+3 dpkg软件包相关文件介绍
 /etc/dpkg/dpkg.cfg dpkg包管理软件的配置文件【Configuration file with default options】
 /var/log/dpkg.log dpkg包管理软件的日志文件【Default log file (see /etc/dpkg/dpkg.cfg(5) and option --log)】
 /var/lib/dpkg/available 存放系统所有安装过的软件包信息【List of available packages.】
 /var/lib/dpkg/status 存放系统现在所有安装软件的状态信息
 /var/lib/dpkg/info 记安装软件包控制目录的控制信息文件
 
+4 dpkg数据库
+dpkg 使用文本文件作为数据库来维护系统中软件，包括文件清单, 依赖关系, 软件状态, 等等详细的内容,通常在 /var/lib/dpkg 目录下。 通常在 status 文件中存储软件状态和控制信息。 在 info/ 目录下备份控制文件， 并在其下的 .list 文件中记录安装文件清单， 其下的 .mdasums 保存文件的 MD5 编码。
+dpkg -l       #查询dpkg数据库（显示所有已安装的Deb包） 如下图
+名称                     版本                          体系结构     描述
++++-===================-=============================-============-===============>
+ii  accountsservice     0.6.55-0ubuntu12~20.04.5      amd64        query and manip>
+每条记录对应一个软件包，注意每条记录的第一、二、三个字符，这就是软件包的状态标识，后边依此是软件包名称、版本号和简单描述。
+第一字符为期望值(Desired=Unknown/Install/Remove/Purge/Hold)，它包括：
+u Unknown状态未知,这意味着软件包未安装,并且用户也未发出安装请求.
+i Install用户请求安装软件包.
+r Remove用户请求卸载软件包.
+p Purge用户请求清除软件包.
+h Hold用户请求保持软件包版本锁定.
+第二列,是软件包的当前状态(Status=Not/Inst/Conf-files/Unpacked/halF-conf/Half-inst/trig-aWait/Trig-pend)
+n Not软件包未安装.
+i Inst软件包安装并完成配置.
+c Conf-files软件包以前安装过,现在删除了,但是它的配置文件还留在系统中.
+u Unpacked软件包被解包,但还未配置.
+f halF-conf试图配置软件包,但是失败了.
+h Half-inst软件包安装,但是但是没有成功.
+w trig-aWait触发器等待
+t Trig-pend触发器未决
+3）第三列标识错误状态,第一种状态标识没有问题,为空. 其它符号则标识相应问题（Err?=(none)/Reinst-required (Status,Err: uppercase=bad)）
+h 软件包被强制保持,因为有其它软件包依赖需求,无法升级.
+r Reinst-required，软件包被破坏,可能需要重新安装才能正常使用(包括删除).
+x 软包件被破坏,并且被强制保持.
+案例说明：
+ii —— 表示系统正常安装了该软件
+pn —— 表示安装了该软件，后来又清除了
+un —— 表示从未安装过该软件
+iu —— 表示安装了该软件，但是未配置
+rc —— 该软件已被删除，但配置文件仍在
+
+5 dpkg子命令
+dpkg-deb、dpkg-divert、dpkg-query、dpkg-split、dpkg-statoverride、start-stop-daemon
+
+6安装
+1）安装相关命令
+dpkg -i package-name.deb # --install  #安装软件包，必须是deb包的完整名称。（软件的安装可被拆分为两个对立的过程“解包”和“配置”）
+dpkg --unpack package-name.deb #“解包”：解开软件包到系统目录但不配置,如果和-R一起使用，参数可以是一个目录
+dpkg --configure package-name.deb #“配置”：配置软件包
+dpkg -c package-name.deb #列出 deb 包的内容
+2）安装相关选项
+-R, --recursive Recursively handle all regular files matching pattern *.deb found at specified directories and all of its
+  1 This can be used with -i, -A, --install, --unpack
+  2 --avail actions（递归地指向特定目录的所有安装包，可以结合-i, -A, --install, --unpack 与--avail一起使用）
+
+7 移除软件包
+dpkg -r package-name # --remove， 移除软件包，但保留其配置文件
+dpkg -P package-name # --purge， 清除软件包的所有文件（removes everything,including conffiles）
+
+8 查询
+dpkg -l package-name-pattern # --list, 查看系统中软件包名符合pattern模式的软件包
+dpkg -L package-name # --listfiles, 查看package-name对应的软件包安装的文件及目录
+dpkg -p package-name # --print-avail, 显示包的具体信息
+dpkg -s package-name # --status, 查看package-name（已安装）对应的软件包信息
+dpkg -S filename-search-pattern # --search,
+从已经安装的软件包中查找包含filename的软件包名称 （Tip：也可使用子命令dpkg-query来进行查询操作）
+
+例1：列出系统上安装的与dpkg相关的软件包
+dpkg -l \*dpkg*
+例2：查看dpkg软件包安装到系统中的文件
+dpkg -L dpkg
+更多dpkg的使用方法可在命令行里使用man dpkg来查阅 或直接使用dpkg --help。
+
+
+1 apt简介
+虽然我们在使用dpkg时，已经解决掉了 软件安装过程中的大量问题，但是当依赖关系不满足时，仍然需要手动解决，而apt这个工具解决了这样的问题，linux distribution 先将软件放置到对应的服务器中，然后分析软件的依赖关系，并且记录下来，然后当客户端有安装软件需求时，通过清单列表与本地的dpkg以存在的软件数据相比较，就能从网络端获取所有需要的具有依赖属性的软件了。
+2 工作原理
+Ubuntu采用集中式的软件仓库机制，将各式各样的软件包分门别类地存放在软件仓库中，进行有效地组织和管理。然后，将软件仓库置于许许多多的镜像服务器中，并保持基本一致。这样，所有的Ubuntu用户随时都能获得最新版本的安装软件包。因此，对于用户，这些镜像服务器就是他们的软件源（Reposity）
+然而，由于每位用户所处的网络环境不同，不可能随意地访问各镜像站点。为了能够有选择地访问，在Ubuntu系统中，使用软件源配置文件/etc/apt/sources.list列出最合适访问的镜像站点地址。
+
+apt-get的更新过程
+  1 执行apt-get update
+  2 程序分析/etc/apt/sources.list
+  3 自动连网寻找list中对应的Packages/Sources/Release列表文件，如果有更新则下载之，存入/var/lib/apt/lists/目录
+  4 然后 apt-get install 相应的包 ，下载并安装。
+
+即使这样，软件源配置文件只是告知Ubuntu系统可以访问的镜像站点地址，但那些镜像站点具体都拥有什么软件资源并不清楚。若每安装一个软件包，就在服务器上寻找一遍，效率是很低的。因而，就有必要为这些软件资源列个清单（建立索引文件），以便本地主机查询。
+
+用户可以使用“apt-get update”命令刷新软件源，建立更新软件包列表。在Ubuntu Linux中，“apt-get update”命令会扫描每一个软件源服务器，并为该服务器所具有软件包资源建立索引文件，存放在本地的/var/lib/apt/lists/目录中。 使用apt-get执行安装、更新操作时，都将依据这些索引文件，向软件源服务器申请资源。因此，在计算机设备空闲时，经常使用“apt-get update”命令刷新软件源，是一个好的习惯。
+
+apt-get install原理
+  1 扫描本地存放的软件跟新列表(apt-get update命令刷新列表 即/var/lib/apt/lists/)，找到最新版本的软件包
+  2 进行软件包依赖关系检查，找到支持该软件正常运行的所有软件包
+  3 从软件源所指的镜像站点下载相关的软件包
+  4 解压软件包，并自动完成应用程序的安装和配置
+
+3 apt相关文件
+/var/lib/dpkg/available 文件的内容是软件包的描述信息, 该软件包括当前系统所使用的Debian 安装源中的所有软件包,其中包括当前系统中已安装的和未安装的软件包.
+/etc/apt/sources.list   记录软件源的地址（当你执行 sudo apt-get install xxx 时，Ubuntu 就去这些站点下载软件包到本地并执行安装）
+/var/cache/apt/archives 已经下载到的软件包都放在这里（用 apt-get install 安装软件时，软件包的临时存放路径）
+/var/lib/apt/lists/     使用apt-get update命令会从/etc/apt/sources.list中下载软件列表，并保存到该目录
+
+
+4 apt-get 使用
+apt-get 是一个下载安装软件包的简单命令行接口。最常用的命令是update(更新)和install(安装)。
+用法： apt-get [选项] 命令
+常用选项：
+-h 本帮助文件。
+-q 输出到日志 - 无进展指示
+-qq 不输出信息，错误除外
+-d 仅下载 - 不安装或解压归档文件
+-s 不实际安装。模拟执行命令
+-y 假定对所有的询问选是，不提示
+-f 尝试修正系统依赖损坏处
+-m 如果归档无法定位，尝试继续
+-u 同时显示更新软件包的列表
+-b 获取源码包后编译
+-V 显示详细的版本号
+-c=? 阅读此配置文件
+-o=? 设置自定的配置选项，如 -o dir::cache=/tmp
+
+常用命令：
+1）apt-get update 更新源
+2）apt-get dist-upgrade 升级系统到相应的发行版(根据 source.list 的配置)
+3）apt-get upgrade 更新所有已经安装的软件包
+4）apt-get install package_name 安装软件包(加上 --reinstall重新安装)
+   apt-get install package_name=version 安装指定版本的软件包
+5）apt-get remove package_name 卸载一个已安装的软件包（保留配置文件）
+6）apt-get purge package_name 移除软件包（删除配置信息）
+ 或apt-get --purge remove packagename
+7）apt-get check 检查是否有损坏的依赖
+8）apt-get autoclean
+删除你已经删掉的软件（定期运行这个命令来清除那些已经卸载的软件包的.deb文件。通过这种方式，您可以释放大量的磁盘空间。如果您的需求十分迫切，可以使用apt-get
+clean以释放更多空间。这个命令会将已安装软件包裹的.deb文件一并删除。大多数情况下您不会再用到这些.debs文件，因此如果您为磁盘空间不足
+而感到焦头烂额，这个办法也许值得一试）
+9）apt-get clean 把安装的软件的备份也删除，不过这样不会影响软件的使用
+
+2、apt-cache
+apt-cache - query the APT cach.
+apt-cache performs a variety of operations on APT's package cache. apt-cache does not manipulate the state of the system but does provide operations to search and generate interesting output from the package metadata.
+1）apt-cache depends packagename 了解使用依赖
+2）apt-cache rdepends packagename 是查看该包被哪些包依赖
+3）apt-cache search packagename 搜索包 【aptitude search packagename】
+4）apt-cache show packagename 获取包的相关信息，如说明、大小、版本等 【aptitude show packagename】
+5）apt-cache showpkg packagename 显示软件包的大致信息
+（注：中括号【】内的aptitude也是类似于apt-*的一个包管理上层工具）
+
+
 
 Ubuntu下安装和卸载软件的3种方式
-
 1、apt-get
-前导步骤	sudo apt-get update（更新索引）
-安装	sudo apt-get install xxx（xxx指代待安装包名）
-卸载	sudo apt-get purge xxx（xxx指代安装时的包名）
-apt-get --purge remove 同上 删除已安装包（不保留配置文件)。如软件包a，依赖软件包b，则执行该命令会删除a，而且不保留配置文件
+前导步骤 sudo apt-get update（更新索引）
+安装 sudo apt-get install xxx（xxx指代待安装包名）
+卸载 sudo apt-get purge xxx（xxx指代安装时的包名）
+apt-get --purge remove 同上 删除已安装包（不保留配置文件)。如软件包a，依赖软件包b，则执行该命令会删除a，且不保留配置文件
 sudo apt-get autoremove（很有可能一些依赖包从此不再需要，自动删除） 删除为了满足依赖而安装的，但现在不再需要的软件包（包括已安装包），保留配置文件。
 apt-get remove  删除已安装的软件包（保留配置文件），不会删除依赖软件包，且保留配置文件。
 apt-get autoclean APT的底层包是dpkg, 而dpkg 安装Package时, 会将 *.deb 放在 /var/cache/apt/archives/中，apt-get autoclean 只会删除 /var/cache/apt/archives/ 已经过期的deb。
@@ -50,3 +719,91 @@ sudo apt-get autoremove（很有可能一些依赖包从此不再需要，自动
 make
 make install
 卸载	make uninstall（卸载时的源码目录所在路径与安装时的源码目录所在路径不同，不影响最终结果）
+
+
+设置ubuntu防火墙
+ufw 即uncomplicated firewall的简称,一些复杂的设定还是要去iptables
+由于linux原始的防火墙工具iptables过于繁琐，所以ubuntu默认提供了一个基于iptable之上的防火墙工具ufw。
+sudo apt-get install ufw        #安装  ubuntu 系统默认已安装ufw
+sudo ufw version                #防火墙版本
+sudo ufw status                 #检查防火墙的状态 显示防火墙和端口的侦听状态，参见 /var/lib/ufw/maps。括号中的数字将不会被显示出来
+sudo ufw enable|disable         #开启/关闭ubuntu防火墙 默认设置是 disable
+sudo ufw default allow|deny     #外来访问默认允许/拒绝
+sudo ufw logging on|off         #转换日志状态
+sudo ufw allow|deny [service]   #开启/禁用 可以用“协议：端口”的方式指定一个存在于/etc/services中的服务名称，也可以通过包的meta-data。 ‘allow’ 参数将把条目加入 /etc/ufw/maps ，而 ‘deny’ 则相反。
+  ufw allow/deny 20             #允许/拒绝 访问20端口,20后可跟/tcp或/udp，表示tcp或udp封包。
+  ufw delete allow/deny 20      #删除以前定义的"允许/拒绝访问20端口"的规则
+  sudo ufw allow 22/tcp         #允许所有的外部IP访问本机的22/tcp (ssh)端口
+  sudo ufw delete allow 22/tcp  #禁用 22 端口
+  ufw allow/deny servicename    #ufw从/etc/services中找到对应service的端口，进行过滤。
+  sudo ufw allow smtp           #允许 smtp 端口 允许所有的外部IP访问本机的25/tcp (smtp)端口
+  sudo ufw deny smtp            #禁止外部访问smtp服务
+  sudo ufw delete allow smtp    #删除 smtp 端口的许可 删除上面建立的某条规则
+  sudo ufw allow from 192.168.254.254          #允许某特定 IP 允许此IP访问所有的本机端口
+  sudo ufw delete allow from 192.168.254.254   #删除上面的规则
+  ufw allow proto tcp from 10.0.1.0/10 to      #本机ip port 25:允许自10.0.1.0/10的tcp封包访问本机的25端口。
+
+
+Ubuntu安装 x-terminal-emulator
+https://blog.csdn.net/weixin_44497198/article/details/109990606
+sudo apt-get install terminator    #安装 terminalx
+Ctrl+ Alt + t                      #默认启动的终端
+sudo apt-get install dconf-tools   #安装dconf-tools，这个是设置默认终端的必须
+dconf-editor                       #搜索
+org > gnome > desktop > terminal   #打开dconf-tools,就像Windows的注册表一样  更改结果为
+或者 在 org > gnome > desktop > applications > terminal
+  exec gnome-terminal
+  exec-arg -x
+  默认快捷键的终端为系统终端
+
+  exec x-terminal-emulator
+  exec-arg -e
+  默认为Terminator
+
+ctrl+shift+o    #上下分屏
+ctrl+shift+e    #左右分屏
+Alt+A           #广播到所有终端
+Alt+O           #停止广播到所有终端
+
+
+
+标准大页和透明大页
+https://www.kernel.org/doc/html/next/admin-guide/mm/transhuge.html
+https://www.cnblogs.com/my-show-time/p/14237757.html
+在 Linux 中大页分为两种： Huge pages ( 标准大页 ) 和 Transparent Huge pages( 透明大页 ) 。
+内存是以块即页的方式进行管理的，当前大部分系统默认的页大小为 4096 bytes 即 4K。1MB 内存等于 256 页； 1GB 内存等于 256000 页。
+CPU 拥有内置的内存管理单元，包含这些页面的列表，每个页面通过页表条目引用。当内存越来越大的时候， CPU 需要管理这些内存页的成本也就越高，这样会对操作系统的性能产生影响。
+
+Huge Pages
+Huge pages 是从 Linux Kernel 2.6 后被引入的，目的是通过使用大页内存来取代传统的 4kb 内存页面， 以适应越来越大的系统内存，让操作系统可以支持现代硬件架构的大页面容量功能。
+
+Huge pages 有两种格式大小：2MB 和1GB ，2MB 页块大小适合用于 GB 大小的内存， 1GB 页块大小适合用于 TB 级别的内存； 2MB 是默认的页大小。
+
+Transparent Huge Pages
+Transparent Huge Pages 缩写 THP ，这个是 RHEL 6 开始引入的一个功能，在 Linux6 上透明大页是默认启用的。
+
+由于 Huge pages 很难手动管理，而且通常需要对代码进行重大的更改才能有效的使用，因此 RHEL 6 开始引入了 Transparent Huge Pages ，THP 是一个抽象层，能够自动创建、管理和使用传统大页。
+
+THP 为系统管理员和开发人员减少了很多使用传统大页的复杂性 , 因为 THP 的目标是改进性能，因此其它开发人员 ( 来自社区和红帽 ) 已在各种系统、配置、应用程序和负载中对 THP 进行了测试和优化。这样可让 THP 的默认设置改进大多数系统配置性能。但是，不建议对数据库工作负载使用 THP 。
+
+这两者最大的区别在于: 标准大页管理是预分配的方式，而透明大页管理则是动态分配的方式。
+
+
+grep Hugepagesize /proc/meminfo    #标准大页的页面大小
+grep Huge /proc/meminfo
+AnonHugePages: 7956480 kB          #返回值不为０，表示开启了THP
+HugePages_Total: 0                 #意味着标准大页禁用了
+
+cat /proc/sys/vm/nr_hugepages      #返回0也意味着传统大页禁用了（传统大页和透明大页）
+
+cat /sys/kernel/mm/transparent_hugepage/enabled #[always] madvise never 检查当前的transparent_hugepage状态
+cat /sys/kernel/mm/transparent_hugepage/defrag  #[always] madvise never 这个应该是内存碎片整理
+never 关闭，不使用透明内存 alway 尽量使用透明内存，扫描内存，有512个 4k页面可以整合，就整合成一个2M的页面 madvise 避免改变内存占用
+
+echo never > /sys/kernel/mm/transparent_hugepage/enabled    #手动临时关闭
+echo never > /sys/kernel/mm/transparent_hugepage/defrag
+
+/sys/kernel/mm/transparent_hugepage/khugepaged/    #使用情况监控
+  pages_to_scan (默认 4096 = 16MB)            #一个扫描周期被扫描的内存页数
+  scan_sleep_millisecs (默认 10000 = 10sec)   #多长时间扫描一次
+  alloc_sleep_millisecs (默认 60000 = 60sec)  #多长时间整理一次碎片

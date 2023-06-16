@@ -1,4 +1,18 @@
 
+
+sudo apt install cmake     #Ubuntu中安装Cmake 此种方式安装的可能不是最新版本的Cmake
+sudo apt-get remove cmake  #卸载原来的cmake版本
+
+https://cmake.org/download/  #下载cmake源码，如cmake-3.17.1.tar.gz Cmake源码编译安装
+tar -zxv -f cmake-3.17.1.tar.gz #在cmake源码所在文件夹中打开命令终端，解压文件
+./bootstrap
+  sudo apt-get install g++         #更新g++ 若提示 cannot find a c++ compiler that supports
+  sudo apt-get install libssl-dev  #安装库 若提示 could not find openssl
+make
+sudo make install
+
+cmake --version   #验证安装版本
+
 编译选项设置--------
 在CMakeLists.txt中可以通过修改CMake内置的环境变量来改变C或C++的编译选项.
 编译选项相关的CMake 变量如下：
@@ -55,3 +69,33 @@ DEPRECATION：如果使用set方法设置CMAKE_ERROR_DEPRECATED为true(不区分
 STATUS：编译时状态信息，左边以--开头(信息白色)
 DEBUG：针对开发人员的调试信息(信息白色)
 TRACE：日志级别的临时信息(信息白色)
+
+
+
+使用CMake交叉编译Arm Linux程序
+https://blog.csdn.net/whahu1989/article/details/104114515
+https://zhuanlan.zhihu.com/p/100367053
+
+在 CMakeLists.txt 同级目录下 新建文件 aarch_linux.cmake 内容如下:
+
+set(CMAKE_SYSTEM_NAME Linux)      #即目标系统名 这里是Linux 该指令必须存在 1)
+set(CMAKE_SYSTEM_PROCESSOR arm)   #目标系统的处理器名，这里是arm
+
+# set(tools /usr/)
+# set(CMAKE_C_COMPILER ${tools}/bin/aarch64-linux-gnu-gcc)
+# set(CMAKE_CXX_COMPILER ${tools}/bin/aarch64-linux-gnu-g++)
+
+set(tools /usr/bin)
+set(CMAKE_C_COMPILER ${tools}/aarch64-linux-gnu-gcc)   #C编译器的可执行文件名称 2)
+set(CMAKE_CXX_COMPILER ${tools}/aarch64-linux-gnu-g++) #C++编译器的可执行文件名称
+
+注:
+1) 支持Linux，QNX，WindowsCE，Android等。如果没有操作系统，那么就写 Generic。执行该指令后，cmake 变量——CMAKE_CROSSCOMPILING 会自动被设置为 TRUE，此时 cmake 就会“知道“现在执行的是交叉编译
+2)由于 cmake 无法自动获取目标机器信息，因此需要显式指明编译工具。
+3)上述命令必须写入脚本中，使用 -DCMAKE_TOOLCHAIN_FILE=xxx.cmake 的方式使用。不能直接写入 CMakeLists.txt 或使用 include(xx.cmake)
+
+编译
+mkdir build
+cd build
+cmake -DCMAKE_TOOLCHAIN_FILE=../aarch_linux.cmake ..     #使用CMake的变量CMAKE_TOOLCHAIN_FILE来指定工具链文件
+make

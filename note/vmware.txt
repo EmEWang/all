@@ -1,8 +1,40 @@
 
+https://www.vmware.com/cn.html   官网
+https://www.vmware.com/cn/products/workstation-pro.html 不用注册可下载
 
+https://zhuanlan.zhihu.com/p/141033713 安装ubuntu20.04
 
+vmware workstation 17 pro激活密钥，通用批量永久激活许可
+17：JU090-6039P-08409-8J0QH-2YR7F
+16：ZF3R0-FHED2-M80TY-8QYGC-NPKYF
+15：FC7D0-D1YDL-M8DXZ-CYPZE-P2AY6
+12：ZC3TK-63GE6-481JY-WWW5T-Z7ATA
+10：1Z0G9-67285-FZG78-ZL3Q2-234JG
 
-VMware 16 激活码 ZF3R0-FHED2-M80TY-8QYGC-NPKYF YF390-0HF8P-M81RQ-2DXQE-M2UT6 ZF71R-DMX85-08DQY-8YMNC-PPHV8
+vmware workstation 17 pro密匙最新
+4A4RR-813DK-M81A9-4U35H-06KND
+NZ4RR-FTK5H-H81C1-Q30QH-1V2LA
+JU090-6039P-08409-8J0QH-2YR7F
+4Y09U-AJK97-089Z0-A3054-83KLA
+4C21U-2KK9Q-M8130-4V2QH-CF810
+MC60H-DWHD5-H80U9-6V85M-8280D
+
+VMware Workstation PRO 17.0.2许可证密钥
+JU090-6039P-08409-8J0QH-2YR7F
+
+VMware Workstation Pro 16 许可证密钥
+ZF3R0-FHED2-M80TY-8QYGC-NPKYF
+YF390-0HF8P-M81RQ-2DXQE-M2UT6
+ZF71R-DMX85-08DQY-8YMNC-PPHV8
+
+VMware Workstation 15 Pro永久激活密钥
+UA5DR-2ZD4H-089FY-6YQ5T-YPRX6
+ZF582-0NW5N-H8D2P-0XZEE-Z22VA
+YG5H2-ANZ0H-M8ERY-TXZZZ-YKRV8
+UG5J2-0ME12-M89WY-NPWXX-WQH88
+GA590-86Y05-4806Y-X4PEE-ZV8E0
+YA18K-0WY8P-H85DY-L4NZG-X7RAD
+
 虚拟机 make RELEASE=1 BITS=64 CENTOS=7 需要手动创建路径../linux_bin64/Release    mkdir -p xxxx
        make RELEASE=1 BITS=64 CENTOS=uos    统信uos arm架构
 虚拟机centos7 忘记root密码重置
@@ -50,3 +82,10 @@ CentOS7 EST（美国东部时间）与北京时间的时差 3月至10月两者�
 #列出时区timedatectl list-timezones
 #修改时区 设置系统时区为上海timedatectl set-timezone Asia/Shanghai
 #将硬件时钟调整为与本地时钟一致, 0 为设置为 UTC 时间 timedatectl set-local-rtc 1
+
+
+使用xshell6连接Linux服务器一直失败
+解决办法：VMware编辑–>虚拟网络编辑器–>勾选2个复选框 将主机虚拟适配器连接到此网络 使用本地DHCP服务将IP地址分配给虚拟机
+
+root连接拒绝密码，但使用其他普通用户则没有问题，这是ssh配置文件问题导致的。
+sudo vim /etc/ssh/sshd_config -> 将 PermitRootLogin 改为yes -> sudo /etc/init.d/ssh restart

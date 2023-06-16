@@ -2,15 +2,158 @@
 https://code.visualstudio.com/          官网
 https://code.visualstudio.com/updates   官方历史版本以及更新记录
 
-vscode一旦连接服务器之后，怎样切换回本地
-  在vscode界面，左上角“文件”-->"打开文件夹"（注意：此处只能是打开文件夹，如果是打开文件，则还是在服务器端）
+https://geek-docs.com/vscode/vscode-tutorials/introduction-to-vscode.html#ftoc-heading-1  部分技巧
+
+连接服务器之后，怎样切换回本地
+ 在vscode界面，左上角“文件”-->"打开文件夹"（注意：此处只能是打开文件夹，如果是打开文件，则还是在服务器端）
     -->从本地选择一个文件夹，打开即可切换到本地。
-列编辑功能说明
-  Shift键+Alt键+鼠标左键
-自由多行选择
-  Alt键+鼠标左键拖动选择各行的部分内容
-trim行尾空格
-  file->preferences->settings->搜索trim->选定 Trim Trailing Whitespace
+file->preferences->settings->搜索trim->选定 Trim Trailing Whitespace trim行尾空格
+
+常用快捷键
+Shift键+Alt键+鼠标左键 #列编辑功能说明
+Alt键+鼠标左键拖动选择各行的部分内容 #自由多行选择
+Ctrl + Shift + P，F1	显示命令面板 Show Command Palette
+Ctrl + P	快速打开 Quick Open
+Ctrl + Shift + N	新窗口/实例 New window/instance
+Ctrl + Shift + W	关闭窗口/实例 Close window/instance
+
+基础编辑 Basic editing
+Ctrl+X	剪切行（空选定） Cut line (empty selection)
+Ctrl+C	复制行（空选定）Copy line (empty selection)
+Alt+ ↑ / ↓	向上/向下移动行 Move line up/down
+Shift+Alt + ↓ / ↑	向上/向下复制行 Copy line up/down
+Ctrl+Shift+K	删除行 Delete line
+Ctrl+Enter	在下面插入行 Insert line below
+Ctrl+Shift+Enter	在上面插入行 Insert line above
+Ctrl+Shift+\	跳到匹配的括号 Jump to matching bracket
+Ctrl+] / [	缩进/缩进行 Indent/outdent line
+Home	转到行首 Go to beginning of line
+End	转到行尾 Go to end of line
+Ctrl+Home	转到文件开头 Go to beginning of file
+Ctrl+End	转到文件末尾 Go to end of file
+Ctrl+↑ / ↓	向上/向下滚动行 Scroll line up/down
+Alt+PgUp / PgDown	向上/向下滚动页面 Scroll page up/down
+Ctrl+Shift+[	折叠（折叠）区域 Fold (collapse) region
+Ctrl+Shift+]	展开（未折叠）区域 Unfold (uncollapse) region
+Ctrl+K Ctrl+[	折叠（未折叠）所有子区域 Fold (collapse) all subregions
+Ctrl+K Ctrl+]	展开（未折叠）所有子区域 Unfold (uncollapse) all subregions
+Ctrl+K Ctrl+0	折叠（折叠）所有区域 Fold (collapse) all regions
+Ctrl+K Ctrl+J	展开（未折叠）所有区域 Unfold (uncollapse) all regions
+Ctrl+K Ctrl+C	添加行注释 Add line comment
+Ctrl+K Ctrl+U	删除行注释 Remove line comment
+Ctrl+/	切换行注释 Toggle line comment
+Shift+Alt+A	切换块注释 Toggle block comment
+Alt+Z	切换换行 Toggle word wrap
+
+编辑器管理 Editor management
+Ctrl+F4, Ctrl+W	关闭编辑器 Close editor
+Ctrl+K F	关闭文件夹 Close folder
+Ctrl+\	拆分编辑器 Split editor
+Ctrl+ 1 / 2 / 3	聚焦到第1，第2或第3编辑器组 Focus into 1st, 2nd or 3rd editor group
+Ctrl+K Ctrl+ ←/→	聚焦到上一个/下一个编辑器组 Focus into previous/next editor group
+Ctrl+Shift+PgUp / PgDown	向左/向右移动编辑器 Move editor left/right
+Ctrl+K ← / →	移动活动编辑器组 Move active editor group
+
+文件管理 File management
+Ctrl+N	新文件 New File
+Ctrl+O	打开文件... Open File...
+Ctrl+S	保存 Save
+Ctrl+Shift+S	另存为... Save As...
+Ctrl+K S	全部保存 Save All
+Ctrl+F4	关闭 Close
+Ctrl+K Ctrl+W	关闭所有 Close All
+Ctrl+Shift+T	重新打开关闭的编辑器 Reopen closed editor
+Ctrl+K	输入保持打开 Enter Keep Open
+Ctrl+Tab	打开下一个 Open next
+Ctrl+Shift+Tab	打开上一个 Open previous
+Ctrl+K P	复制活动文件的路径 Copy path of active file
+Ctrl+K R	显示资源管理器中的活动文件 Reveal active file in Explorer
+Ctrl+K O	显示新窗口/实例中的活动文件 Show active file in new window/instance
+
+显示 Display
+F11	切换全屏 Toggle full screen
+Shift+Alt+1	切换编辑器布局 Toggle editor layout
+Ctrl+ = / -	放大/缩小 Zoom in/out
+Ctrl+B	切换侧栏可见性 Toggle Sidebar visibility
+Ctrl+Shift+E	显示浏览器/切换焦点 Show Explorer / Toggle focus
+Ctrl+Shift+F	显示搜索 Show Search
+Ctrl+Shift+G	显示Git Show Git
+Ctrl+Shift+D	显示调试 Show Debug
+Ctrl+Shift+X	显示扩展 Show Extensions
+Ctrl+Shift+H	替换文件 Replace in files
+Ctrl+Shift+J	切换搜索详细信息 Toggle Search details
+Ctrl+Shift+C	打开新命令提示符/终端 Open new command prompt/terminal
+Ctrl+Shift+U	显示输出面板 Show Output panel
+Ctrl+Shift+V	切换Markdown预览 Toggle Markdown preview
+Ctrl+K V	从旁边打开Markdown预览 Open Markdown preview to the side
+
+调试 Debug
+F9	切换断点 Toggle breakpoint
+F5	开始/继续 Start/Continue
+Shift+F5	停止 Stop
+F11 / Shift+F11	下一步/上一步 Step into/out
+F10	跳过 Step over
+Ctrl+K Ctrl+I	显示悬停 Show hover
+
+集成终端 Integrated terminal
+Ctrl+`	显示集成终端 Show integrated terminal
+Ctrl+Shift+`	创建新终端 Create new terminal
+Ctrl+Shift+C	复制选定 Copy selection
+Ctrl+Shift+V	粘贴到活动端子 Paste into active terminal
+Ctrl+↑ / ↓	向上/向下滚动 Scroll up/down
+Shift+PgUp / PgDown	向上/向下滚动页面 Scroll page up/down
+Ctrl+Home / End	滚动到顶部/底部 Scroll to top/bottom
+
+导航 Navigation
+Ctrl + T	显示所有符号 Show all Symbols
+Ctrl + G	转到行... Go to Line...
+Ctrl + P	转到文件... Go to File...
+Ctrl + Shift + O	转到符号... Go to Symbol...
+Ctrl + Shift + M	显示问题面板 Show Problems panel
+F8	转到下一个错误或警告 Go to next error or warning
+Shift + F8	转到上一个错误或警告 Go to previous error or warning
+Ctrl + Shift + Tab	导航编辑器组历史记录 Navigate editor group history
+Alt + ←/→	返回/前进 Go back / forward
+Ctrl + M	切换选项卡移动焦点 Toggle Tab moves focus
+
+搜索和替换 Search and replace
+Ctrl + F	查找 Find
+Ctrl + H	替换 Replace
+F3 / Shift + F3	查找下一个/上一个 Find next/previous
+Alt + Enter	选择查找匹配的所有出现 Select all occurences of Find match
+Ctrl + D	将选择添加到下一个查找匹配 Add selection to next Find match
+Ctrl + K Ctrl + D	将最后一个选择移至下一个查找匹配项 Move last selection to next Find match
+Alt + C / R / W	切换区分大小写/正则表达式/整个词 Toggle case-sensitive / regex / whole word
+
+多光标和选择 Multi-cursor and selection
+Alt +单击	插入光标 Insert cursor
+Ctrl + Alt +↑/↓	在上/下插入光标 Insert cursor above / below
+Ctrl + U	撤消上一个光标操作 Undo last cursor operation
+Shift + Alt + I	在选定的每一行的末尾插入光标 Insert cursor at end of each line selected
+Ctrl + I	选择当前行 Select current line
+Ctrl + Shift + L	选择当前选择的所有出现 Select all occurrences of current selection
+Ctrl + F2	选择当前字的所有出现 Select all occurrences of current word
+Shift + Alt + →	展开选择 Expand selection
+Shift + Alt + ←	缩小选择 Shrink selection
+Shift + Alt + （拖动鼠标）	列（框）选择 Column (box) selection
+Ctrl + Shift + Alt +（箭头键）	列（框）选择 Column (box) selection
+Ctrl + Shift + Alt + PgUp / PgDown	列（框）选择页上/下 Column (box) selection page up/down
+
+丰富的语言编辑 Rich languages editing
+Ctrl + 空格	触发建议 Trigger suggestion
+Ctrl + Shift + Space	触发器参数提示 Trigger parameter hints
+Tab	Emmet 展开缩写 Emmet expand abbreviation
+Shift + Alt + F	格式化文档 Format document
+Ctrl + K Ctrl + F	格式选定区域 Format selection
+F12	转到定义 Go to Definition
+Alt + F12	Peek定义 Peek Definition
+Ctrl + K F12	打开定义到边 Open Definition to the side
+Ctrl + .	快速解决 Quick Fix
+Shift + F12	显示引用 Show References
+F2	重命名符号 Rename Symbol
+Ctrl + Shift + . /，	替换为下一个/上一个值 Replace with next/previous value
+Ctrl + K Ctrl + X	修剪尾随空格 Trim trailing whitespace
+Ctrl + K M	更改文件语言 Change file language
 
 配置pthread编译条件
 task.json中args栏增加 “-pthread” 如下
@@ -18,6 +161,7 @@ task.json中args栏增加 “-pthread” 如下
             "-pthread",
 
 windows本地 vscode+MinGW配置
+https://www.cnblogs.com/bpf-1024/p/11597000.html
   1 下载安装vscode：https://code.visualstudio.com/Download
   2 安装cpptools工具
   3 下载MinGW
@@ -42,6 +186,7 @@ windows本地 vscode+MinGW配置
       返回 HelloWorld.cpp 文件，按F5调试，发现完全OK了！
 
 vscode连接远程Linux服务器
+https://blog.csdn.net/weixin_43669941/article/details/102778991
   1 在vscode的扩展商店中搜索ssh 安装 Romote-SSH
   2 安装完成后 左侧多一个小图标 RemoteExplorer
   3 点击SSH栏 右上方+号
@@ -57,6 +202,8 @@ vscode连接远程Linux服务器
   8 此时会让你输入密码，输入刚才的用户名对应的密码即可
   9 连接上后，点击左侧的蓝色按钮选择一个你想打开的文件夹即可
   10 断开连接，在菜单栏点击file，选择断开远程连接即可
+  注 3-4也可以通过F1->搜索 ssh->Remote-SSH:Connect to Host->Configure SSH Hosts
+
 
 vscode无法远程连接服务器的解决办法
   1 用mobaXterm、putty等工具都可以正常连接服务器，用vscode突然不行了
@@ -149,3 +296,227 @@ vscode无法远程连接服务器的解决办法
         如：IdentityFile C:\Users\wangjingang\.ssh\id_rsa_95
 
   这时候再用vscode登录server就不用输入密码了！
+
+
+
+
+
+VSCode 中进行 C++ 相关的编译和调试
+https://zhuanlan.zhihu.com/p/35178331/ 部分参考
+
+零配置一步编译调试
+按 F1 弹出下拉框，输入（有下拉补全的）：>C/C++: build and Debug Active File
+然后在弹出的下拉框选择：gcc.exe build and debug active file
+
+使用 Tasks 功能编写编译运行命令
+按 F1 弹出下拉框，输入：>tasks: configure Task 然后随便选，直到生成了一个 tasks.json。
+按 F1 弹出下拉框，输入：>Tasks: Run Test Task
+一键编译运行，可以使用键位绑定 按 F1 弹出下拉框，输入：>Preferences: Open keyboard Shortcuts 找到 Tasks: Run Test Task 命令，绑定按键。
+
+GDB 调试
+按 F1 弹出下拉框，输入：>Debug: Open Launch.json  直到打开 launch.json。
+运行 按F5启动调试任务。
+开启调试的必要条件 编译时必须带上 -g 参数
+
+
+c_cpp_properties.json - 编译环境相关的设置
+该文件用于指定一般的编译环境，包括头文件路径，编译器的路径等。通过 Ctrl + Shift + p 打开命令行，键入关键字 "C++"，在下拉菜单中选择 "C/C++ Edit configuration"，系统即自动在 .vscode 目录下创建 c_cpp_properties.json 文件，供用户进行编译方面的环境配置。默认的配置文件内容如下所示。
+{
+    "configurations": [
+        {
+            "name": "Linux",              //环境名
+            "includePath": [
+                "${workspaceFolder}/**",  //指定头文件路径,这里指定的是当前工作目录，如有需要在后面添加，添加方式是加入 "/to/path" 格式的路径
+                "/usr/include",
+                "/usr/local/include"
+            ],
+            "defines": [],
+            "compilerPath": "/usr/bin/g++",   //编译器的路径，可根据自己的安装情况进行设置
+            "cStandard": "c11",            // C 标准 如 c17
+            "cppStandard": "c++17",        //设置使用的 C/C++ 标准  如c++98
+            "intelliSenseMode": "clang-x64"
+        }
+    ],
+    "version": 4
+}
+上述配置文件中键的值一般已默认生成，若在开发时有所变动，直接修改上述值即可。
+
+
+task.json - 编译参数设置
+该文件用于指定程序的编译规则，即如何将源文件编译为可执行程序。通过 Ctrl + Shift + p 打开命令行，键入关键字 "task"，并在下拉菜单中选择 Tasks: Configure Default Build Task -> Create tassk.json file from template -> Others ，系统即自动在 .vscode 目录下创建 task.json 文件( 基础模版 )，供用户设置具体的编译规则。
+注意此时仅生成了一个 task.json 的简化模板，修改该文件中 label 键的值，再打开命令行,选择 Tasks:Configure Default Build Task 选项，此时修改后的 label 名字会出现在选项栏中，此时选中该 label的名字,则对应的 task.json 文件会发生改变，并被设置为默认编译对象( 即执行命令 Tasks: Run Build Tasks 时默认执行的是该 task.json 文件对应的编译 )，其大致格式如下所示。用户需要根据实际情况对其中的键值进行修改。
+{
+    "version": "2.0.0",
+    "tasks": [
+        {//这个大括号里是‘构建（build）’任务
+            "label": "build", //任务名称，可以更改，不过不建议改
+            "type": "process", //任务类型，process是vsc把预定义变量和转义解析后直接全部传给command；shell相当于先打开shell再输入命令，所以args还会经过shell再解析一遍
+            "command": "gcc", //编译命令，这里是gcc，编译c++的话换成g++
+            "args": [    //方括号里是传给gcc命令的一系列参数，用于实现一些功能
+                "${file}", //指定要编译的是当前文件
+                "-o", //指定输出文件的路径和名称
+                "${fileDirname}/${fileBasenameNoExtension}", //承接上一步的-o，让可执行文件输出到源码文件所在的文件夹下的bin文件夹内，并且让它的名字和源码文件相同
+                "-g", //生成和调试有关的信息
+                "-Wall", // 开启额外警告
+                //"-static-libgcc",  // 静态链接libgcc
+                //"-fexec-charset=GBK", // 生成的程序使用GBK编码，不加这一条会导致Win下输出中文乱码
+                //"-std=c11", // 语言标准，可根据自己的需要进行修改，写c++要换成c++的语言标准，比如c++11
+                "-std=c++17",
+                "-lm",
+                "-pthread",
+            ],
+            "group": {  //group表示‘组’，我们可以有很多的task，然后把他们放在一个‘组’里
+                "kind": "build",//表示这一组任务类型是构建
+                "isDefault": true//表示这个任务是当前这组任务中的默认任务 为True时，用户可以通过 Ctrl+Shift+B 直接运行编译任务
+            },
+            "presentation": { //执行这个任务时的一些其他设定
+                "echo": true,//表示在执行任务时在终端要有输出
+                "reveal": "always", //执行任务时是否跳转到终端面板，可以为always，silent，never
+                "showReuseMessage": false,
+                "focus": false, //设为true后可以使执行task时焦点聚集在终端，但对编译来说，设为true没有意义，因为运行的时候才涉及到输入
+                "panel": "new" //每次执行这个task时都新建一个终端面板，也可以设置为shared，共用一个面板，不过那样会出现‘任务将被终端重用’的提示，比较烦人
+            },
+            "problemMatcher": "$gcc", //捕捉编译时编译器在终端里显示的报错信息，将其显示在vs code的‘问题’面板里
+            "windows": {
+                "args": [
+                "-g",
+                "-Wall",
+                "-std=c++14",
+                "-lm",
+                "${file}",
+                "-o",
+                "${fileDirname}/${fileBasenameNoExtension}.exe"
+                ]
+            }
+        },
+        {//这个大括号里是‘运行(run)’任务，一些设置与上面的构建任务性质相同
+            "label": "run",
+            "type": "shell",
+            "dependsOn": "build", //任务依赖，因为要运行必须先构建，所以执行这个任务前必须先执行build任务，
+            "command": "${fileDirname}/${fileBasenameNoExtension}", //执行exe文件，只需要指定这个exe文件在哪里就好
+            "group": {
+                "kind": "test", //这一组是‘测试’组，将run任务放在test组里方便我们用快捷键执行
+                "isDefault": true
+            },
+            "presentation": {
+                //"echo": true,
+                //"reveal": "always",
+                "focus": true, //这个就设置为true了，运行任务后将焦点聚集到终端，方便进行输入
+                //"panel": "new"
+            },
+            "windows": {
+                "command": "${fileDirname}/${fileBasenameNoExtension}.exe"
+            }
+
+        }
+        {
+            "type": "shell",
+            "label": "make123",
+            "command": "make",                     // 配置使用make
+            "options": {
+                //"cwd": "${workspaceFolder}",     // 当前的项目的目录
+                "cwd": "${fileDirname}",           // 当前文件的目录
+            },
+            "detail": "make调试器生成的任务。"
+        }
+    ]
+}
+上述文件中，通过 command 选项指定编译运行的程序，通过 args 选项给定了传递给编译程序的参数，当 isDefault 为 True 时(默认)，用户使用 Ctrl+Shift+b 即可直接运行编译过程，或者也可以通过 Ctrl+Shift+p 打开命令行，选择 Tasks:Run Build Task 运行上述编译过程。（ 从上述过程可以看出，tasks.json 规定了具体的执行编译过程的程序，也就是说实际上可以通过绝对路径来给出 command 进而无视 c_cpp_properties.json 中的 compilerPath 路径 ）
+在编译成功后，可通过命令行运行编译成功的可执行程序。
+
+
+
+launch.json - 调试相关的参数
+该文件主要与程序的调试相关。用户可通过 Ctrl+Shift+p 打开命令行，键入关键字 "launch",选择 "Debug:Open launch.json" -> "C++(GDB/LLDB)"，即可打开调试的配置文件 launch.json。该文件设置 VScode 在调试时的基本内容和要求.在配置好 launch.json 文件后, 按 F5 即可进入调试模式。launch.json 文件的基本选项如下所示。
+{
+    "version": "0.2.0",
+    "configurations": [
+        {//这个大括号里是我们的‘调试(Debug)’配置
+            "name": "Debug",  // 配置名称 有的配置成"(gdb) Launch" 只是个名字
+            "type": "cppdbg",  // 配置类型，cppdbg对应cpptools提供的调试功能；可以认为此处只能是cppdbg
+            "request": "launch",  // 请求配置类型，可以为launch（启动）或attach（附加）
+            "program": "${fileDirname}/${fileBasenameNoExtension}",// 将要进行调试的程序的路径 一般与task.json 中生成的可执行文件名保持一致  可以使用"${fileDirname}\\bin\\${fileBasenameNoExtension}.exe" 格式
+            "args": [],  // 程序调试时传递给程序的命令行参数，这里设为空即可
+            "stopAtEntry": false,  // 设为true时程序将暂停在程序入口处，相当于在main上打断点
+            "cwd": "${fileDirname}",  // 调试程序时的工作目录，此处为源码文件所在目录
+            "environment": [],  // 环境变量，这里设为空即可
+            "externalConsole": false, // 为true时使用单独的cmd窗口，跳出小黑框；设为false则是用vscode的内置终端，建议用内置终端
+            "internalConsoleOptions": "neverOpen", // 如果不设为neverOpen，调试时会跳到“调试控制台”选项卡，新手调试用不到
+            "MIMode": "gdb", // 指定连接的调试器，gdb是minGW中的调试程序
+            //"miDebuggerPath": "C:\\Program Files\\mingw64\\bin\\gdb.exe", // 可选 指定调试器所在路径，如果你的minGW装在别的地方，则要改成你自己的路径，注意间隔是\\ windows 中的 miDebuggerPath: 更改为实际 GDB 路径
+            "preLaunchTask": "build" // 调试开始前执行的任务，我们在调试前要编译构建。与tasks.json的label相对应，名字要一样
+            "setupCommands": [    // 未知 没有使用
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "windows": {          // 未知 没有使用
+                "program": "${fileDirname}/${fileBasenameNoExtension}.exe",
+                "miDebuggerPath": "/path/to/gdb",
+            },
+            "osx": {              // 未知 没有使用
+                "externalConsole": true
+            },
+        }
+    ]
+}
+在上述文件配置好后，用户通过 F5 即可进入调试模式。注意，只有生成可执行程序时加入了编译选项 -g ( 如本例中，build.json 文件中的 args 部分包括 -g 选项 )，上述可执行文件才可以通过 gdb 进行调试。
+
+
+
+
+项目下简历一个 .vscode 文件夹，里面提供一个 settings.json，可以为项目独立配置，更加灵活。
+{
+    // 文件自动保存
+    // onFocusChange => 当前文件失去焦点后自动保存
+    // onWindowChange => 需要当前 VScode 窗口失去焦点才会自动保存
+    // afterDelay => 与 files.autoSaveDelay 配置联动，也就是在间隔多少毫秒自动保存，默认「1000毫秒」，有个小细节，如果配置了保存格式化代码，这个配置下自动保存不会格式化代码
+    "files.autoSave": "onWindowChange",
+    "files.autoSaveDelay": 2000,
+    // 配置 Tab 空格数
+    "editor.tabSize": 2,
+    // 保存自动格式化代码
+    "editor.formatOnSave": true,
+    // 粘贴自动格式化
+    "editor.formatOnPaste": true,
+    // 可以为不同语言或文档单独配置
+    "[typescript]": {
+        "editor.formatOnSave": false
+    },
+    "[markdown]": {
+        "editor.formatOnSave": true
+    }
+}
+
+
+搭配c/c++环境出现“#include errors detected. Please update your includePath...”问题的解决 引用头文件飘红
+1 gcc -v -E -x c++ -  #检测c++环境 详见gcc
+2 将输出的 #include <...> search starts here: 下面的 路径 拷贝到 c_cpp_properties.json 下的includePath，逗号分隔路径
+
+
+VSCode连接远程服务器里的docker容器
+https://zhuanlan.zhihu.com/p/361934730
+https://blog.csdn.net/TracelessLe/article/details/119060513
+在服务器容器中配置ssh
+0 sudo service docker start     #开启docker daemon
+1 sudo docker run -it -p 6789:22 testimage  #通过一个其他的端口进入容器，这里使用6789端口 在docker启动参数配置增加端口映射（如 -p 6789:22）
+2 apt-get update                   #更新list
+  apt-get install openssh-server   #安装openssh
+3 passwd      #如果希望直接使用root账户登录容器，则设置root密码 设置两遍相同的密码，之后登陆的时候要用到 提示：也可以重新添加账号并设置密码
+4 vim /etc/ssh/sshd_config  #修改配置文件
+  注释掉 PermitRootLogin prohibit-password 这一行 添加这一行 PermitRootLogin yes
+5 service ssh restart       #重启ssh服务 或使用 /etc/init.d/ssh restart
+6 ssh -p 6789 root@0.0.0.0  #本机连接ssh
+  ssh -p 6789 root@192.168.x.xx  #远程访问服务器docker里正在运行的容器
+
+若 报错：ssh: connect to host 0.0.0.0 port 6789: Connection refused
+原因：没有开放对应端口
+sudo iptables -I INPUT -p tcp --dport 6789 -j ACCEPT   #解决方案：在主机上
+
+在自己电脑上配置vscode
+1 brew install openssh  #本地安装openssh，我用的是mac windows会自带openssh
+2 vscode中下载Remote-SSH插件
+3 remote explorer点击SSH右边 + 输入 ssh -p 6789 root@192.168.x.xx #使用插件连接远程服务器里的容器
+注：之前一直用的是Remote-Container，以为可以更方便的连接到服务器里的docker，屡次尝试都不成功，查了些其他人的博客说Remote-Container只能连接本地自己电脑里的docker

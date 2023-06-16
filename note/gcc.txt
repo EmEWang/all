@@ -1,4 +1,9 @@
 
+yum install gcc gcc-c++    #CentOs7端 安装C/C++
+gcc --version  #查看gcc版本
+
+
+
 gcc编译选项-lpthread和-pthread的区别
 1、-lpthread是较为老式的解决方法，pthread新加了对于宏D_REENTRANT的定义，-pthread会被展开为“-D_REENTRANT -lpthread”，
   它不仅可以链接pthread库，还可以打开系统头文件中的各种多线程支持分支，比如，我们常常使用的错误码标志errno，
@@ -37,7 +42,10 @@ gcc/g++
   -c ：只激活预处理、编译和汇编,也就是把程序做成目标文件(.o文件) 。
   -Wl,options ：把参数(options)传递给链接器ld 。如果options 中间有逗号,就将options分成多个选项,然后传递给链接程序。
   -fno-builtin-malloc -fno-builtin-calloc -fno-builtin-realloc -fno-builtin-free :看编译选项的名字就知道，这是阻止编译器优化时使用内置版本的malloc,calloc,realloc,free函数。
-
+  -x 指定语言  如  -x c++
+  -E 只激活预处理,这个不生成文件, 你需要把它重定向到一个输出文件里面。
+  -v Display the programs invoked by the compiler.
+  -Ox 优化等级 -O0	不进行优化处理。-O 或 -O1	优化生成代码。-O2	进一步优化。-O3	比 -O2 更进一步优化，包括 inline 函数。
 
 
 

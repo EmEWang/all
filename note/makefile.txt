@@ -24,3 +24,14 @@ make xxx > build_output_all.txt 2>&1
 注意：上面所有的1,2等数字，后面紧跟着大于号'>' ，中间不能有空格
 
 (在命令行中 直接使用 xxx &> build_output_all.txt 表示所有的信息都输出到同一个文件中)
+
+
+
+编译选项
+https://www.cnblogs.com/lidabo/p/6068448.html
+CC      #一般指 gcc
+CXX     #一般指 g++
+CPPFLAGS   #预处理阶段的选项
+CFLAGS     #C 编译器的选项
+CXXFLAGS   #C++ 编译器的选项 这两个变量实际上涵盖了编译和汇编两个步骤
+LDFLAGS    #传递给连接器的选项

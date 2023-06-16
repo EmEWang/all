@@ -1,4 +1,6 @@
 
+https://docs.docker.com/
+
 sudo apt-get remove docker \
                docker-engine \
                docker.io          #卸载旧版本 旧版本的 Docker 称为 docker 或者 docker-engine
@@ -29,6 +31,7 @@ docker pull ubuntu:20.04    #拉取ubuntu系统镜像 版本为20.04
 docker run -it ubuntu:latest /bin/bash      #启动一个容器ubuntu 最新版  -i:交互式操作，-t:终端  bash:放在镜像名后的是 命令
 docker run -it --rm ubuntu:20.04 /bin/bash       #启动一个容器ubuntu 20.04版 --rm：这个参数是说容器退出后随之将其删除。默认情况下，为了排障需求，退出的容器并不会立即删除，除非手动 docker rm
 docker ps                   #查看运行中容器
+docker ps -a                #查看当前正在运行或过去运行的所有容器
 docker exec -it 775c7c9ee1e1 /bin/bash  #进入运行中的容器 775c7c9ee1e1为容器ID ps命令查出来的
 docker rmi -f  $(docker images | grep "none" | awk '{print $3}')   #删除none镜像
 docker stop $(docker ps -a | grep "Exited" | awk '{print $1 }')    #停止容器
@@ -83,3 +86,136 @@ docker build -t wjg:1 .                     # -t 增加标签
 docker images
 9. 运行镜像
 docker run wjg:1
+
+
+Docker目录挂载的总结
+https://www.cnblogs.com/ivictor/p/4834864.html
+Docker容器启动的时候，如果要挂载宿主机的一个目录，可以用-v或--volume参数指定。
+譬如我要启动一个centos容器，宿主机的/test目录挂载到容器的/soft目录，可通过以下方式指定：
+# docker run -it -v /test:/soft centos /bin/bash
+这样在容器启动后，容器内会自动创建/soft的目录。通过这种方式，我们可以明确一点，即-v参数中，冒号":"前面的目录是宿主机目录，后面的目录是容器内目录。
+1 容器目录不可以为相对路径    docker run -it -v /test:soft centos /bin/bash 启动出错
+2 宿主机目录如果不存在，则会自动生成 docker run -it -v /test:/soft centos /bin/bash 宿主机创建 /test
+3 宿主机的目录如果为相对路径 docker run -it -v test1:/soft centos /bin/bash
+  通过docker inspect命令，查看容器“Mounts”那一部分 有 "Source": "/var/lib/docker/volumes/test1/_data" 此为宿主机上的目录，原来，所谓的相对路径指的是/var/lib/docker/volumes/，与宿主机的当前目录无关。
+4 如果只是-v指定一个目录，这个又是如何对应呢？ 同3类似  "Source": "/var/lib/docker/volumes/xxx/_data" 随机目录名
+5 如果在容器内修改了目录的属主和属组，那么对应的挂载点是否会修改呢？ 跟随UID改变
+6 容器销毁了，在宿主机上新建的挂载目录是否会消失？
+  一、指定了宿主机目录，即 -v /test:/soft。即便容器销毁了，新建的挂载目录不会消失。进一步也可验证，如果宿主机目录的属主和属组发生了变化，容器销毁后，宿主机目录的属主和属组不会恢复到挂载之前的状态。
+  二、没有指定宿主机目录，即-v /soft。销毁容器，看目录是否存在；即便重启了docker服务，该目录依旧存在。
+7 挂载宿主机已存在目录后，在容器内对其进行操作，报“Permission denied”。
+  可通过两种方式解决：
+  1> 关闭selinux。
+  临时关闭：# setenforce 0
+  永久关闭：修改/etc/sysconfig/selinux文件，将SELINUX的值设置为disabled。
+  2> 以特权方式启动容器
+  指定--privileged参数
+  如：# docker run -it --privileged=true -v /test:/soft centos /bin/bash
+
+
+
+
+
+
+基本概念------------------
+https://www.freecodecamp.org/chinese/news/where-are-docker-images-stored-docker-container-paths-explained/
+
+容器 Containers
+容器只是处于运行状态的镜像。当从互联网上获取镜像并使用该镜像运行容器时，实际上是在先前的只读层之上创建了另一个临时可写层。
+
+镜像 Images
+镜像是分层的自包含文件，充当创建容器的模板。它们就像容器的冻结只读副本。 镜像可以通过仓库进行共享。
+
+仓库 Registry
+镜像仓库是一个集中式的位置，可以在其中上传镜像，也可以下载其他人创建的镜像。
+
+
+Docker 的配置信息
+$ docker info
+  ...
+   Storage Driver: overlay2                  <-- 存储驱动
+   Docker Root Dir: /var/lib/docker          <-- docker 根目录的信息
+  ...
+
+Docker 镜像和容器的存储路径
+Linux:
+cd /var/lib/docker - 容器与镜像存放在此目录下
+镜像位置: /var/lib/docker/image
+容器位置: /var/lib/docker/containers
+
+Windows:
+C:\ProgramData\DockerDesktop
+
+MacOS:
+容器和镜像在如下目录下,不同版本或许可能文件版本不一样
+/Users/xxxxmyname/Library/Containers/com.docker.docker/Data
+可以到上面的目录中，查看文件大小, du -sh *
+本机存放位置如下
+/Users/xxxxmyname/Library/Containers/com.docker.docker/Data/vms/0/data/Docker.raw
+
+docker inspect nginx   #查看常规镜像的信息
+  ...
+  "UpperDir": "/var/lib/docker/overlay2/585...9eb/diff"   <--  linux 系统中的路径
+  ...
+
+docker run -it --privileged --pid=host debian nsenter -t 1 -m -u -i sh #连接镜像
+现在，可以进入指定路径：cd /var/lib/docker/overlay2/585...9eb/
+
+
+Docker 根目录的内部结构
+/var/lib/docker 目录中保存着各种信息，例如：容器数据、卷、构建文件、网络文件和集群数据。
+
+Docker 镜像 目录
+最大的文件通常是镜像。如果使用默认的 overlay2 存储驱动，Docker 镜像会保存在 /var/lib/docker/overlay2 目录。
+docker image inspect nginx 中
+  "GraphDriver": {
+              "Data": {
+                  "LowerDir": "/var/lib/docker/overlay2/585...9eb/diff:      <--LowerDir 包含镜像的只读层
+                               /var/lib/docker/overlay2/585...9eb/diff",
+                  "MergedDir": "/var/lib/docker/overlay2/585...9eb/merged",  <--MergedDir 表示 UpperDir 和 LowerDir 合并的结果，Docker 用它来运行容器。
+                  "UpperDir": "/var/lib/docker/overlay2/585...9eb/diff",     <--表示变更的读写层包含在 UpperDir 中
+                  "WorkDir": "/var/lib/docker/overlay2/585...9eb/work"       <--WorkDir 是 overlay2 的内部目录，应该是空的。
+              }
+
+Docker 卷（Volumes）
+可以利用卷来持久化容器内的数据，容器和宿主机之间、容器和容器之间也可以通过共享卷来共享数据。使用 -v 选项可以让容器以挂载卷的方式启动
+  如 docker run --name nginx_container -v /var/log nginx
+如 docker inspect nginx_container 显示
+  "Mounts": [
+            {
+                "Source": "/var/lib/docker/volumes/1e4...d9c/_data",     <-- 挂载的外面的目录
+                "Destination": "/var/log",                               <-- docker中的目录
+            }
+        ],
+...
+
+清理 Docker 使用的空间
+建议使用 Docker 命令来清理不再使用的容器。可以使用以下命令清理容器、网络文件、镜像和构建缓存：
+  docker system prune -a
+此外，也可以清除不再使用的卷：
+  docker volumes prune
+
+
+命令------------------------------
+https://docs.docker.com/engine/reference/commandline/docker/
+
+
+docker run 命令
+docker run --rm -v "$PWD/data":/var/lib/mysql --name mysql -e MYSQL_ROOT_PASSWORD=admin-password -e MYSQL_DATABASE=my-database -p 3306:3306 mysql:8.0.28-debian
+该命令使用了运行 Docker 容器的高级功能：
+-v "$PWD/data" 映射了你的本地目录./data到 Docker 容器，这使你能够启动Docker容器而不丢失你的数据
+-p 3306:3306 映射容器的 3306 端口到我们的机器的 3306 端口上，以便其他应用程序可以使用它
+-e MYSQL_DATABASE=my-database 设置一个环境变量，自动创建一个名为my-database的新数据库
+-e MYSQL_ROOT_PASSWORD=admin-password 设置一个环境变量来设置管理密码
+--rm 停止时移除容器
+
+docker system 命令
+docker system df    #查看有多少空间被使用
+docker system df -v #使用verbose选项 -v 获得更多信息
+docker system prune -a   #尽可能地清理，不包括正在使用的组件
+  -a 包括未使用的和悬空的容器。不提供`-a'将只删除悬空的镜像，这些镜像是没有标记的镜像，与任何其他镜像没有关系。
+docker system prune      #清理大部分Docker资源，但仍然保留有标签的镜像
+docker image prune       #清理未使用和悬空的镜像
+docker image prune -a    #只清理悬空的镜像
+docker container prune   #清理停止运行的容器
+docker volume prune      #清理未使用的卷宗
