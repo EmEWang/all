@@ -1,6 +1,12 @@
 
 redhat/centos  yum    #软件包管理工具
 
+
+centos  安装软件 yum -y update  必要软件 yum -y install vim git wget net-tools gcc gcc-c++ gdb libstdc++-devel
+安装工作中需要的额外库 yum -y install openssl-devel  yum -y install libuuid-devel  yum install telnet 安装telnet
+yum -y install lrzsz    安装传输文件命令
+
+
 https://segmentfault.com/a/1190000011200461?share_user=1030000007255638
 1 简介：
 RPM命名“RedHat Package Manager”，简称则为RPM。这个机制最早由Red Hat这家公司开发出来的，后来实在很好用，因此很多distributons就使用这个机制来作为软件安装的管理方式，包括Fedora，CentOS，SuSE等知名的开发商都是用它。

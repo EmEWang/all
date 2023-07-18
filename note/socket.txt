@@ -23,22 +23,380 @@ TCP/IP的分层
 
 
 
-Linux下PF_PACKET的使用
-sock_raw（注意一定要在root下使用）原始套接字编程可以接收到本机网卡上的数据帧或者数据包,对于监听网络的流量和分析是很有作用的.一共可以有3种方式创建这种socket
-    1.socket(AF_INET, SOCK_RAW, IPPROTO_TCP|IPPROTO_UDP|IPPROTO_ICMP)发送接收ip数据包，不能用IPPROTO_IP，因为如果是用了IPPROTO_IP，系统根本就不知道该用什么协议。
-    2.socket(PF_PACKET, SOCK_RAW, htons(ETH_P_IP|ETH_P_ARP|ETH_P_ALL))发送接收以太网数据帧
-    3.socket(AF_INET, SOCK_PACKET, htons(ETH_P_IP|ETH_P_ARP|ETH_P_ALL))过时了,不要用啊
+
+服务器和客户端程序的流程
+https://blog.csdn.net/chen1415886044/article/details/104455919
+
+client                                   server
+------------------------------------------------------- 三次握手
+connect()   | --- SYN seq=x ----------> | LISTEN listen()
+SYN_SENT    |                           | SYN_RCVD
+            | ↙-- SYN seq=y, ACK=x+1 -↗ |
+ESTABLISHED | --- ACK=y+1 ------------↘ |
+            |                           | ESTABLISHED
+---------------- -------------------------------------- 数据传输
+write()     | --- seq=x+1 ACK=y+1 ----↘ |
+            | <---- ACK=x+2 ----------- | read()
+---------------- -------------------------------------- 四次挥手
+close()     | -- FIN seq=x+2 ACK=y+1 -↘ |
+FIN_WAIT_1  |                         ↗ | CLOSE_WAIT
+            | ↙---- ACK=x+2 --------↗   | close()
+FIN_WAIT_2  | ↙- FIN seq=y+1----------↗ | LAST_ACK
+TIME_WAIT   |                           |
+            | ↖-- ACK=y+1 ------------↘ |
+CLOSED      |                           | CLOSED
+
+代码见test2/client.c server.c
+
+
+
+
+深刻理解socket编程中的read&&write https://zhuanlan.zhihu.com/p/71799852
+
+1 总图
+socket IO -> | nread = read(sock_fd, buf, buflen)           <--- read
+             | nwrite = write(sock_fd, buf, tosend - nsend) <--- write  tosend > nsend
+             blocking的write只有在缓冲区足以放下整个buffer时才返回 与blocking read并不相同
+             nonblock write 则是返回能够放下的字节数 之后在调用返回 -1(errno = EAGAIN 或 WOULDBLOCK)
+             对于blocking write 有个特例 当write正阻塞等待时对面关闭了socket
+             则write会立即将剩余缓冲区填满并返回所写的字节数，在调用write失败(connection reset by peer)
+
+
+read -> | 过程 | nread > 0  读取到正常数据
+               | nread == 0 套接字关闭 读到 FIN break
+               | nread < 0 | errno == EINTR 表示操作被中断 可以继续读取
+                           | errno == EWOULDBLOCK 当套接字sock_fd是非阻塞时且当前没有数据可以读取 返回这个错误码
+                                                  如果阻塞时 表示这个操作本来会被阻塞住
+                           | errno == EAGAIN  表示现在没有数据 过会再重试
+                                              EAGAIN == EWOULDBLOCK
+        | 阻塞&非阻塞区别 | 只要接收缓冲区(receive buffer)有数据 立即返回
+                         | (receive buffer)为空时 blocking模式才会等待
+                         | nonblock模式下会立即返回 -1 errno = (EAGAIN 或 EWOULDBLOCK)
+        | 异常处理 | 客户端主动关闭 发送FIN
+                  | 服务端收到EOF 返回
+                  | 虽然客户端发送了FIN 表示客户端不会主动发送数据了 但是服务端可以继续写
+                  | 加入客户端是异常终止的(OS帮助发送FIN) 当机器再次收到该socket的消息时 客户端会回应RST
+                    因为拥有该socket的进程已经终止 服务端继续写 操作系统会给进程发送SIGPIP 导致服务端异常终止
+                  | 如果OS异常崩溃之类问题 服务器收不到FIN信号 可能永远卡住 所以服务器最好需要设计自动检测机制
+                    或者心跳机制 来实现TCP通信的完全可控
+
+write-> | nwrite > 0 | 发送成功 nsend += nwrite
+        | nwrite == 0 | 套接字关闭 FIN break
+        | 其他 | errno == EINTR 连接正常 操作被中断 可以继续发送 continue
+               | errno == (EAGAIN 或 EWOULDBLOCK) 连接正常 但发送区没有空间 等待下一次发送 continue
+               | 其他 出错 break
+
+2 read/write 回溯
+  2.1 write成功返回，只是buf中的数据被复制到了kernel中的TCP发送缓冲区。
+  至于数据什么时候被发往网络，什么时候被对方主机接收，什么时候被对方进程读取，系统调用层面不会给予任何保证和通知。
+  2.2 对于每个socket，拥有自己的send buffer和receive buffer。
+  sysctl net.core.wmem_default  #同sysctl net/core/wmem_default  同手动操作/proc/sys/net/core/wmem_default
+  sysctl net.core.wmem_max      #sysctl  修改/proc/sys/下的系统变量 . 可以用 / 代替
+  2.3 已经发送到网络的数据依然暂存在send buffer中，只有收到对方的ack后，kernel才从buffer中清除这一部分数据，为后续发送数据腾出空间。
+  接收端将收到的数据暂存在receive buffer中，自动进行确认。
+
+3 blocking（默认）和nonblock模式下read/write行为的区别
+  3.1 read总是在接收缓冲区有数据时立即返回，而不是等到给定的read buffer填满时返回。返回值就是读取的字节数，同时内核receivebuffer空间会增加相应的大小。只有当receive buffer为空时，blocking模式才会等待，而nonblock模式下会立即返回-1（errno = EAGAIN或EWOULDBLOCK）
+  3.2 阻塞与非阻塞write返回值没有区分，都是 <0：出错，=0：连接关闭，>0发送数据大小，特别：返回值 <0时并且(errno == EINTR || errno == EWOULDBLOCK || errno == EAGAIN)的情况下认为连接是正常的，继续发送。只是阻塞模式下write会阻塞着发送数据，非阻塞模式下如果暂时无法发送数据会返回，不会阻塞着 write，因此需要循环发送。
+
+对于blocking的write有个特例：当write正阻塞等待时对面关闭了socket，则write则会立即将剩余缓冲区填满并返回所写的字节数，再次调用则write失败（connection reset by peer）
+
+4 read/write对连接异常的反馈行为：
+对应用程序来说，与另一进程的TCP通信其实是完全异步的过程：
+  1 我并不知道对面什么时候、能否收到我的数据
+  2 我不知道什么时候能够收到对面的数据
+  3 我不知道什么时候通信结束（主动退出或是异常退出、机器故障、网络故障等等）
+对于1和2，采用write() -> read() -> write() -> read() ->...的序列，通过blocking read或者nonblock read+轮询的方式，应用程序基于可以保证正确的处理流程。而且对于3，kernel将这些事件的“通知”通过read/write的结果返回给应用层。这个也是TCP通信的难点。
+
+假设A机器上的一个进程a正在和B机器上的进程b通信,当b进程终止时，无论应用程序是否显式关闭了socket（OS会负责在进程结束时关闭所有的文件描述符，对于socket，则会发送一个FIN包到对面）。
+  1 同步通知：进程a对已经收到FIN的socket调用read，如果已经读完了receive buffer的剩余字节，则会返回EOF:0
+  2 异步通知：如果进程a正阻塞在read调用上（前面已经提到，此时receive buffer一定为空，因为read在receive buffer有内容时就会返回），则read调用立即返回EOF，进程a被唤醒。
+
+socket在收到FIN后，虽然调用read会返回EOF，但进程a依然可以其调用write，因为根据TCP协议，收到对方的FIN包只意味着对方不会再发送任何消息。 在一个双方正常关闭的流程中，收到FIN包的一端将剩余数据发送给对面（通过一次或多次write），然后关闭socket。但是事情远远没有想象中简单。
+假如b进程是异常终止的，发送FIN包是OS代劳的，b进程已经不复存在，当机器再次收到该socket的消息时，会回应RST（因为拥有该socket的进程已经终止）。a进程对收到RST的socket调用write时，操作系统会给a进程发送SIGPIPE，默认处理动作是终止进程，知道你的进程为什么毫无征兆地死亡了吧
+不同于b进程退出（此时OS会负责为所有打开的socket发送FIN包），当B机器的OS崩溃（注意不同于人为关机，因为关机时所有进程的退出动作依然能够得到保证）/主机断电/网络不可达时，a进程根本不会收到FIN包作为连接终止的提示。
+如果a进程阻塞在read上，那么结果只能是永远的等待。
+如果a进程先write然后阻塞在read，由于收不到B机器TCP/IP栈的ack，TCP会持续重传12次（时间跨度大约为9分钟），然后在阻塞的read调用上返回错误：ETIMEDOUT/EHOSTUNREACH/ENETUNREACH
+假如B机器恰好在某个时候恢复和A机器的通路，并收到a某个重传的pack，因为不能识别所以会返回一个RST，此时a进程上阻塞的read调用会返回错误ECONNREST恩，socket对这些错误还是有一定的反馈能力的，前提是在对面不可达时你依然做了一次write调用，而不是轮询或是阻塞在read上，那么总是会在重传的周期内检测出错误。如果没有那次write调用，应用层永远不会收到连接错误的通知。
+
+5 还需要做什么
+  5.1 使用TCP的KEEPALIVE功能
+cat /proc/sys/net/ipv4/tcp_keepalive_time    #7200    每2小时（7200秒）启动一次，发送第一个probe（探测包）
+cat /proc/sys/net/ipv4/tcp_keepalive_intvl   #75      如果在75秒内没有收到对方应答则重发probe
+cat /proc/sys/net/ipv4/tcp_keepalive_probes  #9       当连续9个probe没有被应答时，认为连接已断
+  5.2 进行应用层的心跳
+
+
+
+混杂模式
+默认接收数据，目的MAC是本地地址，才会接收。若想接收所有经过网卡的数据流，而不论其目的MAC是否是它，这需要设置网卡为混杂模式。
+ifconfig eth0 promisc   设置混杂模式 (需要管理员权限)
+ifconfig eth0 -promisc  取消混杂模式
+ifconfig                查看  flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500 是否有 PROMISC
+
+通过代码给 Linux 网卡设置混杂模式
+#include <net/if.h>// struct ifreq
+#include <sys/ioctl.h> // ioctl、SIOCGIFADDR
+#include <sys/socket.h> // socket
+#include <netinet/ether.h> // ETH_P_ALL
+#include <netpacket/packet.h> // struct sockaddr_ll
+
+struct ifreq ethreq;    //网络接口地址
+
+strncpy(ethreq.ifr_name, "eth0", IFNAMSIZ);         //指定网卡名称
+if(-1 == ioctl(sock_raw_fd, SIOCGIFINDEX, &ethreq)) //获取网络接口
+{
+  perror("ioctl");
+  close(sock_raw_fd);
+  exit(-1);
+}
+
+ethreq.ifr_flags |= IFF_PROMISC;
+if(-1 == ioctl(sock_raw_fd, SIOCSIFINDEX, &ethreq)) //网卡设置混杂模式
+{
+  perror("ioctl");
+  close(sock_raw_fd);
+  exit(-1);
+}
+
+
+获取链路层的数据包
+ssize_t recvfrom(int sockfd, void *buf, size_t nbytes,int flags,struct sockaddr *from, socklen_t *addrlen);
+参数：
+sockfd:原始套接字
+buf：接收数据缓冲区
+nbytes:接收数据缓冲区的大小
+flags：套接字标志(常为0)
+from：这里没有用，写 NULL
+addrlen：这里没有用，写 NULL
+
+返回值：
+成功：接收到的字符数
+失败：-1
+
+unsigned char buf[1024] = {0};
+int sock_raw_fd = socket(PF_PACKET, SOCK_RAW, htons(ETH_P_ALL));
+int len = recvfrom(sock_raw_fd, buf, sizeof(buf), 0, NULL, NULL); //获取链路层的数据包
+printf("len = %d\n", len);
+
+
+发送自定义的数据包：
+ssize_t sendto(int sockfd,const void *buf,size_t nbytes,int flags,const struct sockaddr *to,socklen_t addrlen);
+参数：
+sockfd： 原始套接字
+buf： 发送数据缓冲区
+nbytes: 发送数据缓冲区的大小
+flags： 一般为 0
+to： 本机网络接口，指发送的数据应该从本机的哪个网卡出去，而不是以前的目的地址
+addrlen：to 所指向内容的长度
+
+返回值
+成功：发送数据的字符数
+失败：-1
+
+struct sockaddr_ll sll;                 //原始套接字地址结构
+bzero(&sll, sizeof(sll));
+sll.sll_ifindex =ethreq.ifr_ifindex;   //将网络接口赋值给原始套接字地址结构
+
+// send_msg, msg_len 这里还没有定义，模拟一下
+int len = sendto(sock_raw_fd, send_msg, msg_len, 0 , (struct sockaddr *)&sll, sizeof(sll));  // 发送数据
+if(len == -1)
+{
+  perror("sendto");
+}
+
+
+IP结构体:
+struct iphdr
+{
+#if __BYTE_ORDER == __LITTLE_ENDIAN
+    unsigned int ihl:4;
+    unsigned int version:4;
+#elif __BYTE_ORDER == __BIG_ENDIAN
+    unsigned int version:4; //版本号
+    unsigned int ihl:4; //首部长度(4字节为单位)
+#else
+# error "Please fix "
+#endif
+    u_int8_t tos; //服务类型
+    u_int16_t tot_len; //IP包总长度
+    u_int16_t id; //标识
+    u_int16_t frag_off; //是否分片
+    u_int8_t ttl; //生存时间
+    u_int8_t protocol; //上层协议
+    u_int16_t check; //校验和
+    u_int32_t saddr; //源IP地址
+    u_int32_t daddr; //目的IP地址
+};
+
+UDP首部:
+#ifdef __FAVOR_BSD
+struct udphdr
+{
+u_int16_t uh_sport;
+u_int16_t uh_dport;
+u_int16_t uh_ulen;
+u_int16_t uh_sum;
+};
+else
+struct{
+u_int16_t source; //源端口
+u_int16_t dest; //目的端口
+u_int16_t len;  //UDP包的长度
+u_int16_t check; //校验和
+};
+#endif
+
+TCP首部:
+struct tcphdr
+{
+    u_int16_t source;   //TCP源端口
+    u_int16_t dest;      //TCP目的端口
+    u_int32_t seq;       //序列号
+    u_int32_t ack_seq;  //确认序列号
+# if __BYTE_ORDER == __LITTLE_ENDIAN
+    u_int16_t res1:4;
+    u_int16_t doff:4;
+    u_int16_t fin:1;
+    u_int16_t syn:1;
+    u_int16_t rst:1;
+    u_int16_t psh:1;
+    u_int16_t ack:1;
+    u_int16_t urg:1;
+    u_int16_t res2:2;
+# elif __BYTE_ORDER == __BIG_ENDIAN
+    u_int16_t doff:4;
+    u_int16_t res1:4;
+    u_int16_t res2:2;
+    u_int16_t urg:1;
+    u_int16_t ack:1;
+    u_int16_t psh:1;
+    u_int16_t rst:1;
+    u_int16_t syn:1; //请求连接标志
+    u_int16_t fin:1;
+# else
+#   error "Adjust your defines"
+# endif
+    u_int16_t window;  //滑动窗口的大小
+    u_int16_t check;   //校验和
+    u_int16_t urg_ptr;  //紧急字段指针
+};
+
+ICMP:
+struct icmp
+{
+u_int8_t  icmp_type;    /* type of message, see below 类型 */
+u_int8_t  icmp_code;    /* type sub code 代码*/
+u_int16_t icmp_cksum;    /* ones complement checksum of struct校验和 */
+union
+{
+u_char ih_pptr;        /* ICMP_PARAMPROB */
+struct in_addr ih_gwaddr;    /* gateway address */
+struct ih_idseq        /* echo datagram */
+{
+u_int16_t icd_id;
+u_int16_t icd_seq;
+} ih_idseq;
+u_int32_t ih_void;
+
+/* ICMP_UNREACH_NEEDFRAG -- Path MTU Discovery (RFC1191) */
+struct ih_pmtu
+{
+u_int16_t ipm_void;
+u_int16_t ipm_nextmtu;
+} ih_pmtu;
+
+struct ih_rtradv
+{
+u_int8_t irt_num_addrs;
+u_int8_t irt_wpa;
+u_int16_t irt_lifetime;
+} ih_rtradv;
+} icmp_hun;
+#define    icmp_pptr    icmp_hun.ih_pptr
+#define    icmp_gwaddr    icmp_hun.ih_gwaddr
+#define    icmp_id        icmp_hun.ih_idseq.icd_id
+#define    icmp_seq    icmp_hun.ih_idseq.icd_seq
+#define    icmp_void    icmp_hun.ih_void
+#define    icmp_pmvoid    icmp_hun.ih_pmtu.ipm_void
+#define    icmp_nextmtu    icmp_hun.ih_pmtu.ipm_nextmtu
+#define    icmp_num_addrs    icmp_hun.ih_rtradv.irt_num_addrs
+#define    icmp_wpa    icmp_hun.ih_rtradv.irt_wpa
+#define    icmp_lifetime    icmp_hun.ih_rtradv.irt_lifetime
+union
+{
+struct
+{
+u_int32_t its_otime;
+u_int32_t its_rtime;
+u_int32_t its_ttime;
+} id_ts;
+struct
+{
+struct ip idi_ip;
+/* options and then 64 bits of data */
+} id_ip;
+struct icmp_ra_addr id_radv;
+u_int32_t   id_mask;
+u_int8_t    id_data[1]; //icmp数据
+} icmp_dun;
+#define    icmp_otime    icmp_dun.id_ts.its_otime
+#define    icmp_rtime    icmp_dun.id_ts.its_rtime
+#define    icmp_ttime    icmp_dun.id_ts.its_ttime
+#define    icmp_ip        icmp_dun.id_ip.idi_ip
+#define    icmp_radv    icmp_dun.id_radv
+#define    icmp_mask    icmp_dun.id_mask
+#define    icmp_data    icmp_dun.id_data
+};
+
+IP首部长度为20个字节,TCP首部长度为20个字节，UDP首部长度为8个字节, ICMP的首部长度为8个字节。
+
+
+
+
+原始套接字
+https://blog.51cto.com/u_13291771/2792605
+sock_raw（注意一定要在root下使用）原始套接字编程可以接收到本机网卡上的数据帧或者数据包,一共可以有3种方式创建这种socket
+  1.socket(AF_INET, SOCK_RAW, IPPROTO_TCP|IPPROTO_UDP|IPPROTO_ICMP) 可得到原始的IP包 可以自己组织TCP,UDP,ICMP包
+  不能用IPPROTO_IP，因为如果是用了IPPROTO_IP，系统根本就不知道该用什么协议。   基于IP 数据包的编程
+  2.socket(PF_PACKET, SOCK_RAW, htons(ETH_P_IP|ETH_P_ARP|ETH_P_ALL))  PF_PACKET 是基于数据链路层的编程
+  能收到发往本地的MAC帧 能收到从本机发出去的MAC帧(第3个参数为ETH_P_ALL) 能接收到非发住本地的MAC帧(网卡设置为promisc混杂模式)
+  ETH_P_IP    0X800  只接收发往本机的mac的ip类型的数据帧
+  ETH_P_ARP   0X806  只接收发往本机的arp类型的数据帧
+  ETH_P_RARP  0x8035 只接受发往本机的rarp类型的数据帧
+  ETH_P_ALL   0X0003 接收发往本机的MAC所有类型ip,arp,rarp数据帧，接收从本机发出去的数据帧，混杂模式打开的情况下，会接收到非发往本地的MAC数据帧
+  此时设备无关的物理地址使用struct sockaddr_ll
+  3.socket(AF_INET, SOCK_PACKET, htons(ETH_P_IP|ETH_P_ARP|ETH_P_ALL))过时了,不要用啊
+
 1.介绍
 在linux中提供了PF_PACKET接口可以操作链路层的数据。
 2.使用方法
-定义一个pf_packet = socket(PF_SOCKET, SOCK_RAW, htons(ETH_P_RARP));
-就可以利用函数sendto和recefrom来读取和发送链路层的数据包了（当然，发送ARP包，上面第三个参数要变为 htons(ETH_P_ARP)，或者IP的包为ETH_P_IP，可查看文件/usr/include/linux/if_ether.h文件看到所有支持的协议）。
+sock_raw = socket(PF_SOCKET, SOCK_RAW, htons(ETH_P_ALL));  #定义
+int len = recvfrom(sock_raw, buf, sizeof(buf), 0, NULL, NULL); #就可以利用函数sendto和recefrom来读取和发送链路层的数据包了
+发送ARP包为htons(ETH_P_ARP)，IP包为ETH_P_IP，可查看文件/usr/include/linux/if_ether.h文件看到所有支持的协议。
+
+链路层数据包的其中一种情况
+unsigned char buf[1024] = {
+    0xb8, 0x88, 0xe3, 0xe1, 0x10, 0xe6, // dst_mac: b8:88:e3:e1:10:e6
+    0xc8, 0x9c, 0xdc, 0xb7, 0x0f, 0x19, // src_mac: c8:9c:dc:b7:0f:19
+    0x08, 0x00,                         // 类型：0x0800 IP协议    前14个字节为mac组
+    // …… ……
+};
+sprintf(dst_mac,"%02x:%02x:%02x:%02x:%02x:%02x", buf[0], buf[1], buf[2], buf[3], buf[4], buf[5]); #从buf里提取目的mac
+sprintf(src_mac,"%02x:%02x:%02x:%02x:%02x:%02x", buf[6], buf[7], buf[8], buf[9], buf[10], buf[11]); #从buf里提取源mac
+if(buf[12]==0x08 && buf[13]==0x00){}     #判断是否为IP数据包
+if(buf[12]==0x08 && buf[13]==0x06){}     #判断是否为ARP数据包
+if(buf[12]==0x80 && buf[13]==0x35){}     #判断是否为RARP数据包
+
 3.在使用SOCK_RAW, SOCK_DGRAM和SOCK_PACKET的区别
 在socket的第一个参数使用PF_PACKET的时候，上述三种socket的类型都可以使用。但是有区别。
-    (1)使用SOCK_RAW发送的数据必须包含链路层的协议头，接受得到的数据包，包含链路层协议头。而使用SOCK_DGRAM则都不含链路层的协议头。
-    (2)SOCK_PACKET也是可以使用的，但是已经废弃，以后不保证还能支持，不推荐使用。
-    (3)在使用SOCK_RAW或SOCK_DGRAM和SOCK_PACKET时，在sendto和recvfrom中使用的地址类型不同，前两者使用sockaddr_ll类型的地址，而后者使用sockaddr类型的地址。
-    (4)如socket的第一个参数使用PF_INET，第二个参数使用SOCK_RAW，则可以得到原始的IP包。
+  (1)使用SOCK_RAW发送的数据必须包含链路层的协议头，接受得到的数据包，包含链路层协议头。而使用SOCK_DGRAM则都不含链路层的协议头。
+  (2)SOCK_PACKET也是可以使用的，但是已经废弃，以后不保证还能支持，不推荐使用。
+  (3)在使用SOCK_RAW或SOCK_DGRAM和SOCK_PACKET时，在sendto和recvfrom中使用的地址类型不同，前两者使用sockaddr_ll类型的地址，而后者使用sockaddr类型的地址。
+  (4)如socket的第一个参数使用PF_INET，第二个参数使用SOCK_RAW，则可以得到原始的IP包。
+
+
+
 
 AF_INET和PF_INET的细微不同
     AF 表示ADDRESS FAMILY 地址族

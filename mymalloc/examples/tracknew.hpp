@@ -97,7 +97,8 @@ void* operator new[] (std::size_t size, std::align_val_t align) {
 }
 
 // [[nodiscard]]
-// void *malloc (size_t size){
+// void *malloc (size_t size = 0){
+//   return std::malloc(size);
 //   return TrackNew::allocate(size, 0, "::malloc");
 // }
 

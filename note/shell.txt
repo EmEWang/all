@@ -1,10 +1,70 @@
 
+https://www.gnu.org/software/bash/manual/bash.html#Redirections    Bash Reference Manual
+
 Shell重定向 ＆>file、2>&1、1>&2 、/dev/null的区别
-在shell脚本中，默认情况下，总是有三个文件处于打开状态，标准输入(键盘输入)、标准输出（输出到屏幕）、标准错误（也是输出到屏幕），它们分别对应的文件描述符是0，1，2 。
->  默认为标准输出重定向，与 1> 相同
-2>&1  意思是把 标准错误输出 重定向到 标准输出.
-&>file  意思是把标准输出 和 标准错误输出 都重定向到文件file中
-/dev/null是一个文件，这个文件比较特殊，所有传给它的东西它都丢弃掉
+在shell脚本中，默认情况下，总是有三个文件处于打开状态，标准输入(键盘输入)、标准输出（输出到屏幕）、标准错误（也是输出到屏幕），
+  它们分别对应的文件描述符是0，1，2 。
+名称                 代码    操作符            Java中表示     Linux 下文件描述符(Debian 为例)
+标准输入(stdin)       0      < 或 <<           System.in     /dev/stdin -> /proc/self/fd/0 -> /dev/pts/0
+标准输出(stdout)      1      >, >>, 1> 或 1>>  System.out    /dev/stdout -> /proc/self/fd/1 -> /dev/pts/0
+标准错误输出(stderr)  2      2> 或 2>>         System.err    /dev/stderr -> /proc/self/fd/2 -> /dev/pts/0
+>          默认为标准输出重定向，与 1> 相同 注意 1 与 > 之间不能有空格 1可省
+2>&1       标准错误输出 重定向到 标准输出.
+&>file     把标准输出 和 标准错误输出 都重定向到文件file中 同 >& file
+/dev/null  表示一个空设备，相当于一个黑洞，这个文件比较特殊，所有传给它的东西它都丢弃掉
+
+说明
+  < << > >> &< >& 都是重定向操作符
+  2>&1 标准错误 重定向到标准输出 其中 >& 为一个整体 若写成 2>1 则标准错误 重定向到 文件 1
+  2>&1 一般总要放到后面 如 xxx >log 2>&1  可以按照下面的方式理解
+    为什么2>&1要放到后面 过程 1. 本来1-->屏幕  2. 执行>log后 1-->log  3. 执行2>&1后 2-->1 因为1-->log 所以2-->log
+    若写为 2>&1 >log  则过程 1. 本来1-->屏幕  2. 执行2>&1后 2-->1 因为1-->屏幕 所以2-->屏幕  3. 执行>log后 1-->log 2不变 2-->屏幕
+  >log 2>&1 的简写 &>log (更佳) 或 >&log 这3种写法等价 bash文档中有说明
+
+输出重定向
+Command > filename	把标准输出重定向到一个新文件中
+Command >> filename	把标准输出重定向到一个文件(追加)
+Command > filename 2>&1	把标准输出和错误一起重定向到一个文件中
+Command 2> filename	把标准错误重定向到一个文件中
+Command 2>> filename	把标准错误重定向到一个文件中(追加)
+Command >> filename 2>&1	把标准输出和错误一起重定向到一个文件中(追加)
+Command > filename 2> /dev/null	标准输出定向到文件，屏蔽掉错误输出
+
+输入重定向
+Command < filename	Command 命令以 filename 文件作为标准输入
+Command < filename > filename2	Command 信不信以 filename 文件作为标准输入，以 filename 2  作为标准输出
+Command << delimiter	从标准输入中读入，以  delimiter 为结束符。这就是 Bash 的 HereDoc 用法
+
+绑定重定向
+Command  >&m	把标准输出重定向到文件描述符 m 中，如 ls >&1
+Command m>&n	把往文件描述符 m 的输出重定向到文件描述符 n 上，2>71。再如上面的完整写法是 1>&m
+Command <&-	关闭标准输入
+Command 2>&-	关闭标准错误输出，和 2>/dev/null 有类似功效
+
+可以用 exec 绑定重定向做一些有趣的操作，摘录两个操作实例
+[chengmo@centos5 shell]$ exec 6>&1
+#将标准输出与fd 6绑定
+
+[chengmo@centos5 shell]$ ls  /proc/self/fd/
+0  1  2  3  6
+#出现文件描述符6
+
+[chengmo@centos5 shell]$ exec 1>suc.txt
+#将接下来所有命令标准输出，绑定到suc.txt文件（输出到该文件）
+
+[chengmo@centos5 shell]$ ls -al
+#执行命令，发现什么都不返回了，因为标准输出已经输出到suc.txt文件了
+
+[chengmo@centos5 shell]$ exec 1>&6
+#恢复标准输出
+
+[chengmo@centos5 shell]$ exec 6>&-
+#关闭fd 6描述符
+
+[chengmo@centos5 ~]$ ls /proc/self/fd/
+0  1  2  3
+
+
 
 
 [Tab]按键—具有『命令补全』和『档案补齐』的功能
@@ -100,7 +160,10 @@ Linux命令_多条命令执行 如下是分隔符
 4. |  命令行中 | 表示管道 将一个命令输出导向另一个命令输入 像流水线一样连续工作不断地处理文本流 如: env|grep LANG
 
 
-
+ls -l | grep "^-" | wc -l              #当前目录下（不包括子目录）文件数量
+find ./ -maxdepth 1 -type f | wc -l    #同上
+ls -lR | grep "^-" | wc -l             #当前目录下包括的文件数量 注意若要统计隐藏文件 则 ls -laR ...
+find ./ -type f | wc -l                #同上 默认含隐藏文件
 
 xftp
 ldd   list dynamic dependencies缩写 #列出动态库依赖关系 提示 not a dynamic executable 表示不认动态库 编译的平台与运行的平台不匹配
@@ -187,7 +250,7 @@ systemctl start WebExpress
 systemctl list-unit-files         #可以查看启动项
 tracert xxx		                    #跟踪路由路径 traceroute destination-hostname
 find /usr/include -type f  -exec grep CLOCKS_PER_SEC -n --color -H {} \;
-find . -maxdepth 2 -type f −name′∗.h′ −o −name′∗.cpp′ -exec grep foo {} \; 查找所有的.h .cpp文件用 -o 链接 深度是2
+find . -maxdepth 2 -type f −name "∗.h" −o −name "∗.cpp" -exec grep foo {} \; 查找所有的.h .cpp文件用 -o 链接 深度是2
 grep -rin --include=*.h ifaddrs xxx #在xxx中搜索ifaddrs 文件格式*.h -r遍历文件夹 -i忽略大小写 -n行
 grep -w 精确匹配
 grep -v 是反向查找的意思 ps -ef | grep '/home/helife/tomcat-wap/' | grep -v "grep"  查看包含 '/home/helife/tomcat-wap/' 但不包含 "grep" 的进程
@@ -204,6 +267,7 @@ net.ipv4.tcp_tw_reuse = 1
 /proc/[pid]/limits 显示当前进程的资源限制
 /proc/[pid]/fd 是一个目录，包含进程打开文件的情况
 /proc/[pid]/task 查看某个进程的线程的详细信息
+/proc/[pid]/maps 查看某个进程的链接库
 
 /etc/init.d/mxagentrun stop       某个centos7 停止服务
 systemctl stop firewalld.service  centos7       关闭防火墙
@@ -1002,14 +1066,33 @@ ${string/%substring/replacement}  如果$string的后缀匹配$substring, 那么
 echo `expr index "$string" io`  # 输出 4 查找字符 i 或 o 的位置 string="runoob is" 注意 ` 是反引号
 拼接字符串  格式 str=$str1$str2
 
-单引号
+单引号 '
 单引号里的任何字符都会原样输出，单引号字符串中的变量是无效的；
 单引号字串中不能出现单独一个的单引号（对单引号使用转义符后也不行），但可成对出现，作为字符串拼接使用。
 
-双引号
-双引号里可以有变量
+双引号 "
+双引号里可以有变量,除$ \ ' " 这几个字符仍是特殊字符并保留其特殊功能外，其余字符仍作为普通字符对待。
 双引号里可以出现双引号，只要它被转义了就行  如  \"  解析为 "
 其他的转义字符跟单引号一样 原样保存在变量中 单引号 \' 也会保存为 \'
+
+反引号 `
+反引号括起来的字符串被shell解释为命令行，执行时，shell首先执行该命令行，并以它的标准输出结果取代整个反引号部分。
+反引号还可以嵌套使用。但需注意，嵌套使用时内层的反引号必须用反斜杠（\）将其转义。如下
+$ abc=`echo The number of users is \`who| wc -l\``
+$ echo $abc
+The number of users is 2
+在反引号之间的命令行中也可以使用shell的特殊字符。Shell为得到``中命令的结果，它实际上要去执行``中指定的命令。执行时，命令中的特殊字符，如$，”，?等又将具有特殊含义，并且``所包含的可以是任何一个合法的Shell命令，如：
+$ ls
+note readme.txt Notice Unix.dir
+$ TestString="`echo $HOME ` ` ls [nN]*`"
+$ echo $TestString
+/home/yxz note Notice
+题外话:反引号是一个老的用法，$()才是新的用法，推荐使用$()，所以上面的的用法可以改成：
+$ TestString="$(echo $HOME) $(ls [nN]*)"
+$ echo $TestString
+/home/yxz note Notice
+
+
 
 条件表达式要放在 [ ] 之间，并且要有空格，例如: [$a==$b] 是错误的，必须写成 [ $a == $b ]
 if [ 1 -gt 2 ]; then echo 11; else echo 22; fi   使用 [...] 判断语句中大于使用 -gt，小于使用 -lt

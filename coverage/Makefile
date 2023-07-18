@@ -289,3 +289,52 @@ clean103:
 # Segmentation fault
 # 解决方法
 # 在lcov工具中使用–gcov-tool选项选择需要的gcov版本,如lcov --gcov-tool /usr/bin/gcov-4.2
+
+
+
+
+
+
+# 代码覆盖率 测试
+source_z1=coverage.c
+source_z2=coverage2.c
+target_z1=tar1
+target_z2=tar2
+target_out1=1
+target_out2=2
+output_z1=out1
+output_z2=out2
+output_z=out
+out_z=out
+
+# 1 clang + llvm-cov
+# 多目标生成覆盖率
+zzz:
+	-mkdir $(target_out1)
+	-mkdir $(target_out2)
+	-mkdir $(output_z)
+	clang -o $(target_out1)/$(target_z1) -fprofile-instr-generate -fcoverage-mapping $(source_z1)
+	clang -o $(target_out2)/$(target_z2) -fprofile-instr-generate -fcoverage-mapping $(source_z2)
+	cd $(target_out1) ; ./$(target_z1) 2
+	cd $(target_out2) ; ./$(target_z2) 13
+#data_z:
+	llvm-profdata merge -o $(out_z).profdata $(target_out1)/default.profraw $(target_out2)/default.profraw default.profraw
+#	llvm-cov show ./$(target1) -instr-profile=$(target1).profdata
+#	llvm-cov show  -object ./$(target_out2)/$(target_z2) -object ./$(target_out1)/$(target_z1) -instr-profile=$(out_z).profdata -sources $(source_z1) -sources $(source_z2) -format=html -output-dir=$(output_z)
+#	-sources 可省略
+#	llvm-cov show  -instr-profile=$(out_z).profdata \
+#	-object ./$(target_out1)/$(target_z1) -sources $(source_z1) \
+#	-object ./$(target_out2)/$(target_z2) -sources $(source_z2) \
+#	-object ./$(target101) -sources $(source101) \
+#	-format=html -output-dir=$(output_z)
+
+#	llvm-profdata merge -o $(out_z).profdata $(target_out1)/default.profraw $(target_out2)/default.profraw
+	llvm-cov show  -instr-profile=$(out_z).profdata \
+	-object ./$(target_out1)/$(target_z1) \
+	-object ./$(target_out2)/$(target_z2)  \
+	-object ./$(target101) \
+	-format=html -output-dir=$(output_z)
+cleanzzz:
+	rm -rf $(output_z) *.profdata default.profraw $(target_out1) $(target_out2)
+
+

@@ -3,12 +3,28 @@ https://d-programming-books.github.io                     在线书 有用
 
 
 网易云代理失败
+https://blog.csdn.net/jake_tian/article/details/106989711
+https://blog.csdn.net/weixin_44122062/article/details/120484422
+https://gitee.com/meng-chuan/Unlock-netease-cloud-music
+https://simplestark.com/archives/cloudmusic
+https://github.com/UnblockNeteaseMusic/server/issues/776
+https://github.com/nondanee/UnblockNeteaseMusic/issues/85
 1版本用 2.9.10   新版本可能有问题
 2快捷方式 属性 目标 追加 --ignore-certificate-errors
 3 node ../UnblockNeteaseMusic-master/app.js -p 18080:18081     冒号后面的https通道
+需要 node-v16.13.1-win-x64.zip UnblockNeteaseMusic-master.zip CloudMusic-2.9.10.200061_green.7z 都是绿色版本的
+脚本 wyy.bat
+::wyy代理
+D:
+cd D:\tool\wyy\node-v16.13.1-win-x64
+::node ../UnblockNeteaseMusic-master/app.js -p 18080
+node ../UnblockNeteaseMusic-master/app.js -p 18080:18081
+::start cmd /k "cd /d D:\qq\Music\UnblockNeteaseMusic-master && node app.js -p 3333 -f 59.111.181.60"
+::node ../UnblockNeteaseMusic-master/app.js -p 18081:18082 -f 45.254.48.2 -s
+::node ../UnblockNeteaseMusic-master/app.js -p 5000:5002 -e http://music.163.com -s
 
 notepad安装插件:
-    1插件 插件管理 可用 选择安装 
+    1插件 插件管理 可用 选择安装
     2手动http://sourceforge.net/projects/npp-plugins/ 搜索如NppFTP See Projiect DownLload NppFTP_0.26.3.zip bin NppFTP.dll 在Notepad++\plugins下新建一个NppFTP目录把NppFTP.dll放入
     3重启notepad
 
@@ -17,7 +33,7 @@ notepad安装插件:
 
 cmd -> wmic -> product list 获取安装软件列表
 product list /? 查询
-::bat 输出 当前用户的桌面路径 
+::bat 输出 当前用户的桌面路径
 for /f "tokens=2,*" %%i in ('reg query "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders" /v "Desktop"') do (
 set desk=%%j)
 wmic /output:%desk%\重命名为中心部门+姓名+电脑SN码.txt product get name,version,__path
@@ -29,7 +45,7 @@ thinkpad笔记本
 Windows 11系统的点设置-蓝牙和其他设备-触摸板，通过开关进行启用/禁用
 
 win10历史信息
-C:\Users\wangjingang\AppData\Local\Microsoft\Windows\History 
+C:\Users\wangjingang\AppData\Local\Microsoft\Windows\History
  历史
 win+R recent                                                  使用
 任务栏 点击任务视图 向下拉                                    任务
@@ -62,7 +78,7 @@ Windows中使用命令创建计划任务（at、schtasks）
   进入windows10安全模式，在启动项中添加取消关机批任务(将本文最上的取消关机命令另存一个*.bat文件，然后拖到启动项里)，即可解决此项问题。
   在Windows中通常用at和schtasks命令添加计划任务，其中at命令默认是以System权限执行。
   at命令
-    at < Windows2012  
+    at < Windows2012
     从Win2012开始不再支持at命令，以下操作在win7中进行
     若要使用 at 命令，任务计划程序服务必须正在运行。 使用 at 命令创建任务时，必须配置这些任务，以便它们在同一用户帐户中运行。
     at命令语法：
@@ -78,16 +94,16 @@ Windows中使用命令创建计划任务（at、schtasks）
       id：使用此参数指定分配给计划任务的标识号。可省略，自动从1开始。
       /delete：使用此参数可以取消计划任务。 如果省略 id 参数，将取消计算机上所有计划的任务。
       /yes：在取消计划任务时，使用此参数对系统的所有查询强制提供"是"答案。 如果省略此参数，系统将提示你确认取消任务。
-    
+
     使用 at 命令时，计划任务将使用系统帐户（System）的凭据运行。
     使用net start命令查看当前正在运行服务
     如未开启，使用命令net start "task scheduler"开启服务。
-    
+
     例子
       添加计划任务：复制文件操作  at 15:00 cmd /c copy C:\Users\gang\Desktop\1.txt E:\
       查看计划任务：at [id]       at 查看所有任务           at 1 查看第一条任务
       取消计划任务：at /delete    at /delete 删除所有任务   at 1 /delete 删除第一条任务
-  
+
   schtasks命令
     schtasks >= Windows2012
     支持win7-win10
@@ -100,8 +116,8 @@ Windows中使用命令创建计划任务（at、schtasks）
       管理员权限：schtasks /Create /TN TestService2 /SC DAILY /ST 01:02 /TR notepad.exe /RL HIGHEST
                   schtasks /Create /TN "ShutDown" /SC DAILY /ST 00:20 /TR "shutdown -s -t 600" /RL HIGHEST
                   schtasks /create /tn "关机" /tr "shutdown -s -t 30" /sc once /st 01:30
-                    设置后建议去计划任务中查看，如果没有添加成功，需要打开windows防火墙。（计算机右键-管理-服务，开启Windows Firewall）                    
-                    命令注解：                    
+                    设置后建议去计划任务中查看，如果没有添加成功，需要打开windows防火墙。（计算机右键-管理-服务，开启Windows Firewall）
+                    命令注解：
                     /Create  创建任务
                     /TN "ShutDown"  将任务命名为ShutDown
                     /TR "shutdown -s -t 30"  任务执行目录和附加参数
@@ -126,11 +142,11 @@ Windows中使用命令创建计划任务（at、schtasks）
     SchTasks /Query /TN TestService1
     在win7中运行发生错误：无法加载列资源。
     解决方法：chcp查看cmd编码是否为936中文GBK编码，如果是使用命令chcp 437将编码改为美国编码即可运行，但无法打印出非ascii码字符。
-    
+
     修改计划任务：/change
     SchTasks /Change /TN “TestService1” /ST 14:00
     这里需要输入密码。
-    
+
     删除计划任务：/delete
     SchTasks /Delete /TN TestService1 [/f]
     如图：使用/f参数强制删除，不会进行确认
@@ -195,6 +211,3 @@ rsop.msc作用：各种策略的结果集
 secpol.msc作用：本地安全策略设置
 services.msc作用：各项本地服务管理器
 wmimgmt.msc作用：Windows管理体系结构（WMI）
-
-
- 

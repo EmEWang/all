@@ -1,13 +1,22 @@
+
+https://juejin.cn/post/7113192902829801502
+
 mobaxterm V22.1 不同版本可能略有不同
-多窗口同时输入 terminal->write commands on all terminals
-xserver 将linux端的gui程序 显示在当前windows客户端 输入 xclock,那么将在当前windows桌面显示 linux的 xclock 程序界面
-MobaXterm /home/mobaxterm
-  位置 C:\Users\xxx\AppData\Local\Temp\Mxt221\tmp\xxx    每次重启都删除Mxt221文件夹 若要保留则 settings->configuration中设置
+
+MobaXterm 主目录 /home/mobaxterm 输入 powershell 查看实际位置
+  位置 C:\Users\xxx\AppData\Local\Temp\Mxt221\tmp\xxx 每次重启都删除Mxt221文件夹 若保留 settings->configuration中设置
   直接命令登陆远程服务器，并且使用scp命令传输文件
   可以直接apt-get安装vim等常用功能(或者官网下载插件)，实现在windows下模拟linux环境，这样就可以使用vi命令准备INCAR文件，也可以使用Gnuplot进行绘图。
   通过for循环在windows下实现批量操作
-保持SSH连接 setting>SSH>sessions setting>勾选ssh Keepalive
-字体大小 setting>terminal>Defaul terminal font settings>size
+xserver
+  将linux端的gui程序 显示在当前windows客户端 输入 xclock,那么将在当前windows桌面显示 linux的 xclock 程序界面
+多窗口同时输入
+  terminal->write commands on all terminals
+保持SSH连接
+  setting>SSH>sessions setting>勾选ssh Keepalive  具体实现是每个60秒便发送数据，避免SSH连接断开。
+字体大小
+  setting>terminal>Defaul terminal font settings>size 所有session有效。
+  点击ctrl同时滚动鼠标滚轮，可以放大或缩小屏幕字体。只对当前session有效。
 快捷键
   切换小标签（tab） Ctrl+Tab键：向右切换  Ctrl+Shift+Tab键：向左切换
   Ctrl+Shift+N	创建一个新的远程会话
@@ -19,6 +28,8 @@ MobaXterm /home/mobaxterm
 上传下载文件
   左侧工具栏 SSH brower 上方小按钮 或者 右键文件 或者 采用直接拖拽的方式
   右键某个文件 open with 则某个用window程序打开之
+Z-modem
+  某些情况下会使用rz和sz上传和下载文件，需要在session窗口右击选择z-modem相关选项处理。
 会话数量解除
   若Xterm会话数量到14个时，发现新增的会话没有保存下来，这是由于软件自身的限制，解决方法如下
   找到Xterm的目录，打开MobaXterm.ini文件 在[Misc]下面添加SettingsSave=0，保存,重启Xterm
@@ -26,8 +37,19 @@ MobaXterm /home/mobaxterm
   左侧工具栏 sessions 右击User sessions—>选择New folder创建目录
 右键粘贴
   Settings>Configuration>terminal>paste using right-click 勾选
-Servers
+Servers 本地服务器
   工具栏Servers开启/关闭部分网络服务工具
+  如 HTTP协议 右侧齿轮配置，左侧开始按钮，HTTP服务器开启了。 本地访问 http://localhost:80/ 远程访问  http://ip:80/
+tab分组
+  在任意session标签右击，可以选择【set tab color】为多个session窗口进行分组,设置不同的颜色。
+快速建立本地其他终端
+  cmd             控制台终端
+  powershell      powershell终端
+  bash            bash终端
+  wsl             默认
+  git bash        git终端 测试无效
+Windows RDP 远程windows系统
+  session->new session->RPD
 
 鼠标选中一段文字后自动换行
 现象：

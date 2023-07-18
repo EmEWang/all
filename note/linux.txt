@@ -1,6 +1,19 @@
 
 http://ftp.twaren.net/ 台湾高品质学术研究网络
 
+Linux版本
+  内核版本
+    uname -a 查看内核版本
+    cat /proc/version 查看内核版本
+  发行版本
+    lsb_release -a   即可列出所有版本信息   适用于所有的Linux发行版，包括RedHat、SUSE、Debian…等发行版
+    cat /etc/redhat-release  查看发行版本   只适合Redhat系的Linux
+    cat /etc/issue   此命令也适用于所有的Linux发行版
+
+判断 麒麟V10系统
+cat /etc/.productinfo   如果release是 V10 版本，即为银河麒麟系统 如果release是 V7 版本，即为中标麒麟系统
+注:麒麟V10的x86_64与aarch64架构不兼容  x86_64需要在centos7上以make RELEASE=1 BITS=64 CENTOS=uos编译 aarch64需要在120.46.130.85上以make RELEASE=1 BITS=64 CENTOS=uos编译
+
 一般linux系统分为两大类
 1 RedHat系列 RedHat RHEL Centos Fedora "Oracle Linux" 等
   常用的安装包为 rpm 包 安装命令为 "rpm -参数"
@@ -10,6 +23,13 @@ http://ftp.twaren.net/ 台湾高品质学术研究网络
   常用的安装包为 deb 包 安装命令为 "dpkg -参数"
   包管理工具 apt-get
   支持tar包
+
+目录
+文件系统
+环境变量
+链接库
+
+文件系统---------------------------------------------------------------------
 
 Linux下为什么目录的大小总是4096
 在Linux下一切皆文件，因此目录也是文件。目录大小并非常规意义上包含其子文件的总大小，而是单纯指的是目录的大小。
@@ -55,6 +75,280 @@ bin:x:1:bin,daemon
 /etc/group：组及其属性信息
 /etc/shadow：用户密码及其相关信息  #pwconv 将passwd当中的密码映射到了/etc/shadow pwunconv  取消映射 密码仍然放在/etc/passwd当中
 /etc/gshadow：组密码及其相关信息   #/etc/group文件里的密码映射文件  格式为 组名：组密码：组管理员列表：以当前组为附加组的用户列表（分隔符为逗号）
+
+
+循环设备/dev/loop
+/dev/loop（或称vnd (vnode disk)、lofi（循环文件接口））是一种伪设备，这种设备使得文件可以如同块设备一般被访问。
+在使用之前，循环设备必须与现存文件系统上的文件相关联。这种关联将提供给用户一个应用程序接口，接口将允许文件视为块特殊文件（参见设备文件系统）使用。因此，如果文件中包含一个完整的文件系统，那么这个文件就能如同磁盘设备一般被挂载。
+这种设备文件经常被用于光盘或是磁盘镜像（ IOS、IMG）。通过循环挂载来挂载包含文件 系统的文件，便使处在这个文件系统中的文件得以被访问。这些文件将出现在挂载点目录。
+/dev/loopX这些设备在Linux下被称为回环设备。
+losetup -a  或者 losetup        # 查看所有与文件相关联的 loop 设备
+apt autoremove --purge snapd    # ubuntu 删除所有的 /dev/loopX 设备
+
+在一个目录上挂载包含包含文件系统的文件的步骤：
+1. 使用一个循环设备（/dev/loop）连接文件（使用命令 losetup）
+2. 在目录上挂载该循环设备（使用命令 mount）
+
+例如：有一个包含文件系统的文件 sample.img，/mnt/point 为目录，如果将 sample.img 挂载到 /mnt/point 上可以使用下列命令
+losetup /dev/loop0 sample.img
+mount /dev/loop0 /mnt/point
+mount -o loop sample.img /mnt/point   # 可以使用一条mount命令替换以上两条命令
+
+# 卸载
+umount /mnt/point
+losetup -d /dev/loop0
+
+
+在Linux中，有一种特殊的块设备叫loop device,这种loop device设备是通过影射操作系统上的正常的文件而形成的虚拟块设备。因为这种设备的存在，就为我们提供了一种创建一个存在于其他文件中的虚拟文件系统的机制。
+示例
+dd if=/dev/zero of=FS_on_file bs=1k count=10000   #1 使用dd命令创建文件
+losetup /dev/loop0 FS_on_file   #2 使用losetup命令创建一个loop device
+mkfs -t ext3 /dev/loop0         #3 创建一个文件系统 或 mkfs.ext3 /dev/loop0
+mount /dev/loop0 /mnt/FS_file0  #4 挂载这个文件系统 mount point '/mnt/FS_file0' has been created before by 'mkdir'
+若要删除刚才创建的这些对象，依次执行如下步骤：
+$ umount /dev/loop0
+$ losetup -d /dev/loop0   断开设备
+$ rm FS_on_file
+
+
+linux 设备 /dev
+字符设备 包括 键盘 传真 虚拟终端和串口调节器 特殊字符设备(裸设备raw)
+块设备   包括 硬盘 cd-rom 内存等
+伪设备   包括 null zero full loop random urandom stdin stdout stderr fd upd tcp udp等
+
+字符设备
+字符设备是指每次与系统传输1个字符的设备。这些设备节点通常为传真、虚拟终端和串口调制解调器、键盘之类设备提供流通信服务，它通常不支持随机存取数据。 字符设备在实现时，大多不使用缓存器。系统直接从设备读取／写入每一个字符。例如，键盘这种设备提供的就是一个数据流，当你敲入“cnblogs”这个字符串时，键盘驱动程序会按照和输入完全相同的顺序返回这个由七个字符组成的数据流。它们是顺序的，先返回c，最后是s。
+
+块设备
+块设备是指与系统间用块的方式移动数据的设备。这些设备节点通常代表可寻址设备，如硬盘、CD-ROM和内存区域。
+块设备通常支持随机存取和寻址，并使用缓存器。操作系统为输入输出分配了缓存以存储一块数据。当程序向设备发送了读取或者写入数据的请求时，系统把数据中的每一个字符存储在适当的缓存中。当缓存被填满时，会采取适当的操作（把数据传走），而后系统清空缓存。它与字符设备不同之处就是，是否支持随机存储。字符型是流形式，逐一存储。
+
+伪设备
+在类Unix操作系统中，设备节点并不一定要对应物理设备。没有这种对应关系的设备是伪设备。操作系统运用了它们提供的多种功能。
+
+/dev/stdin  标准输入设备 指的就是键盘设备
+  cat>teststdin</dev/stdin     #cat从/dev/stdin获得数据，然后将标准输出，输入的到teststdin文件  ctrl+D 结束
+  cat>teststdin                #不指定输入，默认输入设备就是/dev/stdinn
+/dev/stdout 标准输出设备，默认输出到屏幕上
+  cat test.sh >/dev/stdout |grep 'echo'  #/dev/stdout指向就是标准输出，因此重定向给它的数据，最终发送到屏幕上(fd1)
+  cat test.sh  |grep 'echo'              #同上
+/dev/stderr 标准错误输出，默认输出到屏幕上，但是它的内容不能通过管道传递给grep，管道只能传递标准输出
+  cat test.sh >/dev/stderr |grep 'echo'   #原样输出 test.sh 文件 没有过滤 因为管道传递给grep，管道只能传递标准输出
+/dev/null   空设备，黑洞设备,也称为位桶（bit bucket），任何写入该设备数据都会被丢弃掉。从这个里面读取数据返回是空。
+  cat test.sh >/dev/null     #文件内容丢失，而不会输出到标准输出。
+  cat /dev/null              #什么都没输出
+  badname 2> /dev/null       #这样错误信息 [标准错误] 就被直接丢进垃圾桶了。
+  cat $xx 2> /dev/null > /dev/null  #"$xx"不存在，将不会有任何错误信息提示； "$xx"存在，文件的内容不会打印到标准输出；
+  cat /dev/null > /var/log/wtmp     #自动清空日志文件的内容
+/dev/zero   任何写入该设备数据都会被丢弃掉。读它会提供无限的空字符(NULL, ASCII NUL, 0x00)。
+  其中的一个典型用法是用它提供的字符流来覆盖信息，另一个常见用法是产生一个特定大小的空白文件。
+  dd if=/dev/zero of=testzero count=1024 bs=1024 #创建一个1M文件，该文件一个块是1024字节，一共是1024块 单位也可以为K M G
+  dd if=/dev/zero of=/dev/磁盘分区 #慎用，它是用\0x00填充整个分区。这样做数据是不可以恢复的了。
+  cat /dev/zero>testinputzero   #慎用，会无限输出\x00，用\x00填充文件。若没有限制该用户磁盘配额。它将耗尽整个磁盘空间。
+/dev/full   常满设备 向其写入时返回设备无剩余空间（错误码为ENOSPC），读取时则与/dev/zero相似
+  常被用来测试程序在遇到磁盘无剩余空间错误时的行为。
+  echo 'chengmo' >/dev/full   #-bash: echo: write error: 设备上没有空间  echo $?   # 1
+/dev/random[urandom] 可以用作随机数发生器或伪随机数发生器。它允许程序访问来自设备驱动程序或其它来源的背景噪声。
+  原理是利用 当前系统的熵池来计算出固定一定数量的随机比特，然后将这些比特作为字节流返回。
+  熵池指当前系统的环境噪音，熵指一个系统的混乱程度，系统噪音通过很多参数来评估，如内存的使用，文件的使用量，不同类型的进程数量等等。
+  若当前环境噪音变化的不是很剧烈或当前环境噪音很小，如刚开机，而当前需要大量的随机比特，这时产生的随机数的随机效果就不是很好了。
+  /dev/urandom和/dev/random区别，后者在不能产生新的随机数时会阻塞程序，而前者不会。后者产生大量随机数的速度要慢。
+  dd if=/dev/random of=random.dat bs=1024b count=1
+  dd if=/dev/urandom of=random2.dat bs=1024b count=1    #效果好很多
+/dev/fd    记录用户打开的文件描述符
+/dev/tcp[udp]/host/port  读取该类形式设备，将会创建一个连接host主机port端口的tcp[upd]连接。打开一个socket通讯接口。
+/dev/loop    把loop 文件，作为块设备挂载使用。
+  mount -o loop xx.img /img  #将img镜像文件挂载到/img目录下面，有了这个设备，不需要通过虚拟光驱就可以读虚拟磁盘格式的文件。
+
+
+分析二进制文件 主要针对elf格式
+file 文件名    #帮助确定文件类型             file xx.so
+ldd 文件名     #显示出所有依赖库和它们的路径  ldd xx.so
+ltrace 命令    #显示运行时从库中调用的所有函数 可以看到被调用的函数名称 传递给该函数的参数 最右边是函数返回的内容 ltrace gcc
+hexdump 文件名 #以 ASCII、十进制、十六进制或八进制显示文件内容 hexdump -C /bin/ls | head
+xxd 文件名     #查看文件对应的十六进制形式 -a自动跳过空白 默认关闭 -c加数字 每行显示多少字节 默认16 最大256 -g设定几个字节为一块 默认为2 -l显示多少字节的内容 -s接+-和address +表示从地址处开始的内容 -表示距末尾address开始的内容 -b:以二进制形式查看文件内容
+od 文件名      #默认8进制显示文件
+strings 文件名 #打印文件中的可打印字符的字符串    strings /bin/ls
+readelf 文件名 #显示有关 ELF 文件的信息    readelf -h /bin/ls 显示头
+objdump 文件名 #读取二进制或可执行文件，并将汇编语言指令转储到屏幕上，主要用于反汇编 objdump -d /bin/ls | head
+strace 文件名  #跟踪系统调用和信号 strace -f /bin/ls
+nm 文件名      #列出对象文件中的符号 从二进制文件中识别变量和函数 用 -g 选项编译  nm hello | tail
+strip	         #删除 ELF文件 中一些无用的信息
+size	         #显示目标文件中的 section 大小及目标文件大小
+ar	           #将目标文件链接为静态库
+addr2line	     #将地址转换为文件、行号
+
+
+如何查看分区的文件系统类型
+df -T             #文件系统类型在Type列输出 只可以查看已经挂载的分区和文件系统类型
+parted -l         #参数l表示列出所有设备的分区信息 root权限
+blkid             #查看已格式化分区的UUID和文件系统
+lsblk -f          #也可以查看未挂载的文件系统类型
+
+
+查看 swap
+free -m           #查看swap 空间大小 默认单位为k, -m 单位为M
+swapon -s         #查看swap 空间(file(s)/partition(s))  同cat /proc/swaps
+
+添加交换空间
+  两种选择：添加一个交换分区或添加一个交换文件。推荐你添加一个交换分区；不过，若你没有多少空闲空间可用，则添加交换文件。
+  新添了交换分区并启用它之后，请查看 cat /proc/swaps 或 free 命令的输出来确保交换分区已被启用了。
+
+添加一个交换分区
+  使用fdisk来创建交换分区（假设 /dev/sdb2 是创建的交换分区）
+  mkswap /dev/sdb2      #使用 mkswap 命令来设置交换分区
+  swapon /dev/sdb2      #启用交换分区
+  /dev/sdb2 swap swap defaults 0 0      #写入/etc/fstab,以便在引导时启用
+
+添加一个交换文件
+  dd if=/dev/zero of=/swapfile1 bs=1024k count=512    #创建大小为512M的交换文件
+  mkswap /swapfile1                   #使用 mkswap 命令来设置交换文件
+  swapon /swapfile1                   #启用交换分区
+  /swapfile1 swap swap defaults 0 0   #写入/etc/fstab,以便在引导时启用：
+
+删除交换空间
+  swapoff /dev/sdb2     #禁用交换分区
+  /etc/fstab 文件中中删除项目
+  使用fdisk或yast工具删除分区。
+
+删除交换文件步骤同上。
+
+
+
+终端设备
+终端是一种字符型设备，它有多种类型,常用tty简称。源于Teletypes，或teletypewriters，原来指的是电传打字机，是由Teletype公司生产的,是通过串行线用打印机键盘通过阅读和发送信息的东西，后来这东西被键盘和显示器取代，所以现在叫终端比较合适。放在特殊文件目录/dev/下。
+
+1本地终端
+  用VGA连接主机和显示器，用PS/2或者USB连接主机和键盘，这样的一个显示器/键盘组合就是一个本地终端。
+2用串口连接的远程终端
+  通过串口线把主机接到另外一个有显示器和键盘的主机，通过运行一个终端模拟程序，比如“Windows超级终端”来将这台主机的显示器和键盘借给串口对端的主机。
+3用TCP/IP承载的远程终端
+  类似Telnet，SSH这般。
+前两类都是在本地就直接关联了物理设备的，比如VGA口啊，PS/2口啊，串口啊之类的，这种终端叫做物理终端;第三类在本地则没有关联任何物理设备，注意，不要把物理网卡当成终端关联的物理设备，它只是隧道关联的物理设备，这里的物理网卡完全可以换成卡车，它们与终端并不直接相关，所以这类不直接关联物理设备的终端叫做伪终端。
+
+终端： 输入和输出设备(键盘+显示器)
+物理终端：直接连接在主机上的物理设备（键盘、显示器）；
+串行终端：与机器的串口对应，每一个串口对应的一个串行终端，串口对应的也是物理终端
+虚拟终端：Linux默认有6个虚拟终端，这6个虚拟终端可以使用快捷键（Ctrl+Alt+F1）...（Ctrl+Alt+F6）切换，虚拟终端使用tty（teletypewriter）显示（/dev/tty1~/dev/tty6），他们共用一套物理终端设备
+伪终端： 虚拟终端是有限的，但网络端口和图形端窗口的数目却是无限的，这是通过伪终端来实现的，使用SSH或者Telnet远程连接Linux时使用的就是伪终端，伪终端使用pts（pseudo-terminal slave）显示，执行tty命令执行结果为pts则是伪终端，tty则是虚拟终端
+控制终端：这是一个逻辑概念，即用户正在控制的终端，可以使串行终端、虚拟终端、伪终端
+控制台终端：控制台终端可以认为是一台主机对应的一套键盘和显示器，所有虚拟终端是对应的都是同一控制台终端
+
+1.1系统控制台(/dev/console)
+/dev/console是系统控制终端，系统的错误信息什么的都输出到这里。也就是开机终端，通常系统启动后的信息，都会输出到这个终端上面，直接连接它的，是主机显卡连接的显示器，实际上它输出在系统总线上。一台电脑只有一个console，也就是输出到显卡上的那个终端，所以任何方法向/dev/console写入内容，都会输出到开机终端上。
+如 echo "Hello.I'm tty_b" > /dev/console  需要root权限
+
+1.2当前控制台终端（/dev/tty）
+如果当前进程有控制终端（Controlling Terminal）的话，那么/dev/tty就是当前进程的控制终端的设备特殊文件。对于你登录的shell，/dev/tty就是你使用的终端，设备号是（5,0）。不过它并不指任何物理意义上的控制台，/dev/tty会映射到当前设备（使用命令“tty”可以查看它具体对应哪个实际物理控制台设备）。输出到/dev/tty的内容只会显示在当前工作终端上（无论是登录在ttyn中还是pty中）。你如果在控制台界面下(即字符界面下）那么dev/tty就是映射到dev/tty1-6之间的一个（取决于你当前的控制台号），但是如果你现在是在图形界面（Xwindows），那么你会发现现在的/dev/tty映射到的是/dev/pts的伪终端上。/dev/tty有些类似于到实际所使用终端设备的一个联接。不同于符号链接。
+命令 ps –ax 来查看进程与哪个控制终端相连
+命令 tty 可以查看它具体对应哪个实际终端设备。
+who 或 w 也可以看当前账户的终端。
+简言之，/dev/tty类似个指针，指向你当前所用的终端。
+如 echo "Hello.I'm tty_a" > /dev/tty  会输出到当前屏幕
+
+1.3虚拟控制台终端（/dev/ttyn）
+/dev/ttyn是进程虚拟控制台，他们共享同一个真实的物理控制台。制台是指直接联系到主机的显示器＋键盘/鼠标。
+如果在进程里打开一个这样的文件且该文件不是其他进程的控制台时，那该文件就是这个进程的控制台。进程printf数据会输出到这里。在PC上，用户可以使用ctrl+alt+Fn切换控制台，看起来感觉存在多个屏幕，这种虚拟控制台对应tty1~n，其中 ：
+/dev/tty1等代表第一个虚拟控制台
+例如当使用ctrl+ALT+F2进行切换时，系统的虚拟控制台为/dev/tty2 ，当前控制台（/dev/tty）则指向/dev/tty2
+在Linux系统中，计算机显示器通常被称为控制台终端（Console）。它仿真了类型为Linux的一种终端（TERM=Linux），并且有一些设备特殊文件与之相关联：tty0、tty1、tty2等。当你在控制台上登录时，使用的是tty1。使用ctrl+Alt+[F1—F6]组合键时，我们就可以切换到tty2、tty3等上面去。tty1 – tty6等称为虚拟终端，而tty0则是当前所使用虚拟终端的一个别名，系统所产生的信息会发送到该终端上。因此不管当前正在使用哪个虚拟终端，系统信息都会发送到控制台终端上。
+你可以登录到不同的虚拟终端上去，因而可以让系统同时有几个不同的会话期存在。只有系统或超级用户root可以向/dev/tty0进行写操作。
+而比较特殊的是/dev/tty0，他代表当前虚拟控制台，是当前所使用虚拟控制台的一个别名。因此不管当前正在使用哪个虚拟控制台（注意：这里是虚拟控制台，不包括伪终端），系统信息都会发送到/dev/tty0上。只有系统或超级用户root可以向/dev/tty0进行写操作。tty0是系统自动打开的，但不用于用户登录。在Framebuffer设备没有启用的系统中，可以使用/dev/tty0访问显卡。
+所以向/dev/tty0写入即等同于向/dev/console写入。
+如 echo "Hello.I'm tty_b" > /dev/tty0
+
+其中，/dev/tty1~/dev/tty63代表的是本地终端，也就是接到本机的键盘显示器可以操作的终端。过键盘上的Ctrl-Alt-FX(X为1,2,3…)可以在这些终端之间切换，每切换到一个终端，该终端就是当前的焦点终端。谁是焦点终端会被内核记录为全局变量，这样只要有键盘输入，就会把输入的字符交给焦点终端。这里顺便提一下，对于串口而言，不存在焦点终端的概念，谁连了串口就是谁，而对于伪终端来讲，一般情况下client都是运行在GUI环境，对于Windows那是微软的事，对于Linux，则有X系统完成同样的事。
+系统中有没有什么变量可以表示焦点终端呢？当然有了，那就是/dev/console，不管你在哪里往/dev/console里写东西，这些东西总会出现在系统当前的焦点终端上！
+按照以他人为中心，我们解释了/dev/console其实就是一个全局变量，指代当前的焦点终端，如果当前的焦点是/dev/tty4，那么/dev/console指的就是/dev/tty4，当然这一切都是由内核来维护的。
+那么系统中有没有一个叫做自己的全局变量呢？当然有，那就是/dev/tty，也就是说，无论你在哪个终端下工作，当你往/dev/tty里写东西的时候，它总是会马上出现在你的眼前。
+
+2串行端口终端（/dev/ttySn）
+串行端口终端（Serial Port Terminal）是使用计算机串行端口连接的终端设备。计算机把每个串行端口都看作是一个字符设备。这些串行端口所对应的设备名称是/dev/tts/0（或/dev/ttyS0）、/dev/tts/1（或/dev /ttyS1）等，设备号分别 （4,0）、（4,1）等，分别对应于DOS系统下的COM1、COM2等。若要向一个端口发送数据，可以在命令行上把标准输出重定向到这些特殊文件名上即可。
+例如，在命令行提示符下键入：echo test >; /dev/ttyS1会把单词”test”发送到连接在ttyS1（COM2）端口的设备上。
+
+3伪终端（/dev/pts/n 或 /dev/pty/）
+pty:虚拟终端  pseudo-tty
+pts/ptmx:pts(pseudo-terminal slave)是pty的实现方法，和ptmx(pseudo-terminal master)配合使用实现pty。
+一台服务器有多个tty，一个tty可以对多个pty（pts）
+TELNET —> TTYP3(S3: slave) —> PTYP3(M3: master) —> GETTY
+伪终端(Pseudo Terminal)是终端的发展，为满足现在需求（比如网络登陆、xwindow窗口的管理）。它是成对出现的逻辑终端设备(即master和slave设备, 对master的操作会反映到slave上)。它多用于模拟终端程序，是远程登陆(telnet、ssh、xterm等)后创建的控制台设备。
+历史上，有两套伪终端软件接口：
+BSD接口：较简单，master为/dev/pty[p-za-e][0-9a-f] ;slave为 /dev/tty[p-za-e][0-9a-f] ，它们都是配对的出现的。例如/dev/ptyp3和/dev/ttyp3。但由于在编程时要找到一个合适的终端需要逐个尝试，所以逐渐被放弃。
+Unix 98接口：使用一个/dev/ptmx作为master设备，在每次打开操作时会得到一个master设备fd，并在/dev/pts/目录下得到一个slave设备（如 /dev/pts/3和/dev/ptmx），这样就避免了逐个尝试的麻烦。由于可能有好几千个用户登陆，所以/dev/pts/*是动态生成的，不象其他设备文件是构建系统时就已经产生的硬盘节点(如果未使用devfs、udev、mdev等) 。第一个用户登陆，设备文件为/dev/pts/0，第二个为/dev/pts/1，以此类推。它们并不与实际物理设备直接相关。现在大多数系统是通过此接口实现pty。
+我们在X Window下打开的终端或使用telnet 或ssh等方式登录Linux主机，此时均通过pty设备。例如，如果某人在网上使用telnet程序连接到你的计算机上，则telnet程序就可能会打开/dev/ptmx设备获取一个fd。此时一个getty程序就应该运行在对应的/dev/pts/*上。当telnet从远端获取了一个字符时，该字符就会通过ptmx、pts/*传递给 getty程序，而getty程序就会通过pts/*、ptmx和telnet程序往网络上返回“login:”字符串信息。这样，登录程序与telnet程序就通过“伪终端”进行通信。
+telnet/dev/ptmx(master)pts/*(slave)getty
+如果一个程序把 pts/*看作是一个串行端口设备，则它对该端口的读/写操作会反映在该逻辑终端设备对的另一个/dev/ptmx上，而/dev/ptmx则是另一个程序用于读写操作的逻辑设备。这样，两个程序就可以通过这种逻辑设备进行互相交流，这很象是逻辑设备对之间的管道操作。对于pts/*，任何设计成使用一个串行端口设备的程序都可以使用该逻辑设备。但对于使用/dev/ptmx的程序，则需要专门设计来使用/dev/ptmx逻辑设备。
+通过使用适当的软件，就可以把两个甚至多个伪终端设备连接到同一个物理串行端口上。
+
+伪终端（Pseudo Terminal）是成对的逻辑终端设备(即master和slave设备, 对master的操作会反映到slave上)，例如/dev/ptyp3和/dev/ttyp3（或设备文件系统中分别是/dev/pty/m3和/dev/pty/s3）。它们与实际物理设备并不直接相关。如果一个程序把ttyp3看作是一个串行端口设备，则它对该端口的读/写操作会反映在该逻辑终端设备对的另一个上面（ttyp3）, 而ttyp3则是另一个程序用于读写操作的逻辑设备。
+这样，两个程序就可以通过这种逻辑设备进行互相交流，而其中一个使用ttyp3的程序则认为自己正在与一个串行端口进行通信。这很象是逻辑设备对之间的管道操作。 对于ttyp3（s3），任何设计成使用一个串行端口设备的程序都可以使用该逻辑设备。但对于使用ptyp3的程序，则需要专门设计来使用ptyp3（m3）逻辑设备。 
+例如，如果某人在网上使用telnet程序连接到你的计算机上，则telnet程序就可能会开始连接到设备ptyp2（m2）上（一个伪终端端口上）。此时一个getty程序就应该运行在对应的ttyp2（s2）端口上。
+当telnet从远端获取了一个字符时，该字符就会通过m2、s2传递给 getty程序，而getty程序就会通过s2、m2和telnet程序往网络上返回”login:”字符串信息。这样，登录程序与telnet程序就通过“伪终端”进行通信。
+通过使用适当的软件，就可以把两个甚至多个伪终端设备连接到同一个物理串行端口上。 
+在使用设备文件系统(device filesystem)之前，为了得到大量的伪终端设备特殊文件，使用了比较复杂的文件名命名方式。因为只存在16个ttyp(ttyp0—ttypf)的设备文件，为了得到更多的逻辑设备对，就使用了象q、r、s等字符来代替p。例如，ttys8和ptys8就是一个伪终端设备对。不过这种命名方式目前仍然在RedHat等Linux系统中使用着。
+但Linux系统上的Unix98并不使用上述方法，而使用了”pty master”方式，例如/dev/ptm3。它的对应端则会被自动地创建成/dev/pts/3。这样就可以在需要时提供一个pty伪终端。目录 /dev/pts是一个类型为devpts的文件系统，并且可以在被加载文件系统列表中看到。虽然“文件”/dev/pts/3看上去是设备文件系统中的一项，但其实它完全是一种不同的文件系统。
+即: TELNET —> TTYP3(S3: slave) —> PTYP3(M3: master) —> GETTY
+实验：
+1、在X下打开一个或N个终端窗口
+2、#ls /dev/pt*
+3、关闭这个X下的终端窗口，再次运行；比较两次输出信息就明白了。
+在RHEL4环境下: 输出为/dev/ptmx /dev/pts/1存在一(master)对多(slave)的情况
+
+关系
+                        串行端口                                                          物理串口
+                      | /dev/ttySn     ----------------------------------------------> | serial port
+  |-----------------> | /dev/ttySACn   ----------------------------------------------> | serial port
+  |              |--> | /dev/ttyOn     ----------------------------------------------> | serial port
+  |              |
+  |              |                                        实际的物理控制器                 虚拟控制器
+/dev/tty         |    |              |-->/dev/tty1 ----------> │ │-------------------> | ALT-F1
+  |              |    |              |-->/dev/tty2 ----------> │ │-------------------> | ALT-F2
+  | /dev/console -- > | /dev/tty0--> |-->/dev/tty3 ----------> │X│-------------------> | ALT-F3
+  |                   |              |-->/dev/tty4 ----------> │ │-------------------> | ALT-F4
+  |                   |              |-->/dev/ttyn ----------> │ │-------------------> | GUI
+  |                   —————————————————————————————————————————                           |
+  |                             ↑
+  |                             |                                                         |
+  |--------------指向当前终端----------------------|                                       |
+                                                  |                                       |
+                          pty伪终端               |                                       |
+                    |                    devpts   ↓            X界面下的shell终端          |
+net -->| telnet --> |                  | -> /dev/pts/0 | --> |                   |        ↓
+       | ssh    --> |-> /dev/ptmx <--> | -> /dev/pts/1 | --> |         X         | ----> 显示器
+                    |                  | -> /dev/pts/2 | --> |                   |
+                    |                  | -> /dev/pts/n | --> getty
+
+/dev/tty（n或者Sn）是进程控制台，如果在进程里打开一个这样的文件且该文件不是其他进程的控制终端时，那么该文件就是这个进程的控制终端。那么我们进程printf一个数据就是输出到这里.
+在本机上，用户可以使用ctrl+alt+f1~fn切换控制台，看起来感觉存在多个屏幕，这种虚拟控制台对应tty1~n,但实际上机器只有一个屏幕，也就是我们看到的这个屏幕，对应console。可以理解为console指向激活的那个tty（详细来说不是，tty0才是激活的那个tty，准确地说是激活的那个tty才将输出显示到console）
+历史上，console指主机本身的屏幕键盘，而tty指用电缆链接的其它位置的控制台(仅包含屏幕和键盘)
+#include <fcntl.h> 
+#include <unistd.h> 
+int main() 
+{ 
+  int fd; 
+  fd = open( "/dev/tty2 ", O_WRONLY | O_NOCTTY); 
+  write(fd, "hello tty2\n ", 10); 
+  return 0; 
+}
+
+
+某个tty卡住
+ctrl + alt + Fn进入另一个 tty
+tty登录卡住 ps -t tty（1~6） 一般只有agetty 这个进程 杀掉即可
+sudo kill -9 pid
+
+Ubuntu桌面卡死
+按Ctrl+Alt+Fn可以进入tty终端
+ps -t tty（1~6）查看进程，Xorg往往就是在tty2，记住Xorg的PID，使用kill PID 杀死进程即可
+或者 sudo pkill Xorg  或者  sudo restart lightdm  #执行命令注销桌面重新登录
+
+Ubuntu安全重启
+1. 同时按住 Ctrl 和 Alt 键，按住不要放
+2. 按一下 SysRq 键（有的键盘是PrtSc）
+3. 按一下 R 键
+4. 按一下 E 键
+5. 依次按下 I , S , U , B 键
+这些步骤做完后，系统就会安全重启
 
 
 环境变量---------------------------------------------------------------------
@@ -291,192 +585,208 @@ ssh 执行远程命令，但不登录时，为非交互非登录式。
 
 
 
+链接库------------------------------------------------------------------------------
 
-Linux版本
-  内核版本
-    uname -a 查看内核版本
-    cat /proc/version 查看内核版本
-  发行版本
-    lsb_release -a   即可列出所有版本信息   适用于所有的Linux发行版，包括RedHat、SUSE、Debian…等发行版
-    cat /etc/redhat-release  查看发行版本   只适合Redhat系的Linux
-    cat /etc/issue   此命令也适用于所有的Linux发行版
+程序的链接主要有以下三种：
+静态链接：在程序运行之前先将各个目标模块以及所需要的库函数链接成一个完整的可执行程序，之后不再拆开。
+装入时动态链接：源程序编译后所得到的一组目标模块，在装入内存时，边装入边链接。
+运行时动态链接：原程序编译后得到的目标模块，在程序执行过程中需要用到时才对它进行链接。
+对于动态链接来说，需要一个动态链接库，其作用在于当动态库中的函数发生变化对于可执行程序来说时透明的，可执行程序无需重新编译，方便程序的发布/维护/更新。但是由于程序是在运行时动态加载，这就存在一个问题，假如程序动态加载的函数是恶意的，就有可能导致一些非预期的执行结果或者绕过某些安全设置。
 
-判断 麒麟V10系统
-cat /etc/.productinfo   如果release是 V10 版本，即为银河麒麟系统 如果release是 V7 版本，即为中标麒麟系统
-注:麒麟V10的x86_64与aarch64架构不兼容  x86_64需要在centos7上以make RELEASE=1 BITS=64 CENTOS=uos编译 aarch64需要在120.46.130.85上以make RELEASE=1 BITS=64 CENTOS=uos编译
+链接过程中同一个库（名称相同）的静态和动态两种链接库，在链接过程中，系统优先选择动态链接库
 
+静态链接
+经编译后所得到的三个目标模块A、B、C,他们的长度分别为 L、M、N。在模块A中，有一条语句CALL B，用于调用模块B。在模块B中，有一条语句CALL C, 用于调用模块C。B和C都属于外部调用符号，在将这几个目标模块链接装配成一个装入模块时，需要解决以下两个问题：
+1 对相对地址进行修改
+通常由编译程序产生的所有目标模块，其起始地址都为0，每个模块中的地址都是相对于0的。在链接成一个装入程序后，模块B和C的起始地址不再是0，而是L和L+M，此时需修改B和C中的相对地址，即模块B中的所有相对地址加上L，模块C中的相对地址都加上L+M。
+2 变换外部调用符号
+即将每个模块中所用的外部调用符号，都变换为相对地址，如把B的起始地址变换为L；C的起始地址变换为L+M。这种先进行链接所形成的一个完整的装入模块，又称为可执行文件。通常都不要拆开它，要运行时可直接将它装入内存。这种事先进行链接，以后不再拆开的链接方式，称为静态链接方式。
 
+装入时动态链接(Load-Time Dynamic Linking)
+用户源程序经编译后所得到的目标模块,是在装入内存时,边装入边链接的.即在装入一个目标模块时,若发生一个外部模块调用,将引起装入程序去找出相应的外部目标模块,并将它装入内存,还要修改目标模块中的相对地址。装入时动态链接方式有以下优点：
+1 便与软件版本的修改和更新
+在采用装入时动态链接方式时，要修改或更新各个目标模块，是件非常容易的事，但对于经静态链接以装配在一起的装入模块，如果要修改或更新其中的某个目标模块时，则要求重新打开装入模块，这不仅是低效的，而且有时是不可能的。
+2 便于实现目标模块共享
+若采用装入时动态链接方式，OS能够将一个目标模块链接到几个应用模块，即实现多个应用程序对该模块的共享；然而，采用静态链接方式时每个应用模块都必须含有该目标模块的拷贝，否则无法实现共享。
 
+运行时动态链接（Run –Time Dynamic Linking）
+虽然前面所介绍的动态装入方式，可将一个装入模块装入到内存的任何地方，但装入模块的结构是静态的，它主要表现在两个方面：一是在进程的整个执行期间，装入模块不改变；再者是每次运行时的装入模块都是相同的。实际上，在许多情况下，每次要运行的模块可能是不相同的，但由于事先无法知道本次要运行哪些模块，故只能是将所有可能要运行到的模块，在装入时全部链接在一起，是每次执行时的装入模块是相同的。显然这是低效的。因为这样，在装入模块的运行过程中，往往会有某些目标模块根本就不运行。比较典型的例子是错误处理模块，如果程序在整个运行过程中，都不出现错误，便不会用到该模块。
+能有效的改变这种情况的链接方式，是最近几年流行起来的运行时动态链接方式。这种链接方式，可将某些目标模块的链接，推迟到执行时才进行。即在执行过程中，若发现一个被调用模块尚未装入内存时，由OS去找到该模块，将它装入内存，并把它连接到调用者模块上。
 
-centos  安装软件 yum -y update  必要软件 yum -y install vim git wget net-tools gcc gcc-c++ gdb libstdc++-devel
-安装工作中需要的额外库 yum -y install openssl-devel  yum -y install libuuid-devel  yum install telnet 安装telnet
-yum -y install lrzsz    安装传输文件命令
+一般情况下，ld-linux.so加载动态链接库的顺序为：
+LD_PRELOAD > LD_LIBRARY_PATH > /etc/ld.so.cache > /lib > /usr/lib
+通过 export    LD_PRELOAD=yyy/libxxxx.so写入环境变量，然后执行ldd命令来了解可执行程序所依赖的动态链接库
+执行 export -n LD_PRELOAD=yyy/libxxxx.so来删除环境变量 注意 此命令 只是删除取导出属性 环境变量->局部变量
+ldconfig 将重建 /etc/ld.so.cache 缓存 搜索/etc/ld.so.conf文件或/etc/ld.so.conf.d/目录下的文件
+/sbin/ldconfig –v 列出详细信息
+ldd  #查看依赖库
+nm   #查看库符号
+  符号有很多，常见的有三种：
+  一种是在库中被调用，但并没有在库中定义（表明需要其他库支持），用U表示；
+  一种是在库中定义的函数，用T表示，这是最常见的；
+  另一种所谓的“弱态”符号，它们虽然在库中定义，但可能被其他库中的同名符号覆盖，用W表示。
+man 8 ld-linux                  #ld 连接程序文档
 
+动态库的路径问题 为了让执行程序顺利找到动态库，有三种方法：
+1 把库拷贝到/usr/lib和/lib目录下。
+2 在LD_LIBRARY_PATH环境变量中加上库所在路径。
+例如动态库libhello.so在/home/ting/lib目录下，以bash为例，使用命令：
+$export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/ting/lib
+3 修改/etc/ld.so.conf文件，把库所在的路径加到文件末尾，并执行ldconfig刷新。这样，加入的目录下的所有库文件都可见。
 
+__attribute__((constructor))
+    constructor参数让系统执行main()函数之前调用函数(被__attribute__((constructor))修饰的函数)
+__attribute__((destructor))
+    destructor参数让系统在main()函数退出或者调用了exit()之后,(被__attribute__((destructor))修饰的函数)
 
-systemd service配置
-systemd 的配置文件大部分放置于 /usr/lib/systemd/system/ 目录内
-以audit服务为例
-[Unit]
-Description=Security Auditing Service
-DefaultDependencies=no
-## If auditd.conf has tcp_listen_port enabled, copy this file to
-## /etc/systemd/system/auditd.service and add network-online.target
-## to the next line so it waits for the network to start before launching.
-After=local-fs.target systemd-tmpfiles-setup.service
-Conflicts=shutdown.target
-Before=sysinit.target shutdown.target
-RefuseManualStop=yes                                             #RefuseManualStop=yes，是不允许手动停止的
-ConditionKernelCommandLine=!audit=0
-Documentation=man:auditd(8) https://github.com/linux-audit/audit-documentation
+LD_PRELOAD
+Linux操作系统的动态链接库在加载过程中，动态链接器会先读取LD_PRELOAD环境变量和默认配置文件/etc/ld.so.preload，并将读取到的动态链接库文件进行预加载。即使程序不依赖这些动态链接库，LD_PRELOAD环境变量和/etc/ld.so.preload配置文件中指定的动态链接库依然会被加载，因为它们的优先级比LD_LIBRARY_PATH环境变量所定义的链接库查找路径的文件优先级要高，所以能够提前于用户调用的动态库载入。
+这个功能主要就是用来有选择性的载入不同动态链接库中的相同函数。
 
-[Service]
-Type=forking
-PIDFile=/var/run/auditd.pid
-ExecStart=/sbin/auditd
-## To not use augenrules, copy this file to /etc/systemd/system/auditd.service
-## and comment/delete the next line and uncomment the auditctl line.
-## NOTE: augenrules expect any rules to be added to /etc/audit/rules.d/
-ExecStartPost=-/sbin/augenrules --load
-#ExecStartPost=-/sbin/auditctl -R /etc/audit/audit.rules
-ExecReload=/bin/kill -HUP $MAINPID
-# By default we don't clear the rules on exit. To enable this, uncomment
-# the next line after copying the file to /etc/systemd/system/auditd.service
-#ExecStopPost=/sbin/auditctl -R /etc/audit/audit-stop.rules
+LD_PRELOAD运用总结
+1 定义与目标函数完全一样的函数，包括名称、变量及类型、返回值及类型等
+2 将包含替换函数的源码编译为动态链接库
+3 通过命令 export LD_PRELOAD="库文件路径"，设置要优先替换动态链接库
+如果找不替换库，可以通过 export LD_LIBRARY_PATH=库文件所在目录路径
+LD_LIBRARY_PATH 是一个由若干个路径组成的环境变量，设置系统查找库的目录 每个路径之间由冒号隔开。默认情况下为空
+4 替换结束，要还原函数调用关系，用命令unset LD_PRELOAD 解除
+5 想查询依赖关系，可以用ldd 程序名称
 
-[Install]
-WantedBy=multi-user.target
+LD_DEBUG
+该环境变量可以打开动态链接器的调试功能，当我们设置该变量时，动态链接器会在运行时打印出各种有用的信息，对于我们开发和调试共享库有很大的帮助。
 
-说明
-  [Unit]：这个项目内主要在规范服务启动的脚本、环境配置文件文件名、重新启动的方式等等。
-  [Install]：这个项目就是将此 unit 安装到哪个 target 里面去的意思！
-  [Service] 区块：启动行为
-    启动命令
-    ExecStart字段：定义启动进程时执行的命令
-    ExecReload字段：重启服务时执行的命令
-    ExecStop字段：停止服务时执行的命令
-    ExecStartPre字段：启动服务之前执行的命令
-    ExecStartPost字段：启动服务之后执行的命令
-    ExecStopPost字段：停止服务之后执行的命令
-
-    启动类型
-    Type字段定义启动类型。它可以设置的值如下：
-    simple（默认值）：ExecStart字段启动的进程为主进程
-    forking：ExecStart字段将以fork()方式启动，此时父进程将会退出，子进程将成为主进程（后台运行）
-    oneshot：类似于simple，但只执行一次，Systemd 会等它执行完，才启动其他服务
-    dbus：类似于simple，但会等待 D-Bus 信号后启动
-    notify：类似于simple，启动结束后会发出通知信号，然后 Systemd 再启动其他服务
-    idle：类似于simple，但是要等到其他任务都执行完，才会启动该服务。一种使用场合是为让该服务的输出，不与其他服务的输出相混合
-
-    重启行为
-    Service区块有一些字段，定义了重启行为：
-    KillMode字段：定义 Systemd 如何停止 sshd 服务：
-    control-group（默认值）：当前控制组里面的所有子进程，都会被杀掉
-    process：只杀主进程
-    mixed：主进程将收到 SIGTERM 信号，子进程收到 SIGKILL 信号
-    none：没有进程会被杀掉，只是执行服务的 stop 命令。
-    Restart字段：定义了 sshd 退出后，Systemd 的重启方式
-
-    Restart字段可以设置的值如下。
-    no（默认值）：退出后不会重启
-    on-success：只有正常退出时（退出状态码为0），才会重启
-    on-failure：非正常退出时（退出状态码非0），包括被信号终止和超时，才会重启
-    on-abnormal：只有被信号终止和超时，才会重启
-    on-abort：只有在收到没有捕捉到的信号终止时，才会重启
-    on-watchdog：超时退出，才会重启
-    always：不管是什么退出原因，总是重启
-    注：对于守护进程，推荐设为on-failure。对于那些允许发生错误退出的服务，可以设为on-abnormal。
-    RestartSec字段：表示 Systemd 重启服务之前，需要等待的秒数。
-
-  [Install] 区块
-    Install区块，定义如何安装这个配置文件，即怎样做到开机启动。
-    WantedBy字段：表示该服务所在的 Target。
-    Target的含义是服务组，表示一组服务。
-    WantedBy=multi-user.target指的是：sshd 所在的 Target 是multi-user.target。
-    这个设置非常重要，因为执行systemctl enable sshd.service命令时，sshd.service的一个符号链接，就会放在/etc/systemd/system目录下面的multi-user.target.wants子目录之中。
-    Systemd 有默认的启动 Target。
+LD_DEBUG 可以设置的值有：
+“files”，显示整个装载过程；
+“libs”，显示共享库查找过程；
+“symbols”，显示符号的查找过程；
+“bindings”，显示动态链接的符号绑定过程；
+“versions”，显示符号的版本依赖关系；
+“reloc”，显示重定位信息；
+例如，查看整个装载过程：LD_DEBUG=files ./envTest
+查看依赖共享库的查找过程： LD_DEBUG=libs ./envTest
+显示符号的查找过程：LD_DEBUG=symbols ./envTest
 
 
+静态库
+gcc -c apuelib.c                   #用-c生成.o文件(用.o文件来生成库文件——包含静态库和动态库)。
+ar rcsv libapuelib.a apuelib.o #库名要以lib开头 通过.o文件生成静态库文件
+gcc -static –o myls myls.c -I ../ -L ../ -lapuelib #测试 通过生成的静态库文件进行对测试程序的导入并运行。
+  1）gcc 后必须先是-o，后接生成的文件名，而不能是.c文件；
+  2）-L表示库文件的路径；
+  3）写库文件名的时候，将前面的lib去掉，后缀.a也要去掉，但是要在前面添加-l。要注意的是他们之间没有空格；
+  4）-I表示头文件的位置；
+  5) -static可以省略。
+
+动态库
+gcc -fPIC -Wall -c apuelib.c  #生成.o文件
+gcc -shared -o libapue.so apuelib.o #生成库
+gcc -o myls myls.c -I ../ -L ../ -lapuelib  # 使用
 
 
-内核报错kernel:NMI watchdog: BUG: soft lockup - CPU#1
-  系统管理员电话通知，描述为一台服务器突然无法ssh连接，登录服务器带外IP地址并进入远程控制台界面后，提示Authentication error，重启后即可正常进入系统，进入后过20分钟又进入死循环
-  出现死锁原因
-    1、CPU高负载时间过长
-    2、服务器电源供电不足，导致CPU电压不稳定
-    3、vcpus超过物理cpu cores
-    4、虚机所在的宿主机的CPU太忙或磁盘IO太高
-    5、虚机机的CPU太忙或磁盘IO太高
-    6、VM网卡驱动存在bug，处理高水位流量时存在bug导致CPU死锁
-    7、BIOS开启了超频，导致超频时电压不稳，容易出现CPU死锁
-    8、Linux kernel或KVM存在bug
-    9、BIOS Intel C-State开启导致，关闭可解决
-    10、BIOS spread spectrum开启导致
-  询问了度娘，发现此报错为内核锁死，简称“死机”，询问管理员后得知，近期服务器安装了docker，可能由于负载过高导致
-    Soft lockup：这个bug没有让系统彻底死机，但是若干个进程（或者kernel thread）被锁死在了某个状态（一般在内核区域），很多情况下这个是由于内核锁的使用的问题。
-    内核参数kernel.watchdog_thresh（/proc/sys/kernel/watchdog_thresh）系统默认值为10。如果超过2*10秒会打印信息，注意：调整值时参数不能大于60
-    Linux内核对于每一个cpu都有一个监控进程，在技术界这个叫做watchdog（看门狗）。通过ps –ef | grep watchdog能够看见，进程名称大概是watchdog/X（数字：cpu逻辑编号1/2/3/4之类的）。这个进程或者线程每一秒钟运行一次，否则会睡眠和待机。这个进程运行会收集每一个cpu运行时使用数据的时间并且存放到属于每个cpu自己的内核数据结构。在内核中有很多特定的中断函数。这些中断函数会调用soft lockup计数，他会使用当前的时间戳与特定（对应的）cpu的内核数据结构中保存的时间对比，如果发现当前的时间戳比对应cpu保存的时间大于设定的阀值，他就假设监测进程或看门狗线程在一个相当可观的时间还没有执。Cpu软锁为什么会产生，是怎么产生的？如果linux内核是经过精心设计安排的CPU调度访问，那么怎么会产生cpu软死锁？那么只能说由于用户开发的或者第三方软件引入，看我们服务器内核panic的原因就是qmgr进程引起。因为每一个无限的循环都会一直有一个cpu的执行流程（qmgr进程示一个后台邮件的消息队列服务进程），并且拥有一定的优先级。Cpu调度器调度一个驱动程序来运行，如果这个驱动程序有问题并且没有被检测到，那么这个驱动程序将会暂用cpu的很长时间。根据前面的描述，看门狗进程会抓住（catch）这一点并且抛出一个软死锁（soft lockup）错误。软死锁会挂起cpu使你的系统不可用。
+LD_LIBRARY_PATH 指定运行时依赖库目录
+-rpath-link     指定链接时依赖库目录 运行时无效
+-rpath          指定链接时依赖库目录 运行时有效 目录信息写入 ELF 文件
+-L              指定链接时依赖库目录
 
-  具体分析
-    1.系统如下时间2个时间进行了重启:
-      Mar  3 21:53:16 ser-node7 kernel: Linux version 3.10.0-957.el7.x86_64 (mockbuild@x86040.build.eng.bos.redhat.com)
-      Mar  3 22:37:19 ser-node7 kernel: Linux version 3.10.0-957.el7.x86_64 (mockbuild@x86040.build.eng.bos.redhat.com)
-      在重启前的一段时间均已经出现了cpu软锁的现象，而深入分析cpu软锁，我们依赖于kdump产生的vmcore数据.
-        Mar  3 14:28:18 ser-node7 kernel: NMI watchdog: BUG: soft lockup - CPU#5 stuck for 22s! [runc[1:CHILD]:52902]
-        Mar  2 18:14:59 ser-node7 kernel: NMI watchdog: BUG: soft lockup - CPU#3 stuck for 23s! [runc:[1:CHILD]:55961]
+举例：
+#include<stdio.h> void world(void) { printf("world.\n"); }     #world.c
+#include <stdio.h> void world(void); void hello(void) { printf("hello\n"); world(); }    #hello.c
+void main(void) { hello(); }                                   #test.c
 
-      ./systemctl_list-unit-files:kdump.service enabled
-      如果您之前已经做过，那么请您额外修改/etc/sysctl.conf加入以下行:
-      kernel.softlockup_panic = 1
-      然后执行"sysctl -p"使参数生效。这样当系统出现cpu软锁现象时，会自动触发kernel panic，此时如果kdump可以正常工作，会生成vmcore.并自动重新启动系统
+ubuntu $ gcc -c hello.c world.c                #生成动态库
+ubuntu $ gcc -shared -o libhello.so hello.o
+ubuntu $ gcc -shared -o libworld.so world.o
 
-    2.另外在日志中我们还注意了存在如下的告警,其和上面的soft lockup问题无直接关系.
-      # cat messages | grep "SLUB: Unable to allocate memory on node"
-        Mar  2 18:04:45 ser-node7 kernel: SLUB: Unable to allocate memory on node -1 (gfp=0xd0)
-        Mar  3 14:54:25 ser-node7 kernel: SLUB: Unable to allocate memory on node -1 (gfp=0xd0)
-        Mar  3 14:54:25 ser-node7 kernel: SLUB: Unable to allocate memory on node -1 (gfp=0xd0)
+ldd libhello.so                                #虽然libhello.so中调用了libworld.so的函数 但是ldd中并没有体现出这种关系
+ubuntu $ gcc -shared -o libworld.so world.o -lhello -L .   #显示在生成libhello.so时要链接到libworld.so
+ldd libhello.so                                #此时在ldd中能够体现出这种关系 即有 libworld.so => not found
 
-      此为系统的已知BUG，具体请参考如下KB：
-        SLUB: Unable to allocate memory on node -1 (gfp=0x20)
-        https://access.redhat.com/solutions/4088471
-        依据此KB，请将kernel升级到kernel-3.10.0-1062.4.1.el7或者更新.
-        kernel-3.10.0-1062.4.1.el7下载地址为:
-        https://access.redhat.com/errata/RHSA-2019:3055
-        如何升级内核，请查看下面文档：
-        How to update/upgrade the Red Hat Enterprise Linux kernel?
-        https://access.redhat.com/solutions/20366
+ubuntu $ gcc test.c -lhello -L .   #编译出错 已经在-L指定的路径找打了libhello.so，只是libhello.so还需要libworld.so。虽然它都在同一目录下，但是还是没有办法自动找到libworld.so。
+ubuntu $ gcc test.c -lhello -lworld -L .   #没有报错，成功生成a.out
+./a.out                                    #运行出错 libhello.so => not found
+ubuntu export LD_LIBRARY_PATH=/home/liyihai/documents   #在运行./a.out  OK
+ldd ./a.out   #libhello.so已经通过LD_LIBRARY_PATH环境变量找到，并且libworld.so也出现在a.out的依赖中
+结论：-L指定的是链接时的库路径，生成的可执行文件在运行时库的路径由LD_LIBRARY_PATH环境变量指定。
 
-  解决方案
-    百度大手子给的方案如下所示：
-    vi /etc/sysctl.conf
-    kernel.watchdog_thresh=30
-    查看：# tail -1 /proc/sys/kernel/watchdog_thresh
-    临时生效：# sysctl -w kernel.watchdog_thresh=30
-    原厂建议尚在等待中
+ubuntu $ export LD_LIBRARY_PATH=                 #清空LD_LIBRARY_PATH环境变量
+ubuntu $ gcc test.c -lhello -L . -Wl,-rpath .
+./a.out                #运行正常
+ldd/a.out              #libhello.so => ./libhello.so    libworld.so => ./libworld.so
+  说明库的路径已经被编译进a.out中了。需要注意的是，libhello.so和libworld.so的路径都是通过-rpath指定的路径找到的
 
-  解决办法2
-    echo 30 > /proc/sys/kernel/watchdog_thresh
-    echo "kernel.watchdog_thresh=30" >> /etc/sysctl.conf
-    sysctl -w kernel.watchdog_thresh=30
-    sysctl -q vm.swappiness
-    sysctl -p
+ubuntu $ mdir lib_tmp              # 创建一个lib_tmp目录，然后将libhello.so和libworld.so移动进这个目录。
+ubuntu $ mv libhello.so lib_tmp/
+ubuntu $ mv libworld.so lib_tmp/
 
-  解决办法3:脚本
-    #!/bin/bash
-    #修改阈值为30，写入文件
-    echo 30 > /proc/sys/kernel/watchdog_thresh
-    #修改阈值为30，临时生效
-    sysctl -w kernel.watchdog_thresh=30
+./a.out                #libworld.so => not found 并且libworld.so没有出现在其中
+  究其原因，就是要先找到libhello.so再去找libworld.so，因为是libhello.so依赖于libworld.so，而不是a.out依赖于libworld.so。
+  可见，使用了-rpath参数指定库的路径后，生成的可执行文件的依赖库路径并非就固定不变了。而是执行时先从-rpath指定的路径去找依赖库，如果找不到，还是会报not fund。
 
-    #修改阈值为30，写入启动文件
-    grep 'watchdog_thresh' /etc/sysctl.conf
-    if [ $? -ne 0 ]; then
-    	echo "kernel.watchdog_thresh=30" >> /etc/sysctl.conf
-    else
-    	echo "正常"
-    fi
+ubuntu $ export LD_LIBRARY_PATH=./lib_tmp
+./a.out                #OK
+ldd a.out              #libhello.so => ./lib_tmp/libhello.so    libworld.so => ./lib_tmp/libworld.so
+  可见LD_LIBRARY_PATH还是起作用的,和使用-rpath指定路径的效果是一样的。
+
+ubuntu $ export LD_LIBRARY_PATH=                 #清空LD_LIBRARY_PATH环境变量
+ubuntu $ mv lib_tmp/libworld.so /.               #libworld.so 放入当前目录 libhello.so依然在lib_tmp中
+
+ldd a.out              #libhello.so => not found     找不到libhello.so
+
+ubuntu $ export LD_LIBRARY_PATH=./lib_tmp/
+ldd a.out              #libhello.so => ./lib_tmp/libhello.so    libworld.so => ./libworld.so 可正常运行
+  一切又恢复了正常。此时，libhello.so是通过LD_LIBRARY_PATH找到的，而libworld.so则是通过-rpath指定的路径找到的。
+  综上 LD_LIBRARY_PATH不仅指定可执行文件的库路径，还指定了库所依赖于其它库的路径。
+  并非指定-rpath参数后，就抛弃LD_LIBRARY_PATH环境变量，只是多了个可选的依赖库路径而已。
+
+ubuntu $ export LD_LIBRARY_PATH=                 #清空LD_LIBRARY_PATH环境变量
+将libworld.so移动到lib_tmp目录中，而libhello.so则留在 ./ 目录中
+ubuntu $ gcc test.c -lhello  -L . -Wl,-rpath-link ./lib_tmp  #编译正常
+ldd a.out              #libhello.so => not found
+
+ubuntu $ export LD_LIBRARY_PATH=.
+ldd a.out              #libhello.so => ./libhello.so    libworld.so => not found
+  可见，libhello.so已经通过LD_LIBRARY_PATH找到，但是libworld.so由于没有在LD_LIBRARY_PATH指定的路径中，而且编译时a.out又没有包含库的路径，因此找不到。
+
+结论：-rpath和-rpath-link都可以在链接时指定库的路径；但是运行可执行文件时，-rpath-link指定的路径就不再有效(链接器没有将库的路径包含进可执行文件中)，而-rpath指定的路径还有效(因为链接器已经将库的路径包含在可执行文件中了。)
+不管使用了-rpath还是-rpath-link，LD_LIBRARY_PATH还是有效的。
 
 
+
+动态库的显式调用
+在Linux下显式调用动态库
+#include <dlfcn.h>，提供了下面几个接口：
+1 void * dlopen( const char * pathname, int mode )
+  函数以指定模式打开指定的动态连接库文件，并返回一个句柄给调用进程,失败的话返回NULL。
+  pathname:  指定库的路径和名字。
+  mode: 打开模式。有以下几种：
+    a.解析方式：
+      RTLD_LAZY       暂缓决定，等有需要时再解出符号。
+      RTLD_NOW        立即决定，返回前解除所有为决定的符号。
+    b.作用范围，可与解析方式通过"|"组合使用
+      RTLD_LOCAL      动态库中定义的符号不能被其后打开的其他库重定位，缺省为此。
+      RTLD_GLOBAL     动态库中定义的符号可被其后打开的其他库重定位。
+2 void* dlsym(void* handle,const char* symbol)
+  根据动态链接库操作句柄(pHandle)与符号(symbol)，返回符号对应的地址。使用这个函数不但可以获取函数地址，也可以获取变量地址。
+  handle是由dlopen打开动态链接库后返回的指针，symbol就是要求获取的函数名称，返回值是void*，指向函数的地址，共调用使用。
+3 int dlclose (void *handle)
+  关闭指定句柄的动态链接库，只有当此动态链接库的使用计数为0时,才会真正被系统卸载。
+4 const char *dlerror(void)
+  当动态链接库操作函数执行失败时，dlerror可以返回出错信息，返回值为NULL时表示操作函数执行成功。
+例子:
+  void *libc;
+  void (*printf_call)();
+  if(libc = dlopen("/usr/lib/libmyc.so",RTLD_LAZY))
+  {
+      print_call = dlsym(libc, "printf");
+      (*print_call)("hello, world/n");
+      dlclose(libc);
+  }
+
+在Windows下显式调用动态库
+应用程序必须进行函数调用以在运行时显式加载 DLL。为显式链接到 DLL，应用程序必须：
+1 调用 LoadLibrary（或相似的函数）以加载 DLL 和获取模块句柄。
+2 调用 GetProcAddress，以获取指向应用程序要调用的每个导出函数的函数指针。由于应用程序是通过指针调用 DLL 的函数，编译器不生成外部引用，故无需与导入库链接。
+3 调用 FreeLibrary 使用完 DLL 后。
 
 
 

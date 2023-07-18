@@ -1,0 +1,36 @@
+
+
+
+ifconfig eth0 up / ifconfig eth0 down  #启动关闭指定网卡
+ifconfig eth0 add 33ffe:3240:800:1005::2/64 为网卡eth0配置IPv6地址
+ifconfig eth0 del 33ffe:3240:800:1005::2/64 为网卡eth0删除IPv6地址
+ifconfig eth0 hw ether 00:AA:BB:CC:DD:EE #用ifconfig修改MAC地址
+ifconfig eth0 192.168.120.56  #给eth0网卡配置IP地：192.168.120.56
+ifconfig eth0 192.168.120.56 netmask 255.255.255.0 #给eth0网卡配置IP地址：192.168.120.56 ，并加上子掩码：255.255.255.0
+ifconfig eth0 192.168.120.56 netmask 255.255.255.0 broadcast 192.168.120.255 # /给eth0网卡配置IP地址：192.168.120.56，加上子掩码：255.255.255.0，加上个广播地址： 192.168.120.255
+ifconfig eth0 arp / ifconfig eth0 -arp #启用和关闭ARP协议
+ifconfig eth0 mtu 1500                 #设置最大传输单元
+
+ifconfig 字段含义说明：
+eth0/eth1:           分别表示第一块网卡和第二块网卡；
+lo:                       表示回环测试接口，注意，这个虚拟的interface一定要存在！
+usb0:                  表示USB接口的网卡；
+Linkencap:         表示位于OSI物理层的名称，即连接类型Ethernet（以太网）
+HWaddr:             表示网卡的硬件地址，即MAC地址
+inetaddr:             表示网卡IP；
+Bcast:                 表示广播(broadcast ) 的地址；
+Mask:                 表示子网掩码；
+UP:                     表示网卡开启状态；
+BROADCAST:  表示支持广播；
+MULTICAST:   表示网卡混杂模式；
+RUNNING:        表示网卡的网线被接上；
+MULTICAST:    表示支持组播；
+MTU:                  表示MaximumTrasmission Unit 最大传输单元(字节)，即此接口一次所能传输的最大封包；
+Metric:                 表示路由度量值，缺省值是0；
+RX:                      表示网络由激活到目前为止接收的数据包；
+TX:                      表示网络由激活到目前为止发送的数据包；
+collisions:            表示网络信号冲突的情况；
+txqueuelen:          表示传输缓冲区长度大小；
+Memory:             表示占用内存范围。
+
+

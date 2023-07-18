@@ -1,0 +1,110 @@
+
+
+
+1 位操作代码
+#define SET_BIT(reg, bit)    ((reg) |= (1 << (bit)))       // 设置某个位为1
+#define CLEAR_BIT(reg, bit)  ((reg) &= ~(1 << (bit)))      // 清除某个位为0
+#define TOGGLE_BIT(reg, bit) ((reg) ^= (1 << (bit)))       // 切换某个位的状态
+#define READ_BIT(reg, bit)   (((reg) >> (bit)) & 1)        // 读取某个位的值
+这些宏定义可以在操作寄存器位时提供方便。例如，使用SET_BIT(PORTA, 3)可以将寄存器PORTA的第3位设置为1。
+
+2 延迟函数
+void delay_ms(unsigned int ms) {
+    for (unsigned int i = 0; i < ms; i++) {
+        for (volatile unsigned int j = 0; j < 6000; j++) {
+            // 空循环一段时间
+        }
+    }
+}
+这是一个简单的毫秒级延迟函数。通过嵌套循环来实现一定的延迟时间，可以用于需要精确延迟的场景。
+
+3 外部中断处理
+#include <avr/interrupt.h>
+void init_external_interrupt() {
+    // 配置外部中断触发条件
+    // ...
+
+    // 启用外部中断
+    sei();
+}
+
+ISR(INT0_vect) {
+    // 外部中断0中断处理程序
+}
+
+ISR(INT1_vect) {
+    // 外部中断1中断处理程序
+}
+这段代码使用了Atmel AVR微控制器的外部中断处理机制。通过配置外部中断触发条件和编写中断处理程序，可以实现对外部事件的实时响应。
+
+4 字节序转换
+uint16_t swap_bytes(uint16_t value) {
+    return (value << 8) | (value >> 8);
+}
+这段代码用于交换一个16位整数的高低字节顺序，常用于处理不同字节序的数据。
+
+5 CRC校验
+uint16_t calculate_crc(const uint8_t *data, size_t length) {
+    uint16_t crc = 0;
+    for (size_t i = 0; i < length; i++) {
+        crc ^= (uint16_t)data[i] << 8;
+        for (uint8_t bit = 0; bit < 8; bit++) {
+            if (crc & 0x8000) {
+                crc = (crc << 1) ^ 0x8005;
+            } else {
+                crc <<= 1;
+            }
+        }
+    }
+    return crc;
+}
+这段代码用于计算循环冗余校验（CRC），常用于数据传输的完整性校验。
+
+6 字符串拷贝
+char *string_copy(char *dest, const char *src) {
+    char *p = dest;
+    while ((*p++ = *src++)) ;
+    return dest;
+}
+这段代码实现了字符串拷贝功能，将源字符串复制到目标字符串，包括字符串结尾的空字符。
+
+7.内存复制
+void *memory_copy(void *dest, const void *src, size_t count) {
+    char *d = dest;
+    const char *s = src;
+    while (count--) {
+        *d++ = *s++;
+    }
+    return dest;
+}
+这段代码实现了内存复制功能，将源内存区域的数据复制到目标内存区域，逐字节复制指定数量的数据。
+
+8 位字段操作
+struct {
+    unsigned int flag1: 1;
+    unsigned int flag2: 1;
+    unsigned int flag3: 1;
+    // ...
+} status;
+
+void set_flag(unsigned int *flags, unsigned int position) {
+    *flags |= (1 << position);
+}
+
+void clear_flag(unsigned int *flags, unsigned int position) {
+    *flags &= ~(1 << position);
+}
+
+int check_flag(unsigned int flags, unsigned int position) {
+    return (flags >> position) & 1;
+}
+这段代码演示了如何使用位字段（bit fields）操作来管理标志位。结构体status中的每个成员都只占据一个位，可以通过位操作函数来设置、清除和检查特定位置的标志位。
+
+9.时钟周期计数
+#include <stdint.h>
+uint32_t get_cycle_count() {
+    uint32_t cycle_count;
+    __asm__ volatile("rdcycle %0" : "=r"(cycle_count));
+    return cycle_count;
+}
+这段代码使用了嵌入式处理器的内置指令来获取时钟周期计数。通过读取处理器的计数寄存器，可以精确测量代码段的执行时间，用于性能优化和调试。

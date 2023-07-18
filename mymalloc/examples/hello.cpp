@@ -104,9 +104,18 @@ public:
 
 int params(int argc, char**argv);
 void test1();
+void test123();
+void test2();
+void test3();
 int isys = 0;
 int ipmr = 0;
 
+std::string addrrange(const void* addr, const void* start, size_t len)
+{
+    if(addr >= start && addr < (start + len))
+        return "in";
+    return "out";
+}
 
 
 int main(int argc, char**argv) {
@@ -117,7 +126,7 @@ int main(int argc, char**argv) {
     // int size = 12801;
 
     // unsigned int count = 10000;
-    // for (size_t i = 0; i < count; i++)
+    // for (int i = 0; i < count; i++)
     // {
     //     char *ptr = (char*) malloc(size);
     //     free(ptr);
@@ -134,7 +143,7 @@ int main(int argc, char**argv) {
 
     printf("--- pmr start ---\n");
 
-    test1();
+    test123();
 
     printf("--- pmr end ---\n");
     return 0;
@@ -142,10 +151,8 @@ int main(int argc, char**argv) {
 
 void test1()
 {
-    int count = 1;
-    int count2 = 100000;
-
-
+    int count = 10;
+    int count2 = 50000;
 
     if(isys == 1)
     {
@@ -155,7 +162,7 @@ void test1()
         tu.reset();
 
         std::vector<std::string> coll;
-        for (size_t i = 0; i < count; i++)
+        for (int i = 0; i < count; i++)
         {
             for (int i = 0; i < count2; ++i) {
                 coll.emplace_back("just a non-SSO string");
@@ -163,11 +170,49 @@ void test1()
             coll.clear();
         }
 
-        // for (size_t i = 0; i < 1; i++)
+        // for (int i = 0; i < 1; i++)
         // {
         //     void * pp = malloc(100);
         //     free(pp);
         // }
+
+        tu.status();
+        TrackNew::status();
+    }
+
+    if(ipmr == 1)
+    {
+        printf("使用内存分配器\n");
+        TrackNew::reset();
+        timeuse tu;
+        tu.reset();
+
+        // 在栈上分配一些内存：
+        std::array<std::byte, 8000000> buf;
+
+        // const static long numm = 2000000;
+        // char cc[numm];
+
+        // 将它用作vector的初始内存池：
+        std::pmr::monotonic_buffer_resource pool{buf.data(), buf.size()};
+
+        // std::pmr::unsynchronized_pool_resource pool;
+        // std::pmr::monotonic_buffer_resource pool{cc, numm};
+        std::pmr::vector<std::string> coll{&pool};
+        // std::pmr::vector<std::pmr::string> coll{&pool};
+
+        for (int i = 0; i < count; i++)
+        {
+            for (int i = 0; i < count2; ++i) {
+                coll.emplace_back("just a non-SSO string");
+            }
+            static const char* pp = 0;
+            printf("count %d coll[0] %p step %ld start %p  end %p %s\n",
+            i, coll[0].c_str(), coll[0].c_str() - pp, buf.data(), buf.data() + buf.size(),
+            (coll[0].c_str()>=(char*)(buf.data()) && coll[0].c_str()<=(char*)(buf.data() + buf.size()) ? "in":"out"));
+            pp = coll[0].c_str();
+            coll.clear();
+        }
 
         tu.status();
         TrackNew::status();
@@ -214,37 +259,6 @@ void test1()
     //     tu.status();
     //     TrackNew::status();
     // }
-
-
-    if(ipmr == 1)
-    {
-        printf("使用内存分配器\n");
-        TrackNew::reset();
-        timeuse tu;
-        tu.reset();
-
-        // 在栈上分配一些内存：
-        std::array<std::byte, 2000000> buf;
-
-        const static long numm = 2000000;
-        char cc[numm];
-
-        // 将它用作vector的初始内存池：
-        // std::pmr::monotonic_buffer_resource pool{buf.data(), buf.size()};
-        std::pmr::monotonic_buffer_resource pool{cc, numm};
-        std::pmr::vector<std::string> coll{&pool};
-
-        for (size_t i = 0; i < count; i++)
-        {
-            for (int i = 0; i < count2; ++i) {
-                coll.emplace_back("just a non-SSO string");
-            }
-            coll.clear();
-        }
-
-        tu.status();
-        TrackNew::status();
-    }
 }
 
 int params(int argc, char**argv)
@@ -377,4 +391,85 @@ int params(int argc, char**argv)
     }
 
     return 0;
+}
+
+
+void test2()
+{
+    string *pstr = new string("123");
+
+    void *pv = malloc(12);
+}
+void test3()
+{
+    string *pstr = new string("123");
+}
+void test123()
+{
+    {
+    int i =1;
+    string str1("123");
+    string str2("12345678901234");
+    string str3("123456789012345");
+    string str4("1234567890123456"); // string > 15 堆上分配内存
+
+    vector<int> vcti;                // vector 堆上分配内存
+    vector<string> vctstr;                // vector
+    vcti.emplace_back(1);
+    printf("i:%p str1_d:%p str2_d:%p str3_d:%p str4_d:%p\n", &i, str1.c_str(), str2.c_str(), str3.c_str(), str4.c_str());
+    printf("i:%p  &str1:%p  &str2:%p  &str3:%p  &str4:%p\n", &i, &str1, &str2, &str3, &str4);
+    printf("vcti:%p data:%p\n", &vcti, vcti.data());
+
+    vctstr.emplace_back(str1);
+    vctstr.emplace_back(str4);
+
+    printf("vctstr[0]_d:%p vctstr[1]_d:%p\n", vctstr[0].c_str(), vctstr[1].c_str());
+    printf(" &vctstr[0]:%p  &vctstr[1]:%p\n", &vctstr[0], &vctstr[1]);
+    }
+
+
+    {
+    char arr[1000];
+    std::pmr::monotonic_buffer_resource pool(arr, sizeof(arr));
+    std::pmr::vector<std::string> vct1(&pool);
+    std::string str1{"my string"};
+    std::string str2{"my string with some value"};
+    vct1.emplace_back(str1);
+    vct1.emplace_back(str2);
+
+    printf("arr:%p arr_end:%p\n", arr, arr + sizeof(arr));
+    printf("1  &vct1:%p vct1[0]_d:%p [%s] vct1[1]_d:%p [%s]\n",
+      &vct1, vct1[0].c_str(), addrrange(vct1[0].c_str(), arr, sizeof(arr)).c_str(),
+             vct1[1].c_str(), addrrange(vct1[1].c_str(), arr, sizeof(arr)).c_str());
+    printf("1  &vct1:%p  &vct1[0]:%p [%s]  &vct1[1]:%p [%s]\n",
+      &vct1, &vct1[0], addrrange(&vct1[0], arr, sizeof(arr)).c_str(),
+             &vct1[1], addrrange(&vct1[1], arr, sizeof(arr)).c_str());
+    }
+
+    {
+    char arr[5000];
+    std::pmr::monotonic_buffer_resource pool(arr, sizeof(arr));
+    std::pmr::vector<std::pmr::string> vct1(&pool);
+    std::pmr::string str1{"my string"};
+    std::pmr::string str2{"my string with some value"};
+    vct1.emplace_back(str1);
+    vct1.emplace_back(str2);
+
+    printf("arr:%p arr_end:%p\n", arr, arr + sizeof(arr));
+    printf("2  &vct1:%p vct1[0]_d:%p [%s] vct1[1]_d:%p [%s]\n",
+      &vct1, vct1[0].c_str(), addrrange(vct1[0].c_str(), arr, sizeof(arr)).c_str(),
+             vct1[1].c_str(), addrrange(vct1[1].c_str(), arr, sizeof(arr)).c_str());
+    printf("2  &vct1:%p  &vct1[0]:%p [%s]  &vct1[1]:%p [%s]\n",
+      &vct1, &vct1[0], addrrange(&vct1[0], arr, sizeof(arr)).c_str(),
+             &vct1[1], addrrange(&vct1[1], arr, sizeof(arr)).c_str());
+    }
+
+
+
+    {
+    std::string s{"my string with some value"};
+    std::pmr::string ps{std::move(s), std::pmr::new_delete_resource()}; // 拷贝
+    printf("str s:%p str ps:%p\n", s.c_str(), ps.c_str());
+    }
+
 }

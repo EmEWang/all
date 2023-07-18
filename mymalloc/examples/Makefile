@@ -61,7 +61,25 @@ aarch_tc:
 
 all_pmr:
 	g++ -O2 -pthread -std=c++17 hello.cpp -o pmrtest
-	time ./pmrtest sys
+	LD_PRELOAD=/home/lixiang/code/gperftools/out_x64_O2_page8/libtcmalloc.so time ./pmrtest sys; sleep 1
+	time ./pmrtest sys; sleep 1
+	time ./pmrtest pmr; sleep 1
+#	time ./pmrtest sys
+
+pmrtest:
+	time LD_PRELOAD=/home/lixiang/code/gperftools/out_x64_O2_page8/libtcmalloc.so ./pmrtest sys; sleep 1
+	time ./pmrtest sys; sleep 1
+	time ./pmrtest pmr; sleep 1
+
+all_leak:
+	g++ -std=c++0x -g -o mem_leak hello_leak.cpp -L/home/lixiang/code/gperftools/out_x64_O2 -ltcmalloc
+
+leak_test:
+#	LD_PRELOAD=${dir_tcmalloc_o2}/${tcso} HEAPPROFILE=./pf123 HEAPCHECK=normal ./mem_leak
+	LD_PRELOAD=${dir_tcmalloc_o2}/${tcso} ./mem_leak
+
+leak:all_leak leak_test
+
 
 all_tc1:
 	g++ ${srcfile} -DTCMALLOC123 -g -pthread -L${dir_tcmalloc} -ltcmalloc -o ${target_tcmalloc} && /usr/bin/time -v ./${target_tcmalloc}

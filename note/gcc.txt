@@ -4,6 +4,105 @@ gcc --version  #查看gcc版本
 
 
 
+下载安装GNU套件
+sudo apt install gcc
+sudo apt install g++
+sudo apt install make
+sudo apt install cmake
+
+
+
+sudo apt-get install gcc-multilib           # 64位机器上编译32位程序可能需要安装一个库
+gcc -m32 -o testByteAlign testByteAlign.c   # 编译程序
+
+从#pragma GCC system_header 开始到文件尾的代码被看作是系统头文件的一部分。所有警告信息都不显示（除了#warnings 指示字）
+
+
+
+gcc头文件和库文件搜寻路径
+1 直接在gcc中添加头文件库文件路径参数
+  gcc foo.c -I /home/xiaowp/include -o foo      #手动添加头文件搜索路径
+  gcc foo.c -L /home/xiaowp/lib -lfoo -o foo    #手动添加动态库搜索路径
+  gcc foo.c -L /home/xiaowp/lib -static -lfoo -o foo  #手动添加静态库搜索路径
+2 使用export命令将头文件库文件路径添加到gcc搜寻路径中
+  C_INCLUDE_PATH         C头文件的环境变量
+  CPLUS_INCLUDE_PATH     C++头文件的环境变量 此两个环境变量指明的头文件会在-I指定路径之后，系统默认路径之前进行搜索。
+  LIBRARY_PATH        库搜索路径，此环境变量指明路径会在-L指定路径之后，系统默认路径之前被搜索。
+  LD_LIBRARY_PATH     在程序加载运行期间查找动态链接库时指定除了系统默认路径之外的其他路径，此路径会在系统默认路径之前进行查找。
+  export PATH =$PATH:$HOME/bin    #在PATH中找到可执行文件程序的路径。
+  C_INCLUDE_PATH=/usr/include/libxml2:/MyLib  ; export C_INCLUDE_PATH  #gcc找到头文件的路径
+  CPLUS_INCLUDE_PATH=$CPLUS_INCLUDE_PATH:/usr/include/libxml2:/MyLib ; export CPLUS_INCLUDE_PATH  #g++找到头文件的路径
+  LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/MyLib ;  export LD_LIBRARY_PATH    #找到动态链接库的路径
+  LIBRARY_PATH=$LIBRARY_PATH:/MyLib ; export LIBRARY_PATH     #找到静态库的路径
+3 将头文件库文件复制到gcc默认搜寻路径中
+  /usr/include   标准C语言的头文件目录
+  /usr/lib       标准C语言的库文件目录
+  /usr/local/lib        开源库的库文件目录
+  /usr/local/include    开源库的头文件目录
+
+echo | g++ -v -x c++ -E -     #查询gcc编译时查找的头文件目录，库文件目录
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+符号的可见性
+gcc中的visibility属性用于控制符号的可见性，决定了符号是否可以被外部程序使用。默认情况下，gcc编译的符号（函数、变量等）是全局可见的，也就是说，在编译出的目标文件中，这些符号可以被任何外部程序访问和使用。
+使用visibility属性，可以将符号的可见性限制在本地（即仅当前编译单元中可见）或限制在特定的可共享对象文件中可见，以便在链接时进行符号的隐藏和重定位。
+
+1 编译器选项 -fvisibility
+-fvisibility=xxx 用于设置源文件中符号的缺省可见性，值可以是default（缺省）或者hidden（隐藏），设置为default时，没有显式标识为hidden的符号都处理为可见；设置为hidden时，没有显式标识为可见的符号都处理为隐藏。如果您在编译中没有指定-fvisibility选项，编译器会自行处理为缺省的可见性。
+请注意： default设置不是指编译器缺省的处理方式。和hidden设置一样，default来自ELF格式定义的可见性名称。具有default可见性的符号和所有不使用特殊机制的符号具有相同的可见性类型;也就是说，它将作为公共接口的一部分输出。
+编译器还支持-fvisibility-inlines-hidden选项，用于强制隐藏所有的嵌入函数。当您希望对大多数项目使用缺省的可见性，但又希望隐藏所有的嵌入函数时，您可能会用到这个选项。
+
+2 __attribute__
+如果用GCC 4.0编译代码，可以用可见性属性将个别的符号标识为default或hidden：
+__attribute__((visibility("default"))) void MyFunction1() {}
+__attribute__((visibility("hidden"))) void MyFunction2() {}
+可见性属性会覆盖编译时通过-fvisibility选项指定的值。因此，增加default可见性属性会使符号在所有情况下都被输出，反过来，增加hidden可见性属性会隐藏相应的符号。
+可见性属性可以应用到函数，变量，模板，以及C++类。如果一个类被标识为hidden，则该类的所有成员函数，静态成员变量，以及编译器生成的元数据，比如虚函数表和RTTI信息也都会被隐藏。
+请注意：虽然模板声明可以用可见性属性来标识，但是模板实例则不能。这是个已知的限制，在GCC的未来版本中可能被修复。
+
+3 pragma指令
+将符号标识为default或hidden的另外一种方法是使用GCC 4.0新引入的pragma指令。GCC可见性pragma的优点是可以快速地标识一整块函数，而不需要将可见性属性应用到每个函数中。这个pragma的用法如下：
+void f() { }
+#pragma GCC visibility push(default)
+void g() { }
+void h() { }
+#pragma GCC visibility pop
+在这个例子中，函数g和h被标识为default，因此无论-fvisibility选项如何设置，都会输出；而函数f则遵循-fvisibility选项设置的任何值。push和pop两个关键字标识这个pragma可以被嵌套。push(default)指令将当前的可见性设置为全局可见性，然后定义了函数g h，使用了默认的可见性属性。最后，pop指令将之前的可见性设置恢复。
+
+
+
+/mnt/hgfs/share/msg_test/lib/libcommon.so：对‘sem_unlink’未定义的引用
+/mnt/hgfs/share/msg_test/lib/libcommon.so：对‘sem_close’未定义的引用
+/mnt/hgfs/share/msg_test/lib/libcommon.so：对‘sem_post’未定义的引用
+/mnt/hgfs/share/msg_test/lib/libcommon.so：对‘sem_open’未定义的引用
+/mnt/hgfs/share/msg_test/lib/libcommon.so：对‘sem_getvalue’未定义的引用
+/mnt/hgfs/share/msg_test/lib/libcommon.so：对‘sem_wait’未定义的引用
+解决：在编译的时候加上：-pthread
+
+/mnt/hgfs/share/msg_test/lib/libcommon.so：对‘mq_unlink’未定义的引用
+/mnt/hgfs/share/msg_test/lib/libcommon.so：对‘mq_getattr’未定义的引用
+/mnt/hgfs/share/msg_test/lib/libcommon.so：对‘mq_receive’未定义的引用
+/mnt/hgfs/share/msg_test/lib/libcommon.so：对‘mq_open’未定义的引用
+/mnt/hgfs/share/msg_test/lib/libcommon.so：对‘mq_notify’未定义的引用
+/mnt/hgfs/share/msg_test/lib/libcommon.so：对‘mq_send’未定义的引用
+/mnt/hgfs/share/msg_test/lib/libcommon.so：对‘mq_close’未定义的引用
+解决：在编译的时候加上：-lrt
+
+
+
+
 gcc编译选项-lpthread和-pthread的区别
 1、-lpthread是较为老式的解决方法，pthread新加了对于宏D_REENTRANT的定义，-pthread会被展开为“-D_REENTRANT -lpthread”，
   它不仅可以链接pthread库，还可以打开系统头文件中的各种多线程支持分支，比如，我们常常使用的错误码标志errno，

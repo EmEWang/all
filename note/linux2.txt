@@ -67,158 +67,167 @@ EINVAL：who被指定为无效值。
 
 
 
-链接过程中同一个库（名称相同）的静态和动态两种链接库，在链接过程中，系统优先选择动态链接库
+systemd service配置
+systemd 的配置文件大部分放置于 /usr/lib/systemd/system/ 目录内
+以audit服务为例
+[Unit]
+Description=Security Auditing Service
+DefaultDependencies=no
+## If auditd.conf has tcp_listen_port enabled, copy this file to
+## /etc/systemd/system/auditd.service and add network-online.target
+## to the next line so it waits for the network to start before launching.
+After=local-fs.target systemd-tmpfiles-setup.service
+Conflicts=shutdown.target
+Before=sysinit.target shutdown.target
+RefuseManualStop=yes                                             #RefuseManualStop=yes，是不允许手动停止的
+ConditionKernelCommandLine=!audit=0
+Documentation=man:auditd(8) https://github.com/linux-audit/audit-documentation
+
+[Service]
+Type=forking
+PIDFile=/var/run/auditd.pid
+ExecStart=/sbin/auditd
+## To not use augenrules, copy this file to /etc/systemd/system/auditd.service
+## and comment/delete the next line and uncomment the auditctl line.
+## NOTE: augenrules expect any rules to be added to /etc/audit/rules.d/
+ExecStartPost=-/sbin/augenrules --load
+#ExecStartPost=-/sbin/auditctl -R /etc/audit/audit.rules
+ExecReload=/bin/kill -HUP $MAINPID
+# By default we don't clear the rules on exit. To enable this, uncomment
+# the next line after copying the file to /etc/systemd/system/auditd.service
+#ExecStopPost=/sbin/auditctl -R /etc/audit/audit-stop.rules
+
+[Install]
+WantedBy=multi-user.target
+
+说明
+  [Unit]：这个项目内主要在规范服务启动的脚本、环境配置文件文件名、重新启动的方式等等。
+  [Install]：这个项目就是将此 unit 安装到哪个 target 里面去的意思！
+  [Service] 区块：启动行为
+    启动命令
+    ExecStart字段：定义启动进程时执行的命令
+    ExecReload字段：重启服务时执行的命令
+    ExecStop字段：停止服务时执行的命令
+    ExecStartPre字段：启动服务之前执行的命令
+    ExecStartPost字段：启动服务之后执行的命令
+    ExecStopPost字段：停止服务之后执行的命令
+
+    启动类型
+    Type字段定义启动类型。它可以设置的值如下：
+    simple（默认值）：ExecStart字段启动的进程为主进程
+    forking：ExecStart字段将以fork()方式启动，此时父进程将会退出，子进程将成为主进程（后台运行）
+    oneshot：类似于simple，但只执行一次，Systemd 会等它执行完，才启动其他服务
+    dbus：类似于simple，但会等待 D-Bus 信号后启动
+    notify：类似于simple，启动结束后会发出通知信号，然后 Systemd 再启动其他服务
+    idle：类似于simple，但是要等到其他任务都执行完，才会启动该服务。一种使用场合是为让该服务的输出，不与其他服务的输出相混合
+
+    重启行为
+    Service区块有一些字段，定义了重启行为：
+    KillMode字段：定义 Systemd 如何停止 sshd 服务：
+    control-group（默认值）：当前控制组里面的所有子进程，都会被杀掉
+    process：只杀主进程
+    mixed：主进程将收到 SIGTERM 信号，子进程收到 SIGKILL 信号
+    none：没有进程会被杀掉，只是执行服务的 stop 命令。
+    Restart字段：定义了 sshd 退出后，Systemd 的重启方式
+
+    Restart字段可以设置的值如下。
+    no（默认值）：退出后不会重启
+    on-success：只有正常退出时（退出状态码为0），才会重启
+    on-failure：非正常退出时（退出状态码非0），包括被信号终止和超时，才会重启
+    on-abnormal：只有被信号终止和超时，才会重启
+    on-abort：只有在收到没有捕捉到的信号终止时，才会重启
+    on-watchdog：超时退出，才会重启
+    always：不管是什么退出原因，总是重启
+    注：对于守护进程，推荐设为on-failure。对于那些允许发生错误退出的服务，可以设为on-abnormal。
+    RestartSec字段：表示 Systemd 重启服务之前，需要等待的秒数。
+
+  [Install] 区块
+    Install区块，定义如何安装这个配置文件，即怎样做到开机启动。
+    WantedBy字段：表示该服务所在的 Target。
+    Target的含义是服务组，表示一组服务。
+    WantedBy=multi-user.target指的是：sshd 所在的 Target 是multi-user.target。
+    这个设置非常重要，因为执行systemctl enable sshd.service命令时，sshd.service的一个符号链接，就会放在/etc/systemd/system目录下面的multi-user.target.wants子目录之中。
+    Systemd 有默认的启动 Target。
 
 
 
-程序的链接主要有以下三种：
 
-静态链接：在程序运行之前先将各个目标模块以及所需要的库函数链接成一个完整的可执行程序，之后不再拆开。
-装入时动态链接：源程序编译后所得到的一组目标模块，在装入内存时，边装入边链接。
-运行时动态链接：原程序编译后得到的目标模块，在程序执行过程中需要用到时才对它进行链接。
-对于动态链接来说，需要一个动态链接库，其作用在于当动态库中的函数发生变化对于可执行程序来说时透明的，可执行程序无需重新编译，方便程序的发布/维护/更新。但是由于程序是在运行时动态加载，这就存在一个问题，假如程序动态加载的函数是恶意的，就有可能导致一些非预期的执行结果或者绕过某些安全设置。
+内核报错kernel:NMI watchdog: BUG: soft lockup - CPU#1
+  系统管理员电话通知，描述为一台服务器突然无法ssh连接，登录服务器带外IP地址并进入远程控制台界面后，提示Authentication error，重启后即可正常进入系统，进入后过20分钟又进入死循环
+  出现死锁原因
+    1、CPU高负载时间过长
+    2、服务器电源供电不足，导致CPU电压不稳定
+    3、vcpus超过物理cpu cores
+    4、虚机所在的宿主机的CPU太忙或磁盘IO太高
+    5、虚机机的CPU太忙或磁盘IO太高
+    6、VM网卡驱动存在bug，处理高水位流量时存在bug导致CPU死锁
+    7、BIOS开启了超频，导致超频时电压不稳，容易出现CPU死锁
+    8、Linux kernel或KVM存在bug
+    9、BIOS Intel C-State开启导致，关闭可解决
+    10、BIOS spread spectrum开启导致
+  询问了度娘，发现此报错为内核锁死，简称“死机”，询问管理员后得知，近期服务器安装了docker，可能由于负载过高导致
+    Soft lockup：这个bug没有让系统彻底死机，但是若干个进程（或者kernel thread）被锁死在了某个状态（一般在内核区域），很多情况下这个是由于内核锁的使用的问题。
+    内核参数kernel.watchdog_thresh（/proc/sys/kernel/watchdog_thresh）系统默认值为10。如果超过2*10秒会打印信息，注意：调整值时参数不能大于60
+    Linux内核对于每一个cpu都有一个监控进程，在技术界这个叫做watchdog（看门狗）。通过ps –ef | grep watchdog能够看见，进程名称大概是watchdog/X（数字：cpu逻辑编号1/2/3/4之类的）。这个进程或者线程每一秒钟运行一次，否则会睡眠和待机。这个进程运行会收集每一个cpu运行时使用数据的时间并且存放到属于每个cpu自己的内核数据结构。在内核中有很多特定的中断函数。这些中断函数会调用soft lockup计数，他会使用当前的时间戳与特定（对应的）cpu的内核数据结构中保存的时间对比，如果发现当前的时间戳比对应cpu保存的时间大于设定的阀值，他就假设监测进程或看门狗线程在一个相当可观的时间还没有执。Cpu软锁为什么会产生，是怎么产生的？如果linux内核是经过精心设计安排的CPU调度访问，那么怎么会产生cpu软死锁？那么只能说由于用户开发的或者第三方软件引入，看我们服务器内核panic的原因就是qmgr进程引起。因为每一个无限的循环都会一直有一个cpu的执行流程（qmgr进程示一个后台邮件的消息队列服务进程），并且拥有一定的优先级。Cpu调度器调度一个驱动程序来运行，如果这个驱动程序有问题并且没有被检测到，那么这个驱动程序将会暂用cpu的很长时间。根据前面的描述，看门狗进程会抓住（catch）这一点并且抛出一个软死锁（soft lockup）错误。软死锁会挂起cpu使你的系统不可用。
 
+  具体分析
+    1.系统如下时间2个时间进行了重启:
+      Mar  3 21:53:16 ser-node7 kernel: Linux version 3.10.0-957.el7.x86_64 (mockbuild@x86040.build.eng.bos.redhat.com)
+      Mar  3 22:37:19 ser-node7 kernel: Linux version 3.10.0-957.el7.x86_64 (mockbuild@x86040.build.eng.bos.redhat.com)
+      在重启前的一段时间均已经出现了cpu软锁的现象，而深入分析cpu软锁，我们依赖于kdump产生的vmcore数据.
+        Mar  3 14:28:18 ser-node7 kernel: NMI watchdog: BUG: soft lockup - CPU#5 stuck for 22s! [runc[1:CHILD]:52902]
+        Mar  2 18:14:59 ser-node7 kernel: NMI watchdog: BUG: soft lockup - CPU#3 stuck for 23s! [runc:[1:CHILD]:55961]
 
-①静态链接
-经编译后所得到的三个目标模块A、B、C,他们的长度分别为 L、M、N。在模块A中，有
-一条语句CALL B，用于调用模块B。在模块B中，有一条语句CALL C, 用于调用模块C。B和C都属于外部
-调用符号，在将这几个目标模块链接装配成一个装入模块时，需要解决以下两个问题：
-●对相对地址进行修改
-通常由编译程序产生的所有目标模块，其起始地址都为0，每个模块中的地址都是相对于0的。在链接成
-一个装入程序后，模块B和C的起始地址不再是0，而是L和L+M，此时需修改B和C中的相对地址，即模块
-B中的所有相对地址加上L，模块C中的相对地址都加上L+M。
-●变换外部调用符号
-即将每个模块中所用的外部调用符号，都变换为相对地址，如把B的起始地址变换为L；C的起始地址变
-换为L+M。这种先进行链接所形成的一个完整的装入模块，又称为可执行文件。
-通常都不要拆开它，要运行时可直接将它装入内存。这种事先进行链接，以后不再拆开的链接方式，称为
-静态链接方式。
-②装入时动态链接(Load-Time Dynamic Linking)
-用户源程序经编译后所得到的目标模块,是在装入内存时,边装入边链接的.即在装入一个目标模块时,若
-发生一个外部模块调用,将引起装入程序去找出相应的外部目标模块,并将它装入内存,还要修改目标模
-块中的相对地址。装入时动态链接方式有以下优点：
-●便与软件版本的修改和更新
-在采用装入时动态链接方式时，要修改或更新各个目标模块，是件非常容易的事，但对于经静态链接以
-装配在一起的装入模块，如果要修改或更新其中的某个目标模块时，则要求重新打开装入模块，这不仅
-是低效的，而且有时是不可能的。
-●便于实现目标模块共享
-若采用装入时动态链接方式，OS能够将一个目标模块链接到几个应用模块，即实现多个应用程序对该模
-块的共享；然而，采用静态链接方式时每个应用模块都必须含有该目标模块的拷贝，否则无法实现共享。
-③运行时动态链接（Run –Time Dynamic Linking）
-虽然前面所介绍的动态装入方式，可将一个装入模块装入到内存的任何地方，但装入模块的结构是静态
-的，它主要表现在两个方面：一是在进程的整个执行期间，装入模块不改变；再者是每次运行时的装
-入模块都是相同的。实际上，在许多情况下，每次要运行的模块可能是不相同的，但由于事先无法知道
-本次要运行哪些模块，故只能是将所有可能要运行到的模块，在装入时全部链接在一起，是每次执行时
-的装入模块是相同的。显然这是低效的。因为这样，在装入模块的运行过程中，往往会有某些目标模块
-根本就不运行。比较典型的例子是错误处理模块，如果程序在整个运行过程中，都不出现错误，便不会
-用到该模块。
-能有效的改变这种情况的链接方式，是最近几年流行起来的运行时动态链接方式。这种链接方式，可将
-某些目标模块的链接，推迟到执行时才进行。即在执行过程中，若发现一个被调用模块尚未装入内存时
-，由OS去找到该模块，将它装入内存，并把它连接到调用者模块上。
+      ./systemctl_list-unit-files:kdump.service enabled
+      如果您之前已经做过，那么请您额外修改/etc/sysctl.conf加入以下行:
+      kernel.softlockup_panic = 1
+      然后执行"sysctl -p"使参数生效。这样当系统出现cpu软锁现象时，会自动触发kernel panic，此时如果kdump可以正常工作，会生成vmcore.并自动重新启动系统
 
-man 8 ld-linux     ld 连接程序文档
+    2.另外在日志中我们还注意了存在如下的告警,其和上面的soft lockup问题无直接关系.
+      # cat messages | grep "SLUB: Unable to allocate memory on node"
+        Mar  2 18:04:45 ser-node7 kernel: SLUB: Unable to allocate memory on node -1 (gfp=0xd0)
+        Mar  3 14:54:25 ser-node7 kernel: SLUB: Unable to allocate memory on node -1 (gfp=0xd0)
+        Mar  3 14:54:25 ser-node7 kernel: SLUB: Unable to allocate memory on node -1 (gfp=0xd0)
 
-动态链接库
-LD_PRELOAD
-Linux操作系统的动态链接库在加载过程中，动态链接器会先读取LD_PRELOAD环境变量和默认配置文件/etc/ld.so.preload，并将读取到的动态链接库文件进行预加载。即使程序不依赖这些动态链接库，LD_PRELOAD环境变量和/etc/ld.so.preload配置文件中指定的动态链接库依然会被加载，因为它们的优先级比LD_LIBRARY_PATH环境变量所定义的链接库查找路径的文件优先级要高，所以能够提前于用户调用的动态库载入。
-***这个功能主要就是用来有选择性的载入不同动态链接库中的相同函数。***
-LD_PRELOAD运用总结
-定义与目标函数完全一样的函数，包括名称、变量及类型、返回值及类型等
-将包含替换函数的源码编译为动态链接库
-通过命令 export LD_PRELOAD="库文件路径"，设置要优先替换动态链接库
-如果找不替换库，可以通过 export LD_LIBRARY_PATH=库文件所在目录路径
-LD_LIBRARY_PATH 是一个由若干个路径组成的环境变量，设置系统查找库的目录 每个路径之间由冒号隔开。默认情况下为空
-替换结束，要还原函数调用关系，用命令unset LD_PRELOAD 解除
-想查询依赖关系，可以用ldd 程序名称
+      此为系统的已知BUG，具体请参考如下KB：
+        SLUB: Unable to allocate memory on node -1 (gfp=0x20)
+        https://access.redhat.com/solutions/4088471
+        依据此KB，请将kernel升级到kernel-3.10.0-1062.4.1.el7或者更新.
+        kernel-3.10.0-1062.4.1.el7下载地址为:
+        https://access.redhat.com/errata/RHSA-2019:3055
+        如何升级内核，请查看下面文档：
+        How to update/upgrade the Red Hat Enterprise Linux kernel?
+        https://access.redhat.com/solutions/20366
 
-简单来说LD_PRELOAD的加载是最优先级的我们可以用他来做一些有趣的操作(骚操作).
-一般情况下，ld-linux.so加载动态链接库的顺序为：
-LD_PRELOAD > LD_LIBRARY_PATH > /etc/ld.so.cache > /lib > /usr/lib
-通过 export    LD_PRELOAD=yyy/libxxxx.so写入环境变量，然后执行ldd命令来了解可执行程序所依赖的动态链接库
-执行 export -n LD_PRELOAD=yyy/libxxxx.so来删除环境变量 注意 此命令 只是删除取导出属性 环境变量->局部变量
-ldconfig 将重建 /etc/ld.so.cache 缓存 搜索/etc/ld.so.conf文件或/etc/ld.so.conf.d目录下的文件
-/sbin/ldconfig –v 列出详细信息
-ldd  #查看依赖库
-nm   #查看库符号
-  符号有很多，常见的有三种：
-  一种是在库中被调用，但并没有在库中定义（表明需要其他库支持），用U表示；
-  一种是在库中定义的函数，用T表示，这是最常见的；
-  另一种所谓的“弱态”符号，它们虽然在库中定义，但可能被其他库中的同名符号覆盖，用W表示。
+  解决方案
+    百度大手子给的方案如下所示：
+    vi /etc/sysctl.conf
+    kernel.watchdog_thresh=30
+    查看：# tail -1 /proc/sys/kernel/watchdog_thresh
+    临时生效：# sysctl -w kernel.watchdog_thresh=30
+    原厂建议尚在等待中
 
-动态库的路径问题 为了让执行程序顺利找到动态库，有三种方法：
-(1)把库拷贝到/usr/lib和/lib目录下。
-(2)在LD_LIBRARY_PATH环境变量中加上库所在路径。
-例如动态库libhello.so在/home/ting/lib目录下，以bash为例，使用命令：
-$export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/ting/lib
-(3) 修改/etc/ld.so.conf文件，把库所在的路径加到文件末尾，并执行ldconfig刷新。这样，加入的目录下的所有库文件都可见。
+  解决办法2
+    echo 30 > /proc/sys/kernel/watchdog_thresh
+    echo "kernel.watchdog_thresh=30" >> /etc/sysctl.conf
+    sysctl -w kernel.watchdog_thresh=30
+    sysctl -q vm.swappiness
+    sysctl -p
 
-__attribute__((constructor))
-    constructor参数让系统执行main()函数之前调用函数(被__attribute__((constructor))修饰的函数)
-__attribute__((destructor))
-    destructor参数让系统在main()函数退出或者调用了exit()之后,(被__attribute__((destructor))修饰的函数)
+  解决办法3:脚本
+    #!/bin/bash
+    #修改阈值为30，写入文件
+    echo 30 > /proc/sys/kernel/watchdog_thresh
+    #修改阈值为30，临时生效
+    sysctl -w kernel.watchdog_thresh=30
 
-
-LD_DEBUG
-该环境变量可以打开动态链接器的调试功能，当我们设置该变量时，动态链接器会在运行时打印出各种有用的信息，对于我们开发和调试共享库有很大的帮助。
-
-LD_DEBUG 可以设置的值有：
-“files”，显示整个装载过程；
-“libs”，显示共享库查找过程；
-“symbols”，显示符号的查找过程；
-“bindings”，显示动态链接的符号绑定过程；
-“versions”，显示符号的版本依赖关系；
-“reloc”，显示重定位信息；
-例如，查看整个装载过程：LD_DEBUG=files ./envTest
-查看依赖共享库的查找过程： LD_DEBUG=libs ./envTest
-显示符号的查找过程：LD_DEBUG=symbols ./envTest
-
-
-rpath 路径
-rpath 路径需要在编译时指定，因为这些信息会被写入到了 ELF 文件中。
-
-gcc showBytes.c -fPIC -shared -o libshowBytes.so -I. -L. -lshowBytes -g -Wall -Wl,-rpath-link $(pwd)
-gcc -o envTest envTest.c -I. -L . -lshowBytes -g -Wall -Wl,-rpath $(pwd)
-
-此时，检查下动态了依赖关系如下：
-ldd envTest
-        linux-vdso.so.1 (0x00007fffe4fa3000)
-        libshowBytes.so => /home/myTest/envTest/libshowBytes.so (0x00007fe8017ae000)
-        libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007fe8015b5000)
-        /lib64/ld-linux-x86-64.so.2 (0x00007fe8017ba000)
-可以看出共享库（如：动态库）是可以直接找到的。
-
-
-
-动态库的显式调用
-在Linux下显式调用动态库
-#include <dlfcn.h>，提供了下面几个接口：
-void * dlopen( const char * pathname, int mode )：函数以指定模式打开指定的动态连接库文件，并返回一个句柄给调用进程,失败的话返回NULL。
-  pathname:  指定库的路径和名字。
-  mode: 打开模式。有以下几种：
-    a.解析方式：
-      RTLD_LAZY    暂缓决定，等有需要时再解出符号。
-      RTLD_NOW    立即决定，返回前解除所有为决定的符号。
-    b.作用范围，可与解析方式通过"|"组合使用
-      RTLD_LOCAL      动态库中定义的符号不能被其后打开的其他库重定位，缺省为此。
-      RTLD_GLOBAL    动态库中定义的符号可被其后打开的其他库重定位。
-void* dlsym(void* handle,const char* symbol)：根据动态链接库操作句柄(pHandle)与符号(symbol)，返回符号对应的地址。使用这个函数不但可以获取函数地址，也可以获取变量地址。
-handle是由dlopen打开动态链接库后返回的指针，symbol就是要求获取的函数名称，返回值是void*，指向函数的地址，共调用使用。
-int dlclose (void *handle)：关闭指定句柄的动态链接库，只有当此动态链接库的使用计数为0时,才会真正被系统卸载。
-const char *dlerror(void)：当动态链接库操作函数执行失败时，dlerror可以返回出错信息，返回值为NULL时表示操作函数执行成功。
-例子:
-  void *libc;
-  void (*printf_call)();
-  if(libc = dlopen("/usr/lib/libmyc.so",RTLD_LAZY))
-  {
-      print_call = dlsym(libc, "printf");
-      (*print_call)("hello, world/n");
-      dlclose(libc);
-  }
-
-在Windows下显式调用动态库
-应用程序必须进行函数调用以在运行时显式加载 DLL。为显式链接到 DLL，应用程序必须：
-调用 LoadLibrary（或相似的函数）以加载 DLL 和获取模块句柄。
-调用 GetProcAddress，以获取指向应用程序要调用的每个导出函数的函数指针。由于应用程序是通过指针调用 DLL 的函数，编译器不生成外部引用，故无需与导入库链接。
-使用完 DLL 后调用 FreeLibrary。
+    #修改阈值为30，写入启动文件
+    grep 'watchdog_thresh' /etc/sysctl.conf
+    if [ $? -ne 0 ]; then
+    	echo "kernel.watchdog_thresh=30" >> /etc/sysctl.conf
+    else
+    	echo "正常"
+    fi
 
 
 
@@ -236,16 +245,16 @@ const char *dlerror(void)：当动态链接库操作函数执行失败时，dler
       data       (6) data + stack                         #数据/堆栈段占用内存页数
       dt         (7) dirty pages (unused in Linux 2.6)    #脏页数量
   ————————————————
-参数 解释 /proc/[pid]/status
-Size (pages) 任务虚拟地址空间的大小 VmSize/4
-Resident(pages) 应用程序正在使用的物理内存的大小 VmRSS/4
-Shared(pages) 共享页数 0
-Trs(pages) 程序所拥有的可执行虚拟内存的大小 VmExe/4
-Lrs(pages) 被映像到任务的虚拟内存空间的库的大小 VmLib/4
-Drs(pages) 程序数据段和用户态的栈的大小 （VmData+ VmStk ）4
-dt(pages) 0 
-/proc/[pid]/status里的数值实际是按page来统计的，第二列为Resident(pages)—— 应用程序正在使用的物理内存的大小 VmRSS/4，为实际使用内存数值的四分之一。
-1页=4k
+  参数 解释 /proc/[pid]/status
+  Size (pages) 任务虚拟地址空间的大小 VmSize/4
+  Resident(pages) 应用程序正在使用的物理内存的大小 VmRSS/4
+  Shared(pages) 共享页数 0
+  Trs(pages) 程序所拥有的可执行虚拟内存的大小 VmExe/4
+  Lrs(pages) 被映像到任务的虚拟内存空间的库的大小 VmLib/4
+  Drs(pages) 程序数据段和用户态的栈的大小 （VmData+ VmStk ）4
+  dt(pages) 0 
+  /proc/[pid]/status里的数值实际是按page来统计的，第二列为Resident(pages)—— 应用程序正在使用的物理内存的大小 VmRSS/4，为实际使用  内存数值的四分之一。
+  1页=4k
 
 perf
 https://goodcommand.readthedocs.io/zh_CN/latest/command/perf.html

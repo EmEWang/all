@@ -520,3 +520,9 @@ sudo iptables -I INPUT -p tcp --dport 6789 -j ACCEPT   #解决方案：在主机
 2 vscode中下载Remote-SSH插件
 3 remote explorer点击SSH右边 + 输入 ssh -p 6789 root@192.168.x.xx #使用插件连接远程服务器里的容器
 注：之前一直用的是Remote-Container，以为可以更方便的连接到服务器里的docker，屡次尝试都不成功，查了些其他人的博客说Remote-Container只能连接本地自己电脑里的docker
+
+
+
+显示空格和tab    	  符号
+1.打开setting,在搜索框中输入renderControlCharacters,选中勾选框,即可显示tab为箭头
+2.在搜索框中输入renderWhitespace,选择all,即可显示空格为点

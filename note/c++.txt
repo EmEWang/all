@@ -1,13 +1,245 @@
 
 
+<bits/stdc++.h>  #包含通用c/c++头文件  不是标准 gcc 支持 msvc不支持
+
+
 内存泄漏
 memcheck valgrind
 
-test.cpp
-g++ test.cpp -I../base/include/chen -L../base/lib/c7 -lchen
+g++ test.cpp -I../base/include/chen -L../base/lib/c7 -lchen     #test.cpp
 
 tcmalloc
 react
+
+C语言声明的优先级规则
+1 声明从它的名字开始读取，然后按照优先级顺序依次读取。
+2 优先级从高到低依次是：
+    2.1 声明中被括号括起来的那部分
+    2.2 后缀操作符：括号（）表示这是一个函数，方括号[]表示这是一个数组。
+    2.3 前缀操作符：星号*表示 “指向…的指针”。
+3 如果const volatile后面紧跟类型说明符(如int)，那它作用于类型说明符。在其他情况下，const volatile 作用于它左边紧邻的指针星号。
+
+
+
+外部链接与内部链接
+https://learn.microsoft.com/zh-cn/cpp/cpp/program-and-linkage-cpp?view=msvc-170
+外部链接：它们在程序中的任何翻译单元内可见。 其他任何全局对象都不能具有该名称。
+内部链接：具有内部链接或无链接的符号仅在声明它的翻译单元内可见。
+类定义或函数体中声明的变量没有链接。
+默认情况下，非常量全局变量和 在全局范围或命名空间范围内定义的函数具有外部链接。
+如果要强制一个全局名称具有内部链接，可以将它显式声明为 static。
+默认情况下，以下对象具有内部链接：const对象，constexpr对象，typedef对象，命名空间范围中的 static 对象。
+若要为 const 对象提供外部链接，请将其声明为 extern 并为其赋值：extern const int value = 42;
+
+
+关键字 extern
+https://learn.microsoft.com/zh-cn/cpp/cpp/extern-cpp?view=msvc-170
+1 在非 const 全局变量声明中，extern 指定变量或函数在另一个转换单元中定义。 extern int i;  // declaration only 在其他文件中定义
+2 在 const 变量声明中，它指定变量具有 external 链接。extern 必须应用于所有文件中的所有声明。默认全局 const 变量具有内部链接。
+  extern const int i = 42; // fileA.cpp中  extern const definition
+  extern const int i;      // fileB.cpp中  declaration only. same as i in FileA
+3 在模板声明中，extern 指定模板已在其他位置实例化。 extern 告知编译器它可以重复使用另一个实例化，而不是在当前位置创建新实例。
+template class MyStack<int, 6>;       #该语句创建 MyStack 的实例化，而不保留对象的任何存储。 为所有成员生成代码。
+template MyStack<int, 6>::MyStack( void );  #仅显式实例化构造函数成员函数
+extern template class MyStack<int, 6>; #使用 extern 关键字来防止自动实例化成员
+extern template MyStack<int, 6>::MyStack( void );   #将特定成员标记为外部且未实例化
+使用 extern 关键字阻止编译器在多个对象模块中生成相同的实例化代码。 如果调用函数，则必须在至少一个链接模块中使用指定的显式模板参数来实例化函数模板。 否则，生成程序时将收到链接器错误。
+4 extern "C" 指定函数在别处定义并使用 C 语言调用约定。
+  extern "C++" 指定函数在别处定义并使用 C++ 语言调用约定。
+  extern "C" int printf(const char *fmt, ...);   # Declare printf with C linkage.
+  extern "C" {                                   # Declare the two functions ShowChar
+    char ShowChar(char ch);
+    char GetChar(void);
+  }
+
+
+static
+https://www.runoob.com/w3cnote/cpp-static-usage.html
+
+1 静态数据的存储
+全局（静态）存储区：分为 DATA 段和 BSS 段。DATA 段（全局初始化区）存放初始化的全局变量和静态变量；BSS 段（全局未初始化区）存放未初始化的全局变量和静态变量。程序运行结束时自动释放。其中BBS段在程序执行之前会被系统自动清0，所以未初始化的全局变量和静态变量在程序执行之前已经为0。存储在静态数据区的变量会在程序刚开始运行时就完成初始化，也是唯一的一次初始化。
+
+在 C++ 中 static 的内部实现机制：静态数据成员要在程序一开始运行时就必须存在。因为函数在程序运行中被调用，所以静态数据成员不能在任何函数内分配空间和初始化。
+
+这样，它的空间分配有三个可能的地方，一是作为类的外部接口的头文件，那里有类声明；二是类定义的内部实现，那里有类的成员函数定义；三是应用程序的 main() 函数前的全局数据声明和定义处。
+
+静态数据成员要实际地分配空间，故不能在类的声明中定义（只能声明数据成员）。类声明只声明一个类的"尺寸和规格"，并不进行实际的内存分配，所以在类声明中写成定义是错误的。它也不能在头文件中类声明的外部定义，因为那会造成在多个使用该类的源文件中，对其重复定义。
+
+static 被引入以告知编译器，将变量存储在程序的静态存储区而非栈上空间，静态数据成员按定义出现的先后顺序依次初始化，注意静态成员嵌套时，要保证所嵌套的成员已经初始化了。消除时的顺序是初始化的反顺序。
+
+2 static的作用
+  2.1 在修饰变量的时候，static 修饰的静态局部变量只执行初始化一次，而且延长了局部变量的生命周期，直到程序运行结束以后才释放。
+  2.2 修饰的变量存放在全局数据区的静态变量区，包括全局静态变量和局部静态变量，都在全局数据区分配内存。初始化的时候自动初始化为 0。
+  2.3 修饰全局变量的时候，这个全局变量只能在本文件中访问，不能在其它文件中访问，即便是 extern 外部声明也不可以。
+  2.4 不想被释放的时候，可用static修饰。如修饰函数中存放在栈空间的数组。如果不想让这个数组在函数调用结束释放可用 static 修饰。
+  2.5 考虑到数据安全性（当程序想要使用全局变量的时候应该先考虑使用 static）。
+  2.6 修饰一个函数，则这个函数的只能在本文件中调用，不能被其他文件调用。
+
+静态变量与普通变量
+  静态全局变量有以下特点：
+  1 静态变量都在全局数据区分配内存，包括后面将要提到的静态局部变量;
+  2 未经初始化的静态全局变量会被程序自动初始化为0（在函数体内声明的自动变量的值是随机的，除非它被显式初始化，而在函数体外被声明的自动  变量也会被初始化为 0）；
+  3 静态全局变量在声明它的整个文件都是可见的，而在文件之外是不可见的。
+优点：静态全局变量不能被其它文件所用；其它文件中可以定义相同名字的变量，不会发生冲突。
+
+全局变量和全局静态变量的区别
+  1 全局变量默认是外部链接性，作用域是整个工程，在一个文件内定义，在另一个文件中，通过 extern 声明，就可以使用全局变量。
+  2 显式用 static 修饰的全局变量，作用域是声明此变量所在的文件，其他的文件即使用 extern 声明也不能使用。
+
+静态局部变量有以下特点：
+  1 该变量在全局数据区分配内存；
+  2 静态局部变量在程序执行到该对象的声明处时被首次初始化，即以后的函数调用不再进行初始化；
+  3 静态局部变量一般在声明处初始化，如果没有显式初始化，会被程序自动初始化为 0；
+  4 它始终驻留在全局数据区，直到程序运行结束。但其作用域为局部作用域，当定义它的函数或语句块结束时，其作用域随之结束。
+
+一般程序把新产生的动态数据存放在堆区，函数内部的自动变量存放在栈区。自动变量一般会随着函数的退出而释放空间，静态数据（即使是函数内部的静态局部变量）也存放在全局数据区。全局数据区的数据并不会因为函数的退出而释放空间。
+
+3 static 与 类
+  3.1 静态成员变量:static修饰的类变量，通过 类名::变量名 直接引用
+    3.1.1 静态数据成员可以实现多个对象之间的数据共享，它是类的所有对象的共享成员，它在内存中只占一份空间。
+    3.1.2 静态数据成员在程序开始运行时分配空间，到程序结束后才释放，只要类中指定了静态数据成员，即使不定义对象，也会为静态数据成员分配空间。
+    3.1.3 静态数据成员可以被初始化，但是只能在类体外进行初始化，若未对静态数据成员赋初值，则编译器会自动为其初始化为 0。
+    3.1.4 静态数据成员既可以通过对象名引用，也可以通过类名引用。
+
+  3.2 静态成员函数:static修饰的类方法，通过 类名::方法名 直接引用
+    3.2.1 静态成员函数和静态数据成员一样，他们都属于类的静态成员，而不是对象成员。
+    3.2.2 非静态成员函数有 this 指针，而静态成员函数没有 this 指针。
+    3.2.3 静态成员函数主要用来方位静态数据成员而不能访问非静态成员，包括成员变量和成员函数。
+
+  3.3例子
+  class Point{public:
+    void init(){}
+    static void output(){}
+    int m_x;
+    static int m_sx;};
+    3.3.1 不能通过类名来调用类的非静态成员函数。  Point::init();    编译失败
+    3.3.2 可以通过类的对象调用静态成员函数和非静态成员函数。  Point pt;  pt.init();   pt.output();   OK
+    3.3.3 静态成员函数中不能引用非静态成员。static void output(){printf("%d\n", m_x); }    编译失败
+    3.3.4 非静态成员函数可以调用用静态成员。 void init(){output();}              OK
+    3.3.5 类的静态成员变量必须先初始化再使用，否则会在 linker 时出错。void init(){m_sx++;} static void output(){printf("%d\n", m_sx)} main中 Point pt;  pt.output();编译成功 运行出错 因为类的静态成员变量在使用前必须先初始化。需要 main() 函数前加上 int Point::m_nPointCount = 0;
+
+    思考总结：静态资源属于类，但是是独立于类存在的。从类的加载机制的角度讲，静态资源是类初始化的时候加载的，而非静态资源是类实例化对象的时候加载的。 类的初始化早于类实例化对象。所以对于静态资源来说，它是不可能知道一个类中有哪些非静态资源的；但是对于非静态资源来说就不一样了，由于它是实例化对象出来之后产生的，因此属于类的这些东西它都能认识。
+
+  3.3 static 一般情况下来说是不可以修饰类的， 如果 static 要修饰一个类，说明这个类是一个静态内部类（注意 static 只能修饰一个内部类），也就是匿名内部类。
+
+
+字节对齐
+https://cloud.tencent.com/developer/article/1631792
+
+1 什么是字节对齐
+计算机中内存大小的基本单位是字节（byte），理论上来讲，可以从任意地址访问某种基本数据类型，但是实际上，计算机并非逐字节大小读写内存，而是以2,4,8的倍数的字节块来读写内存，如此一来就会对基本数据类型的合法地址作出一些限制，即它的地址必须是2，4或8的倍数。那么就要求各种数据类型按照一定的规则在空间上排列，这就是对齐。
+
+2 对齐准则
+  2.1 结构体变量的首地址能够被其对齐字节数大小所整除。
+  2.2 结构体每个成员相对结构体首地址的偏移都是成员大小的整数倍，如不满足，对前一个成员填充字节以满足。
+  2.3 结构体的总大小为结构体对最大成员大小的整数倍，如不满足，最后填充字节以满足。
+
+3 举例
+struct test
+{
+    int a;
+    char b;
+    short d;
+    int c;
+};
+
+未对齐时:
+0~3  4  5~9  10~11
+a    b  c    d
+
+对齐时:
+0~3  4  5~7   8~11  12~13  14~15
+a    b  填充  c     d       填充
+
+4 自定义对齐字节
+32位与64位默认对齐数不一样 ，分别是4字节和8字节对齐
+4.1 伪指令#pragma pack(n)（n为字节对齐数）来使得结构间一字节对齐
+#pragma pack(1) /*1字节对齐*/
+struct test
+{
+  ...
+};
+#pragma pack()/*还原默认对齐*/
+
+4.2 __attribute__((aligned (n)))，所作用的结构成员对齐在n字节自然边界上。若结构中有成员的长度大于n，则按照最大成员的长度来对齐。
+    __attribute__ ((packed))，取消结构在编译过程中的优化对齐，也可以认为是1字节对齐。
+struct test
+{
+  ...
+}__attribute__ ((packed));
+————————————————————————————————————————————————————————————————
+
+
+
+RTTI(Run-Time Type Identification)-运行时类型识别
+允许“用指向基类的指针或引用来操作对象”的程序能够获取到“这些指针或引用所指对象”的实际派生类型。
+
+1 为了支持RTTI提供了两个操作符：dynamic_cast和typeid
+  1.1 dynamic_cast允许运行时刻进行类型转换，在一个类层次结构中安全地转化类型，与之相对应有一个非安全的转换操作符static_cast。
+  1.2 typeid是C++的关键字之一，等同于sizeof这类的操作符。typeid操作符的返回结果是名为type_info的标准库类型的对象的引用。
+
+2 typeid
+  2.1 typeid是操作符，不是函数，这点与sizeof类似。
+  2.2 运行时获知变量类型名称，typeid(变量/类型).name()，其返回的字符串格式由编译器实现，一般不会跟类型名一样。
+  2.3 如果表达式的类型是类类型且至少包含有一个虚函数，则typeid操作符返回表达式的动态类型，需要在运行时计算；否则，typeid操作符返回表达式的静态类型，在编译时就可以计算。
+例如
+class base{public :void m(){}};                         class base{public :virtual void m(){}};
+class derived : public base{public:void m(){}};         class derived : public base{public:void m(){}};
+
+typeid(p) == typeid(base*)	     true                    true
+typeid(p) == typeid(derived*)	 false                   false
+typeid(*p) == typeid(base)	     true                    false               <--
+typeid(*p) == typeid(derived)	 false                   true                <--
+对于表达式typeid(p)，因为p是base*类型的指针，因此typeid(p) == typeid(base*)为真，而typeid(p) == typeid(derived*)为假。
+而对于表达式typeid(*p)，由于左边的基类不具有多态性，因而*p将会采用编译期类型来计算，编译期*p是base对象，
+而对于表达式typeid(*p)，因为右边的base类具有多态性，因而在计算typeid(*p)时会根据运行时p所指向的实际类型去计算
+
+3 type_info类
+标准规定四种操作
+  3.1 t1 == t2         返回bool            如果两个对象t1和t2类型相同，则返回true；否则返回false
+  3.2 t1 != t2         返回bool            如果两个对象t1和t2类型不同，则返回true；否则返回false
+  3.3 t.name()         返回C-style字符串    类型名字具体由编译器实现 标准只要求实现为每个类型返回唯一的字符串
+  3.4 t1.before(t2)    返回bool            比较t1.name() < t2.name()
+
+源码在 typeinfo 文件中
+type_info类提供了public虚析构函数，以使用户能够用其作为基类。
+它的默认构造函数和拷贝构造函数及赋值操作符都定义为private，不能定义或复制type_info类型的对象。
+创建type_info对象的唯一方法是使用typeid操作符。
+
+4 bad_typeid异常处理
+  class bad_typeid : public exception
+  {
+  public:
+    bad_typeid () throw() { }
+    virtual ~bad_typeid() throw();
+    virtual const char* what() const throw();
+  };// namespace std
+
+————————————————————————————————————————————————————————————————
+
+
+
+子类调用基类的方法
+class base{virtual void a(){cout<<"base.a";}  void a(){cout<<"base.b";}};
+class drive:public base{virtual void b(){cout<<"drive.a";}  void b(){cout<<"drive.b";}};
+
+1、方法一
+drive d;
+base* pb = new drive;
+drive* pd = new drive;
+d.a();      // drive.a
+d.b();      // drive.b
+d.base::a();      // base.a
+d.base::b();      // base.b
+pb->base::a();      // base.a
+pb->base::b();      // base.b
+pd->base::a();      // base.a
+pd->base::b();      // base.b
+2、方法二
+在B的函数中调用A::test();
+
+
+
 
 
 
@@ -53,7 +285,7 @@ testClass* funcClassPtr() {testClass A; return &A;}
 
 funcClassRef(); // no warning
 funcClassPtr(); // no warning
-
+————————————————————————————————————————————————————————————————
 
 
 

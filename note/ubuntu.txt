@@ -1,6 +1,7 @@
 
 https://ubuntu.com/download/desktop    官网
 https://cn.ubuntu.com/download/desktop 官网中文
+https://forum.ubuntu.org.cn/index.php?sid=73efafc6109bfd8b17b53bec37cc1622  中文论坛
 
 Ubuntu 20.4版本镜像下载国内地址 http://mirrors.aliyun.com/ubuntu-releases/20.04/
        其他版本                http://mirrors.aliyun.com/ubuntu-releases/
@@ -269,6 +270,23 @@ AS_IF的行为是：首先检查第一个条件，如果成立，执行相应操
  --enable-debug          enable debug mode(default=no)
 
 这样我们就可以通过configure的选项来控制编译出的可执行文件是否带有调试信息了。
+
+使用libtcmalloc.so 中设置环境变量
+TCMALLOC_MAX_TOTAL_THREAD_CACHE_BYTES 线程缓存 默认是16M 既 16777216
+可以通过 LD_PRELOAD=paht/libtcmalloc.so TCMALLOC_MAX_TOTAL_THREAD_CACHE_BYTES=167772160 ./xxx 临时设置并运行
+
+系统参数 透明大页 THP 需要root权限 貌似对tcmalloc 影响不大
+设置tcmalloc文档中说明
+echo always >/sys/kernel/mm/transparent_hugepage/enabled  ; \
+echo defer+madvise >/sys/kernel/mm/transparent_hugepage/defrag ; \
+echo 0 >/sys/kernel/mm/transparent_hugepage/khugepaged/max_ptes_none ; \
+echo 1 >/proc/sys/vm/overcommit_memory
+
+还原本地
+echo madvise > /sys/kernel/mm/transparent_hugepage/enabled ; \
+echo madvise >  /sys/kernel/mm/transparent_hugepage/defrag ; \
+echo 511 > /sys/kernel/mm/transparent_hugepage/khugepaged/max_ptes_none ; \
+echo 0 > /proc/sys/vm/overcommit_memory
 
 
 
