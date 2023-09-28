@@ -329,11 +329,20 @@ zzz:
 #	-format=html -output-dir=$(output_z)
 
 #	llvm-profdata merge -o $(out_z).profdata $(target_out1)/default.profraw $(target_out2)/default.profraw
+#	llvm-cov show  -instr-profile=$(out_z).profdata \
+#	-object ./$(target_out1)/$(target_z1) \
+#	-object ./$(target_out2)/$(target_z2)  \
+#	-object ./$(target101) \
+#	-format=html -output-dir=$(output_z)
+
+# -sources files 表示显示指定文件的覆盖率 若没有则显示默认的 注意 此选项 全局有效 不只是针对某一个目标
+# 若一个-object中 制定了文件1 -sources file1 另-object中没有指定-sources选项 则 只显示 file1的覆盖率
 	llvm-cov show  -instr-profile=$(out_z).profdata \
-	-object ./$(target_out1)/$(target_z1) \
+	-object ./$(target_out1)/$(target_z1) -sources coverage.c \
 	-object ./$(target_out2)/$(target_z2)  \
-	-object ./$(target101) \
+	-object ./$(target101) -sources module1/inc/module1_1.h module2/inc/module2_1.h module2/src/module2_1.cpp \
 	-format=html -output-dir=$(output_z)
+
 cleanzzz:
 	rm -rf $(output_z) *.profdata default.profraw $(target_out1) $(target_out2)
 

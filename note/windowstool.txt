@@ -174,6 +174,47 @@ cmd下无法运行的错误(发生系统错误5、拒绝访问)，那是因为cm
 
 
 
+win11 计划任务 执行powershell脚本
+1 powershell脚本
+  task.scrip.ps1                      # powershell脚本 扩展名必须为ps1
+  $(date) -replace "","" >>  D:\tool\task.txt   # 内容 替换空白行
+  . .\task.scrip2.ps1                 # 手动测试
+
+2 开启 powershell脚本 权限
+  set-executionpolicy remotesigned       # 开权限 需要管理员
+  get-executionpolicy                    # 检查权限 显示Restricted，表示状态是禁止的
+  Restricted                             #  执行策略不允许任何脚本运行  默认
+  AllSigned 和 RemoteSigned              # 执行策略可防止 Windows PowerShell 运行没有数字签名的脚本
+
+3 计划任务
+  1 新建任务
+  2 触发器                    # 设置条件
+    选择 每次，重复间隔 10 分钟 持续时间 无限制 # 每10分钟执行一次
+  3 操作                      # 设置运行
+    Program/script            # 填 Powershell ，脚本会在powershell环境下运行
+    Add arguments(optional)   # 填 脚本绝对路径名称 D:\tool\task.scrip.ps1
+    Start in(Optional)        # 填 脚本所在的文件夹绝对路径 D:\tool
+
+
+
+win11,win10睡眠自动被唤醒
+1 powercfg /lastwake  # 命令行输入 查询最后一次被哪个设备唤醒
+2 PowerCfg -DEVICEQUERY wake_armed  # 命令行输入，查询所有可以唤醒电脑的设备
+3 找到之后可以对某个设备允许唤醒关闭 或 软件唤醒卸载之
+  计算机管理 -> 设备管理器 -> 某个设备 -> 右键属性 -> 电源管理，取消勾选 允许此设备唤醒计算机，确定即可
+
+
+
+ThinkPadT480 休眠后耗电严重
+https://blog.csdn.net/w_h_q/article/details/89406716
+1 控制面板->电源选项->选择关闭盖子功能  禁止启用快速启动，耗电原因之一
+2 命令行 输入 powercfg -devicequery wake_programmable命令查看唤起设备
+  设备管理器中找到相应的设备 右键属性 电源管理 允许此设备唤醒计算机 取消勾选
+  都去掉允许唤起的勾选后 输入powercfg -devicequery wake_armed
+  注 我的是 powercfg -devicequery wake_armed
+
+
+
 WinSCP中文版软件命令
   call 执行任意远程Shell命令
   cd 改变远程工作目录

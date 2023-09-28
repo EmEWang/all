@@ -47,5 +47,7 @@ int main(int argc, char **argv)
     foo<int>(0);
     foo<float>(0);
 
+    ttt();
+
     return 0;
 }

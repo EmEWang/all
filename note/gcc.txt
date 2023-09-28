@@ -1,6 +1,6 @@
 
-yum install gcc gcc-c++    #CentOs7端 安装C/C++
-gcc --version  #查看gcc版本
+
+gcc --version  # 查看gcc版本
 
 
 
@@ -10,6 +10,7 @@ sudo apt install g++
 sudo apt install make
 sudo apt install cmake
 
+yum install gcc gcc-c++    # CentOs7端 安装C/C++
 
 
 sudo apt-get install gcc-multilib           # 64位机器上编译32位程序可能需要安装一个库
@@ -21,65 +22,61 @@ gcc -m32 -o testByteAlign testByteAlign.c   # 编译程序
 
 gcc头文件和库文件搜寻路径
 1 直接在gcc中添加头文件库文件路径参数
-  gcc foo.c -I /home/xiaowp/include -o foo      #手动添加头文件搜索路径
-  gcc foo.c -L /home/xiaowp/lib -lfoo -o foo    #手动添加动态库搜索路径
-  gcc foo.c -L /home/xiaowp/lib -static -lfoo -o foo  #手动添加静态库搜索路径
+  gcc foo.c -I /xxx/include -o foo            # 手动添加头文件搜索路径
+  gcc foo.c -L /xxx/lib -lfoo -o foo          # 手动添加动态库搜索路径
+  gcc foo.c -L /xxx/lib -static -lfoo -o foo  # 手动添加静态库搜索路径
 2 使用export命令将头文件库文件路径添加到gcc搜寻路径中
-  C_INCLUDE_PATH         C头文件的环境变量
-  CPLUS_INCLUDE_PATH     C++头文件的环境变量 此两个环境变量指明的头文件会在-I指定路径之后，系统默认路径之前进行搜索。
-  LIBRARY_PATH        库搜索路径，此环境变量指明路径会在-L指定路径之后，系统默认路径之前被搜索。
-  LD_LIBRARY_PATH     在程序加载运行期间查找动态链接库时指定除了系统默认路径之外的其他路径，此路径会在系统默认路径之前进行查找。
-  export PATH =$PATH:$HOME/bin    #在PATH中找到可执行文件程序的路径。
-  C_INCLUDE_PATH=/usr/include/libxml2:/MyLib  ; export C_INCLUDE_PATH  #gcc找到头文件的路径
-  CPLUS_INCLUDE_PATH=$CPLUS_INCLUDE_PATH:/usr/include/libxml2:/MyLib ; export CPLUS_INCLUDE_PATH  #g++找到头文件的路径
-  LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/MyLib ;  export LD_LIBRARY_PATH    #找到动态链接库的路径
-  LIBRARY_PATH=$LIBRARY_PATH:/MyLib ; export LIBRARY_PATH     #找到静态库的路径
-3 将头文件库文件复制到gcc默认搜寻路径中
-  /usr/include   标准C语言的头文件目录
-  /usr/lib       标准C语言的库文件目录
-  /usr/local/lib        开源库的库文件目录
-  /usr/local/include    开源库的头文件目录
-
-echo | g++ -v -x c++ -E -     #查询gcc编译时查找的头文件目录，库文件目录
+  C_INCLUDE_PATH         # C头文件的环境变量
+  CPLUS_INCLUDE_PATH     # C++头文件的环境变量 这两个环境变量指明的头文件会在-I指定路径之后，系统默认路径之前进行搜索
+  LIBRARY_PATH           # 库搜索路径，其指明路径会在-L指定路径之后，系统默认路径之前被搜索
+  LD_LIBRARY_PATH        # 程序运行期间查找动态链接库 优先于系统默认路径
+  export PATH =$PATH:$HOME/bin    # PATH指明可执行文件程序的路径
+  C_INCLUDE_PATH=/usr/include/libxml2:/MyLib  ; export C_INCLUDE_PATH  # gcc找到头文件的路径
+  CPLUS_INCLUDE_PATH=$CPLUS_INCLUDE_PATH:/usr/include/libxml2:/MyLib ; export CPLUS_INCLUDE_PATH  # g++找到头文件的路径
+  LIBRARY_PATH=$LIBRARY_PATH:/MyLib ; export LIBRARY_PATH     # 找到静态库的路径
+  LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/MyLib ;  export LD_LIBRARY_PATH    # 找到动态链接库的路径
+3 gcc默认搜寻路径中
+  /usr/include          # 标准C语言的头文件目录
+  /usr/lib              # 标准C语言的库文件目录
+  /usr/local/lib        # 开源库的库文件目录
+  /usr/local/include    # 开源库的头文件目录
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-符号的可见性
-gcc中的visibility属性用于控制符号的可见性，决定了符号是否可以被外部程序使用。默认情况下，gcc编译的符号（函数、变量等）是全局可见的，也就是说，在编译出的目标文件中，这些符号可以被任何外部程序访问和使用。
-使用visibility属性，可以将符号的可见性限制在本地（即仅当前编译单元中可见）或限制在特定的可共享对象文件中可见，以便在链接时进行符号的隐藏和重定位。
+符号的可见性(visibility)
+gcc中的visibility属性用于控制符号的可见性，决定符号是否可被外部程序访问和使用。默认gcc编译的符号(函数、变量等)是全局可见的。
+使用此属性可将符号的可见性限制在本地(即仅当前编译单元中可见)或特定的可共享对象文件中可见，以便在链接时进行符号的隐藏和重定位。
 
 1 编译器选项 -fvisibility
--fvisibility=xxx 用于设置源文件中符号的缺省可见性，值可以是default（缺省）或者hidden（隐藏），设置为default时，没有显式标识为hidden的符号都处理为可见；设置为hidden时，没有显式标识为可见的符号都处理为隐藏。如果您在编译中没有指定-fvisibility选项，编译器会自行处理为缺省的可见性。
-请注意： default设置不是指编译器缺省的处理方式。和hidden设置一样，default来自ELF格式定义的可见性名称。具有default可见性的符号和所有不使用特殊机制的符号具有相同的可见性类型;也就是说，它将作为公共接口的一部分输出。
-编译器还支持-fvisibility-inlines-hidden选项，用于强制隐藏所有的嵌入函数。当您希望对大多数项目使用缺省的可见性，但又希望隐藏所有的嵌入函数时，您可能会用到这个选项。
+-fvisibility=xxx 用于设置源文件中符号的缺省可见性，值为default（缺省）或者hidden（隐藏）。
+  设置为default时，没有显式标识为hidden的符号都处理为可见。
+  设置为hidden时，没有显式标识为可见的符号都处理为隐藏。
+  如果在编译中没有指定-fvisibility选项，编译器会自行处理为缺省的可见性。
+注意：default设置不是指编译器缺省的处理方式。和hidden设置一样，default来自ELF格式定义的可见性名称。
+  具有default可见性的符号和所有不使用特殊机制的符号具有相同的可见性类型;也就是说，它将作为公共接口的一部分输出。
+编译器还支持-fvisibility-inlines-hidden选项，用于强制隐藏所有的嵌入函数。
+  当您希望对大多数项目使用缺省的可见性，但又希望隐藏所有的嵌入函数时，您可能会用到这个选项。
 
 2 __attribute__
-如果用GCC 4.0编译代码，可以用可见性属性将个别的符号标识为default或hidden：
-__attribute__((visibility("default"))) void MyFunction1() {}
-__attribute__((visibility("hidden"))) void MyFunction2() {}
-可见性属性会覆盖编译时通过-fvisibility选项指定的值。因此，增加default可见性属性会使符号在所有情况下都被输出，反过来，增加hidden可见性属性会隐藏相应的符号。
-可见性属性可以应用到函数，变量，模板，以及C++类。如果一个类被标识为hidden，则该类的所有成员函数，静态成员变量，以及编译器生成的元数据，比如虚函数表和RTTI信息也都会被隐藏。
-请注意：虽然模板声明可以用可见性属性来标识，但是模板实例则不能。这是个已知的限制，在GCC的未来版本中可能被修复。
+用GCC 4.0编译代码，可以用可见性属性将个别的符号标识为default或hidden
+  __attribute__((visibility("default"))) void MyFunction1() {}
+  __attribute__((visibility("hidden"))) void MyFunction2() {}
+可见性属性会覆盖编译时通过-fvisibility选项指定的值。增加default使符号在所有情况下都被输出，增加hidden会隐藏相应的符号。
+可用于函数,变量,模板,类。若类被标识为hidden,则该类所有成员函数,静态成员变量,以及编译器生成的元数据,如虚函数表和RTTI都会被隐藏。
+注意：虽然模板声明可以用可见性属性来标识，但是模板实例则不能。这是个已知的限制，在GCC的未来版本中可能被修复。
 
 3 pragma指令
-将符号标识为default或hidden的另外一种方法是使用GCC 4.0新引入的pragma指令。GCC可见性pragma的优点是可以快速地标识一整块函数，而不需要将可见性属性应用到每个函数中。这个pragma的用法如下：
-void f() { }
-#pragma GCC visibility push(default)
-void g() { }
-void h() { }
-#pragma GCC visibility pop
-在这个例子中，函数g和h被标识为default，因此无论-fvisibility选项如何设置，都会输出；而函数f则遵循-fvisibility选项设置的任何值。push和pop两个关键字标识这个pragma可以被嵌套。push(default)指令将当前的可见性设置为全局可见性，然后定义了函数g h，使用了默认的可见性属性。最后，pop指令将之前的可见性设置恢复。
+将符号标识为default或hidden的另外一种方法是使用GCC 4.0新引入的pragma指令。
+GCC可见性pragma的优点是可以快速地标识一整块函数，而不需要将可见性属性应用到每个函数中。这个pragma的用法如下
+  void f() { }
+  #pragma GCC visibility push(default)
+  void g() { }
+  void h() { }
+  #pragma GCC visibility pop
+上例中，函数g和h被标识为default，无论-fvisibility选项如何设置，都会输出；而函数f则遵循-fvisibility选项设置的任何值。
+push和pop两个关键字标识这个pragma可以被嵌套。
+  push(default)指令将当前的可见性设置为全局可见性，然后定义了函数g h，使用了默认的可见性属性。
+  最后，pop指令将之前的可见性设置恢复。
 
 
 
@@ -115,69 +112,93 @@ gcc编译选项-lpthread和-pthread的区别
 结论用-pthread 如：gcc -pthread -o test test.c
 
 
-gcc/g++
-  -M  生成文件关联的信息。包含目标文件所依赖的所有原始码你能用gcc -M hello.c
-  -MD 和-M相同，不过输出将导入到.d的文件里面
-  -MM 和-M基本相同，不过将忽略由 系统库 造成的依赖关系
-  -MMD 和-MM相同，不过输出将导入到.d的文件里面
-  -C 在预处理的时候,不删除注释信息,一般和-E使用,有时候分析程式，用这个非常方便的
-  -std=c++0x    使用c++0x
-  -std=c++11    使用c++11
-  -std=c++2a    使用c++20
-  -fpic 编译器就生成位置无关目标码.适用于共享库(shared library).
-  -fPIC 编译器就输出位置无关目标码.适用于动态连接(dynamic linking),即使分支需要大范围转移.优于-fpic
-  -v 显示详细的编译、汇编、连接命令
-  -shared 生成共享库格式
-  -static ：指定生成静态链接库
-  -ldl 显示方式加载动态库，可能会调用dlopen、dlsym、dlclose、dlerror
-  -D_GNU_SOURCE 以GNU规范标准编译，如果不加上这个参数会报RTLD_NEXT未定义的错误
-  -L ：表示要链接的库所在的目录。-L.  表示要链接的库在当前目录， -L/usr/lib 表示要连接的库在/usr/lib下。目录在/usr/lib时，系统会自动搜索这个目录，可以不用指明。
-  -l (L的小写)：表示需要链接库的名称，注意不是库文件名称，比如库文件为 libtest.so，那么库名称为test
-  -include ：包含头文件，这个很少用，因为一般情况下在源码中，都有指定头文件。
-  -I (i 的大写)：指定头文件的所在的目录，可以使用相对路径。
-  -Wall ：生成所有警告信息
-  -ggdb ：此选项将尽可能的生成gdb 的可以使用的调试信息。
-  -g ：编译器在编译的时候产生调试信息。
-  -c ：只激活预处理、编译和汇编,也就是把程序做成目标文件(.o文件) 。
-  -Wl,options ：把参数(options)传递给链接器ld 。如果options 中间有逗号,就将options分成多个选项,然后传递给链接程序。
-  -fno-builtin-malloc -fno-builtin-calloc -fno-builtin-realloc -fno-builtin-free :看编译选项的名字就知道，这是阻止编译器优化时使用内置版本的malloc,calloc,realloc,free函数。
-  -x 指定语言  如  -x c++
-  -E 只激活预处理,这个不生成文件, 你需要把它重定向到一个输出文件里面。
-  -v Display the programs invoked by the compiler.
-  -Ox 优化等级 -O0	不进行优化处理。-O 或 -O1	优化生成代码。-O2	进一步优化。-O3	比 -O2 更进一步优化，包括 inline 函数。
+
+gcc编译过程
+hello.c
+    ↓    预处理 cpp  gcc hello.c -o hello.i -E      # 预处理指令 删除注释 添加必要的调试信息(如行信息)
+hello.i
+    ↓    编译 ccl    gcc hello.i -o hello.s -S      # 词法和语法的分析 生成对应硬件平台的汇编语言
+hello.s
+    ↓    汇编 as     gcc hello.s -o hello.o -c      # 调用汇编器as将汇编源程序翻译成可重定位文件
+hello.o      可重定位指该文件已经包含可以让处理器直接运行的指令流，但是程序中的所有的全局符号(函数和全局变量)尚未定位。
+    ↓    链接 ld     gcc hello.o -o hello -lc -lgcc # 重定位 合并相同权限的段 (标准c库和gcc库内置，-lc和-lgcc默认)
+hello
 
 
 
-ar基本用法
-　　ar命令可以用来创建、修改库，也可以从库中提出单个模块。库是一单独的文件，里面包含了按照特定的结构组织起来的其它的一些文件（称做此库文件的member）。原始文件的内容、模式、时间戳、属主、组等属性都保留在库文件中。
-　　下面是ar命令的格式：
-　　ar [-]{dmpqrtx}[abcfilNoPsSuvV] [membername] [count] archive files...
-　　例如我们可以用ar rv libtest.a hello.o hello1.o来
-生成一个库，库名字是test，链接时可以用-ltest链接。该库中存放了两个模块hello.o和hello1.o。选项前可以有‘-'字符，也可以
-没有。下面我们来看看命令的操作选项和任选项。现在我们把{dmpqrtx}部分称为操作选项，而[abcfilNoPsSuvV]部分称为任选项。
-　　{dmpqrtx}中的操作选项在命令中只能并且必须使用其中一个，它们的含义如下：
+gcc/g++ 编译选项
+  -M      # 生成文件关联的信息。包含目标文件所依赖的所有原始码你能用 gcc -M hello.c
+  -MD     # 和-M相同，不过输出将导入到.d的文件里面
+  -MM     # 和-M基本相同，不过将忽略由 系统库 造成的依赖关系
+  -MMD    # 和-MM相同，不过输出将导入到.d的文件里面
 
-d：从库中删除模块。按模块原来的文件名指定要删除的模块。如果使用了任选项v则列出被删除的每个模块。
-m：该操作是在一个库中移动成员。当库中如果有若干模块有相同的符号定义(如函数定义)，则成员的位置顺序很重要。如果没有指定任选项，任何指定的成员将移到库的最后。也可以使用'a'，'b'，或'i'任选项移动到指定的位置。
-p：显示库中指定的成员到标准输出。如果指定任选项v，则在输出成员的内容前，将显示成员的名字。如果没有指定成员的名字，所有库中的文件将显示出来。
-q：快速追加。增加新模块到库的结尾处。并不检查是否需要替换。'a'，'b'，或'i'任选项对此操作没有影响，模块总是追加的库的结尾处。如果使用了任选项v则列出每个模块。 这时，库的符号表没有更新，可以用'ar s'或ranlib来更新库的符号表索引。
-r：在库中插入模块(替换)。当插入的模块名已经在库中存在，则替换同名的模块。如果若干模块中有一个模块在库中不存在，ar显示一个错误消息，并不替换其他同名模块。默认的情况下，新的成员增加在库的结尾处，可以使用其他任选项来改变增加的位置。
-t：显示库的模块表清单。一般只显示模块名。
-x：从库中提取一个成员。如果不指定要提取的模块，则提取库中所有的模块。
+  -Ox     # 优化等级 -O0 不优化 -O 同 -O1 优化 -O2 进一步优化 -O3 更进一步优化，包括 inline 函数。
+  -o file # 指定输出文件名   gcc a.c -o a
+  -C      # 预处理不删除注释信息,一般和-E使用,分析程序非常方便
+  -c      # 只激活预处理、编译和汇编,把程序做成目标文件(.o文件)
+  -E      # 预处理(默认输出到屏幕)   gcc a.c -o a.i -E
+  -S      # 输出编译后的汇编代码文件   gcc a.c -o a.s -S
+  -ggdb   # 尽可能的生成gdb可以使用的调试信息
+  -g      # 在编译结果中增加调试信息   gcc a.c -o a -g
+  -I      # 指定头文件所在目录 可用相对路径   gcc a.c -o a -I./include
+  -include # 包含头文件，很少用，一般情况下在源码中都有指定头文件
+  -L      # 链接库所在的目录   gcc a.c -o a -L./lib
+  -l      # 需要链接库的名称  libtest.so 使用 -ltest
+  -ldl    # 显示方式加载动态库，可能会调用dlopen、dlsym、dlclose、dlerror
+  -Wall   # 打开所有警告信息
+  -shared # 生成共享库格式
+  -static # 指定生成静态链接库   gcc a.c -o a -lxxx -static
+  -fpic   # 生成位置无关目标码.适用于共享库(shared library).
+  -fPIC   # 输出位置无关目标码.适用于动态连接(dynamic linking),即使分支需要大范围转移.优于-fpic
 
-　　下面在看看可与操作选项结合使用的任选项：
+  -v      # 显示详细的编译、汇编、连接命令  Display the programs invoked by the compiler
+  -x      # 指定语言  如  -x c++
+  -std=c++0x  # 使用c++0x
+  -std=c++11  # 使用c++11
+  -std=c++2a  # 使用c++20
 
-a：在库的一个已经存在的成员后面增加一个新的文件。如果使用任选项a，则应该为命令行中membername参数指定一个已经存在的成员名。
-b：在库的一个已经存在的成员前面增加一个新的文件。如果使用任选项b，则应该为命令行中membername参数指定一个已经存在的成员名。
-c：创建一个库。不管库是否存在，都将创建。
-f：在库中截短指定的名字。缺省情况下，文件名的长度是不受限制的，可以使用此参数将文件名截短，以保证与其它系统的兼容。
-i：在库的一个已经存在的成员前面增加一个新的文件。如果使用任选项i，则应该为命令行中membername参数指定一个已经存在的成员名(类似任选项b)。
-l：暂未使用
-N：与count参数一起使用，在库中有多个相同的文件名时指定提取或输出的个数。
-o：当提取成员时，保留成员的原始数据。如果不指定该任选项，则提取出的模块的时间将标为提取出的时间。
-P：进行文件名匹配时使用全路径名。ar在创建库时不能使用全路径名（这样的库文件不符合POSIX标准），但是有些工具可以。
-s：写入一个目标文件索引到库中，或者更新一个存在的目标文件索引。甚至对于没有任何变化的库也作该动作。对一个库做ar s等同于对该库做ranlib。
-S：不创建目标文件索引，这在创建较大的库时能加快时间。
-u：一般说来，命令ar r...插入所有列出的文件到库中，如果你只想插入列出文件中那些比库中同名文件新的文件，就可以使用该任选项。该任选项只用于r操作选项。
-v：该选项用来显示执行操作选项的附加信息。
-V：显示ar的版本。
+  -D_GNU_SOURCE  # 以GNU规范标准编译，如果不加上这个参数会报RTLD_NEXT未定义的错误
+  -Wl,options    # 把参数(options)传递给链接器ld。若options中有逗号,就将options分成多个选项传递给链接程序
+  -fno-builtin-malloc -fno-builtin-calloc -fno-builtin-realloc -fno-builtin-free # 阻止编译器优化时使用内置版本的malloc,calloc,realloc,free函数
+
+echo | g++ -v -x c++ -E -     #查询gcc编译时查找的头文件目录，库文件目录
+类似于 g++ -v -x c++ -E 1.cpp  但是 1.cpp为空文件
+
+
+
+
+ar 基本用法
+ar用来创建、修改库，从库中提出单个模块。库是一单独的文件，包含按照特定结构组织的其它文件(称做此库文件的member)。
+  原始文件的内容、模式、时间戳、属主、组等属性都保留在库文件中。
+ar命令格式
+  ar [-]{dmpqrtx}[abcfilNoPsSuvV] [membername] [count] archive files...
+    {dmpqrtx}部分为操作选项，而[abcfilNoPsSuvV]部分为任选项。选项前可以有‘-'字符，也可以没有。
+  ar rv liba.a a1.o a2.o  # 生成一个库，库名a，用-la链接。该库中存放了两个模块a1.o和a2.o。
+{dmpqrtx}中的操作选项在命令中只能并且必须使用其中一个
+  d # 删除库中模块。按模块原来的文件名指定要删除的模块。若使用了任选项v则列出被删除的每个模块。
+  m # 移动库中成员。若库中模块有相同的符号定义(如函数)，成员位置顺序很重要。
+    若没有指定任选项，任何指定的成员将移到库的最后。也可以使用'a'，'b'，或'i'任选项移动到指定的位置。
+  p # 显示库中指定的成员到标准输出。指定任选项v，输出成员内容前，显示成员名字。没指定成员的名字，所有库中的文件将显示出来。
+  q # 快速追加。增加新模块到库的结尾处。并不检查是否需要替换。'a'，'b'，或'i'任选项对此操作没有影响，模块总是追加的库的结尾处。
+    若使用了任选项v则列出每个模块。 这时，库的符号表没有更新，可以用'ar s'或ranlib来更新库的符号表索引。
+  r # 在库中插入模块(替换)。当插入的模块名已经在库中存在，则替换同名的模块。
+    如果若干模块中有一个模块在库中不存在，ar显示一个错误消息，并不替换其他同名模块。
+    默认的情况下，新的成员增加在库的结尾处，可以使用其他任选项来改变增加的位置。
+  t # 显示库的模块表清单。一般只显示模块名。
+  x # 从库中提取一个成员。如果不指定要提取的模块，则提取库中所有的模块。
+
+可与操作选项结合使用的任选项
+  a # 在库的一个已经存在的成员后面增加一个新的文件。如果使用任选项a，则应该为命令行中membername参数指定一个已经存在的成员名。
+  b # 在库的一个已经存在的成员前面增加一个新的文件。如果使用任选项b，则应该为命令行中membername参数指定一个已经存在的成员名。
+  c # 创建一个库。不管库是否存在，都将创建。
+  f # 在库中截短指定的名字。缺省情况下，文件名的长度是不受限制的，可以使用此参数将文件名截短，以保证与其它系统的兼容。
+  i # 在库的一个已经存在的成员前面增加一个新的文件。如果使用任选项i，则应该为命令行中membername参数指定一个已经存在的成员名(同b)。
+  l # 暂未使用
+  N # 与count参数一起使用，在库中有多个相同的文件名时指定提取或输出的个数。
+  o # 当提取成员时，保留成员的原始数据。如果不指定该任选项，则提取出的模块的时间将标为提取出的时间。
+  P # 进行文件名匹配时使用全路径名。ar在创建库时不能使用全路径名（这样的库文件不符合POSIX标准），但是有些工具可以。
+  s # 写入一个目标文件索引到库中，或者更新一个存在的目标文件索引。甚至对于没有任何变化的库也作该动作。对一个库做ar s等同于对该库做ranlib。
+  S # 不创建目标文件索引，这在创建较大的库时能加快时间。
+  u # 一般说来，命令ar r...插入所有列出的文件到库中，如果你只想插入列出文件中那些比库中同名文件新的文件，就可以使用该任选项。该任选项只用于r操作选项。
+  v # 该选项用来显示执行操作选项的附加信息。
+  V # 显示ar的版本。

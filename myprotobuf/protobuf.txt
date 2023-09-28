@@ -1,0 +1,39 @@
+
+protobuf Linux编译
+
+https://github.com/protocolbuffers/protobuf   #源码
+
+下载源文件
+1 git clone https://github.com/google/protobuf.git
+2 cd protobuf
+3 git submodule update --init --recursive     #非常重要 protobuf/third_party 第三方库需要额外下
+
+cmake方式编译
+cmake -DCMAKE_INSTALL_PREFIX="/opt/proto" -Dprotobuf_BUILD_TESTS=OFF -DBUILD_SHARED_LIBS=ON ../   # 关闭测试
+make
+make install        #如果安装的话
+
+
+bazel方式编译
+需要在安装 bazel
+bazel build :protoc :protobuf
+
+
+
+编译安装(任意版本)  下载protobuf对应版本。以protobuf-all-3.19.4.tar.gz为例
+sudo apt-get install autoconf automake libtool make g++ unzip  #需要工具 autoconf, automake, libtool, make, g++, unzip
+
+1 wget https://github.com/protocolbuffers/protobuf/releases/download/v3.19.4/protobuf-all-3.19.4.tar.gz
+2 tar -zxvf protobuf-all-3.19.4.tar.gz
+3 cd protobuf-3.19.4
+4 sudo ./autogen.sh
+5 sudo ./configure
+6 sudo make
+7 sudo make check
+8 sudo make install
+9 sudo ldconfig    # refresh shared library cache
+
+protoc --version   #验证
+
+
+

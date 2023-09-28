@@ -17,24 +17,20 @@ W               #up后表示系统到目前运行了多久时间。
 uptime          #命令查看
 /proc/uptime    #查看
 
+ubuntu关闭和开启图形界面
+图像界面的关闭和开启是安装显卡驱动的条件之一
+关闭图形界面
+sudo systemctl set-default multi-user.target
+sudo reboot
 
-重启命令：
-1、reboot
-2、shutdown -r now 立刻重启(root用户使用)
-3、shutdown -r 10 过10分钟自动重启(root用户使用)
-4、shutdown -r 20:35 在时间为20:35时候重启(root用户使用)
-如果是通过shutdown命令设置重启的话，可以用shutdown -c命令取消重启
-
-关机命令：
-1、halt   立刻关机
-2、poweroff 立刻关机
-3、shutdown -h now 立刻关机(root用户使用)
-4、shutdown -h 10 10分钟后自动关机
+开启图形界面
+sudo systemctl set-default graphical.target
+sudo reboot
 
 
-ubuntu版本
-  cat /etc/issue             例如 Ubuntu 20.04.4 LTS \n \l
-  sudo lsb_release -a        与上个方法相比，内容更为详细
+
+
+
 
 Ubuntu 查看cpu个数及核心数
 总核数 = 物理CPU个数 X 每颗物理CPU的核数
@@ -49,14 +45,7 @@ cat /proc/cpuinfo | grep name | cut -f2 -d: | uniq -c  #查看CPU信息（型号
 cat /proc/meminfo     #查看内存信息 系统内存大小的信息，可以查看总内存，剩余内存，可使用内存等信息
 lscpu                 #查看cpu信息 型号 架构 大小端 等等
 
-如何查看linux 系统版本
-cat /etc/redhat-release
-lsb_release -a
-cat  /etc/issue
 
-如何查看Linux 内核
-uname -a
-cat /proc/version
 
 
 sudo dmidecode                            #查看机器硬件型号
@@ -93,90 +82,6 @@ CPU核数/线程（非常实用）
 
 # lscpu | grep -E '^Thread|^Core|^Socket|^CPU\('
 
-系统
-uname -a               # 查看内核/操作系统/CPU信息
-lsb_release -a         # 查看操作系统版本 (适用于所有的linux，包括Redhat、SuSE、Debian等发行版，但是在debian下要安装lsb)
-cat /proc/cpuinfo      # 查看CPU信息
-hostname               # 查看计算机名
-lspci -tv              # 列出所有PCI设备
-lsusb -tv              # 列出所有USB设备
-lsmod                  # 列出加载的内核模块
-env                    # 查看环境变量
-
-资源
-free -m                # 查看内存使用量和交换区使用量
-df -h                  # 查看各分区使用情况
-du -sh <目录名>        # 查看指定目录的大小
-grep MemTotal /proc/meminfo   # 查看内存总量
-grep MemFree /proc/meminfo    # 查看空闲内存量
-uptime                 # 查看系统运行时间、用户数、负载
-cat /proc/loadavg      # 查看系统负载
-
-磁盘和分区
-mount | column -t      # 查看挂接的分区状态
-fdisk -l               # 查看所有分区
-swapon -s              # 查看所有交换分区
-hdparm -i /dev/hda     # 查看磁盘参数(仅适用于IDE设备)
-dmesg | grep IDE       # 查看启动时IDE设备检测状况
-
-网络
-ifconfig               # 查看所有网络接口的属性
-iptables -L            # 查看防火墙设置
-route -n               # 查看路由表
-netstat -lntp          # 查看所有监听端口
-netstat -antp          # 查看所有已经建立的连接
-netstat -s             # 查看网络统计信息
-
-进程
-ps -ef                 # 查看所有进程
-top                    # 实时显示进程状态
-
-用户
-w                      # 查看活动用户
-id <用户名>            # 查看指定用户信息
-last                   # 查看用户登录日志
-cut -d: -f1 /etc/passwd   # 查看系统所有用户
-cut -d: -f1 /etc/group    # 查看系统所有组
-crontab -l             # 查看当前用户的计划任务
-
-服务
-chkconfig --list       # 列出所有系统服务
-chkconfig --list | grep on    # 列出所有启动的系统服务
-
-程序
-rpm -qa                # 查看所有安装的软件包
-查看CPU信息（型号）
-cat /proc/cpuinfo | grep name | cut -f2 -d: | uniq -c
-    8  Intel(R) Xeon(R) CPU            E5410   @ 2.33GHz  (看到有8个逻辑CPU, 也知道了CPU型号)
-cat /proc/cpuinfo | grep physical | uniq -c
-    4 physical id      : 0             (说明实际上是两颗4核的CPU)
-    4 physical id      : 1
-getconf LONG_BIT
- 32         (说明当前CPU运行在32bit模式下, 但不代表CPU不支持64bit)
-cat /proc/cpuinfo | grep flags | grep ' lm ' | wc -l
-   8
-(结果大于0, 说明支持64bit计算. lm指long mode, 支持lm则是64bit)
-
-
-再完整看cpu详细信息, 不过大部分我们都不关心而已.
-dmidecode | grep 'Processor Information'
-
-查看内 存信息
-cat /proc/meminfo
-
-uname -a
-Linux euis1 2.6.9-55.ELsmp #1 SMP Fri Apr 20 17:03:35 EDT 2007 i686 i686 i386 GNU/Linux
-(查看当前操作系统内核信息)
-
-cat /etc/issue | grep Linux
-Red Hat Enterprise Linux AS release 4 (Nahant Update 5)
-(查看当前操作系统发行版信息)
-
-查看机器型号
-dmidecode | grep "Product Name"
-
-查看网卡信息
-dmesg | grep -i eth
 
 
 
@@ -675,34 +580,35 @@ apt-get 是一个下载安装软件包的简单命令行接口。最常用的命
 用法： apt-get [选项] 命令
 常用选项：
 -h 本帮助文件。
--q 输出到日志 - 无进展指示
+-q 静默安装 输出到日志 - 无进展指示
 -qq 不输出信息，错误除外
 -d 仅下载 - 不安装或解压归档文件
 -s 不实际安装。模拟执行命令
 -y 假定对所有的询问选是，不提示
--f 尝试修正系统依赖损坏处
+-f 尝试修复损坏的系统关系
 -m 如果归档无法定位，尝试继续
 -u 同时显示更新软件包的列表
 -b 获取源码包后编译
 -V 显示详细的版本号
 -c=? 阅读此配置文件
 -o=? 设置自定的配置选项，如 -o dir::cache=/tmp
+--reinstall  重新安装已安装但可能存在问题的软件包
+--install-suggests  同时安装apt给出的建议安装包
 
 常用命令：
-1）apt-get update 更新源
-2）apt-get dist-upgrade 升级系统到相应的发行版(根据 source.list 的配置)
-3）apt-get upgrade 更新所有已经安装的软件包
-4）apt-get install package_name 安装软件包(加上 --reinstall重新安装)
+1）apt-get update 更新源 也就是源的软件包列表
+2）apt-get upgrade 更新所有已经安装的软件包 但存在依赖问题的不升级
+   apt-get dist-upgrade 更新所有已经安装的软件包 解决依赖并升级
+3）apt-get install package_name 安装软件包(加上 --reinstall重新安装)
    apt-get install package_name=version 安装指定版本的软件包
-5）apt-get remove package_name 卸载一个已安装的软件包（保留配置文件）
-6）apt-get purge package_name 移除软件包（删除配置信息）
- 或apt-get --purge remove packagename
-7）apt-get check 检查是否有损坏的依赖
-8）apt-get autoclean
-删除你已经删掉的软件（定期运行这个命令来清除那些已经卸载的软件包的.deb文件。通过这种方式，您可以释放大量的磁盘空间。如果您的需求十分迫切，可以使用apt-get
-clean以释放更多空间。这个命令会将已安装软件包裹的.deb文件一并删除。大多数情况下您不会再用到这些.debs文件，因此如果您为磁盘空间不足
-而感到焦头烂额，这个办法也许值得一试）
-9）apt-get clean 把安装的软件的备份也删除，不过这样不会影响软件的使用
+4）apt-get remove package_name 卸载一个已安装的软件包（保留配置文件）同时卸载有依赖的软件包
+   apt-get autoremove 删除为了满足其他软件包的依赖而安装的，但现在不再需要的软件包
+   apt-get purge package_name 移除软件包 会完全移除软件包（删除配置信息）
+   或apt-get --purge remove packagename
+5）apt-get check 检查是否有损坏的依赖
+6）apt-get clean  移除/var/cache/apt/archives/ 和 /var/cache/apt/archives/partial/ 下.deb文件 除已经被锁定的文件
+   apt-get autoclean  只会删除不会再下载且几乎无用的文件 删除已删除的软件包的.deb安装文件
+
 
 2、apt-cache
 apt-cache - query the APT cach.
@@ -737,6 +643,40 @@ sudo apt-get autoremove（很有可能一些依赖包从此不再需要，自动
 make
 make install
 卸载	make uninstall（卸载时的源码目录所在路径与安装时的源码目录所在路径不同，不影响最终结果）
+
+
+主要包管理工具
+dpkg          #debian包安装工具
+apt-get       #apt命令行前端
+aptitude      #apt的高级字符和命令行前端 全新菜单操作包管理工具 针对apt设计 可兼容apt-get
+synaptic      #图形界面apt前端
+dselect       #使用菜单界面的包管理工具
+tasksel       #task安装工具
+各工具并非取代对方 如dselect同时使用apt和dpkg apt使用/var/lib/apt/lists/来追踪软件包 dpkg使用/var/lib/dpkg/
+
+ubuntu内核自动升级后 若进不去系统 应在系统进入界面选择"ubuntu高级选项"进入地内核版本 然后删除已经升级的高内核
+dpkg --list | grep linux-image        # 列出当前系统内核的image和extra文件
+dpkg --list | grep linux-header       # 查看安装内核的headers文件
+sudo apt-get purge linux-image-4.4.0.97  #删除某版本的内核
+sudo apt-get autoremove               #
+
+
+
+PPA (Personal Package Archives) 个人软件源
+https://launchpad.net/ubuntu/+ppas  #launchpad平台
+
+sudo add-apt-repository ppa:wiznote-team  # 添加源  如在launchpad平台 搜索 知笔记(wiznote)
+sudo apt-get update                       # 更新源
+sudo apt-get update              # 安装
+
+sudo add-apt-repository -r ppa:wiznote-team   # 删除源
+/etc/apt/sources.list.d/                  #进入这个文件夹删除对应的源文件
+
+sudo add-apt-repository ppa:pee-developers/stable  # 录屏软件
+sudo apt-get update
+sudo apt-get install peek
+peek
+
 
 
 设置ubuntu防火墙

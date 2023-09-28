@@ -11,6 +11,9 @@ https://blog.csdn.net/qq_35246620/article/details/54317740
 https://wangdoc.com/ssh/key
 https://deepzz.com/post/how-to-setup-ssh-config.html
 
+
+sudo apt-get install openssh-server    # 安装 SSH客户端
+
 ssh 服务安装
 要在Ubuntu主机开启SSH服务，需要开启openssh-server
 1 sudo apt-get install openssh-server    #下载SSH服务

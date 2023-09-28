@@ -7,6 +7,12 @@ C:\Windows\System32\WindowsPowerShell\v1.0\powershell_ise.exe   #带工具栏
 wmic csproduct get name    #查看主机型号
 wmic bios get serialnumber #查看主机序列号
 
+Windows下显式调用动态库
+应用程序必须进行函数调用以在运行时显式加载 DLL。为显式链接到 DLL，应用程序必须：
+1 调用 LoadLibrary（或相似的函数）以加载 DLL 和获取模块句柄。
+2 调用 GetProcAddress，以获取指向应用程序要调用的每个导出函数的函数指针。由于应用程序是通过指针调用 DLL 的函数，编译器不生成外部引用，故无需与导入库链接。
+3 调用 FreeLibrary 使用完 DLL 后。
+
 
 创建线程后马上CloseHandle(threadhandle)起什么作用
 HANDLE threadhandle = CreateThread(NULL, 0, RecvThreadProc, NULL, NULL, NULL);
