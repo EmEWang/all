@@ -1,0 +1,11 @@
+
+
+https://www.lua.org/home.html                    # 官网
+https://www.runoob.com/lua/lua-tutorial.html     # 菜鸟教程
+https://www.runoob.com/try/runcode.php?filename=HelloWorld&type=lua  # 菜鸟教程在线测试环境
+https://www.gammon.com.au/scripts/doc.php?lua    # 部分lua功能
+
+https://www.cnblogs.com/not2/p/12082782.html     # wow 插件开发入门
+https://github.com/fgprodigal/BlizzardInterfaceCode_zhTW/blob/master/README.textile  # github
+https://warcraft.huijiwiki.com/wiki/%E6%8F%92%E4%BB%B6%E7%BC%96%E5%86%99%E4%BB%8B%E7%BB%8D#%E5%88%9B%E5%BB%BA%E6%96%B0%E6%8F%92%E4%BB%B6 # 插件编写介绍#创建新插件
+https://nga.178.com/read.php?tid=21788060&rand=966 # nga 老插件教材《Beginning Lua with World of Warcraft Add-Ons》

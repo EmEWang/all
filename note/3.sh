@@ -1,6 +1,7 @@
 #!/bin/bash
 
 exec() {
+    echo "$0"
     echo "$1"
     echo "$2"
     echo "$3"
@@ -16,3 +17,10 @@ exec() {
 
 #exec "$*"
 exec "$@" #"$@" "$@" #perf.sh  pid time filename
+# exec a b c $@
+
+dirs="dir1 dir2 dir3"
+for dir in ${dirs}
+do
+    echo ${dir}
+done

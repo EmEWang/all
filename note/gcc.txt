@@ -1,11 +1,9 @@
 
 
-gcc --version  # 查看gcc版本
 
+gcc --version              # 查看gcc版本
 
-
-下载安装GNU套件
-sudo apt install gcc
+sudo apt install gcc       # 下载安装GNU套件
 sudo apt install g++
 sudo apt install make
 sudo apt install cmake
@@ -16,7 +14,21 @@ yum install gcc gcc-c++    # CentOs7端 安装C/C++
 sudo apt-get install gcc-multilib           # 64位机器上编译32位程序可能需要安装一个库
 gcc -m32 -o testByteAlign testByteAlign.c   # 编译程序
 
-从#pragma GCC system_header 开始到文件尾的代码被看作是系统头文件的一部分。所有警告信息都不显示（除了#warnings 指示字）
+g++ test.cpp -I../base/include/chen -L../base/lib/c7 -lchen     # test.cpp
+
+
+
+从#pragma GCC system_header 开始到文件尾的代码被看作是系统头文件的一部分。所有警告信息都不显示(除了#warnings 指示字)
+
+#pragma GCC diagnostic push                 # 记录当前的诊断状态
+#pragma GCC diagnostic pop                  # 恢复到之前的诊断状态
+#pragma GCC diagnostic ignored "XXX"        # 关闭/屏蔽/忽略某个警告
+
+示例
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat"
+//code                                      # 屏蔽局部代码中的格式转化警告
+#pragma GCC diagnostic pop
 
 
 
@@ -26,15 +38,16 @@ gcc头文件和库文件搜寻路径
   gcc foo.c -L /xxx/lib -lfoo -o foo          # 手动添加动态库搜索路径
   gcc foo.c -L /xxx/lib -static -lfoo -o foo  # 手动添加静态库搜索路径
 2 使用export命令将头文件库文件路径添加到gcc搜寻路径中
-  C_INCLUDE_PATH         # C头文件的环境变量
-  CPLUS_INCLUDE_PATH     # C++头文件的环境变量 这两个环境变量指明的头文件会在-I指定路径之后，系统默认路径之前进行搜索
-  LIBRARY_PATH           # 库搜索路径，其指明路径会在-L指定路径之后，系统默认路径之前被搜索
-  LD_LIBRARY_PATH        # 程序运行期间查找动态链接库 优先于系统默认路径
-  export PATH =$PATH:$HOME/bin    # PATH指明可执行文件程序的路径
-  C_INCLUDE_PATH=/usr/include/libxml2:/MyLib  ; export C_INCLUDE_PATH  # gcc找到头文件的路径
-  CPLUS_INCLUDE_PATH=$CPLUS_INCLUDE_PATH:/usr/include/libxml2:/MyLib ; export CPLUS_INCLUDE_PATH  # g++找到头文件的路径
-  LIBRARY_PATH=$LIBRARY_PATH:/MyLib ; export LIBRARY_PATH     # 找到静态库的路径
-  LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/MyLib ;  export LD_LIBRARY_PATH    # 找到动态链接库的路径
+  C_INCLUDE_PATH        # C头文件的环境变量
+  CPLUS_INCLUDE_PATH    # C++头文件的环境变量 这两个路径在-I路径之后，系统默认路径之前搜索
+  LIBRARY_PATH          # 程序编译期间库搜索路径，其会在-L路径之后，系统默认路径之前搜索
+  LD_LIBRARY_PATH       # 程序加载运行期间库搜索路径 优先于系统默认路径
+  PATH                  # 可执行程序路径
+  export PATH =$PATH:$HOME/bin  或 PATH =$PATH:$HOME/bin;export PATH
+  export C_INCLUDE_PATH=/usr/include/libxml2:/MyLib
+  export CPLUS_INCLUDE_PATH=$CPLUS_INCLUDE_PATH:/usr/include/libxml2:/MyLib
+  export LIBRARY_PATH=$LIBRARY_PATH:/MyLib
+  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/MyLib
 3 gcc默认搜寻路径中
   /usr/include          # 标准C语言的头文件目录
   /usr/lib              # 标准C语言的库文件目录
@@ -42,13 +55,57 @@ gcc头文件和库文件搜寻路径
   /usr/local/include    # 开源库的头文件目录
 
 
+常见错误/警告
+1 warning: missing sentinel in function call [-Wformat]
+  原来可接受任意个参数的函数在调用时，必须给它传的最后一个参数是NULL。估计它是根据检测NULL来判断参数的个数。
+  execl("./add", "add");  则会提示
+  execl("./add", "add", (char*)0);  OK 或 execl("./add", "add", NULL);
+2 warning: format ‘%d’ expects argument of type ‘int’, but argument 2 has type ‘ssize_t’ {aka ‘long int’} [-Wformat=]
+  类型不匹配
+   78 |     printf("addr ca %x\n", &ca);
+      |                     ~^     ~~~
+      |                      |     |
+      |                      |     char *
+      |                      unsigned int
+3 warning: ‘return’ with a value, in function returning void
+  返回值不匹配
+   80 |         return -1;
+      |                ^
+add.c:74:6: note: declared here
+   74 | void writetofile(const char* msg)
+      |      ^~~~~~~~~~~
+4 warning: ‘%s’ directive writing 16 bytes into a region of size between 0 and 12 [-Wformat-overflow=]
+  越界
+   76 |     sprintf(context, "[%d-%02d-%02d %02d:%02d:%02d]%-9d %s",
+      |                                                         ^~
+   77 |       ts->tm_year+1900, ts->tm_mon+1, ts->tm_mday, ts->tm_hour, ts->tm_min, ts->tm_sec, pid, "add\n");
+      |
+5 warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+  长度不匹配 应改为long
+  320 |     printf("thread id ~~~ %lu pid %d return %d\n", pthread_self(), getpid(), (int)pv);
+                                                                                     ^
+6  warning: passing argument 3 of ‘pthread_create’ from incompatible pointer type [-Wincompatible-pointer-types]
+  参数类型不匹配
+  348 |        pthread_create(tid+i, NULL, tfunc2, NULL);
+      |                                    ^~~~~~
+      |                                    |
+      |                                    void (*)()
+In file included from test.c:18:
+/usr/include/pthread.h:200:15: note: expected ‘void * (*)(void *)’ but argument is of type ‘void (*)()’
+  200 |       void *(*__start_routine) (void *),
+      |       ~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~
+8 warning: implicit declaration of function ‘waitpid’ [-Wimplicit-function-declaration]
+  缺少头文件  #include <sys/types.h>  #include <sys/wait.h>
+  570 |     waitpid(-1, &i, 0);
+      |     ^~~~~~~
+
 
 符号的可见性(visibility)
 gcc中的visibility属性用于控制符号的可见性，决定符号是否可被外部程序访问和使用。默认gcc编译的符号(函数、变量等)是全局可见的。
 使用此属性可将符号的可见性限制在本地(即仅当前编译单元中可见)或特定的可共享对象文件中可见，以便在链接时进行符号的隐藏和重定位。
 
 1 编译器选项 -fvisibility
--fvisibility=xxx 用于设置源文件中符号的缺省可见性，值为default（缺省）或者hidden（隐藏）。
+-fvisibility=xxx 用于设置源文件中符号的缺省可见性，值为default(缺省)或者hidden(隐藏)。
   设置为default时，没有显式标识为hidden的符号都处理为可见。
   设置为hidden时，没有显式标识为可见的符号都处理为隐藏。
   如果在编译中没有指定-fvisibility选项，编译器会自行处理为缺省的可见性。
@@ -58,7 +115,7 @@ gcc中的visibility属性用于控制符号的可见性，决定符号是否可�
   当您希望对大多数项目使用缺省的可见性，但又希望隐藏所有的嵌入函数时，您可能会用到这个选项。
 
 2 __attribute__
-用GCC 4.0编译代码，可以用可见性属性将个别的符号标识为default或hidden
+用GCC 4.0及以上版本编译代码，可以用可见性属性将个别的符号标识为default或hidden
   __attribute__((visibility("default"))) void MyFunction1() {}
   __attribute__((visibility("hidden"))) void MyFunction2() {}
 可见性属性会覆盖编译时通过-fvisibility选项指定的值。增加default使符号在所有情况下都被输出，增加hidden会隐藏相应的符号。
@@ -77,6 +134,83 @@ GCC可见性pragma的优点是可以快速地标识一整块函数，而不需�
 push和pop两个关键字标识这个pragma可以被嵌套。
   push(default)指令将当前的可见性设置为全局可见性，然后定义了函数g h，使用了默认的可见性属性。
   最后，pop指令将之前的可见性设置恢复。
+
+
+
+
+
+__attribute__机制
+__attribute__((attribute-list))   # 语法格式  其位置约束为：放于声明的尾部“；”之前。
+GNU C的一大特色就是attribute机制。它可以设置函数属性(Function Attribute )、变量属性(Variable)和类型属性(Type)。
+
+
+__attribute__((visibility("default")))  // 默认方式  外面的链接可见
+__attribute__((visibility("hideen")))   // 隐藏方式  则该符号仅在本so中可见，在其他库中则不可见
+
+默认方式下，如程序调用函数F，F存在于两个动态链接库liba.so,libb.so中，程序执行要链接这两个库，链接顺序是先链接liba.so，
+ 这时候通过liba.so的导出符号表就可以找到函数F的定义，并加入到符号表中；
+ 再链接libb.so的时候，符号表中已经存在函数F，就不会再更新符号表，所以调用的始终是liba.so中的F函数。
+
+g++编译时，可用参数-fvisibility指定所有符号的可见性(不加此参数时默认外部可见)；
+ 若需要对特定函数的可见性进行设置，需在代码中使用attribute设置visibility属性。
+ 编写大型程序时，可用-fvisibility=hidden设置符号默认隐藏，针对特定变量和函数，
+ 在代码中使用attribute ((visibility("default")))另该符号外部可见，这种方法可用有效避免so之间的符号冲突。
+
+在Linux下动态库(.so)中，通过GCC的C++ visibility属性可以控制共享文件导出符号。
+ 在GCC 4.0及以上版本中，有个visibility属性，可见属性可以应用到函数、变量、模板以及C++类。
+ "default"：用它定义的符号将被导出，动态库中的函数默认是可见的。意味着该方法对其它模块是可见的。
+ "hidden"：用它定义的符号将不被导出，并且不能从其它对象进行使用，动态库中的函数是被隐藏的。
+ 而hidden表示该方法符号不会被放到动态符号表里，所以其它模块(可执行文件或者动态库)不可以通过符号表访问该方法。
+将符号的可见性指定为visibility("hidden")，这将不允许它们在库中被导出，但是可以在源文件之间共享。
+ 实际上，隐藏的符号将不会出现在动态符号表中，但是还被留在符号表中用于静态链接。
+
+
+__attribute__((noreturn))  # 函数声明中，告诉编译器这个函数不会返回给调用者，以便编译器在优化时去掉不必要的函数返回代码。
+
+
+__attribute__((packed)) 的作用就是告诉编译器取消结构在编译过程中的优化对齐,按照实际占用字节数进行对齐，是GCC特有的语法。
+ 这个功能是跟操作系统没关系，跟编译器有关，gcc编译器不是紧凑模式的，windows下vc的编译器也不是紧凑的，用tc的编译器就是紧凑的。
+在TC下：struct my{ char ch; int a;} sizeof(int)=2;sizeof(my)=3;(紧凑模式)
+在GCC下：struct my{ char ch; int a;} sizeof(int)=4;sizeof(my)=8;(非紧凑模式)
+在GCC下：struct my{ char ch; int a;}__attrubte__ ((packed)) sizeof(int)=4;sizeof(my)=5
+GNU CC需要使用 –Wall编译器来击活该功能，这是控制警告信息的一个很好的方式。
+
+packed属性使得变量或者结构体成员使用最小的对齐方式，即对变量是一字节对齐，对域(field)是位对齐，减小对象占用的空间。
+attribute属性的效力与你的连接器也有关，如果你的连接器最大只支持16字节对齐，那么你此时定义32字节对齐也是无济于事的。
+使用该属性对struct或者union类型进行定义，设定其类型的每一个变量的内存约束。当用在enum类型定义时，暗示了应该使用最小完整的类型。
+
+struct student
+{
+    char name[7];
+    uint32_t id;
+    char subject[5];
+} __attribute__ ((aligned(4))); // 对齐到4字节，同样可指定对齐到8字节。
+
+struct student
+{
+    char name[7];
+    uint32_t id;
+    char subject[5];
+} __attribute__ ((packed));     // 不对齐，结构体的长度，就是各个变量长度的和
+
+
+__attribute__((constructor))  # 修饰的函数在main函数之前执行
+__attribute__((destructor))   # 修饰的函数在main函数之后或调用exit()之后执行
+
+int mait(int argc, char* argv[]){printf("mainfunc\n");}
+__attribute__((constructor)) static void beforefunc(){printf("beforefunc\n");}
+运行打印如下:
+beforefunc
+mainfunc
+
+带有优先级的参数
+__attribute__((constructor(101))) static void beforefunc1(){printf("beforefunc1\n");}
+__attribute__((constructor(102))) static void beforefunc1(){printf("beforefunc2\n");}
+__attribute__((constructor(103))) static void beforefunc1(){printf("beforefunc3\n");}
+以上三个函数会依照优先级的顺序调用.1-100是保留的,最好从100之后开始用.(但是实际上,自己测试100以内的,也没有得到警告)
+
+
+
 
 
 
@@ -104,14 +238,14 @@ gcc编译选项-lpthread和-pthread的区别
 1、-lpthread是较为老式的解决方法，pthread新加了对于宏D_REENTRANT的定义，-pthread会被展开为“-D_REENTRANT -lpthread”，
   它不仅可以链接pthread库，还可以打开系统头文件中的各种多线程支持分支，比如，我们常常使用的错误码标志errno，
   如果没有定义_REENTRANT，则实现为一个全局变量；若是定义了_REENTRANT，则会实现为每线程独有，从而避免线程竞争错误。
-2、-pthread可移植性较强：在Linux中，pthread是作为一个单独的库存在的（libpthread.so），但是在其他Unix变种中却不一定，
+2、-pthread可移植性较强：在Linux中，pthread是作为一个单独的库存在的(libpthread.so)，但是在其他Unix变种中却不一定，
   比如在FreeBSD中是没有单独的pthread库的，因此在FreeBSD中不能使用-lpthread来链接pthread，
   而使用-pthread则不会存在这个问题，因为FreeBSD的编译器能正确将-pthread展开为该系统下的依赖参数。
   同样道理，其他不同的变种也会有这样那样的区别，如果使用-lpthread，则可能在移植到其他Unix变种中时会出现问题，
-  为了保持较高的可移植性，我们最好还是使用-pthread（尽管这种做法未被接纳成为C标准，但已基本是事实标准）。
+  为了保持较高的可移植性，我们最好还是使用-pthread(尽管这种做法未被接纳成为C标准，但已基本是事实标准)。
 结论用-pthread 如：gcc -pthread -o test test.c
 
-
+https://www.zhihu.com/question/497962877/answer/3249942822  #   GCC使不使用-fPIC编译的区别在哪里
 
 gcc编译过程
 hello.c
@@ -144,7 +278,6 @@ gcc/g++ 编译选项
   -include # 包含头文件，很少用，一般情况下在源码中都有指定头文件
   -L      # 链接库所在的目录   gcc a.c -o a -L./lib
   -l      # 需要链接库的名称  libtest.so 使用 -ltest
-  -ldl    # 显示方式加载动态库，可能会调用dlopen、dlsym、dlclose、dlerror
   -Wall   # 打开所有警告信息
   -shared # 生成共享库格式
   -static # 指定生成静态链接库   gcc a.c -o a -lxxx -static
@@ -159,15 +292,51 @@ gcc/g++ 编译选项
 
   -D_GNU_SOURCE  # 以GNU规范标准编译，如果不加上这个参数会报RTLD_NEXT未定义的错误
   -Wl,options    # 把参数(options)传递给链接器ld。若options中有逗号,就将options分成多个选项传递给链接程序
-  -fno-builtin-malloc -fno-builtin-calloc -fno-builtin-realloc -fno-builtin-free # 阻止编译器优化时使用内置版本的malloc,calloc,realloc,free函数
+  -fno-builtin-malloc -fno-builtin-calloc -fno-builtin-realloc -fno-builtin-free #
+    阻止编译器优化时使用内置版本的malloc,calloc,realloc,free函数
 
-echo | g++ -v -x c++ -E -     #查询gcc编译时查找的头文件目录，库文件目录
-类似于 g++ -v -x c++ -E 1.cpp  但是 1.cpp为空文件
+  -lz     # 是link libz，链接压缩库(Z)
+  -lrt    # 实时库(real time)：shm_open系列
+  -lm     # 是link libm，链接数学库(math)
+  -lc     # 是link libc，链接标准C库(C lib)
+  -ldl    # 显示方式加载动态库，使用dlopen、dlsym、dlclose、dlerror
+  -lnsl   # 需要链接libnsl.so， libnsl.so是C网络服务的库
+  -lclntsh   # 需要链接libclntsh.so,是orcale客户端编译的时候需要用到的一个库，可以扒一扒
+  -lpthread  # 线程库
+  -lsnmp++   # 网络管理库
+  -locci  #  是指Oracle C++ Call Interface对应的动态库,(OCCI)驱动程序
+  -lCOS4
+  -lCOSDynamic4
+  -lomniCodeSets4
+  -lomniDynamic4
+  -lomniORB4
+  -lomnithread
+
+
+echo | g++ -v -x c++ -E -     # 查询gcc编译时查找的头文件目录，库文件目录
+g++ -v -x c++ -E 1.cpp        # 类似于上句 但是 1.cpp为空文件
+
+
+
+-g 编译生成的目标文件中加入源码信息。把目标文件中的机器指令与源代码的行数对应起来。
+  这里并不是将整个源码都添嵌入到目标文件中，而只是添加对应的行数信息，因此debug时，必须保证gdb可以找到源文件。
+-g  有3个等级
+-g0 等于不加-g；即不包含任何信息
+-g1 不包含局部变量和与行号有关的调试信息，因此只能够用于回溯跟踪和堆栈存储和函数的调用等等。
+-g2 默认的级别，此时产生的调试信息包括扩展的符号表、行号、局部或外部变量信息
+-g3 包含级别2中的所有调试信息，以及源代码中定义的宏
+
+-O 编译优化 有4个等级
+ -O0 不优化，如果指定了多个-o选项，不管带不带数字，最后一个选项才是生效的选项
+ -O1 最基本的优化。编译器会在不花费太多编译时间的同时试图生成更快更小的代码。
+ -O2 推荐的优化。O2比O1启用多一些标记。O2编译器会试图提高代码性能而不会增大体积和大量占用的编译时间。
+ -O3 最高优化。延长编译代码时间,结果体积更大积更耗内存。gcc3.x只比O2快一点点,gcc4.x中还未必更快,不应全局启用。
+ -Os 优化代码尺寸。启用了O2中不增加磁盘占用的选项。对磁盘紧张或CPU缓存较小非常有用。
 
 
 
 
-ar 基本用法
+ar
 ar用来创建、修改库，从库中提出单个模块。库是一单独的文件，包含按照特定结构组织的其它文件(称做此库文件的member)。
   原始文件的内容、模式、时间戳、属主、组等属性都保留在库文件中。
 ar命令格式
@@ -196,9 +365,125 @@ ar命令格式
   l # 暂未使用
   N # 与count参数一起使用，在库中有多个相同的文件名时指定提取或输出的个数。
   o # 当提取成员时，保留成员的原始数据。如果不指定该任选项，则提取出的模块的时间将标为提取出的时间。
-  P # 进行文件名匹配时使用全路径名。ar在创建库时不能使用全路径名（这样的库文件不符合POSIX标准），但是有些工具可以。
+  P # 进行文件名匹配时使用全路径名。ar在创建库时不能使用全路径名(这样的库文件不符合POSIX标准)，但是有些工具可以。
   s # 写入一个目标文件索引到库中，或者更新一个存在的目标文件索引。甚至对于没有任何变化的库也作该动作。对一个库做ar s等同于对该库做ranlib。
   S # 不创建目标文件索引，这在创建较大的库时能加快时间。
   u # 一般说来，命令ar r...插入所有列出的文件到库中，如果你只想插入列出文件中那些比库中同名文件新的文件，就可以使用该任选项。该任选项只用于r操作选项。
   v # 该选项用来显示执行操作选项的附加信息。
   V # 显示ar的版本。
+
+
+
+
+ASAN(AddressSanitizer 内存除毒器 gcc4.8以上)检测内存泄漏
+  https://github.com/google/sanitizers
+  https://www.usenix.org/system/files/conference/atc12/atc12-final39.pdf
+  https://learn.microsoft.com/en-us/cpp/sanitizers/?view=msvc-160
+  可以诊断内存越界访问，使用了超出作用域的栈内存，使用栈内存作为函数返回值，释放未申请的内存，内存重复释放，
+  内存释放后又被使用等常见内存问题。原理与valgrind不同，valgrind利用位图模拟内存的分配策略，
+  asan则利用额外分配的shadow memory以及redzone等插桩内存对内存进行检测，效率比valgrind高好几倍，
+  降低2倍左右，valgrind则10倍左右，也可以检测出valgrind无法检测出的内存错误。
+
+ASAN原理
+代码中所有的内存访问操作都被编译器转换为如下形式
+
+Before:
+  *address = ...;  // or: ... = *address;
+
+After：
+  if (IsPoisoned(address)) {
+    ReportError(address, kAccessSize, kIsWrite);
+  }
+  *address = ...;  // or: ... = *address;
+
+gcc编译选项(CFLAGS)
+  -fsanitize=address         # 开启内存越界检测
+  -fsanitize-recover=address # 检测到错误之后程序继续运行而不是内存出错即报错退出，默认生效 gcc6 以上
+    没有生效的话，可进一步设置ASAN_OPTIONS=halt_on_error=0
+  -fno-omit-frame-pointer    # 不省略函数帧数据，主要指栈顶，栈底寄存器，便于分辨帧的开始结尾
+
+ASAN_OPTIONS是ASAN的运行选项环境变量。
+  halt_on_error=0              # 检测内存错误后继续运行，否则程序会终止
+  detect_leaks=1               # 进行内存泄露检测，默认进行
+  malloc_context_size=15       # 内存错误发生时，显示的调用栈层数为15
+  log_path=/home/xos/asan.log  # 内存检查问题日志存放文件路径
+  suppressions=$SUPP_FILE      # 屏蔽打印某些内存错误
+  export ASAN_OPTIONS=halt_on_error=0:use_sigaltstack=0:detect_leaks=1:malloc_context_size=15:log_path=/home/xos/asan.log:suppressions=$SUPP_FILE
+
+export LD_PRELOAD= libasan.so.2:libprelib.so   # 如gcc版本低，用asan做内存检查时，要链接libasan.so库。
+
+
+LSAN(LeakSanitizier 运行时内存泄漏检测器)是ASAN的内存泄漏检测模块，也可单独使用。
+lsan 是在进程结束时才开始泄漏检测，因此它几乎不会降低程序的性能。支持两种运行模式
+1 和 asan 一起运行  通过运行时标识 detect_leaks 来开启，asan 支持如下两种方式来传递运行时标志
+  1.1 ASAN_OPTIONS=detect_leaks=1   #  环境变量 ASAN_OPTIONS
+  1.2 函数 __asan_default_options
+    const char*__asan_default_options() { return "detect_leaks=1"; }
+2 Stand-alone mode
+  对于 cmake，方法如下
+  set (CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -fsanitize=leak")
+  set (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fsanitize=leak")
+  set (CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS_DEBUG} -fsanitize=leak")
+
+LSAN_OPTIONS是LSAN运行选项的环境变量
+  exitcode=0         # 默认0x16 设置内存泄露退出码为0
+  use_unaligned=4    # 默认0  设置4字节对齐  0只考虑对齐的8字节模式 1会考虑未对齐  指针本身而不是其指向的内存
+  max_leaks          # 默认0  非0表示检测了max_leaks后就停止检测
+  suppressions       # 指定suppressions路径
+  print-suppressions # 默认1  1打印suppression统计信息
+  report_objects     # 默认0  1报告各个泄露对象的地址
+  export LSAN_OPTIONS=exitcode=0:use_unaligned=4
+
+
+一个使用asan的简单小例子
+//a.c
+#include <stdio.h>
+#include <stdlib.h>
+
+int my_print()
+{
+    int*a =  malloc(10);
+    printf("this is my_print");
+    return 0;
+}
+
+int main()
+{
+    my_print();
+    return 0;
+}
+
+gcc a.c -fsanitize=address -fno-omit-frame-pointer -fsanitize-recover=address –lasan  # 动态链接的编译
+LD_PRELOAD=/usr/local/gcc-6.4.0/lib64/libasan.so ./a.out  # 动态链接的运行
+
+gcc a.c -fsanitize=address -fno-omit-frame-pointer -fsanitize-recover=address -static-libasan # 静态链接的编译
+./a.out  # 静态链接的运行
+
+
+运行的结果如下
+
+this is my_print
+
+=================================================================
+
+==8437==ERROR: LeakSanitizer: detected memory leaks
+
+Direct leak of 10 byte(s) in 1 object(s) allocated from:
+
+    #0 0x7f7c835e35b8 in __interceptor_malloc ../../.././libsanitizer/asan/asan_malloc_linux.cc:62
+
+    #1 0x4007a7 in my_print (/root/workspace/a.out+0x4007a7)
+
+    #2 0x4007ca in main (/root/workspace/a.out+0x4007ca)
+
+    #3 0x7f7c82f6d454 in __libc_start_main (/lib64/libc.so.6+0x22454)
+
+SUMMARY: AddressSanitizer: 10 byte(s) leaked in 1 allocation(s).
+
+
+
+
+
+
+
+

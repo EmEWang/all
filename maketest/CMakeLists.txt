@@ -19,7 +19,13 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # 方法2 静态库编译  SHARED 动态库 STATIC 静态库
 add_executable(maketest main.cpp)
-file(GLOB SOURCES_LIB  module1/src/*.cpp module2/src/*.cpp module3/src/*.cpp module4/src/*.cpp)
+# file(GLOB SOURCES_LIB  module1/src/*.cpp module2/src/*.cpp module3/src/*.cpp module4/src/*.cpp)
+file(GLOB SOURCES_LIB  module*/src/*.cpp)   # 自动过滤文件
 add_library(lib STATIC ${SOURCES_LIB})
-target_include_directories(lib PUBLIC ${PROJECT_SOURCE_DIR}/module1/inc ${PROJECT_SOURCE_DIR}/module2/inc ${PROJECT_SOURCE_DIR}/module3/inc ${PROJECT_SOURCE_DIR}/module4/inc)
-target_link_libraries( maketest PRIVATE lib -rdynamic -ldl)
+# target_include_directories(lib PUBLIC ${PROJECT_SOURCE_DIR}/module1/inc ${PROJECT_SOURCE_DIR}/module2/inc ${PROJECT_SOURCE_DIR}/module3/inc ${PROJECT_SOURCE_DIR}/module4/inc)
+file(GLOB SOURCES_INC  module*/inc)         # 自动过滤文件夹
+target_include_directories(lib PUBLIC ${SOURCES_INC})
+target_link_libraries(maketest PRIVATE lib -rdynamic -ldl -pthread)
+
+add_subdirectory(testlinux1)          # 子目录
+add_subdirectory(testlinux2)          # 子目录

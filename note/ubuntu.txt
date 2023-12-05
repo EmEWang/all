@@ -1,21 +1,21 @@
 
-https://ubuntu.com/download/desktop    官网
-https://cn.ubuntu.com/download/desktop 官网中文
-https://forum.ubuntu.org.cn/index.php?sid=73efafc6109bfd8b17b53bec37cc1622  中文论坛
+https://ubuntu.com/                    # 官网
+https://ubuntu.com/download/desktop    # 官网 下载
+https://cn.ubuntu.com/download/desktop # 官网中文
+https://forum.ubuntu.org.cn/index.php?sid=73efafc6109bfd8b17b53bec37cc1622  # 中文论坛
+
+https://www.debian.org/doc/user-manuals    # Debian 用户手册
+https://www.debian.org/doc/manuals/debian-handbook/apt.zh-cn.html  # Debian 管理员手册
+
+http://mirrors.163.com/    # 网易开源镜像
+https://developer.aliyun.com/mirror/ # 阿里云开源镜像
+
 
 Ubuntu 20.4版本镜像下载国内地址 http://mirrors.aliyun.com/ubuntu-releases/20.04/
        其他版本                http://mirrors.aliyun.com/ubuntu-releases/
 
 ubuntu/debian    apt-get   #软件包管理工具
 
-Linux查看系统开机时间
-who -b          #查看最后一次系统启动的时间   系统引导 2023-07-24 08:34
-who -r          #查看当前系统运行时间         运行级别 5 2023-07-24 08:35
-last reboot     #查看Linux系统历史启动的时间
-top             #up后表示系统到目前运行了多久时间。
-w               #up后表示系统到目前运行了多久时间。
-uptime          #命令查看
-/proc/uptime    #查看
 
 ubuntu关闭和开启图形界面
 图像界面的关闭和开启是安装显卡驱动的条件之一
@@ -29,59 +29,24 @@ sudo reboot
 
 
 
+addr2line: getting error "DWARF error: section .debug_str is larger than its filesize  错误
+https://bugs.launchpad.net/ubuntu/+source/binutils/+bug/1977958
+https://stackoverflow.com/questions/71410361/what-to-do-with-dwarf-error-section-debug-info-is-larger-than-its-filesize
 
 
-
-Ubuntu 查看cpu个数及核心数
-总核数 = 物理CPU个数 X 每颗物理CPU的核数
-总逻辑CPU数 = 物理CPU个数 X 每颗物理CPU的核数 X 超线程数
-cat /proc/cpuinfo   # 查看linux系统和CPU型号，类型和大小
-cat /proc/cpuinfo| grep "physical id"| sort| uniq| wc -l  # 查看物理CPU个数
-cat /proc/cpuinfo| grep "cpu cores"| uniq    # 查看每个物理CPU中core的个数(即核数)
-cat /proc/cpuinfo| grep "processor"| wc -l   # 查看逻辑CPU的个数
-grep 'processor' /proc/cpuinfo | sort -u | wc -l  # 查看线程数 此处是总的线程数，可理解为逻辑cpu的数量
-cat /proc/cpuinfo | grep name | cut -f2 -d: | uniq -c  # 查看CPU信息（型号）
-
-cat /proc/meminfo     # 查看内存信息 系统内存大小的信息，可以查看总内存，剩余内存，可使用内存等信息
-lscpu                 # 查看cpu信息 型号 架构 大小端 等等
-lscpu | grep -E '^Thread|^Core|^Socket|^CPU\('  # CPU核数/线程（非常实用）
+向日葵
+https://sunlogin.oray.com/download/linux?type=personal&ici=sunlogin-navigation
+sudo dpkg -i 文件名.deb   # 安装
+sudo dpkg -r sunloginclient  # 卸载
+/usr/local/sunlogin/bin/sunloginclient # 启动命令
+966 690 042 123456        # 账户
 
 
-
-sudo dmidecode                            # 查看机器硬件型号
-sudo dmidecode | grep "Product Name"      # 查看主机型号
-sudo dmidecode -t 2 | grep Serial         # 查看主机序列号
-sudo dmidecode -t 4 | grep ID             # 查看 CPU ID
-sudo lshw -c network | grep serial | head -n 1  # 查看MAC地址
-
-
-
-Linux一句命令之判断大小端序
-1 echo -n I | od -o | head -n1 | cut -f2 -d" " | cut -c6
-输出：1为小端模式，0为大端模式；
-解析：od命令的作用为将指定内容以八进制、十进制、十六进制、浮点格式或ASCII编码字符方式显示；
-
-2 echo -n I | od -o | head -n1 | awk '{print $2}'| cut -c6
-输出：1为小端模式，0为大端模式；
-解析：awk命令为文本处理。
-
-3 lscpu | grep -i byte
-输出：Byte Order:            Little Endian；
-解析：grep -i 为不区分大小写匹配；
-注意：在低版本的Linux可能不支持lscpu命令。
-
-4 dpkg-architecture | grep -i end
-输出：
-      DEB_BUILD_ARCH_ENDIAN=little
-      DEB_HOST_ARCH_ENDIAN=little
-      DEB_TARGET_ARCH_ENDIAN=little
-解析：dpkg-architecture命令是列出dpkg打包的一些环境参数；
-
-
-
+https://github.com/microsoft/mimalloc     # 微软
 
 
 编译gperftools
+https://blog.51cto.com/quantfabric/2568961
 https://github.com/gperftools/gperftools
 1 cmake方式
   mkdir build; cd build ;cmake .. ; make
@@ -117,7 +82,7 @@ https://github.com/gperftools/gperftools
     默认的page大小通过减少内存碎片 来最小化内存使用，但跟踪这些page会花费更多的时间。
     使用更大的page则会带来更多的内存碎片，但速度上会有所提升
 
-3 Install "google-perftools" Package on Ubuntu   # 安装成品
+3 Install "google-perftools" Package on Ubuntu   # apt安装
 sudo apt-get update -y
 sudo apt-get install -y google-perftools
 
@@ -222,10 +187,10 @@ echo 0 > /proc/sys/vm/overcommit_memory
 3 链接动态库
 4 preload方式  如 env LD_PRELOAD=/usr/lib/libprofiler.so ./exe   env是linux下插入环境变量的shell命令 可省
 
-1 使用google工具 git@github.com:gperftools/gperftools.git 或 安装成品工具
+1 使用google工具 git@github.com:gperftools/gperftools.git 源码方式 或 直接apt 安装
 2 heap profiler 必须使用tcmalloc来分配内存 链接tcmalloc库 编译链接-ltcmalloc或LD_PRELOAD进程加载
-  cpu profiler 编译链接-lprofiler或LD_PRELOAD进程加载
-  heap checker 使用 -ltcmalloc
+  cpu profiler  编译链接-lprofiler或LD_PRELOAD进程加载
+  heap checker  使用 -ltcmalloc
   -ltcmalloc_and_profiler 是两者的和
   2.1 heap profiler
     https://gperftools.github.io/gperftools/heapprofile.html
@@ -233,24 +198,38 @@ echo 0 > /proc/sys/vm/overcommit_memory
     HeapProfilerStart("转储文件");
     。。。   代码段
     HeapProfilerStop();
-    # google/heap-profiler.h   引用头文件
-    # 用 HeapProfilerStart("转储文件") 和 HeapProfilerStop()把要分析的代码块包起来
-    # HeapProfilerDump() or GetHeapProfile()来检查分析情况 确定代码段，输出profile文件等
-    # HeapProfilerStart的参数是周期性输出文件的前缀，HeapProfilerDump的参数是当前heap的profile输出文路径
-    # 两种方式都会周期性生成 prefix.0000.heap, prefix.0001.heap一系列profile文件
-    # 周期性是指一旦一定数量的对内存被allocated就生成新的profile文件。HEAP_PROFILE_ALLOCATION_INTERVAL来控制这一数量
-    # IsHeapProfilerRunning() 会告诉你是否已经调用过HeapProfilerStart
+
+    google/heap-profiler.h   #  引用头文件
+    HeapProfilerStart("转储文件") 和 HeapProfilerStop() #把要分析的代码块包起来
+    HeapProfilerDump() or GetHeapProfile()来检查分析情况 确定代码段，输出profile文件等
+    HeapProfilerStart的参数是周期性输出文件的前缀，HeapProfilerDump的参数是当前heap的profile输出文路径
+    两种方式都会周期性生成 prefix.0000.heap, prefix.0001.heap一系列profile文件
+    周期性是指一旦一定数量的对内存被allocated就生成新的profile文件。HEAP_PROFILE_ALLOCATION_INTERVAL来控制这一数量
+    IsHeapProfilerRunning() 会告诉你是否已经调用过HeapProfilerStart
 
     分析整个程序 进程环境变量配置
-    HEAPPROFILE=/tmp/mybin.hprof env1=xxx env2=yyy ./exe # 启动进程 需要在编译的时候链接  -ltcmalloc_and_profiler
+    HEAPPROFILE=/tmp/mybin.hprof env1=xxx env2=yyy ./exe # 编译时候链接 -ltcmalloc_and_profiler
     HEAPPROFILE=/tmp/mybin.hprof LD_PRELOAD=path/libtcmalloc_and_profiler.so ... ./exe # preload方式
-    # 默认统计规则是, 程序每分配 1 GB, 或每占用 100 MB, 统计一次. 可通过环境变量控制
-    # HEAPPROFILE 开启内存统计 设置命名转储的分析文件. 如 HEAPPROFILE=server ./server
-    #   生成的文件 server.0001.heap  server.0002.heap 等
-    # HEAP_PROFILE_ALLOCATION_INTERVAL: 每分配多少字节的内存统计一次. 默认为 1073741824 (1 GB).
-    # HEAP_PROFILE_INUSE_INTERVAL: 每占用多少字节的内存统计一次. 默认为 104857600 (100 MB).
-    # HEAP_PROFILE_TIME_INTERVAL: 每隔多少秒统计一次. 默认为 0.
-    # HEAPPROFILESIGNAL: 每当收到指定信号统计一次.
+    默认统计规则是, 程序每分配 1 GB, 或每占用 100 MB, 统计一次. 可通过环境变量控制
+    HEAPPROFILE 开启内存统计 设置命名转储的分析文件. 如 HEAPPROFILE=server ./server
+      生成的文件 server.0001.heap  server.0002.heap 等
+    HEAP_PROFILE_ALLOCATION_INTERVAL # 每分配多少字节的内存统计一次. 默认为 1073741824 (1 GB).
+      Dump heap profiling information each time the specified number of bytes has been allocated by the program.
+    HEAP_PROFILE_INUSE_INTERVAL # 每占用多少字节的内存统计一次. 默认为 104857600 (100 MB).
+      Dump heap profiling information whenever the high-water memory usage mark increases by the specified number of bytes.
+    HEAP_PROFILE_TIME_INTERVAL # 每隔多少秒统计一次. 默认为 0.
+      Dump heap profiling information each time the specified number of seconds has elapsed.
+    HEAPPROFILESIGNAL # 每当收到指定信号统计一次. 默认为 disabled.
+      Dump heap profiling information whenever the specified signal is sent to the process.
+    HEAP_PROFILE_MMAP # 默认为 false
+      Profile mmap, mremap and sbrk calls in addition to malloc, calloc, realloc, and new. NOTE:
+      this causes the profiler to profile calls internal to tcmalloc, since tcmalloc and friends
+      use mmap and sbrk internally for allocations. One partial solution is to filter these allocations out
+      when running pprof, with something like
+      pprof --ignore='DoAllocWithArena|SbrkSysAllocator::Alloc|MmapSysAllocator::Alloc.
+    HEAP_PROFILE_ONLY_MMAP # 默认为 false
+      Only profile mmap, mremap, and sbrk calls; do not profile malloc, calloc, realloc, or new.
+    HEAP_PROFILE_MMAP_LOG # Log mmap/munmap calls. 默认为 false
     注 1 信号是数字编号   可用 kill 等工具发送(kill -xx pid)
        2 若编译时没连接tcmalloc库 启动进程前需要添加 LD_PRELOAD=path/libtcmalloc_and_profiler.so ...
        3 链接tcmalloc_debug动态库，然后gdb挂着程序跑，出现内存错误，程序可能会出现崩溃，然后结合gdb调试,查找内存错误。
@@ -320,6 +299,28 @@ echo 0 > /proc/sys/vm/overcommit_memory
     # which dot                         # 显示路径表示安装成功
     # sudo apt-get install gv           # 安装 gv
 
+    # 工具官网以及源码 仅供参考 可用apt-get安装现成的
+    https://graphviz.gitlab.io/_pages/Download/Download_source.html    # graphviz
+    https://www.ghostscript.com/download/gsdnld.html    # ghostscript 转PDF
+
+    手动安装 graphviz_2.42.2-3build2_arm64.deb 下面lib为其依赖
+    graphviz_2.42.2-3build2_arm64.deb
+    libann0_1.1.2+doc-7build1_arm64.deb
+    libcdt5_2.42.2-3build2_arm64.deb
+    libcgraph6_2.42.2-3build2_arm64.deb
+    libgraphviz-dev_2.42.2-3build2_arm64.deb
+    libgtk2.0-0_2.24.32-4ubuntu4_arm64.deb           # 貌似这3个可省
+    libgtk2.0-bin_2.24.32-4ubuntu4_arm64.deb         #
+    libgtk2.0-common_2.24.32-4ubuntu4_all.deb        #
+    libgts-0.7-5_0.7.6+darcs121130-4_arm64.deb
+    libgts-bin_0.7.6+darcs121130-4_arm64.deb
+    libgvc6-plugins-gtk_2.42.2-3build2_arm64.deb
+    libgvc6_2.42.2-3build2_arm64.deb
+    libgvpr2_2.42.2-3build2_arm64.deb
+    liblab-gamut1_2.42.2-3build2_arm64.deb
+    libpathplan4_2.42.2-3build2_arm64.deb
+    libxdot4_2.42.2-3build2_arm64.deb
+
   3.3 结果格式
     内存分析
     # ./pprof --text testheaparm --base=server.0001.heap server.0004.heap
@@ -335,6 +336,11 @@ echo 0 > /proc/sys/vm/overcommit_memory
     # 第二列和第五列是第一列和第四列的百分比表示
     # 第三列是第二列累加之和，如：第二行的第三列就是第一行的第二列+第二行的第二列
     # 第四列代表所有的进程和它调用函数的内存之和
+    The first column contains the direct memory use in MB.
+    The fourth column contains memory use by the procedure and all of its callees.
+    The second and fifth columns are just percentage representations of the numbers in the first and fourth columns.
+    The third column is a cumulative sum of the second column (i.e., the kth entry in the third column
+      is the sum of the first k entries in the second column.)
 
     cpu分析
     pprof --text ./RBtree ./RBtree.prof 生成的字符统计结果如下。
@@ -357,22 +363,138 @@ echo 0 > /proc/sys/vm/overcommit_memory
 
 
 jemalloc
+https://github.com/jemalloc/jemalloc
 git@github.com:jemalloc/jemalloc.git
+http://mysql.taobao.org/monthly/2019/08/04/   # JeMalloc-5.1.0 实现分析
+https://zhuanlan.zhihu.com/p/635155570        # Jemalloc内存分配与优化实践
 
 1 编译
+https://github.com/jemalloc/jemalloc/blob/dev/INSTALL.md
 ./autogen.sh       # 开启堆检测 则 ./autogen.sh --enable-prof
+./configure        # 可省 或者添加其他选项 如 ./configure --enable-prof 等等
 make
 make install
 
+lib/libjemalloc.so  # 动态库
+bin/jeprof          # 前端工具
+bin/jemalloc-config # 脚本 获取编译属性
+
 2 使用
+https://github.com/jemalloc/jemalloc/wiki/Getting-Started
+http://jemalloc.net/jemalloc.3.html
+
+2.1 进程方式
 MALLOC_CONF  环境变量 配置jemalloc运行时参数
-  MALLOC_CONF=par1:val1,par2:val2      # 参数格式
-  prof:true           # 打开堆检测
-  g_prof_interval:32  # dump的频率，以2为底的指数，32表示2的32次方，即发生变化的内存到达4G时dump一次
-  jeprof.pid.0.i0.heap  # dump文件名格式
+  https://github.com/jemalloc/jemalloc/wiki/Use-Case%3A-Heap-Profiling
+  http://jemalloc.net/jemalloc.3.html#tuning
+  MALLOC_CONF=prof_leak:true,lg_prof_sample:0,prof_final:true # 程序正常退出时报告泄漏情况 产生一个dump文件
+  MALLOC_CONF=prof:true,lg_prof_interval:20  # 运行程序时，每分配(大约)1MB就会dump产生一个文件
+  MALLOC_CONF=prof:true,prof_gdump:true      # 每次达到新高时dump
+  MALLOC_CONF=prof:true,prof_active:false,prof_prefix:jeprof.out  # 程序启动时开启profiling且disabled之
+  MALLOC_CONF=par1:val1,par2:val2      # 格式
+  prof:true           # 开启堆检测(profiling)  总开关  每次malloc时进行信息采集
+  prof_active:false   # 程序启动时profiling是disabled  默认true 代码中可手动设置
+  prof_leak:true      # 是否开启profiling memory leak，默认是false  常与 prof_final 一起使用
+  prof_final:true     # 程序正常结束时输出结果dump   <prefix>.<pid>.<seq>.f.heap
+  prof_gdump:true     # 当总分配量创新高时就dump 默认 fasle
+  g_prof_interval:32  # 内存变化2^32(4G)时dump一次 <prefix>.<pid>.<seq>.i<iseq>.heap
+  prof_prefix:xxx     # 修改ump文件名前缀<prefix> 默认jeprof
+  lg_prof_sample:0    # 平均每分配出2^N个字节 采一次样  默认19(512KB)  0每次分配都采样
+  prof_accum:true     # 报告抽样数量积累的开关 默认 fasle
+
+  转储采样统计，就是产生dump文件(堆占用剖析工具，大体可以分为间隔采样，转储采样统计)，有三种方式
+    MALLOC_CONF="lg_prof_interval:N"   # 分配活动中，每流转1^N字节，将采样统计数据转储到文件。
+    MALLOC_CONF="prof_gdump:true"      # 当总分配量创新高时，将采样统计数据转储到文件。
+    mallctl("prof.dump", NULL, NULL, NULL, 0)  # 在程序内主动触发转储
+
+2.2 代码方式
+  2.2.1 Heap Profiling
+  jemalloc/jemalloc.h   # 头文件
+  -ljemalloc            # 链接库
+  bool active;
+  mallctl("prof.dump", NULL, NULL, NULL, 0);  # 调用dump 记录内存现场 生成prof
+  active = true;  mallctl("prof.active", NULL, NULL, &active, sizeof(bool)); # profiling enable
+  active = false; mallctl("prof.active", NULL, NULL, &active, sizeof(bool)); # profiling disabled
+  setenv("MALLOC_CONF", "prof:true,prof_active:false,prof_prefix:jeprof.out", 1); # 设置环境变量
+
+  2.2.2 Mem Statistics
+  je_malloc_stats_print(NULL, NULL, NULL)   # memory 的统计输出到stderr上面 东西较多
+  je_mallctl 函数，得到一些关键的统计数据
+    uint64_t epoch = 1;
+    size_t sz = sizeof(epoch);
+    je_mallctl("epoch", &epoch, &sz, &epoch, sz);
+    size_t allocated, active, mapped;
+    sz = sizeof(size_t);
+    je_mallctl("stats.allocated", &allocated, &sz, NULL, 0);
+    je_mallctl("stats.active", &active, &sz, NULL, 0);
+    je_mallctl("stats.mapped", &mapped, &sz, NULL, 0);
+    printf("allocated/active/mapped: %zu/%zu/%zu\n", allocated, active, mapped);
+
+  上面我们在每次 do_something 后面得到 allocated，active 以及 mapped 这些指标，然后输出：
+    allocated/active/mapped: 54919648/58540032/64831488
+    allocated/active/mapped: 55034336/58658816/64950272
+    allocated/active/mapped: 55149024/58777600/65069056
+    allocated/active/mapped: 55263712/58896384/65187840
+
+  2.2.3 Leak Check
+  JE_MALLOC_CONF="prof_leak:true,lg_prof_sample:0,prof_final:true" ./leak  # 程序退出后，会生成一个dump文件
+
+  jeprof leak jeprof.9001.0.f.heap   # jeprof 工具查看
+
+    Using local file leak.
+    Using local file jeprof.9001.0.f.heap.
+    Welcome to jeprof!  For help, type 'help'.
+    (jeprof) top
+    Total: 52.1 MB
+        52.1 100.0% 100.0%     52.1 100.0% je_prof_backtrace
+        0.0   0.0% 100.0%     52.1 100.0% __libc_start_main
+        0.0   0.0% 100.0%     52.1 100.0% _start
+        0.0   0.0% 100.0%     52.1 100.0% do_something
+        0.0   0.0% 100.0%     52.1 100.0% imalloc (inline)
+        0.0   0.0% 100.0%     52.1 100.0% imalloc_body (inline)
+        0.0   0.0% 100.0%     52.1 100.0% je_malloc
+        0.0   0.0% 100.0%     52.1 100.0% je_prof_alloc_prep (inline)
+        0.0   0.0% 100.0%     52.1 100.0% main
+
 
 3 结果
-  jeprof  # perf工具 位于 jemalloc/bin 用法类似于tcmalloc
+  jemalloc/bin/jeprof  # perf工具  基于pprof  用法类似于tcmalloc
+  --show_bytes   # 以字节的形式    如 Total: 2173680 B
+  --lines        # 显示行号
+  jeprof --show_bytes a.out jeprof.28954.1.m1.heap    # 只能看到部分调用链
+  jeprof --pdf a.out jeprof.28954.1.m1.heap > je.pdf  # 依赖 ghostscript graphviz
+  jeprof --dot a.out -base=jeprof.28954.0.m0.heap jeprof.28954.1.m1.heap  # 生成dot文件
+    http://www.webgraphviz.com/ 在线查看
+
+https://tinylab.org/the-builtin-heap-profiling-of-jemalloc/  # jemalloc4.0.3 之堆占用剖析·内部实现
+4 je_malloc/imalloc_body 函数 采样过程 可能略有出入
+  1 opt.prof - 剖析总开关。由环境变量 MALLOC_CONF="prof:true" 来打开。
+    s2u: 剖析打开时，会 提前 将请求分配的内存大小，“规整”到内部实际分配的大小。故，采样统计的都是规整后内存分配数。
+    prep: 准备阶段，判断是否进行采样，及采样的准备工作。
+  2 prof.active - 剖析激活与否的开关。MALLOC_CONF="prof:true,prof_active:false"默认禁用，代码通过mallctl激活。
+  3 opt.lg_prof_sample - 采样平均间隔（以字节计）。累计本线程分配出的内存，若超过阀值，则触发采样，同时清零、设置新阀值。
+      注意：a) 阀值以“平均 2^lg_prof_sample 字节”做随机分布；b) lg_prof_sample 为 0 时，对每次分配都采样。
+  4 thread.prof.active - 本线程之剖析激活与否的开关。
+  5 准备进行采样：确保 bt（backtrace）已记录在本地哈希表。这里提到的哈希表，键（key）为 bt，值（value）为 prof_tctx_t 类型，
+      该类型含有数据成员 cnts，其类型为 prof_cnt_t，这是一组计数器：
+    curobjs：已分配 内存对象 计数，或者说是内存分配计次（因为每次分配，分配一个 内存对象）。
+    curbytes: 已分配内存字节数。
+    accumobjs，accumbytes：类似上述（相应）计数。不同的是，上面两计数会在 free（相应内存）时减小，而 accum* 计数不会，
+      换言之，只增不减。
+    注意：标号为 5.1) 过程，当 bt 未见于本地哈希表，需在全局哈希表中找到，并插入本地哈希表。全局哈希表，键（key）为 bt，
+      值（value）为 prof_gctx_t 类型。若全局哈希表中也无有，则新建记录：bt 存于 prof_gctx_t，并作为键（key）。
+  6 分配内存：有两特点。一是 Chunk 头部元数据有 arena_chunk_map_misc_t 之数组，其中每项对应一页（Chunk 含有多个内存页）。
+      arena_chunk_map_misc_t 保存了 ❺ 返回的 prof_tctx_t 地址。另，此处可见，分配的内存必须在页级大小，于是就有了第二个特点：
+    不足页级大小的分配，或者说 small 量级的分配，晋级（promote）到 large 量级分配。此时，对应的 arena_chunk_map_bits_t，
+      large 位和 run size 均设置；但同时 binid 也设置。binid 指示了 promote 前应该分配的尺寸：
+  7 增加 prof_tctxt_t 中相应计数。
+    再来看看内存释放时，prof_tctxt_t 中计数如何减小，函数路径je_free/ifree/prof_free/prof_free_sampled_object：通过
+      待释放内存块 之指针，找到 prof_tctx_t（参见 ❻）。若计数减为 0， 则进一步考虑销毁 prof_tctx_t 甚至于 prof_gctx_t 结构。
+    此处注意：prof_tctx_t 位于分配发起线程的本地存储，而释放可能位于其他线程。故需锁保护。
+
+
+
+
 
 
 gcc for arm几个版本区别
@@ -436,9 +558,6 @@ file pp                   # 查看编译后的是不是arm的可执行文件
 /home/用户名/.bashrc" 添加 /etc/profile 中一样的两行
 
 
-aarch64-linux-gnu-g++ demo.cpp -o xxx  # 手动命令方式编译
-./configure --host=aarch64-linux-gnu   # configure方式编译 编译器为aarch64-linux-gnu-g++  host中为前缀
-  确保交叉编译工具链的bin文件在PATH环境变量里 echo $PATH 没有路径则添加
 
 machine `aarch64' not recognized
 https://github.com/li3tuo4/rc-fpga-zcu/issues/6
@@ -454,9 +573,12 @@ https://blog.csdn.net/u010871058/article/details/71173501
 --target=GARGET  # 指定软件面向的系统平台.主要在程序语言工具如编译器和汇编器上下文中起作用.没指定则默认使用'--host'值.
 
 --prefix=/work/gaoht/gsoap/target  # 指定软件安装的位置
-一般而言，只要指定 --host 就可以了  记住： --host 指定的是交叉编译工具链的前缀
 LDFLAGS="-L/usr/non-standard-path/python/lib"  # 指定动态库的路径
 
+一般而言，只要指定 --host 就可以了  记住： --host 指定的是交叉编译工具链的前缀
+aarch64-linux-gnu-g++ demo.cpp -o xxx  # 手动命令方式编译
+./configure --host=aarch64-linux-gnu   # configure方式编译 编译器为aarch64-linux-gnu-g++  host中为前缀
+  确保交叉编译工具链的bin文件在PATH环境变量里 echo $PATH 没有路径则添加
 
 如在 i686 开发机上交叉编译出 ethtool，让其在powerpc开发板上运行
 http://blog.chinaunix.net/uid-24148050-id-2213969.html
@@ -620,146 +742,284 @@ apt list          Lists packages with criteria (installed, upgradable etc)
 apt edit-sources  Edits sources list
 
 
-sudo apt update                    更新软件包列表
-sudo apt install cmake             Ubuntu中安装Cmake
-sudo apt install g++               安装 g++    g++ --version  验证是否安装完成
-sudo apt install gcc               安装 gcc    gcc --version
-sudo apt-get install build-essential  gcc,g++,make的安装。build-essential是一整套工具,gcc,libc等 未测
+apt update                  # 更新软件包列表
+apt install cmake           # Ubuntu中安装Cmake
+apt install g++             # 安装 g++    g++ --version  验证是否安装完成
+apt install gcc             # 安装 gcc    gcc --version
+apt-get install build-essential  # gcc,g++,make的安装。build-essential是一整套工具,gcc,libc等 未测
 
 
 dpkg介绍
 https://segmentfault.com/a/1190000011463440
-1 dpkg - package manager for Debian （debian系统的包管理工具）。
-dpkg is a tool to install, build, remove and manage Debian packages，dpkg是Debian的一个底层包管理工具，
-  主要用于对已下载到本地和已安装的软件包进行管理。
-dpkg 本身是一个底层的工具。上层的工具，像是 APT，被用于从远程获取软件包以及处理复杂的软件包关系。
+1 dpkg  # package manager for Debian (debian系统的包管理工具)
+dpkg is a tool to install, build, remove and manage Debian packages，dpkg，对已下载到本地和已安装的软件包进行管理。
+dpkg 是Debian的一个底层包管理工具。上层的工具，如APT，被用于从远程获取软件包以及处理复杂的软件包关系。
 
 2 deb软件包名规则
-格式为：Package_Version-Build_Architecture.deb
-如：nano_1.3.10-2_i386.deb
-软件包名称(Package Name): nano
-版本(Version Number):1.3.10
-修订号(Build Number):2
-平台(Architecture):i386
+Package_Version-Build_Architecture.deb  # 格式
+nano_1.3.10-2_i386.deb  # 例子
+nano                    # 软件包名称(Package Name)
+1.3.10                  # 版本(Version Number)
+2                       # 修订号(Build Number)
+i386                    # 平台(Architecture)  all 平台无关 适用于所有平台.如文本 网页 图片 媒体 pdf
 
 3 dpkg软件包相关文件介绍
-/etc/dpkg/dpkg.cfg      # dpkg包管理软件的配置文件 Configuration file with default options
-/var/log/dpkg.log       # dpkg包管理软件的日志文件 Default log file (see /etc/dpkg/dpkg.cfg(5) and option --log)
+/etc/dpkg/dpkg.cfg      # dpkg包管理的配置文件 Configuration file with default options
+/var/log/dpkg.log       # dpkg包管理的默认日志文件 (see /etc/dpkg/dpkg.cfg(5) and option --log)
 /var/lib/dpkg/available # 存放系统所有安装过的软件包信息 List of available packages
 /var/lib/dpkg/status    # 存放系统现在所有安装软件的状态信息
-/var/lib/dpkg/info      # 记安装软件包控制目录的控制信息文件
+/var/lib/dpkg/info/     # 记安装软件包控制目录的控制信息文件
 
 4 dpkg数据库
-dpkg 使用文本文件作为数据库来维护系统中软件，包括文件清单, 依赖关系, 软件状态, 等等详细的内容,通常在 /var/lib/dpkg 目录下。
-通常在 status 文件中存储软件状态和控制信息。
-在 info/ 目录下备份控制文件，并在其下的 .list 文件中记录安装文件清单， 其下的 .mdasums 保存文件的 MD5 编码。
-dpkg -l       #查询dpkg数据库（显示所有已安装的Deb包） 如下图
+dpkg 用文本文件作为数据库来维护系统中软件，包括文件清单,依赖关系,软件状态 等等,在 /var/lib/dpkg/ 下
+status中存储软件状态和控制信息;info/下备份控制文件，其下.list中记录安装文件清单，.mdasums保存文件的MD5编码。
+dpkg -l       # 查询dpkg数据库（显示所有已安装的Deb包） 如下
+
 名称                     版本                          体系结构     描述
 +++-===================-=============================-============-===============>
 ii  accountsservice     0.6.55-0ubuntu12~20.04.5      amd64        query and manip>
-每条记录对应一个软件包，注意每条记录的第一、二、三个字符，这就是软件包的状态标识，后边依此是软件包名称、版本号和简单描述。
-第一字符为期望值(Desired=Unknown/Install/Remove/Purge/Hold)，它包括：
-u Unknown状态未知,这意味着软件包未安装,并且用户也未发出安装请求.
-i Install用户请求安装软件包.
-r Remove用户请求卸载软件包.
-p Purge用户请求清除软件包.
-h Hold用户请求保持软件包版本锁定.
-第二列,是软件包的当前状态(Status=Not/Inst/Conf-files/Unpacked/halF-conf/Half-inst/trig-aWait/Trig-pend)
-n Not软件包未安装.
-i Inst软件包安装并完成配置.
-c Conf-files软件包以前安装过,现在删除了,但是它的配置文件还留在系统中.
-u Unpacked软件包被解包,但还未配置.
-f halF-conf试图配置软件包,但是失败了.
-h Half-inst软件包安装,但是但是没有成功.
-w trig-aWait触发器等待
-t Trig-pend触发器未决
-3）第三列标识错误状态,第一种状态标识没有问题,为空. 其它符号则标识相应问题（Err?=(none)/Reinst-required (Status,Err: uppercase=bad)）
-h 软件包被强制保持,因为有其它软件包依赖需求,无法升级.
-r Reinst-required，软件包被破坏,可能需要重新安装才能正常使用(包括删除).
-x 软包件被破坏,并且被强制保持.
+
+每条记录对应一个软件包，每条第1 2 3个字符，是软件包的状态标识，后边依此是软件包名称、版本号和简单描述。
+第1个字符为期望值(Desired=Unknown/Install/Remove/Purge/Hold)
+  u # Unknown状态未知,这意味着软件包未安装,并且用户也未发出安装请求.
+  i # Install用户请求安装软件包.
+  r # Remove用户请求卸载软件包.
+  p # Purge用户请求清除软件包.
+  h # Hold用户请求保持软件包版本锁定.
+第2个字符是软件包的当前状态(Status=Not/Inst/Conf-files/Unpacked/halF-conf/Half-inst/trig-aWait/Trig-pend)
+  n # Not软件包未安装.
+  i # Inst软件包安装并完成配置.
+  c # Conf-files软件包以前安装过,现在删除了,但是它的配置文件还留在系统中.
+  u # Unpacked软件包被解包,但还未配置.
+  f # halF-conf试图配置软件包,但是失败了.
+  h # Half-inst软件包安装,但是但是没有成功.
+  w # trig-aWait触发器等待
+  t # Trig-pend触发器未决
+第3个字符是标识错误状态,状态标识没有问题则为空. (Err?=(none)/Reinst-required (Status,Err: uppercase=bad))
+  h # 软件包被强制保持,因为有其它软件包依赖需求,无法升级.
+  r # Reinst-required，软件包被破坏,可能需要重新安装才能正常使用(包括删除).
+  x # 软包件被破坏,并且被强制保持.
 案例说明：
-ii —— 表示系统正常安装了该软件
-pn —— 表示安装了该软件，后来又清除了
-un —— 表示从未安装过该软件
-iu —— 表示安装了该软件，但是未配置
-rc —— 该软件已被删除，但配置文件仍在
+  ii # 表示系统正常安装了该软件
+  pn # 表示安装了该软件，后来又清除了
+  un # 表示从未安装过该软件
+  iu # 表示安装了该软件，但是未配置
+  rc # 该软件已被删除，但配置文件仍在
+
+dpkg -l nano*
+Desired=Unknown/Install/Remove/Purge/Hold
+| Status=Not/Installed/Config-files/Unpacked/Failed-config/Half-installed
+|/ Err?=(none)/Hold/Reinst-required/X=both-problems (Status,Err: uppercase=bad)
+||/ Name           Version        Description
++++-==============-==============-============================================
+ii  nano           1.3.10-2       free Pico clone with some new features
+pn  nano-tiny               (no description available)
+un  nanoblogger             (no description available)
+系统中安装了 nano 版本为 1.3.10-2;安装过 nano-tiny, 后来又清除了; 从未安装过nanoblogger.
+
 
 5 dpkg子命令
 dpkg-deb、dpkg-divert、dpkg-query、dpkg-split、dpkg-statoverride、start-stop-daemon
 
+dpkg可用作dpkg-deb的前端，处理本地包. 可以提取从.deb文件中提取软件包信息和数据.以下是dpkg-deb操作方式
+  -b, --build    # dpkg-deb -b nano nano_1.3.10-2_ill.deb  重新打包
+  -c, --contents # dpkg-deb -c nano_1.3.10-2_i386.deb  |more  列出软件包的内容
+  -I, --info     # dpkg-deb -I nano_1.3.10-2_i386.deb  查看软件包的信息
+  -f, --field    # 重新构建软件包,如nano(1.3.10)要满足以下依赖关系:dpkg-deb -f nano_1.3.10-2_i386.deb depends  depends 为对应查询段
+  -e, --control  # dpkg-deb -e ./nano_1.3.10-2_i386.deb ./nano/DEBIAN  解压控制文件
+  -x, --extract  # dpkg-deb -x ./nano_1.3.10-2_i386.deb ./nano   解压程序文件
+  -X, --vextract, and --fsystarfile. # dpkg-deb -X ./nano_1.3.10-2_i386.deb ./nano   解压程序文件并列出软件包内容。
+
 6安装
 6.1 安装相关命令
-dpkg -i package-name.deb # --install # 安装软件包，必须是deb包的完整名称。软件的安装可被拆分为两个对立的过程“解包”和“配置”
-dpkg --unpack package-name.deb # “解包”：解开软件包到系统目录但不配置,如果和-R一起使用，参数可以是一个目录
-dpkg --configure package-name.deb # “配置”：配置软件包
-dpkg -c package-name.deb # 列出 deb 包的内容
+dpkg -i package-name.deb          # 同--install  安装软件包 可被拆分为 解包和配置 两个对立的过程
+dpkg --unpack package-name.deb    # 解包  解开软件包到系统目录但不配置,-R 参数可以是一个目录
+dpkg --configure package-name.deb # 配置软件包
+dpkg -c package-name.deb          # 列出包的内容
 6.2 安装相关选项
 -R, --recursive Recursively handle all regular files matching pattern *.deb found at specified directories and all of its
+  如果指定--recursive 或 -R 选项，必须指定一个目录代替包文件
   1 This can be used with -i, -A, --install, --unpack
-  2 --avail actions（递归地指向特定目录的所有安装包，可以结合-i, -A, --install, --unpack 与--avail一起使用）
+  2 --avail actions(递归地指向特定目录的所有安装包，可以结合-i, -A, --install, --unpack 与--avail一起使用)
+
+安装步骤 dpkg -i ./nano_1.3.10-2_i386.deb
+  1 导出新包的控制文件。
+  2 如果相同包的另一个版本在新包安装前已经被安装，执行旧包的prerm脚本程序。
+  3 如果由包提供，运行postinst脚本。
+  4 解压新文件同时备份旧文件，如果遇到问题以便修复。
+  5 如果另一个版本的同一个包在新包安装前已经安装，执行旧包的postrm脚本。
+    注意：执行postrm 脚本后执行新文件的preint脚本，因为写新文件的同时移除旧文件。
+  6 配置软件包。
+
+dpkg 安装软件包时,主要分为两个阶段:首先解包; 然后运行postinst控制脚本(如果有的话),这就是所谓的配置阶段.
+当完成软件包当解包后, dpkg 的--install选项自动调用配置阶段.
+
+dpkg --unpack nano_1.3.10-2_i386.deb  # 解包
+
+dpkg -l nano
+  iU  nano           1.3.10-2       free Pico clone with some new features
+说明此时系统中安装了nano 包, 但是未经配置.
+
+解包可能包括包以下步骤:
+  将控制文件解压到临时目录.
+  运行 preinst(如果有的话). 通常为停止相关服务.
+  解压配置文件到 /etc 目录, 并添加.dpkg-new 后缀, 以防止冲突.
+  解压 data.tar.gz 到系统根目录,(--root=dir).
+  将控制文件解压到 /var/lib/dpkg/info 目录并添加软件名前缀. 对数据库进行更新.
+  数据库中将软件包的状态设置为"unpacked".
+仅仅解包, 并不能确保软件可以正常运行.
+
+dpkg --configure nano      # 配置
+
+dpkg -l nano
+  ii  nano           1.3.10-2       free Pico clone with some new features
+如输出所示, nano 已经正常安装.
+
+软件解包后, 还需要对其进行调整, 比如根据实际情况对配置文件进行修改. 这一步通常是在安装过程中自动进行的,
+  当然可以手动调用, 这次用到的是软件名, 而不是deb文件名.
+通过命令“ dpkg -L nano "可以得以验证
+这一过程可能包括以下步骤:
+  询问对配置文件的处理方法, 覆盖当前版本, 还是不做处理.(当软件升级时会碰到这种情况)
+  运行 postinst 脚本
+  将软件包标记为 "installed"
+如果想再次修改配置选项, 可以运行:dpkg-reconfigure nano
+
 
 7 移除软件包
-dpkg -r package-name # --remove， 移除软件包，但保留其配置文件
-dpkg -P package-name # --purge， 清除软件包的所有文件（removes everything,including conffiles）
+dpkg -r package-name # 同--remove  移除软件包，但保留其配置文件
+dpkg -P package-name # 同--purge   清除软件包的所有文件(removes everything,including conffiles)
+
+dpkg -r nano
+  首先运行 prerm 脚本(如果有的话).
+  然后, 保留配置文件, 其他文件全部删除.
+  删除 /var/lib/dpkg/info 目录下软件包的所有配置文件, 保留postrm和list文件.
+  最后, dpkg 在数据库中将软件状态修改为删除.
+dpkg -l nano
+  rc  nano    1.3.10-2     free Pico clone with some new features
+
+-P or --purge 删除所有的包括配置文件。主要删除的是/var/lib/dpkg/status中指定文件。
+  给出的是-a或者--pending而不是包的名字，所有的包都被打开(解压缩)，但是在/var/bin/dpkg/status文件中标记被移除或清除的，
+  将会分别被移除或清除(但是在 /var/bin/dpkg/status文件中标记“要”移除)
+dpkg -P nano
+  删除所有的文件. 所有的文件都被解除了（从系统中删除了）.
+  运行postrm脚本.如果还存在,运行postrm脚本.
+  删除 postrm 和 list 文件.保留的两个文件,从系统中解除postfix.postrm和postfix.files.
+  在dpkg的数据库中将软件包标记为未安装
+dpkg -l nano
+  pn  nano                                          (no description available)
+pn 这意味着软件包实际上是被清除了,但是在数据库中还有这个软件包的记录.
+因此,pn 明确指出以前安装过 nano, 在软件包数据库中出现过,并且现在已被完全清除.
+
+
+dpkg-reconfigure
+重新配制一个已经安装的包裹,如果它使用的是 debconf (debconf 为包裹安装提供了一个统一的配制界面).
+你能够重新配制 debconf 它本身,如你想改变它的前端或提问的优先权.如重新配制 debconf ,使用一个 dialog 前端,简单运行:
+dpkg-reconfigure --frontend=dialog debconf (如果你安装时选错了,这里可以改回来哟
+echo " hold" | dpkg --set-selections
+设置  的状态为 hlod (命令行方式)
+dpkg --get-selections ""
+取的  的当前状态 (命令行方式)
+支持通配符,如:
+
+Debian:~# dpkg --get-selections *wine*
+libwine hold
+libwine-alsa hold
+libwine-arts hold
+libwine-dev hold
+libwine-nas hold
+libwine-print hold
+libwine-twain hold
+wine hold
+wine+ hold
+wine-doc hold
+wine-utils hold
+dpkg-source -x
+如果你手工下载了一个程序的源码包，其中包含了几个类似 .orig.tar.gz , .dsc ,
+以及 .diff.gz 之类的文件，
+那么你就可以对 .dsc 文件使用这个命令来 unpack 源码包。
+dpkg-buildpackage
+从 Debian 源码树建立一个deb包。你必须在source tree的主目录才能生效。例如：
+dpkg-buildpackage -rfakeroot -uc -b
+这里 '-rfakeroot' 指定命令使用 fakeroot 程序来模仿 root 权限 (来实现所有者(ownership)目的)，
+'-uc' 表示 "Don't cryptographically sign the changelog", '-b' 代表只建立二进制包.
+debuild
+一个快速打包脚本类似 dpkg-buildpackage ,能自动的识别是否使用 fakeroot,
+同时为你运行 lintian 和 gpg
+修正倚赖关系
+dpkg --configure --pending
+如果dpkg在apt-get install upgrade dist-uptradeing 的时候出错退出，
+尝试使用此命令来配置已经unpack的包。
+然后再用 apt-get install ，upgrade, or dist-upgrade -f ，
+然后再用 apt-get install, upgrade, or dist-upgrade.
+可能会重复多次，这样通常可以解决大多数的依赖性问题。
+(同时,如果提示由于某种原因需要某个特定的包裹,你可以常识安装或卸载这个包)
+apt-get install -f
+apt-get upgrade -f
+apt-get dist-upgrade -f
+尝试修正上述过程中出现依赖性关系
+注意 apt-get install -f 不需要  作为参数。
+
+
 
 8 查询
+dpkg --info package-name # 查看指定包的详细信息
 dpkg -l package-name-pattern # --list, 查看系统中软件包名符合pattern模式的软件包
 dpkg -L package-name # --listfiles, 查看package-name对应的软件包安装的文件及目录
 dpkg -p package-name # --print-avail, 显示包的具体信息
 dpkg -s package-name # --status, 查看package-name（已安装）对应的软件包信息
-dpkg -S filename-search-pattern # --search,
-从已经安装的软件包中查找包含filename的软件包名称 （Tip：也可使用子命令dpkg-query来进行查询操作）
+dpkg -S filename-search-pattern # --search,从已经安装的软件包中查找包含filename的软件包名称
 
-
-dpkg -l \*dpkg*   # 列出系统上安装的与dpkg相关的软件包
-dpkg -L dpkg      # 查看dpkg软件包安装到系统中的文件
+dpkg -l           # 查看系统中软件包状态, 支持模糊查询 同 dpkg-query -l
+  dpkg -l *nano*  # 列出系统上安装的与nano相关的软件包
+dpkg -L nano      # 查看nano安装到系统中的文件 即 查询系统中属于nano的文件
+  dpkg --listfiles nano 同上  dpkg-query -L nano 同上
+dpkg -s nano      # 查看软件nano的详细信息 同 dpkg-query -s nano
+dpkg -S nano      # 查看某个文件的归属包 同 dpkg-query -S nano
 dpkg --help       # 更多dpkg的使用方法  或man dpkg
+dpkg --info package-name | grep Depends # 查看包的依赖关系
+  dpkg -i package-name # 安装 当有依赖不满足时 也会列出来
+
 
 
 1 apt简介
-虽然我们在使用dpkg时，已经解决掉了 软件安装过程中的大量问题，但是当依赖关系不满足时，仍然需要手动解决，
-  而apt这个工具解决了这样的问题，linux distribution 先将软件放置到对应的服务器中，然后分析软件的依赖关系，
-  并且记录下来，然后当客户端有安装软件需求时，通过清单列表与本地的dpkg以存在的软件数据相比较，
-  就能从网络端获取所有需要的具有依赖属性的软件了。
+当依赖关系不满足时，dpkg需要手动解决；而apt解决了这个问题，
+  linux distribution 将软件放置到对应的服务器中，分析软件的依赖关系，并记录下来，
+  当客户端安装软件时，通过清单列表与本地dpkg已存在的软件数据相比，就能从网络端获取所需的具有依赖属性的软件。
 
 2 工作原理
-Ubuntu采用集中式的软件仓库机制，将各式各样的软件包分门别类地存放在软件仓库中，进行有效地组织和管理。
-  然后，将软件仓库置于许许多多的镜像服务器中，并保持基本一致。这样，所有的Ubuntu用户随时都能获得最新版本的安装软件包。
-  因此，对于用户，这些镜像服务器就是他们的软件源（Reposity）
-然而，由于每位用户所处的网络环境不同，不可能随意地访问各镜像站点。为了能够有选择地访问，
-  在Ubuntu系统中，使用软件源配置文件/etc/apt/sources.list列出最合适访问的镜像站点地址。
-即使这样，软件源配置文件只是告知Ubuntu系统可以访问的镜像站点地址，但那些镜像站点具体都拥有什么软件资源并不清楚。
-  若每安装一个软件包，就在服务器上寻找一遍，效率很低。因而，有必要为这些软件资源列个清单（建立索引文件），以便本地主机查询。
-apt-get update 命令刷新软件源，建立更新软件包列表。它会扫描每一个软件源服务器，并为该服务器所具有软件包资源建立索引文件，
-  存放在本地的/var/lib/apt/lists/目录中。 使用apt-get执行安装、更新操作时，都将依据这些索引文件，向软件源服务器申请资源。
-  因此，在计算机设备空闲时，经常使用“apt-get update”命令刷新软件源，是一个好的习惯。
+Ubuntu采用集中式的软件仓库机制，将软件包分门别类地存放在软件仓库中，进行有效地组织和管理。
+  并将软件仓库置于镜像服务器中，这样用户能随时获得最新版本的安装软件包。
+  对于用户，镜像服务器就是软件源(Reposity)，用/etc/apt/sources.list文件配置源。
+  为了效率，为这些软件资源列个清单(建索引文件)，以便本地主机查询。
+apt-get update 刷新软件源，更新软件包列表。扫描每一个源服务器，并为该服务器所具有软件包资源建立索引文件，
+  存放在本地的/var/lib/apt/lists/中。apt-get安装、更新时，都将依据这些索引文件，向软件源服务器申请资源。
 
 apt-get的更新过程
   1 执行apt-get update
-  2 程序分析/etc/apt/sources.list
-  3 自动连网寻找list中对应的Packages/Sources/Release列表文件，如果有更新则下载之，存入/var/lib/apt/lists/目录
-  4 然后 apt-get install 相应的包 ，下载并安装。
+  2 分析/etc/apt/sources.list
+  3 寻找list中对应的Packages/Sources/Release列表文件，有则更新之，存入/var/lib/apt/lists/
+  4 apt-get install 相应的包 ，下载并安装。
 
 apt-get install原理
-  1 扫描本地存放的软件跟新列表(apt-get update命令刷新列表 即/var/lib/apt/lists/)，找到最新版本的软件包
+  1 扫描本地存放的软件更新列表(/var/lib/apt/lists/)，找到最新版本的软件包
   2 进行软件包依赖关系检查，找到支持该软件正常运行的所有软件包
   3 从软件源所指的镜像站点下载相关的软件包
   4 解压软件包，并自动完成应用程序的安装和配置
 
 3 apt相关文件
-/var/lib/dpkg/available # 软件包的描述信息,当前系统所用Debian安装源中的所有软件包,包括当前系统中已安装和未安装的软件包
-/etc/apt/sources.list   # 软件源的地址  apt-get install xxx 时，就去这些站点下载软件包到本地并执行安装
-/var/cache/apt/archives # 已经下载到的软件包都放在这里  apt-get install 安装软件时，软件包的临时存放路径
-/var/lib/apt/lists/     # apt-get update命令会从/etc/apt/sources.list中下载软件列表，并保存到该目录
+/var/lib/dpkg/available # 包描述信息  当前系统所用源中的所有包,包括已安装和未安装的包
+/etc/apt/sources.list   # 源配置  apt-get install 时，去这些站点下载软件包到本地并安装
+/var/cache/apt/archives # 包存放目录  apt-get install 时，包的临时存放路径
+/var/lib/apt/lists/     # 源对应的包索引  apt-get update下载软件列表，并保存到该目录
 
 4 apt-get
-apt-get [选项] 命令   # 格式   下载安装软件包的简单命令行接口
-  -h                 # 本帮助文件。
-  -q                 # 静默安装 输出到日志 - 无进展指示
+apt-get [opt] cmd    # 格式
+  -h                 # 帮助
+  -q                 # 静默安装 输出到日志 无进展指示
   -qq                # 不输出信息，错误除外
-  -d                 # 仅下载 - 不安装或解压归档文件
+  -d                 # 仅下载 不安装或解压归档文件
   -s                 # 不实际安装。模拟执行命令
-  -y                 # 假定对所有的询问选是，不提示
+  -y                 # 对所有的询问选是，不提示
   -f                 # 尝试修复损坏的系统关系
   -m                 # 如果归档无法定位，尝试继续
   -u                 # 同时显示更新软件包的列表
@@ -784,10 +1044,11 @@ apt-get [选项] 命令   # 格式   下载安装软件包的简单命令行接�
 6）apt-get clean      # 移除/var/cache/apt/archives/ 和 /var/cache/apt/archives/partial/ 下.deb文件 除已经被锁定的文件
    apt-get autoclean  # 只会删除不会再下载且几乎无用的文件 删除已删除的软件包的.deb安装文件
 
-
 5 apt-cache
-apt-cache - query the APT cach.
-apt-cache performs a variety of operations on APT's package cache. apt-cache does not manipulate the state of the system but does provide operations to search and generate interesting output from the package metadata.
+apt-cache # query the APT cach.
+apt-cache performs a variety of operations on APT's package cache. apt-cache does not manipulate
+  the state of the system but does provide operations to search and generate interesting output
+  from the package metadata.
 1）apt-cache depends packagename   # 了解使用依赖
 2）apt-cache rdepends packagename  # 是查看该包被哪些包依赖
 3）apt-cache search packagename    # 搜索包 【aptitude search packagename】
@@ -799,20 +1060,21 @@ apt-cache performs a variety of operations on APT's package cache. apt-cache doe
 
 Ubuntu下安装和卸载软件的3种方式
 1、apt-get
-sudo apt-get update       # 更新索引
-sudo apt-get install xxx  # 安装  xxx指代待安装包名
-sudo apt-get purge xxx    # 卸载  xxx指代安装时的包名
-apt-get --purge remove    # 同上 删除已安装包（不保留配置文件)。如软件包a，依赖软件包b，则执行该命令会删除a，且不保留配置文件
-sudo apt-get autoremove（很有可能一些依赖包从此不再需要，自动删除） 删除为了满足依赖而安装的，但现在不再需要的软件包（包括已安装包），保留配置文件。
-apt-get remove  删除已安装的软件包（保留配置文件），不会删除依赖软件包，且保留配置文件。
-apt-get autoclean APT的底层包是dpkg, 而dpkg 安装Package时, 会将 *.deb 放在 /var/cache/apt/archives/中，apt-get autoclean 只会删除 /var/cache/apt/archives/ 已经过期的deb。
-apt-get clean  使用 apt-get clean 会将 /var/cache/apt/archives/ 的 所有 deb 删掉，可以理解为 rm /var/cache/apt/archives/*.deb。
+apt-get update       # 更新索引
+apt-get install xxx  # 安装  xxx指代待安装包名
+apt-get remove       # 删除已安装的软件包（保留配置文件），不会删除依赖软件包，且保留配置文件。
+apt-get purge xxx    # 卸载  xxx指代安装时的包名
+apt-get --purge remove  # 同上 删除已安装包（不保留配置文件)。如软件包a，依赖软件包b，则执行该命令会删除a，且不保留配置文件
+apt-get autoremove   # 删除为了满足依赖而安装的，但现在不再需要的软件包（包括已安装包），保留配置文件。
+apt-get clean        # 将 /var/cache/apt/archives/ 的 所有 deb 删掉，rm /var/cache/apt/archives/*.deb。
+apt-get autoclean    # 只会删除 /var/cache/apt/archives/ 已经过期的deb。
+  apt的底层包是dpkg, 而dpkg安装包时,会将 *.deb 放在 /var/cache/apt/archives/中
 2、dpkg
-sudo dpkg -i xxx.deb     # 安装   xxx.deb指代待安装Deb包名
-sudo apt-get -f install  # 很有可能一些依赖包并未安装，自动安装
-sudo dpkg-query -W "*chrome*" # 由于安装后得到的DPKG包名一般与安装时候的Deb包名不同，在卸载的时候首先要找到相应的DPKG包名，以chrome浏览器为例
-sudo dpkg -P google-chrome-stable（1步骤中找到的DPKG包名）
-sudo apt-get autoremove（很有可能一些依赖包从此不再需要，自动删除）
+dpkg -i xxx.deb      # 安装
+apt-get -f install   # 可能一些依赖包并未安装，自动安装
+dpkg-query -W "*chrome*"     # 安装后的dpkg包名与安装时的deb包名不同，卸载时先找到相应的dpkg包名
+dpkg -P google-chrome-stable # 上步中找到的dpkg包名
+apt-get autoremove           # 很有可能一些依赖包从此不再需要，自动删除
 3、从源码编译安装
 ./configure   # 安装3步曲
 make
@@ -842,7 +1104,7 @@ https://launchpad.net/ubuntu/+ppas  #launchpad平台
 
 sudo add-apt-repository ppa:wiznote-team  # 添加源  如在launchpad平台 搜索 知笔记(wiznote)
 sudo apt-get update                       # 更新源
-sudo apt-get update              # 安装
+sudo apt-get install xxx                  # 安装
 
 sudo add-apt-repository -r ppa:wiznote-team   # 删除源
 /etc/apt/sources.list.d/                  #进入这个文件夹删除对应的源文件
@@ -905,39 +1167,1077 @@ Alt+O           #停止广播到所有终端
 https://www.kernel.org/doc/html/next/admin-guide/mm/transhuge.html
 https://www.cnblogs.com/my-show-time/p/14237757.html
 在 Linux 中大页分为两种： Huge pages ( 标准大页 ) 和 Transparent Huge pages( 透明大页 ) 。
-内存是以块即页的方式进行管理的，当前大部分系统默认的页大小为 4096 bytes 即 4K。1MB 内存等于 256 页； 1GB 内存等于 256000 页。
-CPU 拥有内置的内存管理单元，包含这些页面的列表，每个页面通过页表条目引用。当内存越来越大的时候， CPU 需要管理这些内存页的成本也就越高，这样会对操作系统的性能产生影响。
+内存是以块即页的方式进行管理的，当前大部分系统默认的页大小为4K。1MB 内存等于 256 页；1GB 内存等于 256000 页。
+CPU 拥有内置的内存管理单元，包含这些页面的列表，每个页面通过页表条目引用。
+当内存越来越大的时候，CPU 需要管理这些内存页的成本也就越高，这样会对操作系统的性能产生影响。
 
 Huge Pages
-Huge pages 是从 Linux Kernel 2.6 后被引入的，目的是通过使用大页内存来取代传统的 4kb 内存页面， 以适应越来越大的系统内存，让操作系统可以支持现代硬件架构的大页面容量功能。
+Huge pages 是从 Linux Kernel 2.6 后被引入的，目的是通过使用大页内存来取代传统的 4kb 内存页面，
+以适应越来越大的系统内存，让操作系统可以支持现代硬件架构的大页面容量功能。
 
-Huge pages 有两种格式大小：2MB 和1GB ，2MB 页块大小适合用于 GB 大小的内存， 1GB 页块大小适合用于 TB 级别的内存； 2MB 是默认的页大小。
+Huge pages 有两种页块格式大小：2MB 和1GB ，2MB 适用于 GB 大小的内存， 1GB 适用于 TB 级别的内存；2MB 是默认的页大小。
 
 Transparent Huge Pages
 Transparent Huge Pages 缩写 THP ，这个是 RHEL 6 开始引入的一个功能，在 Linux6 上透明大页是默认启用的。
 
-由于 Huge pages 很难手动管理，而且通常需要对代码进行重大的更改才能有效的使用，因此 RHEL 6 开始引入了 Transparent Huge Pages ，THP 是一个抽象层，能够自动创建、管理和使用传统大页。
+由于 Huge pages 很难手动管理，而且通常需要对代码进行重大的更改才能有效的使用，
+因此 RHEL 6 开始引入了 Transparent Huge Pages ，THP 是一个抽象层，能够自动创建、管理和使用传统大页。
 
-THP 为系统管理员和开发人员减少了很多使用传统大页的复杂性 , 因为 THP 的目标是改进性能，因此其它开发人员 ( 来自社区和红帽 ) 已在各种系统、配置、应用程序和负载中对 THP 进行了测试和优化。这样可让 THP 的默认设置改进大多数系统配置性能。但是，不建议对数据库工作负载使用 THP 。
+THP 减少了使用传统大页的复杂性,THP 的默认设置改进大多数系统配置性能。但是，不建议对数据库工作负载使用 THP 。
 
 这两者最大的区别在于: 标准大页管理是预分配的方式，而透明大页管理则是动态分配的方式。
 
 
-grep Hugepagesize /proc/meminfo    #标准大页的页面大小
+grep Hugepagesize /proc/meminfo    # 标准大页的页面大小
 grep Huge /proc/meminfo
-AnonHugePages: 7956480 kB          #返回值不为０，表示开启了THP
-HugePages_Total: 0                 #意味着标准大页禁用了
+  AnonHugePages: 7956480 kB        # 不为0，表示开启了THP
+  HugePages_Total: 0               # 表示禁用标准大页
 
-cat /proc/sys/vm/nr_hugepages      #返回0也意味着传统大页禁用了（传统大页和透明大页）
+cat /proc/sys/vm/nr_hugepages      # 0 也意味着传统大页禁用了（传统大页和透明大页）
 
 cat /sys/kernel/mm/transparent_hugepage/enabled #[always] madvise never 检查当前的transparent_hugepage状态
 cat /sys/kernel/mm/transparent_hugepage/defrag  #[always] madvise never 这个应该是内存碎片整理
-never 关闭，不使用透明内存 alway 尽量使用透明内存，扫描内存，有512个 4k页面可以整合，就整合成一个2M的页面 madvise 避免改变内存占用
+never 关闭 不使用透明内存;alway 尽量使用透明内存，扫描内存，有512个4k页面可整合，整合成一个2M页面;madvise 避免改变内存占用
 
-echo never > /sys/kernel/mm/transparent_hugepage/enabled    #手动临时关闭
+echo never > /sys/kernel/mm/transparent_hugepage/enabled    # 手动临时关闭
 echo never > /sys/kernel/mm/transparent_hugepage/defrag
 
-/sys/kernel/mm/transparent_hugepage/khugepaged/    #使用情况监控
-  pages_to_scan (默认 4096 = 16MB)            #一个扫描周期被扫描的内存页数
-  scan_sleep_millisecs (默认 10000 = 10sec)   #多长时间扫描一次
-  alloc_sleep_millisecs (默认 60000 = 60sec)  #多长时间整理一次碎片
+/sys/kernel/mm/transparent_hugepage/khugepaged/    # 使用情况监控
+  pages_to_scan (默认 4096 = 16MB)            # 一个扫描周期被扫描的内存页数
+  scan_sleep_millisecs (默认 10000 = 10sec)   # 多长时间扫描一次
+  alloc_sleep_millisecs (默认 60000 = 60sec)  # 多长时间整理一次碎片
+
+
+
+
+
+
+perf(Performance Event)
+https://goodcommand.readthedocs.io/zh_CN/latest/command/perf.html
+https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/monitoring_and_managing_system_status_and_performance/profiling-memory-accesses-with-perf-mem_monitoring-and-managing-system-status-and-performance
+https://access.redhat.com/documentation/zh-cn/red_hat_enterprise_linux/8/html/monitoring_and_managing_system_status_and_performance/profiling-memory-accesses-with-perf-mem_monitoring-and-managing-system-status-and-performance#the-purpose-of-perf-mem_profiling-memory-accesses-with-perf-mem
+https://www.cnblogs.com/conscience-remain/p/16142279.html
+https://wiki.csie.ncku.edu.tw/embedded/perf-tutorial
+https://zhuanlan.zhihu.com/p/664546779 # 学会使用perf性能分析工具--这一篇就够了
+https://zhuanlan.zhihu.com/p/664396453 # 从小白到精通：揭秘perf工具的全部功能与操作技巧
+Linux kernel 2.6.31后自带系统性能优化工具，原理是对目标进行取样，记录特定条件下所侦测的事件是否发生以及发生的次数。
+通过它，程序利用PMU(Performance Monitor Unit)，tracepoint和内核中的特殊计数器来进行性能统计。
+它可分析应用程序的性能问题(per thread)，内核的性能问题，从而全面理解应用程序中的性能瓶颈。
+
+cat "/boot/config-`uname -r`" | grep "PERF_EVENT" # 查看目前的 Kernel config 有没启用 Perf
+cat /proc/sys/kernel/perf_event_paranoid  # root使用perf能取得哪些event data   perf record可查看
+  -1 权限全开
+  0  不允许 raw tracepoint access。但可以使用 perf stat、perf record 並取得 CPU events data。
+  1  不允许 CPU events data。但可以使用 perf stat、perf record 並取得 Kernel profiling data。
+  2  不允许任何量測。但部份用來查看或分析已存在的紀錄的指令仍可使用，如 perf ls、perf report、perf timechart、 perf trace。
+sudo sh -c " echo 0 > /proc/sys/kernel/kptr_restrict"  # 检测cache miss event，先取消kernel pointer的禁用
+
+gcc – o test1 – g test.c　　# 一定要加-g选项，加入调试和符号表信息。
+sudo perf stat ./a.out
+
+perf安装
+  1 https://blog.csdn.net/qq_44158431/article/details/125199825
+  基于Ubuntu 20.04 安装perf性能分析工具            # 安装指定版本
+  sudo apt install linux-tools-common
+  sudo apt install linux-tools-5.13.0-40-generic
+  sudo apt install linux-cloud-tools-5.13.0-40-generic
+
+  2 https://blog.csdn.net/z1026544682/article/details/115329534
+  Perf软件包默认在Ubuntu 20.04默认存储库中不可用。  # 根据系统版本自动选择版本 这个好用
+  apt-get install linux-tools-$(uname -r) linux-tools-generic -y # 安装命令
+
+  3 yum install perf    # 红帽 centos
+
+命令大部分需要root权限  如 sudo perf xxx
+perf -v                  # 查看安装的perf版本  =perf version
+perf --help              # 可用的所有选项      =perf -h
+perf list                # 列出所有的采样事件 event
+perf list sw             # 性能清单 显示软件预定义事件的列表
+perf list stat           # 性能清单 打印所有strace事件
+
+Perf top                 # 实时显示系统的性能统计信息。可查看最耗时的内核函数或某个用户进程 -a默认
+perf top -p $pid         # 指定进程
+perf top -e cpu-clock    # 显示与CPU时钟相关的事件，请使用-e选项
+perf top -e cache-misses -c 5000 # -c取样频率 默认4000
+
+perf stat                # 有要优化的目标，对目标进行特定或一些列的 event 检查
+perf stat -p pid         # 收集性能统计信息 指定进程,ctrl+c 杀死进程之后，就可以看到相应的数据了
+perf stat ls -ld /etc/   # 性能统计 获取ls -ld / etc命令的性能统计信息
+perf stat free -m        # 运行“ free -m”命令时系统中会发生什么
+perf stat --repeat 5 -e cache-misses,cache-references,instructions,cycles ./perf_stat_cache_miss #
+  --repeat n或-r n 重复执行 n 次该程序，并显示每个 event 的变化区间
+
+perf record/report       # 有別于 stat，record 可以针对函数级别进行 event 统计，方便对程序 热点 作更精細的分析和优化
+perf record df -h        # 性能记录 运行df -h命令，并使用以下命令将其概要文件记录到当前工作目录perf.data中
+perf record –e cpu-clock ./test1  # 查找时间上的热点函数
+perf record -e cpu-clock -g -p 2548 # 程序运行完(或Ctrl+c结束),生成perf.data文件，若之前已有，覆盖之前的
+  -g perf record额外记录函数的调用关系
+  -e cpu-clock 指perf record监控的指标为cpu周期  -p 指定需要record的进程pid
+  -F <frequcncy>调整取样频率  cat /proc/sys/kernel/perf_event_max_sample_rate 取样频率最大值
+perf record -e branch-misses:u,branch-instructions:u ./perf_record_example # :u只统计 user space 的 event
+
+perf report              # 性能报告 用于分析由perf记录生成的文件，并生成平面或图形轮廓
+perf report -i perf.data # -i 指定要查看的文件
+perf script -i perf.data &> perf.unfold  # 用perf script工具对perf.data进行解析
+
+perf bench mem all       # 性能基准 在系统上执行多个基准测试。如检查所有内存速度测试
+perf diff perf.data perf.data.old  # 进行两次record对比
+
+perf应用
+1 cpu分析  基于linux perf dump程序数据 并生成火焰图查看
+2 perf top函数性能分析  perf top -p `pidof server_name_xxx`
+3 函数调用链的性能占比  perf record -F 99 -p ${pid} --call-graph dwarf sleep ${采样时间}  在执行perf report
+  --call-graph dwarf 记录调用链和堆栈 包含-g  如--call-graph dwarf,4096 其中数字为用户堆栈可省 默认为8192B
+
+火焰图 Flame Graph
+https://www.cnblogs.com/happyliu/p/6142929.html
+https://github.com/brendangregg/FlameGraph     # GitHub
+https://github.com/brendangregg/FlameGraph.git # git仓库
+https://perf.wiki.kernel.org/index.php/Main_Page
+
+sudo perf record -e cpu-clock -g -p 28591          # 1 Ctrl+c结束执行后，在当前目录下会生成采样数据perf.data.
+sudo perf record -F 10000 -p pid -g -- sleep 30    # 1 sleep持续采样时间 -p 进程id 用的这个 -F 采样频率
+sudo perf script -i perf.data &> perf.unfold       # 2 用perf script工具对perf.data进行解析
+~/FlameGraph/stackcollapse-perf.pl perf.unfold &> perf.folded # 3 将perf.unfold中的符号进行折叠
+~/FlameGraph/flamegraph.pl perf.folded > perf.svg             # 4 最后生成svg图
+
+perf.sh -p pid  # 导出火焰图 下边为shell脚本
+exec() {
+    echo "$1"
+    sudo perf record -F 10000 -p "$1" -g -- sleep 30                # 采样30秒
+    sudo perf script > out.unfold                                   # 用perf script工具对perf.data进行解析
+    ~code/FlameGraph/stackcollapse-perf.pl out.unfold > out.folded  # .unfold中的符号进行折叠
+    ~code/FlameGraph/flamegraph.pl out.folded > out.svg             # 最后生成svg图
+}
+
+parse_arg() {
+    while [ $# -gt 0 ]; do
+        case "$1" in
+            -p|--pid)
+                shift 1
+                if [ -n "$1" ]; then
+                    exec "$1"
+                fi
+                shift 1
+                ;;
+
+            *)
+                shift 1
+                ;;
+
+        esac
+    done
+}
+
+parse_arg "$@"
+
+
+
+
+
+GPG(GnuPG GNU Privacy Guard)  加密和解密工具
+https://gnupg.org/
+https://linux.cn/article-14082-1.html
+https://www.ruanyifeng.com/blog/2013/07/gpg.html
+GPG密钥工作原理是使用私钥和公钥。私钥加密的只能用相应的公钥解密。用公钥加密的只能用相应的私钥解密。
+sudo apt install gnupg         # 安装      或 sudo apt install gpg
+gpg --full-generate-key      # 生成密钥  大多数问题使用默认值
+gpg --list-secret-keys       # 检查 GPG 密钥
+gpg --list-public-keys       # 分别看到私钥和公钥都是通过 ID 相互绑定的
+gpg --encrypt --output xxx.gpg --recipient user@example.com xxx  # 加密文件
+  —encrypt 加密  --output 指定输出文件  --recipient 指定一个相应的 GPG 密钥的电子邮件
+gpg --decrypt --output xxx xxx.gpg   # 解密
+gpg --list-public-keys        # 显示公钥
+gpg --output key.gpg --export id_xxx     # 导出一个公钥
+gpg --import key.gpg          # 导入公钥
+gpg --edit-key id             # 验证该密钥
+  gpg> fpr                    # 显示密钥的指纹
+  gpg> sign                   # 符合
+
+安装bazel
+https://bazel.build/install/ubuntu?hl=zh-cn#install-on-ubuntu
+1 将 Bazel 分发 URI 添加为软件包来源 注意：此步骤只需执行一次。
+sudo apt install apt-transport-https curl gnupg -y
+curl -fsSL https://bazel.build/bazel-release.pub.gpg | gpg --dearmor >bazel-archive-keyring.gpg
+sudo mv bazel-archive-keyring.gpg /usr/share/keyrings
+echo "deb [arch=amd64 signed-by=/usr/share/keyrings/bazel-archive-keyring.gpg] https://storage.googleapis.com/bazel-apt stable jdk1.8" | sudo tee /etc/apt/sources.list.d/bazel.list
+组件名称“jdk1.8”仅出于旧版原因保留，与受支持或包含的 JDK 版本无关。Bazel 版本与 Java 版本无关。更改“jdk1.8”组件名称将破坏代码库的现有用户。
+
+2 安装和更新 Bazel
+sudo apt update && sudo apt install bazel
+sudo apt install bazel-1.0.0              # 安装特定的旧版 Bazel  可选
+
+解决 E: Could not get lock /var/lib/apt/lists/lock
+参考：Unable to lock the administration directory (/var/lib/dpkg/) is another process using it?
+在更换软件源时遇到了如下问题：
+
+sudo apt-get update
+E: Could not get lock /var/lib/apt/lists/lock - open (11: Resource temporarily unavailable)
+E: Unable to lock directory /var/lib/apt/lists/
+表明当前有某个进程正在apt-get，然而我并没有使用任何命令，于是需要kill掉进程。
+
+解决方法是：
+sudo rm /var/lib/apt/lists/lock
+
+3 安装 JDK(可选)
+Bazel 包含一个捆绑的私有 JRE 作为其运行时，并且不需要您安装任何特定版本的 Java。
+但是，如果要使用 Bazel 构建 Java 代码，必须安装 JDK。
+sudo apt install default-jdk
+sudo apt install openjdk-8-jdk    # Ubuntu 16.04 (LTS) uses OpenJDK 8 by default
+sudo apt install openjdk-11-jdk   # Ubuntu 18.04 (LTS) uses OpenJDK 11 by default
+
+
+bazel参考
+https://blog.csdn.net/elaine_bao/article/details/78668657
+https://zhulao.gitee.io/blog/2019/04/05/%E7%BC%96%E8%AF%91%E6%9E%84%E5%BB%BA%E5%B7%A5%E5%85%B7-bazel/index.html
+
+bazel编译tcmalloc
+$ cd ~/code/tcmalloc
+$ git clone https://github.com/google/tcmalloc.git  ./
+$ bazel test //tcmalloc/...                             # 编译
+$ bazel build tcmalloc/testing:hello_main       # 验证 编译hello_main 运行
+$ bazel run tcmalloc/testing:hello_main
+
+
+lixiang@lixiang-ThinkCentre-M730e-N010:~$ sudo apt install apt-transport-https curl gnupg -y
+[sudo] lixiang 的密码：
+正在读取软件包列表... 完成
+正在分析软件包的依赖关系树
+正在读取状态信息... 完成
+curl 已经是最新版 (7.68.0-1ubuntu2.18)。
+gnupg 已经是最新版 (2.2.19-3ubuntu2.2)。
+下列【新】软件包将被安装：
+  apt-transport-https
+升级了 0 个软件包，新安装了 1 个软件包，要卸载 0 个软件包，有 141 个软件包未被升级。
+需要下载 1,704 B 的归档。
+解压缩后会消耗 162 kB 的额外空间。
+获取:1 http://cn.archive.ubuntu.com/ubuntu focal-updates/universe amd64 apt-transport-https all 2.0.9 [1,704 B]
+已下载 1,704 B，耗时 1秒 (1,851 B/s)
+正在选中未选择的软件包 apt-transport-https。
+(正在读取数据库 ... 系统当前共安装有 260018 个文件和目录。)
+准备解压 .../apt-transport-https_2.0.9_all.deb  ...
+正在解压 apt-transport-https (2.0.9) ...
+正在设置 apt-transport-https (2.0.9) ...
+
+lixiang@lixiang-ThinkCentre-M730e-N010:~$ curl -fsSL https://bazel.build/bazel-release.pub.gpg | gpg --dearmor >bazel-archive-keyring.gpg
+lixiang@lixiang-ThinkCentre-M730e-N010:~$ sudo mv bazel-archive-keyring.gpg /usr/share/keyrings
+lixiang@lixiang-ThinkCentre-M730e-N010:~$ echo "deb [arch=amd64 signed-by=/usr/share/keyrings/bazel-archive-keyring.gpg] https://storage.googleapis.com/bazel-apt stable jdk1.8" | sudo tee /etc/apt/sources.list.d/bazel.list
+deb [arch=amd64 signed-by=/usr/share/keyrings/bazel-archive-keyring.gpg] https://storage.googleapis.com/bazel-apt stable jdk1.8
+lixiang@lixiang-ThinkCentre-M730e-N010:~$ sudo apt update && sudo apt install bazel
+命中:1 https://dl.google.com/linux/chrome/deb stable InRelease
+获取:2 https://storage.googleapis.com/bazel-apt stable InRelease [2,259 B]
+命中:3 https://download.docker.com/linux/ubuntu focal InRelease
+获取:4 https://storage.googleapis.com/bazel-apt stable/jdk1.8 amd64 Packages [10.2 kB]
+获取:5 http://security.ubuntu.com/ubuntu focal-security InRelease [114 kB]
+命中:6 http://cn.archive.ubuntu.com/ubuntu focal InRelease
+命中:7 http://lenovo.archive.canonical.com focal InRelease
+获取:8 http://cn.archive.ubuntu.com/ubuntu focal-updates InRelease [114 kB]
+获取:12 http://security.ubuntu.com/ubuntu focal-security/main amd64 DEP-11 Metadata [59.8 kB]
+命中:9 https://apt.llvm.org/focal llvm-toolchain-focal InRelease
+获取:13 http://security.ubuntu.com/ubuntu focal-security/universe amd64 DEP-11 Metadata [95.7 kB]
+命中:10 https://apt.llvm.org/focal llvm-toolchain-focal-12 InRelease
+获取:14 http://security.ubuntu.com/ubuntu focal-security/multiverse amd64 DEP-11 Metadata [940 B]
+命中:11 https://apt.llvm.org/focal llvm-toolchain-focal-13 InRelease
+获取:15 http://cn.archive.ubuntu.com/ubuntu focal-backports InRelease [108 kB]
+获取:16 http://cn.archive.ubuntu.com/ubuntu focal-updates/main amd64 DEP-11 Metadata [275 kB]
+忽略:16 http://cn.archive.ubuntu.com/ubuntu focal-updates/main amd64 DEP-11 Metadata
+获取:17 http://cn.archive.ubuntu.com/ubuntu focal-updates/universe amd64 DEP-11 Metadata [409 kB]
+获取:17 http://cn.archive.ubuntu.com/ubuntu focal-updates/universe amd64 DEP-11 Metadata [409 kB]
+获取:17 http://cn.archive.ubuntu.com/ubuntu focal-updates/universe amd64 DEP-11 Metadata [409 kB]
+获取:17 http://cn.archive.ubuntu.com/ubuntu focal-updates/universe amd64 DEP-11 Metadata [409 kB]
+获取:17 http://cn.archive.ubuntu.com/ubuntu focal-updates/universe amd64 DEP-11 Metadata [409 kB]
+获取:17 http://cn.archive.ubuntu.com/ubuntu focal-updates/universe amd64 DEP-11 Metadata [409 kB]
+获取:17 http://cn.archive.ubuntu.com/ubuntu focal-updates/universe amd64 DEP-11 Metadata [409 kB]
+获取:17 http://cn.archive.ubuntu.com/ubuntu focal-updates/universe amd64 DEP-11 Metadata [409 kB]
+获取:18 http://cn.archive.ubuntu.com/ubuntu focal-updates/multiverse amd64 DEP-11 Metadata [940 B]
+获取:19 http://cn.archive.ubuntu.com/ubuntu focal-backports/main amd64 DEP-11 Metadata [7,980 B]
+获取:20 http://cn.archive.ubuntu.com/ubuntu focal-backports/universe amd64 DEP-11 Metadata [30.5 kB]
+获取:16 http://cn.archive.ubuntu.com/ubuntu focal-updates/main amd64 DEP-11 Metadata [275 kB]
+已下载 665 kB，耗时 5分 31秒 (2,007 B/s)
+正在读取软件包列表... 完成
+正在分析软件包的依赖关系树
+正在读取状态信息... 完成
+有 141 个软件包可以升级。请执行 ‘apt list --upgradable’ 来查看它们。
+正在读取软件包列表... 完成
+正在分析软件包的依赖关系树
+正在读取状态信息... 完成
+将会同时安装下列软件：
+  zlib1g-dev
+建议安装：
+  google-jdk | java8-sdk-headless | java8-jdk | java8-sdk | oracle-java8-installer
+下列【新】软件包将被安装：
+  bazel zlib1g-dev
+升级了 0 个软件包，新安装了 2 个软件包，要卸载 0 个软件包，有 141 个软件包未被升级。
+需要下载 50.9 MB 的归档。
+解压缩后会消耗 607 kB 的额外空间。
+您希望继续执行吗？ [Y/n] y
+获取:1 https://storage.googleapis.com/bazel-apt stable/jdk1.8 amd64 bazel amd64 6.2.0 [50.7 MB]
+获取:2 http://cn.archive.ubuntu.com/ubuntu focal-updates/main amd64 zlib1g-dev amd64 1:1.2.11.dfsg-2ubuntu1.5 [155 kB]
+已下载 50.9 MB，耗时 3分 39秒 (233 kB/s)
+正在选中未选择的软件包 zlib1g-dev:amd64。
+(正在读取数据库 ... 系统当前共安装有 260022 个文件和目录。)
+准备解压 .../zlib1g-dev_1%3a1.2.11.dfsg-2ubuntu1.5_amd64.deb  ...
+正在解压 zlib1g-dev:amd64 (1:1.2.11.dfsg-2ubuntu1.5) ...
+正在选中未选择的软件包 bazel。
+准备解压 .../archives/bazel_6.2.0_amd64.deb  ...
+正在解压 bazel (6.2.0) ...
+正在设置 zlib1g-dev:amd64 (1:1.2.11.dfsg-2ubuntu1.5) ...
+正在设置 bazel (6.2.0) ...
+正在处理用于 man-db (2.9.1-1) 的触发器 ...
+lixiang@lixiang-ThinkCentre-M730e-N010:~$
+lixiang@lixiang-ThinkCentre-M730e-N010:~$
+lixiang@lixiang-ThinkCentre-M730e-N010:~$ bazel
+bazel       bazel-real
+
+
+lixiang@lixiang-ThinkCentre-M730e-N010:~/code$ cd code/tcmalloc/
+lixiang@lixiang-ThinkCentre-M730e-N010:~/code/tcmalloc$ ls
+ci  CONTRIBUTING.md  docs  LICENSE  README.md  tcmalloc  WORKSPACE
+lixiang@lixiang-ThinkCentre-M730e-N010:~/code/tcmalloc$ bazel test //tcmalloc/...
+Extracting Bazel installation...
+Starting local Bazel server and connecting to it...
+DEBUG: /home/lixiang/.cache/bazel/_bazel_lixiang/7019b445a0b1ff55bfbc59e169b8ae99/external/rules_python/python/repositories.bzl:32:10: py_repositories is a no-op and is deprecated. You can remove this from your WORKSPACE file
+INFO: Analyzed 831 targets (81 packages loaded, 3339 targets configured).
+INFO: Found 132 targets and 699 test targets...
+FAIL: //tcmalloc/testing:releasing_test_small_but_slow (see /home/lixiang/.cache/bazel/_bazel_lixiang/7019b445a0b1ff55bfbc59e169b8ae99/execroot/com_google_tcmalloc/bazel-out/k8-fastbuild/testlogs/tcmalloc/testing/releasing_test_small_but_slow/test.log)
+INFO: Elapsed time: 686.688s, Critical Path: 75.96s
+INFO: 6043 processes: 2414 internal, 3629 linux-sandbox.
+INFO: Build completed, 1 test FAILED, 6043 total actions
+//tcmalloc:allocation_sample_test_256k_pages                             PASSED in 0.0s
+//tcmalloc:allocation_sample_test_256k_pages_pow2                        PASSED in 0.1s
+//tcmalloc:allocation_sample_test_256k_pages_pow2_sharded_transfer_cache PASSED in 0.1s
+//tcmalloc:allocation_sample_test_256k_pages_sharded_transfer_cache      PASSED in 0.0s
+//tcmalloc:allocation_sample_test_32k_pages                              PASSED in 0.1s
+//tcmalloc:allocation_sample_test_8k_pages                               PASSED in 0.0s
+//tcmalloc:allocation_sample_test_deprecated_perthread                   PASSED in 0.0s
+//tcmalloc:allocation_sample_test_flat_cpu_caches                        PASSED in 0.0s
+//tcmalloc:allocation_sample_test_hpaa                                   PASSED in 0.1s
+//tcmalloc:allocation_sample_test_legacy_size_classes                    PASSED in 0.3s
+//tcmalloc:allocation_sample_test_no_hpaa                                PASSED in 0.4s
+//tcmalloc:allocation_sample_test_numa_aware                             PASSED in 0.0s
+//tcmalloc:allocation_sample_test_real_cpu_caches                        PASSED in 0.0s
+//tcmalloc:allocation_sample_test_separate_allocs_for_few_and_many_objects_spans PASSED in 0.0s
+//tcmalloc:allocation_sample_test_small_but_slow                         PASSED in 0.1s
+//tcmalloc:allocation_sample_test_use_huge_region_more_often             PASSED in 0.0s
+//tcmalloc:arena_test_256k_pages                                         PASSED in 0.3s
+//tcmalloc:arena_test_256k_pages_pow2                                    PASSED in 0.0s
+//tcmalloc:arena_test_256k_pages_pow2_sharded_transfer_cache             PASSED in 0.0s
+//tcmalloc:arena_test_256k_pages_sharded_transfer_cache                  PASSED in 0.0s
+//tcmalloc:arena_test_32k_pages                                          PASSED in 0.0s
+//tcmalloc:arena_test_8k_pages                                           PASSED in 0.0s
+//tcmalloc:arena_test_deprecated_perthread                               PASSED in 0.0s
+//tcmalloc:arena_test_flat_cpu_caches                                    PASSED in 0.1s
+//tcmalloc:arena_test_hpaa                                               PASSED in 0.0s
+//tcmalloc:arena_test_legacy_size_classes                                PASSED in 0.0s
+//tcmalloc:arena_test_no_hpaa                                            PASSED in 0.0s
+//tcmalloc:arena_test_numa_aware                                         PASSED in 0.0s
+//tcmalloc:arena_test_real_cpu_caches                                    PASSED in 0.0s
+//tcmalloc:arena_test_separate_allocs_for_few_and_many_objects_spans     PASSED in 0.0s
+//tcmalloc:arena_test_small_but_slow                                     PASSED in 0.0s
+//tcmalloc:arena_test_use_huge_region_more_often                         PASSED in 0.0s
+//tcmalloc:central_freelist_fuzz                                         PASSED in 0.0s
+//tcmalloc:central_freelist_test                                         PASSED in 36.5s
+//tcmalloc:cpu_cache_activate_test                                       PASSED in 0.2s
+//tcmalloc:cpu_cache_test                                                PASSED in 19.8s
+//tcmalloc:experiment_config_test                                        PASSED in 0.1s
+//tcmalloc:experiment_fuzz                                               PASSED in 0.0s
+//tcmalloc:guarded_page_allocator_profile_test                           PASSED in 0.2s
+//tcmalloc:guarded_page_allocator_test                                   PASSED in 0.7s
+//tcmalloc:huge_address_map_test                                         PASSED in 0.0s
+//tcmalloc:huge_allocator_test                                           PASSED in 7.7s
+//tcmalloc:huge_cache_test                                               PASSED in 1.2s
+//tcmalloc:huge_page_aware_allocator_fuzz                                PASSED in 0.0s
+//tcmalloc:huge_page_aware_allocator_test                                PASSED in 8.7s
+//tcmalloc:huge_page_filler_fuzz                                         PASSED in 0.0s
+//tcmalloc:huge_region_test                                              PASSED in 2.0s
+//tcmalloc:lifetime_based_allocator_test                                 PASSED in 0.5s
+//tcmalloc:malloc_extension_fuzz                                         PASSED in 0.0s
+//tcmalloc:new_extension_test_256k_pages                                 PASSED in 0.8s
+//tcmalloc:new_extension_test_256k_pages_pow2                            PASSED in 1.0s
+//tcmalloc:new_extension_test_256k_pages_pow2_sharded_transfer_cache     PASSED in 1.2s
+//tcmalloc:new_extension_test_256k_pages_sharded_transfer_cache          PASSED in 0.8s
+//tcmalloc:new_extension_test_32k_pages                                  PASSED in 0.8s
+//tcmalloc:new_extension_test_8k_pages                                   PASSED in 0.9s
+//tcmalloc:new_extension_test_deprecated_perthread                       PASSED in 1.0s
+//tcmalloc:new_extension_test_flat_cpu_caches                            PASSED in 1.0s
+//tcmalloc:new_extension_test_hpaa                                       PASSED in 1.1s
+//tcmalloc:new_extension_test_legacy_size_classes                        PASSED in 0.8s
+//tcmalloc:new_extension_test_no_hpaa                                    PASSED in 0.8s
+//tcmalloc:new_extension_test_numa_aware                                 PASSED in 0.8s
+//tcmalloc:new_extension_test_real_cpu_caches                            PASSED in 1.0s
+//tcmalloc:new_extension_test_separate_allocs_for_few_and_many_objects_spans PASSED in 1.0s
+//tcmalloc:new_extension_test_small_but_slow                             PASSED in 1.4s
+//tcmalloc:new_extension_test_use_huge_region_more_often                 PASSED in 0.8s
+//tcmalloc:page_allocator_test                                           PASSED in 0.0s
+//tcmalloc:page_heap_test_256k_pages                                     PASSED in 0.0s
+//tcmalloc:page_heap_test_256k_pages_pow2                                PASSED in 0.0s
+//tcmalloc:page_heap_test_256k_pages_pow2_sharded_transfer_cache         PASSED in 0.2s
+//tcmalloc:page_heap_test_256k_pages_sharded_transfer_cache              PASSED in 0.0s
+//tcmalloc:page_heap_test_32k_pages                                      PASSED in 0.3s
+//tcmalloc:page_heap_test_8k_pages                                       PASSED in 0.1s
+//tcmalloc:page_heap_test_deprecated_perthread                           PASSED in 0.3s
+//tcmalloc:page_heap_test_flat_cpu_caches                                PASSED in 0.0s
+//tcmalloc:page_heap_test_hpaa                                           PASSED in 0.1s
+//tcmalloc:page_heap_test_legacy_size_classes                            PASSED in 0.2s
+//tcmalloc:page_heap_test_no_hpaa                                        PASSED in 0.0s
+//tcmalloc:page_heap_test_numa_aware                                     PASSED in 0.4s
+//tcmalloc:page_heap_test_real_cpu_caches                                PASSED in 0.0s
+//tcmalloc:page_heap_test_separate_allocs_for_few_and_many_objects_spans PASSED in 0.1s
+//tcmalloc:page_heap_test_small_but_slow                                 PASSED in 0.0s
+//tcmalloc:page_heap_test_use_huge_region_more_often                     PASSED in 0.1s
+//tcmalloc:pagemap_test_256k_pages                                       PASSED in 0.9s
+//tcmalloc:pagemap_test_256k_pages_pow2                                  PASSED in 1.1s
+//tcmalloc:pagemap_test_256k_pages_pow2_sharded_transfer_cache           PASSED in 1.1s
+//tcmalloc:pagemap_test_256k_pages_sharded_transfer_cache                PASSED in 1.5s
+//tcmalloc:pagemap_test_32k_pages                                        PASSED in 0.9s
+//tcmalloc:pagemap_test_8k_pages                                         PASSED in 1.7s
+//tcmalloc:pagemap_test_deprecated_perthread                             PASSED in 0.8s
+//tcmalloc:pagemap_test_flat_cpu_caches                                  PASSED in 2.2s
+//tcmalloc:pagemap_test_hpaa                                             PASSED in 1.4s
+//tcmalloc:pagemap_test_legacy_size_classes                              PASSED in 2.7s
+//tcmalloc:pagemap_test_no_hpaa                                          PASSED in 1.3s
+//tcmalloc:pagemap_test_numa_aware                                       PASSED in 4.0s
+//tcmalloc:pagemap_test_real_cpu_caches                                  PASSED in 1.8s
+//tcmalloc:pagemap_test_separate_allocs_for_few_and_many_objects_spans   PASSED in 2.7s
+//tcmalloc:pagemap_test_small_but_slow                                   PASSED in 1.7s
+//tcmalloc:pagemap_test_use_huge_region_more_often                       PASSED in 0.9s
+//tcmalloc:pages_test_256k_pages                                         PASSED in 0.4s
+//tcmalloc:pages_test_256k_pages_pow2                                    PASSED in 0.4s
+//tcmalloc:pages_test_256k_pages_pow2_sharded_transfer_cache             PASSED in 0.5s
+//tcmalloc:pages_test_256k_pages_sharded_transfer_cache                  PASSED in 0.5s
+//tcmalloc:pages_test_32k_pages                                          PASSED in 0.4s
+//tcmalloc:pages_test_8k_pages                                           PASSED in 0.4s
+//tcmalloc:pages_test_deprecated_perthread                               PASSED in 0.5s
+//tcmalloc:pages_test_flat_cpu_caches                                    PASSED in 0.3s
+//tcmalloc:pages_test_hpaa                                               PASSED in 0.4s
+//tcmalloc:pages_test_legacy_size_classes                                PASSED in 0.4s
+//tcmalloc:pages_test_no_hpaa                                            PASSED in 0.3s
+//tcmalloc:pages_test_numa_aware                                         PASSED in 0.3s
+//tcmalloc:pages_test_real_cpu_caches                                    PASSED in 0.4s
+//tcmalloc:pages_test_separate_allocs_for_few_and_many_objects_spans     PASSED in 0.5s
+//tcmalloc:pages_test_small_but_slow                                     PASSED in 0.4s
+//tcmalloc:pages_test_use_huge_region_more_often                         PASSED in 0.2s
+//tcmalloc:profile_marshaler_test                                        PASSED in 0.1s
+//tcmalloc:sampled_allocation_allocator_test_256k_pages                  PASSED in 0.1s
+//tcmalloc:sampled_allocation_allocator_test_256k_pages_pow2             PASSED in 0.0s
+//tcmalloc:sampled_allocation_allocator_test_256k_pages_pow2_sharded_transfer_cache PASSED in 0.0s
+//tcmalloc:sampled_allocation_allocator_test_256k_pages_sharded_transfer_cache PASSED in 0.3s
+//tcmalloc:sampled_allocation_allocator_test_32k_pages                   PASSED in 0.0s
+//tcmalloc:sampled_allocation_allocator_test_8k_pages                    PASSED in 0.0s
+//tcmalloc:sampled_allocation_allocator_test_deprecated_perthread        PASSED in 0.1s
+//tcmalloc:sampled_allocation_allocator_test_flat_cpu_caches             PASSED in 0.0s
+//tcmalloc:sampled_allocation_allocator_test_hpaa                        PASSED in 0.0s
+//tcmalloc:sampled_allocation_allocator_test_legacy_size_classes         PASSED in 0.0s
+//tcmalloc:sampled_allocation_allocator_test_no_hpaa                     PASSED in 0.0s
+//tcmalloc:sampled_allocation_allocator_test_numa_aware                  PASSED in 0.0s
+//tcmalloc:sampled_allocation_allocator_test_real_cpu_caches             PASSED in 0.1s
+//tcmalloc:sampled_allocation_allocator_test_separate_allocs_for_few_and_many_objects_spans PASSED in 0.2s
+//tcmalloc:sampled_allocation_allocator_test_small_but_slow              PASSED in 0.3s
+//tcmalloc:sampled_allocation_allocator_test_use_huge_region_more_often  PASSED in 0.0s
+//tcmalloc:size_classes_test_256k_pages                                  PASSED in 0.3s
+//tcmalloc:size_classes_test_256k_pages_pow2                             PASSED in 0.3s
+//tcmalloc:size_classes_test_256k_pages_pow2_sharded_transfer_cache      PASSED in 0.6s
+//tcmalloc:size_classes_test_256k_pages_sharded_transfer_cache           PASSED in 0.7s
+//tcmalloc:size_classes_test_32k_pages                                   PASSED in 0.3s
+//tcmalloc:size_classes_test_8k_pages                                    PASSED in 0.4s
+//tcmalloc:size_classes_test_deprecated_perthread                        PASSED in 0.7s
+//tcmalloc:size_classes_test_flat_cpu_caches                             PASSED in 0.3s
+//tcmalloc:size_classes_test_hpaa                                        PASSED in 0.4s
+//tcmalloc:size_classes_test_legacy_size_classes                         PASSED in 0.3s
+//tcmalloc:size_classes_test_no_hpaa                                     PASSED in 0.3s
+//tcmalloc:size_classes_test_numa_aware                                  PASSED in 0.6s
+//tcmalloc:size_classes_test_real_cpu_caches                             PASSED in 0.3s
+//tcmalloc:size_classes_test_separate_allocs_for_few_and_many_objects_spans PASSED in 0.4s
+//tcmalloc:size_classes_test_small_but_slow                              PASSED in 0.1s
+//tcmalloc:size_classes_test_use_huge_region_more_often                  PASSED in 0.3s
+//tcmalloc:sizemap_fuzz                                                  PASSED in 0.1s
+//tcmalloc:span_fuzz                                                     PASSED in 0.0s
+//tcmalloc:span_test_256k_pages                                          PASSED in 3.9s
+//tcmalloc:span_test_256k_pages_pow2                                     PASSED in 0.8s
+//tcmalloc:span_test_256k_pages_pow2_sharded_transfer_cache              PASSED in 0.8s
+//tcmalloc:span_test_256k_pages_sharded_transfer_cache                   PASSED in 4.1s
+//tcmalloc:span_test_32k_pages                                           PASSED in 2.1s
+//tcmalloc:span_test_8k_pages                                            PASSED in 1.9s
+//tcmalloc:span_test_deprecated_perthread                                PASSED in 2.8s
+//tcmalloc:span_test_flat_cpu_caches                                     PASSED in 3.3s
+//tcmalloc:span_test_hpaa                                                PASSED in 2.0s
+//tcmalloc:span_test_legacy_size_classes                                 PASSED in 2.3s
+//tcmalloc:span_test_no_hpaa                                             PASSED in 2.2s
+//tcmalloc:span_test_numa_aware                                          PASSED in 3.9s
+//tcmalloc:span_test_real_cpu_caches                                     PASSED in 2.2s
+//tcmalloc:span_test_separate_allocs_for_few_and_many_objects_spans      PASSED in 2.9s
+//tcmalloc:span_test_small_but_slow                                      PASSED in 0.7s
+//tcmalloc:span_test_use_huge_region_more_often                          PASSED in 2.1s
+//tcmalloc:stack_trace_table_test_256k_pages                             PASSED in 0.0s
+//tcmalloc:stack_trace_table_test_256k_pages_pow2                        PASSED in 0.0s
+//tcmalloc:stack_trace_table_test_256k_pages_pow2_sharded_transfer_cache PASSED in 0.0s
+//tcmalloc:stack_trace_table_test_256k_pages_sharded_transfer_cache      PASSED in 0.2s
+//tcmalloc:stack_trace_table_test_32k_pages                              PASSED in 0.3s
+//tcmalloc:stack_trace_table_test_8k_pages                               PASSED in 0.3s
+//tcmalloc:stack_trace_table_test_deprecated_perthread                   PASSED in 0.1s
+//tcmalloc:stack_trace_table_test_flat_cpu_caches                        PASSED in 0.0s
+//tcmalloc:stack_trace_table_test_hpaa                                   PASSED in 0.0s
+//tcmalloc:stack_trace_table_test_legacy_size_classes                    PASSED in 0.1s
+//tcmalloc:stack_trace_table_test_no_hpaa                                PASSED in 0.0s
+//tcmalloc:stack_trace_table_test_numa_aware                             PASSED in 0.1s
+//tcmalloc:stack_trace_table_test_real_cpu_caches                        PASSED in 0.0s
+//tcmalloc:stack_trace_table_test_separate_allocs_for_few_and_many_objects_spans PASSED in 0.1s
+//tcmalloc:stack_trace_table_test_small_but_slow                         PASSED in 0.0s
+//tcmalloc:stack_trace_table_test_use_huge_region_more_often             PASSED in 0.3s
+//tcmalloc:stats_test                                                    PASSED in 0.6s
+//tcmalloc:thread_cache_test                                             PASSED in 0.2s
+//tcmalloc:transfer_cache_fuzz                                           PASSED in 0.0s
+//tcmalloc:want_legacy_size_classes_test                                 PASSED in 0.5s
+//tcmalloc/internal:affinity_test                                        PASSED in 0.4s
+//tcmalloc/internal:cache_topology_test                                  PASSED in 0.0s
+//tcmalloc/internal:config_test                                          PASSED in 0.0s
+//tcmalloc/internal:environment_test                                     PASSED in 0.0s
+//tcmalloc/internal:lifetime_predictions_test                            PASSED in 3.3s
+//tcmalloc/internal:lifetime_tracker_test                                PASSED in 0.0s
+//tcmalloc/internal:linked_list_test                                     PASSED in 0.0s
+//tcmalloc/internal:logging_test                                         PASSED in 0.4s
+//tcmalloc/internal:memory_stats_test                                    PASSED in 0.0s
+//tcmalloc/internal:mincore_test                                         PASSED in 4.6s
+//tcmalloc/internal:numa_fuzz                                            PASSED in 0.1s
+//tcmalloc/internal:numa_test                                            PASSED in 0.1s
+//tcmalloc/internal:percpu_tcmalloc_test                                 PASSED in 10.4s
+//tcmalloc/internal:prefetch_test                                        PASSED in 0.0s
+//tcmalloc/internal:profile_builder_fuzz                                 PASSED in 0.3s
+//tcmalloc/internal:profile_builder_test                                 PASSED in 0.4s
+//tcmalloc/internal:range_tracker_test                                   PASSED in 0.2s
+//tcmalloc/internal:residency_test                                       PASSED in 0.0s
+//tcmalloc/internal:sampled_allocation_recorder_test                     PASSED in 3.4s
+//tcmalloc/internal:sampled_allocation_test                              PASSED in 0.4s
+//tcmalloc/internal:stacktrace_filter_test                               PASSED in 30.7s
+//tcmalloc/internal:timeseries_tracker_test                              PASSED in 0.1s
+//tcmalloc/testing:aligned_new_test_256k_pages                           PASSED in 31.8s
+//tcmalloc/testing:aligned_new_test_256k_pages_pow2                      PASSED in 45.7s
+//tcmalloc/testing:aligned_new_test_256k_pages_pow2_sharded_transfer_cache PASSED in 39.1s
+//tcmalloc/testing:aligned_new_test_256k_pages_sharded_transfer_cache    PASSED in 30.9s
+//tcmalloc/testing:aligned_new_test_32k_pages                            PASSED in 47.6s
+//tcmalloc/testing:aligned_new_test_8k_pages                             PASSED in 30.5s
+//tcmalloc/testing:aligned_new_test_deprecated_perthread                 PASSED in 28.2s
+//tcmalloc/testing:aligned_new_test_flat_cpu_caches                      PASSED in 31.1s
+//tcmalloc/testing:aligned_new_test_hpaa                                 PASSED in 40.9s
+//tcmalloc/testing:aligned_new_test_legacy_size_classes                  PASSED in 31.0s
+//tcmalloc/testing:aligned_new_test_no_hpaa                              PASSED in 27.8s
+//tcmalloc/testing:aligned_new_test_numa_aware                           PASSED in 29.3s
+//tcmalloc/testing:aligned_new_test_real_cpu_caches                      PASSED in 33.7s
+//tcmalloc/testing:aligned_new_test_separate_allocs_for_few_and_many_objects_spans PASSED in 38.6s
+//tcmalloc/testing:aligned_new_test_small_but_slow                       PASSED in 27.8s
+//tcmalloc/testing:aligned_new_test_use_huge_region_more_often           PASSED in 35.9s
+//tcmalloc/testing:current_allocated_bytes_test_256k_pages               PASSED in 0.2s
+//tcmalloc/testing:current_allocated_bytes_test_256k_pages_pow2          PASSED in 0.1s
+//tcmalloc/testing:current_allocated_bytes_test_256k_pages_pow2_sharded_transfer_cache PASSED in 0.5s
+//tcmalloc/testing:current_allocated_bytes_test_256k_pages_sharded_transfer_cache PASSED in 0.2s
+//tcmalloc/testing:current_allocated_bytes_test_32k_pages                PASSED in 0.2s
+//tcmalloc/testing:current_allocated_bytes_test_8k_pages                 PASSED in 0.3s
+//tcmalloc/testing:current_allocated_bytes_test_deprecated_perthread     PASSED in 0.2s
+//tcmalloc/testing:current_allocated_bytes_test_flat_cpu_caches          PASSED in 0.2s
+//tcmalloc/testing:current_allocated_bytes_test_hpaa                     PASSED in 0.2s
+//tcmalloc/testing:current_allocated_bytes_test_legacy_size_classes      PASSED in 0.5s
+//tcmalloc/testing:current_allocated_bytes_test_no_hpaa                  PASSED in 0.6s
+//tcmalloc/testing:current_allocated_bytes_test_numa_aware               PASSED in 0.6s
+//tcmalloc/testing:current_allocated_bytes_test_real_cpu_caches          PASSED in 0.1s
+//tcmalloc/testing:current_allocated_bytes_test_separate_allocs_for_few_and_many_objects_spans PASSED in 0.2s
+//tcmalloc/testing:current_allocated_bytes_test_small_but_slow           PASSED in 0.3s
+//tcmalloc/testing:current_allocated_bytes_test_use_huge_region_more_often PASSED in 0.6s
+//tcmalloc/testing:deallocation_profiler_test_256k_pages                 PASSED in 34.5s
+//tcmalloc/testing:deallocation_profiler_test_256k_pages_pow2            PASSED in 32.0s
+//tcmalloc/testing:deallocation_profiler_test_256k_pages_pow2_sharded_transfer_cache PASSED in 26.8s
+//tcmalloc/testing:deallocation_profiler_test_256k_pages_sharded_transfer_cache PASSED in 31.4s
+//tcmalloc/testing:deallocation_profiler_test_32k_pages                  PASSED in 30.6s
+//tcmalloc/testing:deallocation_profiler_test_8k_pages                   PASSED in 52.7s
+//tcmalloc/testing:deallocation_profiler_test_deprecated_perthread       PASSED in 30.1s
+//tcmalloc/testing:deallocation_profiler_test_flat_cpu_caches            PASSED in 45.0s
+//tcmalloc/testing:deallocation_profiler_test_hpaa                       PASSED in 35.6s
+//tcmalloc/testing:deallocation_profiler_test_legacy_size_classes        PASSED in 35.7s
+//tcmalloc/testing:deallocation_profiler_test_no_hpaa                    PASSED in 27.0s
+//tcmalloc/testing:deallocation_profiler_test_numa_aware                 PASSED in 37.4s
+//tcmalloc/testing:deallocation_profiler_test_real_cpu_caches            PASSED in 34.4s
+//tcmalloc/testing:deallocation_profiler_test_separate_allocs_for_few_and_many_objects_spans PASSED in 55.7s
+//tcmalloc/testing:deallocation_profiler_test_small_but_slow             PASSED in 52.9s
+//tcmalloc/testing:deallocation_profiler_test_use_huge_region_more_often PASSED in 36.1s
+//tcmalloc/testing:default_parameters_test_256k_pages                    PASSED in 0.0s
+//tcmalloc/testing:default_parameters_test_256k_pages_pow2               PASSED in 0.0s
+//tcmalloc/testing:default_parameters_test_256k_pages_pow2_sharded_transfer_cache PASSED in 0.0s
+//tcmalloc/testing:default_parameters_test_256k_pages_sharded_transfer_cache PASSED in 0.0s
+//tcmalloc/testing:default_parameters_test_32k_pages                     PASSED in 0.0s
+//tcmalloc/testing:default_parameters_test_8k_pages                      PASSED in 0.0s
+//tcmalloc/testing:default_parameters_test_deprecated_perthread          PASSED in 0.0s
+//tcmalloc/testing:default_parameters_test_flat_cpu_caches               PASSED in 0.0s
+//tcmalloc/testing:default_parameters_test_hpaa                          PASSED in 0.0s
+//tcmalloc/testing:default_parameters_test_legacy_size_classes           PASSED in 0.0s
+//tcmalloc/testing:default_parameters_test_no_hpaa                       PASSED in 0.3s
+//tcmalloc/testing:default_parameters_test_numa_aware                    PASSED in 0.2s
+//tcmalloc/testing:default_parameters_test_real_cpu_caches               PASSED in 0.0s
+//tcmalloc/testing:default_parameters_test_separate_allocs_for_few_and_many_objects_spans PASSED in 0.0s
+//tcmalloc/testing:default_parameters_test_small_but_slow                PASSED in 0.0s
+//tcmalloc/testing:default_parameters_test_use_huge_region_more_often    PASSED in 0.0s
+//tcmalloc/testing:frag_test_256k_pages                                  PASSED in 0.0s
+//tcmalloc/testing:frag_test_256k_pages_pow2                             PASSED in 0.3s
+//tcmalloc/testing:frag_test_256k_pages_pow2_sharded_transfer_cache      PASSED in 0.0s
+//tcmalloc/testing:frag_test_256k_pages_sharded_transfer_cache           PASSED in 0.0s
+//tcmalloc/testing:frag_test_32k_pages                                   PASSED in 0.1s
+//tcmalloc/testing:frag_test_8k_pages                                    PASSED in 0.0s
+//tcmalloc/testing:frag_test_deprecated_perthread                        PASSED in 0.0s
+//tcmalloc/testing:frag_test_flat_cpu_caches                             PASSED in 0.0s
+//tcmalloc/testing:frag_test_hpaa                                        PASSED in 0.0s
+//tcmalloc/testing:frag_test_legacy_size_classes                         PASSED in 0.0s
+//tcmalloc/testing:frag_test_no_hpaa                                     PASSED in 0.0s
+//tcmalloc/testing:frag_test_numa_aware                                  PASSED in 0.0s
+//tcmalloc/testing:frag_test_real_cpu_caches                             PASSED in 0.1s
+//tcmalloc/testing:frag_test_separate_allocs_for_few_and_many_objects_spans PASSED in 0.0s
+//tcmalloc/testing:frag_test_small_but_slow                              PASSED in 0.2s
+//tcmalloc/testing:frag_test_use_huge_region_more_often                  PASSED in 0.0s
+//tcmalloc/testing:get_stats_test_256k_pages                             PASSED in 0.2s
+//tcmalloc/testing:get_stats_test_256k_pages_pow2                        PASSED in 0.1s
+//tcmalloc/testing:get_stats_test_256k_pages_pow2_sharded_transfer_cache PASSED in 0.1s
+//tcmalloc/testing:get_stats_test_256k_pages_sharded_transfer_cache      PASSED in 0.1s
+//tcmalloc/testing:get_stats_test_32k_pages                              PASSED in 0.1s
+//tcmalloc/testing:get_stats_test_8k_pages                               PASSED in 0.1s
+//tcmalloc/testing:get_stats_test_deprecated_perthread                   PASSED in 0.1s
+//tcmalloc/testing:get_stats_test_flat_cpu_caches                        PASSED in 0.3s
+//tcmalloc/testing:get_stats_test_hpaa                                   PASSED in 0.1s
+//tcmalloc/testing:get_stats_test_legacy_size_classes                    PASSED in 0.3s
+//tcmalloc/testing:get_stats_test_no_hpaa                                PASSED in 0.2s
+//tcmalloc/testing:get_stats_test_numa_aware                             PASSED in 0.2s
+//tcmalloc/testing:get_stats_test_real_cpu_caches                        PASSED in 0.4s
+//tcmalloc/testing:get_stats_test_separate_allocs_for_few_and_many_objects_spans PASSED in 0.2s
+//tcmalloc/testing:get_stats_test_small_but_slow                         PASSED in 0.5s
+//tcmalloc/testing:get_stats_test_use_huge_region_more_often             PASSED in 0.1s
+//tcmalloc/testing:heap_profiling_test_256k_pages                        PASSED in 5.6s
+//tcmalloc/testing:heap_profiling_test_256k_pages_pow2                   PASSED in 6.0s
+//tcmalloc/testing:heap_profiling_test_256k_pages_pow2_sharded_transfer_cache PASSED in 5.4s
+//tcmalloc/testing:heap_profiling_test_256k_pages_sharded_transfer_cache PASSED in 5.6s
+//tcmalloc/testing:heap_profiling_test_32k_pages                         PASSED in 6.0s
+//tcmalloc/testing:heap_profiling_test_8k_pages                          PASSED in 5.4s
+//tcmalloc/testing:heap_profiling_test_deprecated_perthread              PASSED in 5.6s
+//tcmalloc/testing:heap_profiling_test_flat_cpu_caches                   PASSED in 6.1s
+//tcmalloc/testing:heap_profiling_test_hpaa                              PASSED in 5.5s
+//tcmalloc/testing:heap_profiling_test_legacy_size_classes               PASSED in 6.2s
+//tcmalloc/testing:heap_profiling_test_no_hpaa                           PASSED in 5.8s
+//tcmalloc/testing:heap_profiling_test_numa_aware                        PASSED in 5.7s
+//tcmalloc/testing:heap_profiling_test_real_cpu_caches                   PASSED in 6.0s
+//tcmalloc/testing:heap_profiling_test_separate_allocs_for_few_and_many_objects_spans PASSED in 6.1s
+//tcmalloc/testing:heap_profiling_test_small_but_slow                    PASSED in 6.2s
+//tcmalloc/testing:heap_profiling_test_use_huge_region_more_often        PASSED in 5.6s
+//tcmalloc/testing:large_alloc_size_test_256k_pages                      PASSED in 0.0s
+//tcmalloc/testing:large_alloc_size_test_256k_pages_pow2                 PASSED in 0.0s
+//tcmalloc/testing:large_alloc_size_test_256k_pages_pow2_sharded_transfer_cache PASSED in 0.0s
+//tcmalloc/testing:large_alloc_size_test_256k_pages_sharded_transfer_cache PASSED in 0.3s
+//tcmalloc/testing:large_alloc_size_test_32k_pages                       PASSED in 0.0s
+//tcmalloc/testing:large_alloc_size_test_8k_pages                        PASSED in 0.0s
+//tcmalloc/testing:large_alloc_size_test_deprecated_perthread            PASSED in 0.0s
+//tcmalloc/testing:large_alloc_size_test_flat_cpu_caches                 PASSED in 0.2s
+//tcmalloc/testing:large_alloc_size_test_hpaa                            PASSED in 0.0s
+//tcmalloc/testing:large_alloc_size_test_legacy_size_classes             PASSED in 0.0s
+//tcmalloc/testing:large_alloc_size_test_no_hpaa                         PASSED in 0.0s
+//tcmalloc/testing:large_alloc_size_test_numa_aware                      PASSED in 0.0s
+//tcmalloc/testing:large_alloc_size_test_real_cpu_caches                 PASSED in 0.0s
+//tcmalloc/testing:large_alloc_size_test_separate_allocs_for_few_and_many_objects_spans PASSED in 0.3s
+//tcmalloc/testing:large_alloc_size_test_small_but_slow                  PASSED in 0.0s
+//tcmalloc/testing:large_alloc_size_test_use_huge_region_more_often      PASSED in 0.0s
+//tcmalloc/testing:largesmall_frag_test_256k_pages                       PASSED in 2.5s
+//tcmalloc/testing:largesmall_frag_test_256k_pages_pow2                  PASSED in 2.3s
+//tcmalloc/testing:largesmall_frag_test_256k_pages_pow2_sharded_transfer_cache PASSED in 2.3s
+//tcmalloc/testing:largesmall_frag_test_256k_pages_sharded_transfer_cache PASSED in 2.5s
+//tcmalloc/testing:largesmall_frag_test_32k_pages                        PASSED in 7.1s
+//tcmalloc/testing:largesmall_frag_test_8k_pages                         PASSED in 14.5s
+//tcmalloc/testing:largesmall_frag_test_deprecated_perthread             PASSED in 4.4s
+//tcmalloc/testing:largesmall_frag_test_flat_cpu_caches                  PASSED in 4.0s
+//tcmalloc/testing:largesmall_frag_test_hpaa                             PASSED in 19.9s
+//tcmalloc/testing:largesmall_frag_test_legacy_size_classes              PASSED in 5.8s
+//tcmalloc/testing:largesmall_frag_test_no_hpaa                          PASSED in 5.2s
+//tcmalloc/testing:largesmall_frag_test_numa_aware                       PASSED in 6.0s
+//tcmalloc/testing:largesmall_frag_test_real_cpu_caches                  PASSED in 9.7s
+//tcmalloc/testing:largesmall_frag_test_separate_allocs_for_few_and_many_objects_spans PASSED in 4.3s
+//tcmalloc/testing:largesmall_frag_test_small_but_slow                   PASSED in 3.8s
+//tcmalloc/testing:largesmall_frag_test_use_huge_region_more_often       PASSED in 6.3s
+//tcmalloc/testing:lifetimes_test_256k_pages                             PASSED in 64.7s
+//tcmalloc/testing:lifetimes_test_256k_pages_pow2                        PASSED in 69.5s
+//tcmalloc/testing:lifetimes_test_256k_pages_pow2_sharded_transfer_cache PASSED in 69.1s
+//tcmalloc/testing:lifetimes_test_256k_pages_sharded_transfer_cache      PASSED in 61.7s
+//tcmalloc/testing:lifetimes_test_32k_pages                              PASSED in 54.5s
+//tcmalloc/testing:lifetimes_test_8k_pages                               PASSED in 64.8s
+//tcmalloc/testing:lifetimes_test_deprecated_perthread                   PASSED in 55.7s
+//tcmalloc/testing:lifetimes_test_flat_cpu_caches                        PASSED in 56.9s
+//tcmalloc/testing:lifetimes_test_hpaa                                   PASSED in 55.9s
+//tcmalloc/testing:lifetimes_test_legacy_size_classes                    PASSED in 69.7s
+//tcmalloc/testing:lifetimes_test_no_hpaa                                PASSED in 63.7s
+//tcmalloc/testing:lifetimes_test_numa_aware                             PASSED in 61.3s
+//tcmalloc/testing:lifetimes_test_real_cpu_caches                        PASSED in 59.1s
+//tcmalloc/testing:lifetimes_test_separate_allocs_for_few_and_many_objects_spans PASSED in 64.3s
+//tcmalloc/testing:lifetimes_test_small_but_slow                         PASSED in 69.5s
+//tcmalloc/testing:lifetimes_test_use_huge_region_more_often             PASSED in 55.9s
+//tcmalloc/testing:limit_test_256k_pages                                 PASSED in 3.1s
+//tcmalloc/testing:limit_test_256k_pages_pow2                            PASSED in 2.2s
+//tcmalloc/testing:limit_test_256k_pages_pow2_sharded_transfer_cache     PASSED in 1.0s
+//tcmalloc/testing:limit_test_256k_pages_sharded_transfer_cache          PASSED in 2.0s
+//tcmalloc/testing:limit_test_32k_pages                                  PASSED in 2.6s
+//tcmalloc/testing:limit_test_8k_pages                                   PASSED in 3.3s
+//tcmalloc/testing:limit_test_deprecated_perthread                       PASSED in 6.2s
+//tcmalloc/testing:limit_test_flat_cpu_caches                            PASSED in 2.5s
+//tcmalloc/testing:limit_test_hpaa                                       PASSED in 2.2s
+//tcmalloc/testing:limit_test_legacy_size_classes                        PASSED in 4.3s
+//tcmalloc/testing:limit_test_no_hpaa                                    PASSED in 3.1s
+//tcmalloc/testing:limit_test_numa_aware                                 PASSED in 2.5s
+//tcmalloc/testing:limit_test_real_cpu_caches                            PASSED in 2.6s
+//tcmalloc/testing:limit_test_separate_allocs_for_few_and_many_objects_spans PASSED in 2.4s
+//tcmalloc/testing:limit_test_small_but_slow                             PASSED in 7.8s
+//tcmalloc/testing:limit_test_use_huge_region_more_often                 PASSED in 2.5s
+//tcmalloc/testing:malloc_extension_system_malloc_test                   PASSED in 0.0s
+//tcmalloc/testing:malloc_extension_test_256k_pages                      PASSED in 0.8s
+//tcmalloc/testing:malloc_extension_test_256k_pages_pow2                 PASSED in 0.3s
+//tcmalloc/testing:malloc_extension_test_256k_pages_pow2_sharded_transfer_cache PASSED in 0.4s
+//tcmalloc/testing:malloc_extension_test_256k_pages_sharded_transfer_cache PASSED in 0.2s
+//tcmalloc/testing:malloc_extension_test_32k_pages                       PASSED in 0.2s
+//tcmalloc/testing:malloc_extension_test_8k_pages                        PASSED in 0.2s
+//tcmalloc/testing:malloc_extension_test_deprecated_perthread            PASSED in 0.0s
+//tcmalloc/testing:malloc_extension_test_flat_cpu_caches                 PASSED in 0.3s
+//tcmalloc/testing:malloc_extension_test_hpaa                            PASSED in 0.3s
+//tcmalloc/testing:malloc_extension_test_legacy_size_classes             PASSED in 0.3s
+//tcmalloc/testing:malloc_extension_test_no_hpaa                         PASSED in 0.3s
+//tcmalloc/testing:malloc_extension_test_numa_aware                      PASSED in 0.3s
+//tcmalloc/testing:malloc_extension_test_real_cpu_caches                 PASSED in 0.3s
+//tcmalloc/testing:malloc_extension_test_separate_allocs_for_few_and_many_objects_spans PASSED in 0.3s
+//tcmalloc/testing:malloc_extension_test_small_but_slow                  PASSED in 0.2s
+//tcmalloc/testing:malloc_extension_test_use_huge_region_more_often      PASSED in 0.9s
+//tcmalloc/testing:malloc_tracing_extension_system_malloc_test           PASSED in 0.3s
+//tcmalloc/testing:malloc_tracing_extension_test_256k_pages              PASSED in 0.2s
+//tcmalloc/testing:malloc_tracing_extension_test_256k_pages_pow2         PASSED in 0.0s
+//tcmalloc/testing:malloc_tracing_extension_test_256k_pages_pow2_sharded_transfer_cache PASSED in 0.0s
+//tcmalloc/testing:malloc_tracing_extension_test_256k_pages_sharded_transfer_cache PASSED in 0.2s
+//tcmalloc/testing:malloc_tracing_extension_test_32k_pages               PASSED in 0.2s
+//tcmalloc/testing:malloc_tracing_extension_test_8k_pages                PASSED in 0.0s
+//tcmalloc/testing:malloc_tracing_extension_test_deprecated_perthread    PASSED in 0.2s
+//tcmalloc/testing:malloc_tracing_extension_test_flat_cpu_caches         PASSED in 0.1s
+//tcmalloc/testing:malloc_tracing_extension_test_hpaa                    PASSED in 0.1s
+//tcmalloc/testing:malloc_tracing_extension_test_legacy_size_classes     PASSED in 0.0s
+//tcmalloc/testing:malloc_tracing_extension_test_no_hpaa                 PASSED in 0.3s
+//tcmalloc/testing:malloc_tracing_extension_test_numa_aware              PASSED in 0.0s
+//tcmalloc/testing:malloc_tracing_extension_test_real_cpu_caches         PASSED in 0.0s
+//tcmalloc/testing:malloc_tracing_extension_test_separate_allocs_for_few_and_many_objects_spans PASSED in 0.0s
+//tcmalloc/testing:malloc_tracing_extension_test_small_but_slow          PASSED in 0.0s
+//tcmalloc/testing:malloc_tracing_extension_test_use_huge_region_more_often PASSED in 0.0s
+//tcmalloc/testing:markidle_test                                         PASSED in 0.2s
+//tcmalloc/testing:memalign_test_256k_pages                              PASSED in 1.4s
+//tcmalloc/testing:memalign_test_256k_pages_pow2                         PASSED in 1.0s
+//tcmalloc/testing:memalign_test_256k_pages_pow2_sharded_transfer_cache  PASSED in 0.9s
+//tcmalloc/testing:memalign_test_256k_pages_sharded_transfer_cache       PASSED in 1.3s
+//tcmalloc/testing:memalign_test_32k_pages                               PASSED in 1.1s
+//tcmalloc/testing:memalign_test_8k_pages                                PASSED in 1.2s
+//tcmalloc/testing:memalign_test_deprecated_perthread                    PASSED in 1.2s
+//tcmalloc/testing:memalign_test_flat_cpu_caches                         PASSED in 0.9s
+//tcmalloc/testing:memalign_test_hpaa                                    PASSED in 1.1s
+//tcmalloc/testing:memalign_test_legacy_size_classes                     PASSED in 1.2s
+//tcmalloc/testing:memalign_test_no_hpaa                                 PASSED in 0.7s
+//tcmalloc/testing:memalign_test_numa_aware                              PASSED in 1.6s
+//tcmalloc/testing:memalign_test_real_cpu_caches                         PASSED in 1.2s
+//tcmalloc/testing:memalign_test_separate_allocs_for_few_and_many_objects_spans PASSED in 1.3s
+//tcmalloc/testing:memalign_test_small_but_slow                          PASSED in 0.9s
+//tcmalloc/testing:memalign_test_use_huge_region_more_often              PASSED in 0.9s
+//tcmalloc/testing:memory_errors_test_256k_pages                         PASSED in 4.1s
+//tcmalloc/testing:memory_errors_test_256k_pages_pow2                    PASSED in 3.9s
+//tcmalloc/testing:memory_errors_test_256k_pages_pow2_sharded_transfer_cache PASSED in 4.3s
+//tcmalloc/testing:memory_errors_test_256k_pages_sharded_transfer_cache  PASSED in 5.1s
+//tcmalloc/testing:memory_errors_test_32k_pages                          PASSED in 2.4s
+//tcmalloc/testing:memory_errors_test_8k_pages                           PASSED in 3.5s
+//tcmalloc/testing:memory_errors_test_deprecated_perthread               PASSED in 2.8s
+//tcmalloc/testing:memory_errors_test_flat_cpu_caches                    PASSED in 3.1s
+//tcmalloc/testing:memory_errors_test_hpaa                               PASSED in 1.8s
+//tcmalloc/testing:memory_errors_test_legacy_size_classes                PASSED in 2.3s
+//tcmalloc/testing:memory_errors_test_no_hpaa                            PASSED in 2.9s
+//tcmalloc/testing:memory_errors_test_numa_aware                         PASSED in 3.1s
+//tcmalloc/testing:memory_errors_test_real_cpu_caches                    PASSED in 3.5s
+//tcmalloc/testing:memory_errors_test_separate_allocs_for_few_and_many_objects_spans PASSED in 3.0s
+//tcmalloc/testing:memory_errors_test_small_but_slow                     PASSED in 2.3s
+//tcmalloc/testing:memory_errors_test_use_huge_region_more_often         PASSED in 2.4s
+//tcmalloc/testing:no_deps_per_cpu_test_256k_pages                       PASSED in 9.9s
+//tcmalloc/testing:no_deps_per_cpu_test_256k_pages_pow2                  PASSED in 7.1s
+//tcmalloc/testing:no_deps_per_cpu_test_256k_pages_pow2_sharded_transfer_cache PASSED in 4.3s
+//tcmalloc/testing:no_deps_per_cpu_test_256k_pages_sharded_transfer_cache PASSED in 7.2s
+//tcmalloc/testing:no_deps_per_cpu_test_32k_pages                        PASSED in 9.9s
+//tcmalloc/testing:no_deps_per_cpu_test_8k_pages                         PASSED in 10.0s
+//tcmalloc/testing:no_deps_per_cpu_test_deprecated_perthread             PASSED in 9.5s
+//tcmalloc/testing:no_deps_per_cpu_test_flat_cpu_caches                  PASSED in 9.5s
+//tcmalloc/testing:no_deps_per_cpu_test_hpaa                             PASSED in 9.4s
+//tcmalloc/testing:no_deps_per_cpu_test_legacy_size_classes              PASSED in 11.5s
+//tcmalloc/testing:no_deps_per_cpu_test_no_hpaa                          PASSED in 8.1s
+//tcmalloc/testing:no_deps_per_cpu_test_numa_aware                       PASSED in 6.3s
+//tcmalloc/testing:no_deps_per_cpu_test_real_cpu_caches                  PASSED in 11.5s
+//tcmalloc/testing:no_deps_per_cpu_test_separate_allocs_for_few_and_many_objects_spans PASSED in 7.2s
+//tcmalloc/testing:no_deps_per_cpu_test_small_but_slow                   PASSED in 13.9s
+//tcmalloc/testing:no_deps_per_cpu_test_use_huge_region_more_often       PASSED in 15.7s
+//tcmalloc/testing:no_deps_test_256k_pages                               PASSED in 6.1s
+//tcmalloc/testing:no_deps_test_256k_pages_pow2                          PASSED in 5.4s
+//tcmalloc/testing:no_deps_test_256k_pages_pow2_sharded_transfer_cache   PASSED in 3.7s
+//tcmalloc/testing:no_deps_test_256k_pages_sharded_transfer_cache        PASSED in 5.9s
+//tcmalloc/testing:no_deps_test_32k_pages                                PASSED in 6.9s
+//tcmalloc/testing:no_deps_test_8k_pages                                 PASSED in 8.0s
+//tcmalloc/testing:no_deps_test_deprecated_perthread                     PASSED in 5.6s
+//tcmalloc/testing:no_deps_test_flat_cpu_caches                          PASSED in 8.5s
+//tcmalloc/testing:no_deps_test_hpaa                                     PASSED in 5.9s
+//tcmalloc/testing:no_deps_test_legacy_size_classes                      PASSED in 6.6s
+//tcmalloc/testing:no_deps_test_no_hpaa                                  PASSED in 8.6s
+//tcmalloc/testing:no_deps_test_numa_aware                               PASSED in 11.8s
+//tcmalloc/testing:no_deps_test_real_cpu_caches                          PASSED in 8.2s
+//tcmalloc/testing:no_deps_test_separate_allocs_for_few_and_many_objects_spans PASSED in 10.9s
+//tcmalloc/testing:no_deps_test_small_but_slow                           PASSED in 7.4s
+//tcmalloc/testing:no_deps_test_use_huge_region_more_often               PASSED in 4.9s
+//tcmalloc/testing:numa_locality_test                                    PASSED in 0.0s
+//tcmalloc/testing:outofmemory_test                                      PASSED in 0.4s
+//tcmalloc/testing:peak_heap_profiling_test                              PASSED in 0.1s
+//tcmalloc/testing:profile_test_256k_pages                               PASSED in 0.1s
+//tcmalloc/testing:profile_test_256k_pages_pow2                          PASSED in 0.2s
+//tcmalloc/testing:profile_test_256k_pages_pow2_sharded_transfer_cache   PASSED in 0.1s
+//tcmalloc/testing:profile_test_256k_pages_sharded_transfer_cache        PASSED in 0.1s
+//tcmalloc/testing:profile_test_32k_pages                                PASSED in 0.1s
+//tcmalloc/testing:profile_test_8k_pages                                 PASSED in 0.1s
+//tcmalloc/testing:profile_test_deprecated_perthread                     PASSED in 0.1s
+//tcmalloc/testing:profile_test_flat_cpu_caches                          PASSED in 0.1s
+//tcmalloc/testing:profile_test_hpaa                                     PASSED in 0.1s
+//tcmalloc/testing:profile_test_legacy_size_classes                      PASSED in 0.1s
+//tcmalloc/testing:profile_test_no_hpaa                                  PASSED in 0.1s
+//tcmalloc/testing:profile_test_numa_aware                               PASSED in 0.1s
+//tcmalloc/testing:profile_test_real_cpu_caches                          PASSED in 0.1s
+//tcmalloc/testing:profile_test_separate_allocs_for_few_and_many_objects_spans PASSED in 0.1s
+//tcmalloc/testing:profile_test_small_but_slow                           PASSED in 0.1s
+//tcmalloc/testing:profile_test_use_huge_region_more_often               PASSED in 0.1s
+//tcmalloc/testing:realized_fragmentation_test_256k_pages                PASSED in 0.0s
+//tcmalloc/testing:realized_fragmentation_test_256k_pages_pow2           PASSED in 0.5s
+//tcmalloc/testing:realized_fragmentation_test_256k_pages_pow2_sharded_transfer_cache PASSED in 0.0s
+//tcmalloc/testing:realized_fragmentation_test_256k_pages_sharded_transfer_cache PASSED in 0.1s
+//tcmalloc/testing:realized_fragmentation_test_32k_pages                 PASSED in 0.0s
+//tcmalloc/testing:realized_fragmentation_test_8k_pages                  PASSED in 0.3s
+//tcmalloc/testing:realized_fragmentation_test_deprecated_perthread      PASSED in 0.0s
+//tcmalloc/testing:realized_fragmentation_test_flat_cpu_caches           PASSED in 0.0s
+//tcmalloc/testing:realized_fragmentation_test_hpaa                      PASSED in 0.0s
+//tcmalloc/testing:realized_fragmentation_test_legacy_size_classes       PASSED in 0.0s
+//tcmalloc/testing:realized_fragmentation_test_no_hpaa                   PASSED in 0.1s
+//tcmalloc/testing:realized_fragmentation_test_numa_aware                PASSED in 0.2s
+//tcmalloc/testing:realized_fragmentation_test_real_cpu_caches           PASSED in 0.0s
+//tcmalloc/testing:realized_fragmentation_test_separate_allocs_for_few_and_many_objects_spans PASSED in 0.0s
+//tcmalloc/testing:realized_fragmentation_test_small_but_slow            PASSED in 0.3s
+//tcmalloc/testing:realized_fragmentation_test_use_huge_region_more_often PASSED in 0.0s
+//tcmalloc/testing:realloc_test_256k_pages                               PASSED in 7.2s
+//tcmalloc/testing:realloc_test_256k_pages_pow2                          PASSED in 12.6s
+//tcmalloc/testing:realloc_test_256k_pages_pow2_sharded_transfer_cache   PASSED in 7.1s
+//tcmalloc/testing:realloc_test_256k_pages_sharded_transfer_cache        PASSED in 4.9s
+//tcmalloc/testing:realloc_test_32k_pages                                PASSED in 7.5s
+//tcmalloc/testing:realloc_test_8k_pages                                 PASSED in 5.0s
+//tcmalloc/testing:realloc_test_deprecated_perthread                     PASSED in 5.3s
+//tcmalloc/testing:realloc_test_flat_cpu_caches                          PASSED in 5.3s
+//tcmalloc/testing:realloc_test_hpaa                                     PASSED in 4.9s
+//tcmalloc/testing:realloc_test_legacy_size_classes                      PASSED in 9.7s
+//tcmalloc/testing:realloc_test_no_hpaa                                  PASSED in 4.7s
+//tcmalloc/testing:realloc_test_numa_aware                               PASSED in 6.5s
+//tcmalloc/testing:realloc_test_real_cpu_caches                          PASSED in 4.8s
+//tcmalloc/testing:realloc_test_separate_allocs_for_few_and_many_objects_spans PASSED in 5.2s
+//tcmalloc/testing:realloc_test_small_but_slow                           PASSED in 5.0s
+//tcmalloc/testing:realloc_test_use_huge_region_more_often               PASSED in 6.6s
+//tcmalloc/testing:reclaim_test_256k_pages                               PASSED in 7.7s
+//tcmalloc/testing:reclaim_test_256k_pages_pow2                          PASSED in 7.3s
+//tcmalloc/testing:reclaim_test_256k_pages_pow2_sharded_transfer_cache   PASSED in 7.5s
+//tcmalloc/testing:reclaim_test_256k_pages_sharded_transfer_cache        PASSED in 7.2s
+//tcmalloc/testing:reclaim_test_32k_pages                                PASSED in 7.1s
+//tcmalloc/testing:reclaim_test_8k_pages                                 PASSED in 7.2s
+//tcmalloc/testing:reclaim_test_deprecated_perthread                     PASSED in 0.3s
+//tcmalloc/testing:reclaim_test_flat_cpu_caches                          PASSED in 7.5s
+//tcmalloc/testing:reclaim_test_hpaa                                     PASSED in 7.2s
+//tcmalloc/testing:reclaim_test_legacy_size_classes                      PASSED in 7.4s
+//tcmalloc/testing:reclaim_test_no_hpaa                                  PASSED in 7.4s
+//tcmalloc/testing:reclaim_test_numa_aware                               PASSED in 7.2s
+//tcmalloc/testing:reclaim_test_real_cpu_caches                          PASSED in 7.7s
+//tcmalloc/testing:reclaim_test_separate_allocs_for_few_and_many_objects_spans PASSED in 7.2s
+//tcmalloc/testing:reclaim_test_small_but_slow                           PASSED in 7.4s
+//tcmalloc/testing:reclaim_test_use_huge_region_more_often               PASSED in 7.5s
+//tcmalloc/testing:releasing_test_256k_pages                             PASSED in 0.0s
+//tcmalloc/testing:releasing_test_256k_pages_pow2                        PASSED in 0.0s
+//tcmalloc/testing:releasing_test_256k_pages_pow2_sharded_transfer_cache PASSED in 0.1s
+//tcmalloc/testing:releasing_test_256k_pages_sharded_transfer_cache      PASSED in 0.0s
+//tcmalloc/testing:releasing_test_32k_pages                              PASSED in 0.0s
+//tcmalloc/testing:releasing_test_8k_pages                               PASSED in 0.0s
+//tcmalloc/testing:releasing_test_deprecated_perthread                   PASSED in 0.0s
+//tcmalloc/testing:releasing_test_flat_cpu_caches                        PASSED in 0.3s
+//tcmalloc/testing:releasing_test_hpaa                                   PASSED in 0.3s
+//tcmalloc/testing:releasing_test_legacy_size_classes                    PASSED in 0.0s
+//tcmalloc/testing:releasing_test_no_hpaa                                PASSED in 0.0s
+//tcmalloc/testing:releasing_test_numa_aware                             PASSED in 0.0s
+//tcmalloc/testing:releasing_test_real_cpu_caches                        PASSED in 0.3s
+//tcmalloc/testing:releasing_test_separate_allocs_for_few_and_many_objects_spans PASSED in 0.0s
+//tcmalloc/testing:releasing_test_use_huge_region_more_often             PASSED in 0.3s
+//tcmalloc/testing:sample_size_class_test_256k_pages                     PASSED in 3.6s
+//tcmalloc/testing:sample_size_class_test_256k_pages_pow2                PASSED in 4.0s
+//tcmalloc/testing:sample_size_class_test_256k_pages_pow2_sharded_transfer_cache PASSED in 3.2s
+//tcmalloc/testing:sample_size_class_test_256k_pages_sharded_transfer_cache PASSED in 3.6s
+//tcmalloc/testing:sample_size_class_test_32k_pages                      PASSED in 2.3s
+//tcmalloc/testing:sample_size_class_test_8k_pages                       PASSED in 3.1s
+//tcmalloc/testing:sample_size_class_test_deprecated_perthread           PASSED in 2.3s
+//tcmalloc/testing:sample_size_class_test_flat_cpu_caches                PASSED in 3.2s
+//tcmalloc/testing:sample_size_class_test_hpaa                           PASSED in 2.6s
+//tcmalloc/testing:sample_size_class_test_legacy_size_classes            PASSED in 7.0s
+//tcmalloc/testing:sample_size_class_test_no_hpaa                        PASSED in 3.3s
+//tcmalloc/testing:sample_size_class_test_numa_aware                     PASSED in 2.3s
+//tcmalloc/testing:sample_size_class_test_real_cpu_caches                PASSED in 2.4s
+//tcmalloc/testing:sample_size_class_test_separate_allocs_for_few_and_many_objects_spans PASSED in 3.0s
+//tcmalloc/testing:sample_size_class_test_small_but_slow                 PASSED in 2.9s
+//tcmalloc/testing:sample_size_class_test_use_huge_region_more_often     PASSED in 2.8s
+//tcmalloc/testing:sampler_test_256k_pages                               PASSED in 20.5s
+//tcmalloc/testing:sampler_test_256k_pages_pow2                          PASSED in 23.5s
+//tcmalloc/testing:sampler_test_256k_pages_pow2_sharded_transfer_cache   PASSED in 24.1s
+//tcmalloc/testing:sampler_test_256k_pages_sharded_transfer_cache        PASSED in 23.1s
+//tcmalloc/testing:sampler_test_32k_pages                                PASSED in 23.4s
+//tcmalloc/testing:sampler_test_8k_pages                                 PASSED in 20.6s
+//tcmalloc/testing:sampler_test_deprecated_perthread                     PASSED in 17.3s
+//tcmalloc/testing:sampler_test_flat_cpu_caches                          PASSED in 22.6s
+//tcmalloc/testing:sampler_test_hpaa                                     PASSED in 39.4s
+//tcmalloc/testing:sampler_test_legacy_size_classes                      PASSED in 24.8s
+//tcmalloc/testing:sampler_test_no_hpaa                                  PASSED in 20.8s
+//tcmalloc/testing:sampler_test_numa_aware                               PASSED in 17.5s
+//tcmalloc/testing:sampler_test_real_cpu_caches                          PASSED in 23.5s
+//tcmalloc/testing:sampler_test_separate_allocs_for_few_and_many_objects_spans PASSED in 17.1s
+//tcmalloc/testing:sampler_test_small_but_slow                           PASSED in 13.1s
+//tcmalloc/testing:sampler_test_use_huge_region_more_often               PASSED in 24.5s
+//tcmalloc/testing:sampling_memusage_test_256k_pages                     PASSED in 56.5s
+//tcmalloc/testing:sampling_memusage_test_256k_pages_pow2                PASSED in 34.1s
+//tcmalloc/testing:sampling_memusage_test_256k_pages_pow2_sharded_transfer_cache PASSED in 34.2s
+//tcmalloc/testing:sampling_memusage_test_256k_pages_sharded_transfer_cache PASSED in 58.2s
+//tcmalloc/testing:sampling_memusage_test_32k_pages                      PASSED in 28.4s
+//tcmalloc/testing:sampling_memusage_test_8k_pages                       PASSED in 25.2s
+//tcmalloc/testing:sampling_memusage_test_deprecated_perthread           PASSED in 22.9s
+//tcmalloc/testing:sampling_memusage_test_flat_cpu_caches                PASSED in 65.6s
+//tcmalloc/testing:sampling_memusage_test_hpaa                           PASSED in 42.3s
+//tcmalloc/testing:sampling_memusage_test_legacy_size_classes            PASSED in 66.9s
+//tcmalloc/testing:sampling_memusage_test_no_hpaa                        PASSED in 42.3s
+//tcmalloc/testing:sampling_memusage_test_numa_aware                     PASSED in 42.3s
+//tcmalloc/testing:sampling_memusage_test_real_cpu_caches                PASSED in 31.4s
+//tcmalloc/testing:sampling_memusage_test_separate_allocs_for_few_and_many_objects_spans PASSED in 19.7s
+//tcmalloc/testing:sampling_memusage_test_small_but_slow                 PASSED in 21.6s
+//tcmalloc/testing:sampling_memusage_test_use_huge_region_more_often     PASSED in 30.2s
+//tcmalloc/testing:sampling_test                                         PASSED in 5.9s
+//tcmalloc/testing:startup_size_test                                     PASSED in 0.0s
+//tcmalloc/testing:system-alloc_test                                     PASSED in 0.0s
+//tcmalloc/testing:tcmalloc_large_test_256k_pages                        PASSED in 0.5s
+//tcmalloc/testing:tcmalloc_large_test_256k_pages_pow2                   PASSED in 0.5s
+//tcmalloc/testing:tcmalloc_large_test_256k_pages_pow2_sharded_transfer_cache PASSED in 1.1s
+//tcmalloc/testing:tcmalloc_large_test_256k_pages_sharded_transfer_cache PASSED in 1.0s
+//tcmalloc/testing:tcmalloc_large_test_32k_pages                         PASSED in 0.5s
+//tcmalloc/testing:tcmalloc_large_test_8k_pages                          PASSED in 0.9s
+//tcmalloc/testing:tcmalloc_large_test_deprecated_perthread              PASSED in 0.5s
+//tcmalloc/testing:tcmalloc_large_test_flat_cpu_caches                   PASSED in 0.6s
+//tcmalloc/testing:tcmalloc_large_test_hpaa                              PASSED in 0.5s
+//tcmalloc/testing:tcmalloc_large_test_legacy_size_classes               PASSED in 0.6s
+//tcmalloc/testing:tcmalloc_large_test_no_hpaa                           PASSED in 1.5s
+//tcmalloc/testing:tcmalloc_large_test_numa_aware                        PASSED in 0.7s
+//tcmalloc/testing:tcmalloc_large_test_real_cpu_caches                   PASSED in 1.4s
+//tcmalloc/testing:tcmalloc_large_test_separate_allocs_for_few_and_many_objects_spans PASSED in 0.4s
+//tcmalloc/testing:tcmalloc_large_test_small_but_slow                    PASSED in 0.7s
+//tcmalloc/testing:tcmalloc_large_test_use_huge_region_more_often        PASSED in 0.9s
+//tcmalloc/testing:tcmalloc_test_256k_pages                              PASSED in 31.6s
+//tcmalloc/testing:tcmalloc_test_256k_pages_pow2                         PASSED in 54.4s
+//tcmalloc/testing:tcmalloc_test_256k_pages_pow2_sharded_transfer_cache  PASSED in 39.6s
+//tcmalloc/testing:tcmalloc_test_256k_pages_sharded_transfer_cache       PASSED in 42.7s
+//tcmalloc/testing:tcmalloc_test_32k_pages                               PASSED in 54.7s
+//tcmalloc/testing:tcmalloc_test_8k_pages                                PASSED in 21.9s
+//tcmalloc/testing:tcmalloc_test_deprecated_perthread                    PASSED in 39.0s
+//tcmalloc/testing:tcmalloc_test_flat_cpu_caches                         PASSED in 34.4s
+//tcmalloc/testing:tcmalloc_test_hpaa                                    PASSED in 36.7s
+//tcmalloc/testing:tcmalloc_test_legacy_size_classes                     PASSED in 37.6s
+//tcmalloc/testing:tcmalloc_test_no_hpaa                                 PASSED in 40.9s
+//tcmalloc/testing:tcmalloc_test_numa_aware                              PASSED in 41.2s
+//tcmalloc/testing:tcmalloc_test_real_cpu_caches                         PASSED in 53.9s
+//tcmalloc/testing:tcmalloc_test_separate_allocs_for_few_and_many_objects_spans PASSED in 41.1s
+//tcmalloc/testing:tcmalloc_test_small_but_slow                          PASSED in 50.6s
+//tcmalloc/testing:tcmalloc_test_use_huge_region_more_often              PASSED in 40.1s
+//tcmalloc/testing:thread_ctor_test_256k_pages                           PASSED in 0.2s
+//tcmalloc/testing:thread_ctor_test_256k_pages_pow2                      PASSED in 0.1s
+//tcmalloc/testing:thread_ctor_test_256k_pages_pow2_sharded_transfer_cache PASSED in 0.1s
+//tcmalloc/testing:thread_ctor_test_256k_pages_sharded_transfer_cache    PASSED in 0.1s
+//tcmalloc/testing:thread_ctor_test_32k_pages                            PASSED in 0.1s
+//tcmalloc/testing:thread_ctor_test_8k_pages                             PASSED in 0.4s
+//tcmalloc/testing:thread_ctor_test_deprecated_perthread                 PASSED in 0.1s
+//tcmalloc/testing:thread_ctor_test_flat_cpu_caches                      PASSED in 0.2s
+//tcmalloc/testing:thread_ctor_test_hpaa                                 PASSED in 0.1s
+//tcmalloc/testing:thread_ctor_test_legacy_size_classes                  PASSED in 0.1s
+//tcmalloc/testing:thread_ctor_test_no_hpaa                              PASSED in 0.1s
+//tcmalloc/testing:thread_ctor_test_numa_aware                           PASSED in 0.1s
+//tcmalloc/testing:thread_ctor_test_real_cpu_caches                      PASSED in 0.3s
+//tcmalloc/testing:thread_ctor_test_separate_allocs_for_few_and_many_objects_spans PASSED in 0.1s
+//tcmalloc/testing:thread_ctor_test_small_but_slow                       PASSED in 0.1s
+//tcmalloc/testing:thread_ctor_test_use_huge_region_more_often           PASSED in 0.2s
+//tcmalloc/testing:threadcachesize_test_256k_pages                       PASSED in 0.1s
+//tcmalloc/testing:threadcachesize_test_256k_pages_pow2                  PASSED in 0.4s
+//tcmalloc/testing:threadcachesize_test_256k_pages_pow2_sharded_transfer_cache PASSED in 0.6s
+//tcmalloc/testing:threadcachesize_test_256k_pages_sharded_transfer_cache PASSED in 0.6s
+//tcmalloc/testing:threadcachesize_test_32k_pages                        PASSED in 0.4s
+//tcmalloc/testing:threadcachesize_test_8k_pages                         PASSED in 0.2s
+//tcmalloc/testing:threadcachesize_test_deprecated_perthread             PASSED in 0.3s
+//tcmalloc/testing:threadcachesize_test_flat_cpu_caches                  PASSED in 0.5s
+//tcmalloc/testing:threadcachesize_test_hpaa                             PASSED in 0.4s
+//tcmalloc/testing:threadcachesize_test_legacy_size_classes              PASSED in 0.3s
+//tcmalloc/testing:threadcachesize_test_no_hpaa                          PASSED in 0.2s
+//tcmalloc/testing:threadcachesize_test_numa_aware                       PASSED in 0.5s
+//tcmalloc/testing:threadcachesize_test_real_cpu_caches                  PASSED in 0.4s
+//tcmalloc/testing:threadcachesize_test_separate_allocs_for_few_and_many_objects_spans PASSED in 0.2s
+//tcmalloc/testing:threadcachesize_test_small_but_slow                   PASSED in 3.6s
+//tcmalloc/testing:threadcachesize_test_use_huge_region_more_often       PASSED in 0.3s
+//tcmalloc/testing:variants_test_256k_pages                              PASSED in 0.3s
+//tcmalloc/testing:variants_test_256k_pages_pow2                         PASSED in 0.3s
+//tcmalloc/testing:variants_test_256k_pages_pow2_sharded_transfer_cache  PASSED in 0.0s
+//tcmalloc/testing:variants_test_256k_pages_sharded_transfer_cache       PASSED in 0.0s
+//tcmalloc/testing:variants_test_32k_pages                               PASSED in 0.3s
+//tcmalloc/testing:variants_test_8k_pages                                PASSED in 0.2s
+//tcmalloc/testing:variants_test_deprecated_perthread                    PASSED in 0.2s
+//tcmalloc/testing:variants_test_flat_cpu_caches                         PASSED in 0.1s
+//tcmalloc/testing:variants_test_hpaa                                    PASSED in 0.1s
+//tcmalloc/testing:variants_test_legacy_size_classes                     PASSED in 0.0s
+//tcmalloc/testing:variants_test_no_hpaa                                 PASSED in 0.0s
+//tcmalloc/testing:variants_test_numa_aware                              PASSED in 0.1s
+//tcmalloc/testing:variants_test_real_cpu_caches                         PASSED in 0.4s
+//tcmalloc/testing:variants_test_separate_allocs_for_few_and_many_objects_spans PASSED in 0.1s
+//tcmalloc/testing:variants_test_small_but_slow                          PASSED in 0.3s
+//tcmalloc/testing:variants_test_use_huge_region_more_often              PASSED in 0.0s
+//tcmalloc/testing:releasing_test_small_but_slow                         FAILED in 0.2s
+  /home/lixiang/.cache/bazel/_bazel_lixiang/7019b445a0b1ff55bfbc59e169b8ae99/execroot/com_google_tcmalloc/bazel-out/k8-fastbuild/testlogs/tcmalloc/testing/releasing_test_small_but_slow/test.log
+//tcmalloc:profile_test                                                  PASSED in 52.5s
+  Stats over 2 runs: max = 52.5s, min = 3.4s, avg = 28.0s, dev = 24.5s
+//tcmalloc:huge_page_filler_test                                         PASSED in 6.6s
+  Stats over 3 runs: max = 6.6s, min = 1.1s, avg = 4.7s, dev = 2.5s
+//tcmalloc:transfer_cache_test                                           PASSED in 16.4s
+  Stats over 3 runs: max = 16.4s, min = 5.3s, avg = 9.1s, dev = 5.2s
+
+Executed 699 out of 699 tests: 698 tests pass and 1 fails locally.
+There were tests whose specified size is too big. Use the --test_verbose_timeout_warnings command line option to see which ones these are.
+lixiang@lixiang-ThinkCentre-M730e-N010:~/code/tcmalloc$
+
+lixiang@lixiang-ThinkCentre-M730e-N010:~/code/tcmalloc$ bazel build tcmalloc/testing:hello_main
+INFO: Analyzed target //tcmalloc/testing:hello_main (0 packages loaded, 0 targets configured).
+INFO: Found 1 target...
+Target //tcmalloc/testing:hello_main up-to-date:
+  bazel-bin/tcmalloc/testing/hello_main
+INFO: Elapsed time: 0.083s, Critical Path: 0.00s
+INFO: 1 process: 1 internal.
+INFO: Build completed successfully, 1 total action
+
+lixiang@lixiang-ThinkCentre-M730e-N010:~/code/tcmalloc$ bazel run tcmalloc/testing:hello_main
+Starting local Bazel server and connecting to it...
+DEBUG: /home/lixiang/.cache/bazel/_bazel_lixiang/7019b445a0b1ff55bfbc59e169b8ae99/external/rules_python/python/repositories.bzl:32:10: py_repositories is a no-op and is deprecated. You can remove this from your WORKSPACE file
+INFO: Analyzed target //tcmalloc/testing:hello_main (58 packages loaded, 732 targets configured).
+INFO: Found 1 target...
+Target //tcmalloc/testing:hello_main up-to-date:
+  bazel-bin/tcmalloc/testing/hello_main
+INFO: Elapsed time: 2.869s, Critical Path: 0.07s
+INFO: 1 process: 1 internal.
+INFO: Build completed successfully, 1 total action
+INFO: Running command line: bazel-bin/tcmalloc/testing/hello_main
+Current heap size = 73728 bytes
+hello world!
+new'd 1073741824 bytes at 0x352180000000
+Current heap size = 1073816576 bytes
+malloc'd 1073741824 bytes at 0x3521c0000000
+Current heap size = 2147558400 bytes
+
+
+
+

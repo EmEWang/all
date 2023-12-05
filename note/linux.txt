@@ -1,15 +1,15 @@
 
-http://ftp.twaren.net/ 台湾高品质学术研究网络
-
-
-
-如何查看Linux 内核
-uname -a     # -a 所有 -s 内核名称 -n 主机名 -r 内核发行号 -v 内核版本 -m 主机硬件架构 -p CPU类型 -i 硬件平台 -o 操作系统
-cat /proc/version
+http://ftp.twaren.net/                   # 台湾高品质学术研究网络
+https://zhuanlan.zhihu.com/p/489812795   # 探讨关于Linux磁盘与文件系统原理
+https://zhuanlan.zhihu.com/p/436454953   # Linux vDSO概述
+https://zq99299.github.io/linux-tutorial/  # linux 系统教程学习笔记
+https://awesome-programming-books.github.io/linux/UNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B(%E7%AC%AC%E4%B8%89%E7%89%88).pdf # UNIX环境高级编程(第三版).pdf
+https://www.zhihu.com/question/47528537/answer/2770074755 # linux的内存管理是怎么样的
+https://gityuan.com/2015/12/20/signal/    # Linux信号(signal)机制
 
 Linux版本
   内核版本
-    uname -a                 # 内核版本/操作系统/CPU信息
+    uname -a  # -a 所有 -s 内核名称 -n 主机名 -r 内核发行号 -v 内核版本 -m 主机硬件架构 -p CPU类型 -i 硬件平台 -o 操作系统
     cat /proc/version        # 内核版本
   发行版本 Linux Standard Base (LSB)
     lsb_release -a           # 查看操作系统版本  适用所有Linux发行版，包括RedHat SUSE Debian Ubuntu等
@@ -17,11 +17,13 @@ Linux版本
     cat /etc/issue           # 适用所有Linux发行版
 
 cat /etc/.productinfo        # release是 V10 版本，为银河麒麟系统 release是 V7 版本，为中标麒麟系统
-注:麒麟V10的x86_64与aarch64架构不兼容  x86_64需要在centos7上以make RELEASE=1 BITS=64 CENTOS=uos编译 aarch64需要在120.46.130.85上以make RELEASE=1 BITS=64 CENTOS=uos编译
+  麒麟V10的x86_64与aarch64架构不兼容
+  x86_64需要在centos7上以make RELEASE=1 BITS=64 CENTOS=uos编译
+  aarch64需要在120.46.130.85上以make RELEASE=1 BITS=64 CENTOS=uos编译
 
 
 
-一般linux系统分为两大类
+linux系统一般分为两大类
 1 RedHat系列 RedHat RHEL Centos Fedora "Oracle Linux" 等
   常用的安装包为 rpm 包 安装命令为 "rpm -参数"
   包管理工具 yum
@@ -32,6 +34,18 @@ cat /etc/.productinfo        # release是 V10 版本，为银河麒麟系统 rel
   支持tar包
 
 
+
+Linux查看系统开机时间
+who -b          # 查看最后一次系统启动的时间   系统引导 2023-07-24 08:34
+who -r          # 查看当前系统运行时间         运行级别 5 2023-07-24 08:35
+last reboot     # 查看Linux系统历史启动的时间
+top             # up后表示系统到目前运行了多久时间。
+w               # up后表示系统到目前运行了多久时间。
+uptime          # 命令查看
+/proc/uptime    # 查看
+
+
+关机
 shutdown [-krhc] [时间 [警告信息]]  # 或 /sbin/shutdown 需要 root  下面简写为 xx
   k # 不要真的关机 只发送警告信息   shutdown -k '吓唬你的' 测试无效
   r # 服务停掉重新启动  xx -r now 立刻重启  xx -r 20:35 20:35重启  xx -r 5 5分钟后重启 同 xx -r +5
@@ -48,6 +62,29 @@ poweroff   # 进入关机模式
 reboot     # 直接重新启动
 suspend    # 进入休眠模式
 
+
+
+
+Linux一句命令之判断大小端序
+1 echo -n I | od -o | head -n1 | cut -f2 -d" " | cut -c6
+输出：1为小端模式，0为大端模式；
+解析：od命令的作用为将指定内容以八进制、十进制、十六进制、浮点格式或ASCII编码字符方式显示；
+
+2 echo -n I | od -o | head -n1 | awk '{print $2}'| cut -c6
+输出：1为小端模式，0为大端模式；
+解析：awk命令为文本处理。
+
+3 lscpu | grep -i byte
+输出：Byte Order:            Little Endian；
+解析：grep -i 为不区分大小写匹配；
+注意：在低版本的Linux可能不支持lscpu命令。
+
+4 dpkg-architecture | grep -i end
+输出：
+      DEB_BUILD_ARCH_ENDIAN=little
+      DEB_HOST_ARCH_ENDIAN=little
+      DEB_TARGET_ARCH_ENDIAN=little
+解析：dpkg-architecture命令是列出dpkg打包的一些环境参数；
 
 
 
@@ -98,9 +135,6 @@ zh_HK.BIG5 BIG5         # 繁体
 zh_TW.BIG5 BIG5         # 繁体
 
 
-
-dos2unix [-kn] file [newfile]   # 换行符转换 windows和linux2个不同 CR(^M) LF($) -> LF
-unix2dos [-kn] file [newfile]   # -k 保留该文件原本的 mtime 时间格式 -n 保留旧文件 如 dos2unix -n old new
 
 
 iconv    # 语系编码转换
@@ -301,10 +335,10 @@ apt autoremove --purge snapd    # ubuntu 删除所有的 /dev/loopX 设备
   losetup -d /dev/loop0
 
 例2
-  dd if=/dev/zero of=FS_on_file bs=1k count=10000   #1 使用dd命令创建文件
-  losetup /dev/loop0 FS_on_file   #2 使用losetup命令创建一个loop device
-  mkfs -t ext3 /dev/loop0         #3 创建一个文件系统 或 mkfs.ext3 /dev/loop0
-  mount /dev/loop0 /mnt/FS_file0  #4 挂载这个文件系统  /mnt/FS_file0必须存在
+  dd if=/dev/zero of=FS_on_file bs=1k count=10000   # 1 使用dd命令创建文件
+  losetup /dev/loop0 FS_on_file   # 2 使用losetup命令创建一个loop device
+  mkfs -t ext3 /dev/loop0         # 3 创建一个文件系统 或 mkfs.ext3 /dev/loop0
+  mount /dev/loop0 /mnt/FS_file0  # 4 挂载这个文件系统  /mnt/FS_file0必须存在
 删除刚才创建的这些对象，依次执行
   umount /dev/loop0
   losetup -d /dev/loop0   # 断开设备
@@ -579,15 +613,14 @@ man 8 ld-linux                       # ld 连接程序文档
 2 在LD_LIBRARY_PATH环境变量中加上库所在路径。 如 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/ting/lib
 3 修改/etc/ld.so.conf文件，把库所在的路径加到文件末尾，并执行ldconfig刷新。这样，加入的目录下的所有库文件都可见。
 
-__attribute__((constructor))
-  系统执行main()之前调用的函数(被__attribute__((constructor))修饰的函数)
-__attribute__((destructor))
-  系统执行main()退出或调用exit()之后调用的函数(被__attribute__((destructor))修饰的函数)
 
 LD_PRELOAD
 Linux动态链接器会先读取LD_PRELOAD环境变量和默认配置文件/etc/ld.so.preload，并将读取到的动态链接库文件进行预加载。
   即使程序不依赖这些动态链接库，其指定的动态链接库依然会被加载，因为它的优先级最高，所以能够提前于用户调用的动态库载入。
 这个功能主要就是用来有选择性的载入不同动态链接库中的相同函数。
+在UNIX的动态链接库的世界中，LD_PRELOAD就是这样一个环境变量，它可以影响程序的运行时的链接（Runtime linker），
+  它允许你定义在程序运行前优先加载的动态链接库。这个功能主要就是用来有选择性的载入不同动态链接库中的相同函数。
+  通过这个环境变量，我们可以在主程序和其动态链接库的中间加载别的动态链接库，甚至覆盖正常的函数库。
 
 LD_PRELOAD运用总结
 1 定义与目标函数完全一样的函数，包括名称、变量及类型、返回值及类型等
@@ -606,6 +639,63 @@ symbols   # 显示符号的查找过程   如 LD_DEBUG=symbols ./envTest
 bindings  # 显示动态链接的符号绑定过程
 versions  # 显示符号的版本依赖关系
 reloc     # 显示重定位信息
+
+
+
+ldconfig  # /sbin/下 通常在系统启动时运行，安装了一个新的动态链接库时，需要手工运行这个命令。
+/lib和/usr/lib    # 1 默认搜寻目录
+/etc/ld.so.conf   # 2 动态库配置文件
+/etc/ld.so.cache  # 3 默认缓存文件 保存已排好序的动态链接库名字列表
+搜索1和2指定目录的lib*.so*，然后更新3   # ldconfig 执行
+搜索3，然后是2指定目录                  # ld.so 查找过程
+  -v 显示正在扫描的目录及搜索到的动态链接库以及所创建的连接的名字
+  -n 仅扫描命令行指定的目录，不扫描默认目录，也不扫描配置文件所列的目录
+  -N 不重建缓存文件
+  -X 不更新文件的连接
+  -f  CONF 指定动态链接库的配置文件为CONF，系统默认为/etc/ld.so.conf
+  -C  CACHE 指定生成的缓存文件为CACHE，系统默认的是/etc/ld.so.cache
+  -r  ROOT 改变应用程序的根目录为ROOT
+  -l 进入专家模式手工设置连接
+  -p 打印出当前缓存文件所保存的所有共享库的名字
+  -c FORMAT 指定缓存文件所使用的格式
+  注意:以下4种方法 择一即可 最后调用ldconfig 其实就是系统刷新下so文件
+  1 sudo ldconfig -v  # 在/lib和/usr/lib里面添加库文件，需要执行,否则无法找到库文件。
+  2 echo "/usr/local/mysql/lib" >> /etc/ld.so.conf # 上述两个目录之外的路径添加库文件
+  3 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/mysql/lib  # 使用环境变量
+  4 touch opencv.conf;echo "/user/local/lib" > opencv.conf;sudo ldconfig   # 在/etc/ld.so.conf.d/目录下创建.conf文件来添加库路径
+
+
+
+gcc  tiger.c /usr/lib/libm.a  -o tiger # 同 gcc  tiger.c -lm –o tiger
+
+静态库
+静态库是.o文件的一个集合，通常静态库以”.a”为后缀。静态库由程序ar生成
+gcc -o tiger.o -c tiger.c  # 生成目标文件 tiger.o
+ar rcs libadd.a tiger.o    # 生成静态库 libadd.a
+在使用-l选项时，-o选项的目的名要在-l链接的库名之前，否则gcc会认为-l是生成的目标而出错
+gcc 默认链接动态库，动态库不存在时，才链接静态库；指定静态库需要 -static
+-L/xx/public (-L 后面没有空格)，-labc表示连接指定/xx/public下 libabc.so/libabc.a
+静态库链接时搜索路径顺序
+gcc参数-L > gcc的环境变量LIBRARY_PATH > 内定目录/lib /usr/lib /usr/local/lib
+
+动态库
+在程序执行期间需要调共享库时才加载到内存，可被多个程序共享使用；每个共享库都有三个文件名：real name、soname 和 linker name。
+liba.so.57.24.102                  # real name  真正的库文件，包含库文件的完整版本号
+liba.so.57 -> liba.so.57.24.102    # soname 符号链接的名字，只包含共享库的主版本号(主版本号相同，函数的接口是一致的)；
+  因此应用程序的.dynamic段只记录共享库的soname，只要soname一致，这个共享库就可以用。
+liba.so -> liba.so.57.24.102       # linker name 在编译链接时使用，gcc 的-L选项应该指定linker name所在目录
+
+gcc -shared -fPIC a.c -o liba.so   # 创建动态库
+gcc -c -fPIC a.cpp -o a.o    gcc -shared -fPIC a.o -o liba.so # 同上
+
+/lib, /usr/lib/, /usr/local/lib    # 默认的动态库搜索路径
+-L               #  指定连接时动态库的路径
+LD_LIBRARY_PATH  # 动态库搜索路径
+xxxxx undefined  # 连接时找不到某一个函数，即连接时找不到相应的动态库
+gcc ... -Wl,-rpath  # 编译时指定动态库搜索路径   设置 ELF可执行文件中动态段中DT_RPATH指定的路径。
+error while loading shared libraries  # 加载时找不到相应的动态库
+/etc/ld.so.cache # 缓存的动态库路径 由 /etc/ld.so.conf 配置 -> ldconfig
+
 
 
 静态库
@@ -727,5 +817,63 @@ dlfcn.h              # 头文件
       (*print_call)("hello, world/n");
       dlclose(libc);
   }
+
+
+
+
+getrusage的用法
+https://blog.csdn.net/imred/article/details/50643022
+sys/time.h(为了得到timeval结构体的声明，这个结构体实际上在bits/time.h中声明)，sys/resource.h
+int getrusage(int who, struct rusage *usage);
+描述
+getrusage()返回who的系统资源用量，who可以取以下值：
+RUSAGE_SELF：返回调用该函数进程的资源用量统计，会返回该进程下所有线程的资源用量之和。
+RUSAGE_CHILDREN：返回调用该函数进程所有已终止且被回收子进程的资源用量统计。如果进程有孙子进程或更远的后代进程，且这些后代进程和这些后代进程与调用进程之间的中间进程也已终止且被回收，那么这些后代进程的资源用量也会被统计。
+RUSAGE_THREAD(Linux 2.6.26起支持)：返回调用该函数线程的资源用量统计。
+资源用量以以下结构体的形式返回到usage指针指向的空间：
+
+struct rusage {
+    struct timeval ru_utime; /* user CPU time used */
+    struct timeval ru_stime; /* system CPU time used */
+    long   ru_maxrss;        /* maximum resident set size */
+    long   ru_ixrss;         /* integral shared memory size */
+    long   ru_idrss;         /* integral unshared data size */
+    long   ru_isrss;         /* integral unshared stack size */
+    long   ru_minflt;        /* page reclaims (soft page faults) */
+    long   ru_majflt;        /* page faults (hard page faults) */
+    long   ru_nswap;         /* swaps */
+    long   ru_inblock;       /* block input operations */
+    long   ru_oublock;       /* block output operations */
+    long   ru_msgsnd;        /* IPC messages sent */
+    long   ru_msgrcv;        /* IPC messages received */
+    long   ru_nsignals;      /* signals received */
+    long   ru_nvcsw;         /* voluntary context switches */
+    long   ru_nivcsw;        /* involuntary context switches */
+};
+有些字段并不被Linxu支持，但是为了兼容其他系统以及未来可能支持，这些字段仍被保留了下来，这些字段在函数执行后会被内核设为0。各个字段的解释如下：
+ru_utime：返回进程在用户模式下的执行时间，以timeval结构的形式返回(该结构体在bits/timeval中声明)。
+ru_stime：返回进程在内核模式下的执行时间，以timeval结构的形式返回(该结构体在bits/timeval中声明)。
+ru_maxrss(Linux 2.6.32起支持)：返回最大驻留集的大小，单位为kb。当who被指定为RUSAGE_CHILDREN时，返回各子进程最大驻留集的大小中最大的一个，而不是进程树中最大的最大驻留集。
+ru_ixrss：目前不支持
+ru_idrss：目前不支持
+ru_isrss：目前不支持
+ru_minflt：缺页中断的次数，且处理这些中断不需要进行I/O；不需要进行I/O操作的原因是系统使用“reclaiming”的方式在物理内存中得到了之前被淘汰但是未被修改的页框。(第一次访问bss段时也会产生这种类型的缺页中断)
+ru_majflt：缺页中断的次数，且处理这些中断需要进行I/O。
+ru_nswap：目前不支持
+ru_inblock(Linux 2.6.22起支持)：文件系统需要进行输入操作的次数。
+ru_oublock(Linux 2.6.22起支持)：文件系统需要进行输出操作的次数。
+ru_msgsnd：目前不支持
+ru_msgrcv：目前不支持
+ru_nsignals：目前不支持
+ru_nvcsw(Linux 2.6起支持)：因进程自愿放弃处理器时间片而导致的上下文切换的次数(通常是为了等待请求的资源)。
+ru_nivcsw(Linux 2.6起支持)：因进程时间片使用完毕或被高优先级进程抢断导致的上下文切换的次数。
+
+返回值
+执行成功返回0，发生错误返回-1，同时设置errno的值。
+
+错误
+EFAULT：usage指针指向不可访问地址。
+EINVAL：who被指定为无效值。
+
 
 

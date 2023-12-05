@@ -58,56 +58,81 @@
 
 
 file=testheap.cpp# 源程序
-obj=                  # 中间文件
-out=testheap# 结果程序
-outarm=testheaparm# 结果程序
+obj=# 中间文件
+out=testheap# 结果程序 x64
+outarm=testheaparm# 结果程序 arm
 googlepath=/home/lixiang/code/gperftools/build/# google连接目录 注意前面不能由空格 否则会引起shell分割错误
 jemallocpath=/home/lixiang/code/jemalloc2/lib/# jemalloc
-pprof=/home/lixiang/code/gperftools/src/pprof     # pprof程序
-jeprof=/home/lixiang/code/jemalloc2/bin/jeprof     # jeprof程序
-ff=server.0001.heap  # pprof指定日志文件 基准
-ff2=server.0002.heap # pprof指定日志文件 对比
-log=server# 日志1
-log2=server2# 日志2
+pprof=/home/lixiang/code/gperftools/src/pprof     # tcmalloc pprof程序
+jeprof=/home/lixiang/code/jemalloc2/bin/jeprof     # jemalloc jeprof程序
+ff=# pprof指定日志文件 基准
+ff2=# pprof指定日志文件 对比
+log=tcmalloc# 日志1
+log2=jemalloc# 日志2
 gccarm=aarch64-linux-gnu-g++
 
 
-# 程序编译若不连接google库 则需要LD_PRELOAD加载
-
+# 默认编译     需要LD_PRELOAD加载库
 all:
 	g++ -o ${out} ${file}
-
+# 连接tcmalloc库的方式编译
 all2:
 	g++ -o ${out} ${file}  -L${googlepath} -lprofiler -ltcmalloc
-
 # 生成arm版本
 arm:
 	${gccarm} -o ${outarm} ${file}
 
-test:
+
+# tcmalloc 测试  libtcmalloc_and_profiler.so 可替代 libtcmalloc.so 和 libprofiler.so
+# 编译连接方式
+test11:
 	LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${googlepath} ./${out}
 # 设置log名
-test2:
-	HEAPPROFILE=server LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${googlepath} ./${out}
-# LD_PRELOAD方式
-test21:
-	LD_PRELOAD=${googlepath}libtcmalloc.so:${googlepath}libprofiler.so HEAPPROFILE=${log} LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${googlepath} ./${out}
-# 设置分配大小记录
-test3:
+test12:
+	HEAPPROFILE=${log} LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${googlepath} ./${out}
+# 设置分配多大空间 产生dump文件
+test13:
 	HEAPPROFILE=${log} HEAP_PROFILE_ALLOCATION_INTERVAL=1024 LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${googlepath} ./${out}
 # 信号只能使用数字 使用kill -x pid
-test4:
+test14:
 	HEAPPROFILE=${log} HEAPPROFILESIGNAL=12 LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${googlepath} ./${out}
-test5:
-	LD_PRELOAD=${googlepath}libtcmalloc.so:${googlepath}libprofiler.so HEAPPROFILE=server HEAPPROFILESIGNAL=12 ./${out}
+
+
+# LD_PRELOAD方式
+test21:
+	LD_PRELOAD=${googlepath}libtcmalloc.so:${googlepath}libprofiler.so HEAPPROFILE=${log} ./${out}
+# 设置使用多大空间 产生dump文件
+test22:
+	LD_PRELOAD=${googlepath}libtcmalloc_and_profiler.so HEAPPROFILE=${log} HEAP_PROFILE_INUSE_INTERVAL=1048576 ./${out}
+# 使用信号 产生dump文件
+test23:
+	LD_PRELOAD=${googlepath}libtcmalloc_and_profiler.so HEAPPROFILE=server HEAPPROFILESIGNAL=12 ./${out}
+
+
+
 
 # 使用jemaloc
-testj1:
-	MALLOC_CONF=prof:true,lg_prof_interval:20 LD_PRELOAD=${jemallocpath}libjemalloc.so.2 ./${out}
-testj2:
-	MALLOC_CONF=prof_leak:true,lg_prof_sample:0,prof_final:true LD_PRELOAD=${jemallocpath}libjemalloc.so.2 ./${out}
-#	MALLOC_CONF=prof_leak:true,lg_prof_sample:0,prof_final:true LD_PRELOAD=${jemallocpath}libjemalloc.so.2 ./a.out
+# MALLOC_CONF 选项
+# https://jemalloc.net/jemalloc.3.html#mallctl_namespace   TUNING -> MALLCTL NAMESPACE
+# prof_leak(bool)    Leak reporting enabled/disabled 如生效 配合 prof_final 显示结果
+# prof_final(bool)   如生效 程序退出时 显示结果
+# lg_prof_sample(size_t)  分配多大内存产生样本  默认 19 即512KB(2^19 B) 17 128K  27 128M
+# lg_prof_interval(ssize_t)  默认关闭 实际分配多少产生样本
 
+
+testj1:
+	MALLOC_CONF=prof:true,lg_prof_interval:17,prof_prefix:${log2} LD_PRELOAD=${jemallocpath}libjemalloc.so ./${out}
+#	MALLOC_CONF=prof:true,lg_prof_interval:17,prof_prefix:jeprof.app LD_PRELOAD=${jemallocpath}libjemalloc.so ./${out}
+#	MALLOC_CONF=prof:true,lg_prof_sample:17,prof_prefix:jeprof.app LD_PRELOAD=${jemallocpath}libjemalloc.so ./${out}
+#	MALLOC_CONF=prof:true,lg_prof_sample:17,prof_accum:true,lg_prof_interval:20 LD_PRELOAD=${jemallocpath}libjemalloc.so ./${out}
+testj2:
+	MALLOC_CONF=prof_leak:true,lg_prof_sample:0,prof_final:true LD_PRELOAD=${jemallocpath}libjemalloc.so ./${out}
+#	MALLOC_CONF=prof_leak:true,lg_prof_sample:0,prof_final:true LD_PRELOAD=${jemallocpath}libjemalloc.so ./a.out
+#	MALLOC_CONF="oversize_threshold:1,background_thread:true,metadata_thp:auto,dirty_decay_ms:9000000000,muzzy_decay_ms:9000000000";
+
+
+
+# tcmalloc 分析结果
 pprof:
 #	echo ${ff}
 	${pprof} --text ${out} ${ff}
@@ -115,25 +140,35 @@ pprof:
 pprof2:
 	${pprof} --text ${out} --base=${ff} ${ff2}
 
+# 图形化结果
 pprofpdf:
 	${pprof} --pdf ${out} ${ff} > heap.pdf
 #	${pprof} --pdf ${out} --base=${ff} ${ff2} > record1.pdf
-
-# 图形化结果
 pprofgv:
 	${pprof} --gv ${out} ${ff}
 pprofsvg:
-	${pprof} --svg ${out} ${ff} > ${ff}.svg
+	${pprof} --svg ${out} ${ff} > ${ff}.tc.svg
 pprofgif:
-	${pprof} --gif ${out} ${ff} > ${ff}.gif
+	${pprof} --gif ${out} ${ff} > ${ff}.tc.gif
 
-# 使用jemaloc
+
+
+# jemaloc 分析结果
 jprof:
 	${jeprof} --text ${out} ${ff}
+#	${jeprof} --svg ${out} ${ff} > ${ff}.svg
 #	${jeprof} --pdf ${out} ${ff} > ${out}.pdf
+jprofgif:
+	${jeprof} --gif ${out} ${ff} > ${ff}.je.gif
+jprofsvg:
+	${jeprof} --svg ${out} ${ff} > ${ff}.je.svg
+jprofpdf:
+	${jeprof} --pdf ${out} ${ff} > ${ff}.je.pdf
+jprof2:
+	${jeprof} --text ${out} --base=${ff} ${ff2}
 
 clean:
-	rm -f ${obj} ${out} ./*.00*.heap*  *.pdf *.png *.gif jeprof.*.*.heap
+	rm -f ${obj} ${out}  *.pdf *.png *.gif *.svg *.heap
 
 # -T表示输出类型，jpg、gif、svg等等，-o指定输出文件名，不指定则输出到标准输出上。
 #dot 数据格式
@@ -155,5 +190,26 @@ clean:
 # www.graphviz.org   graphviz 官网地址
 dot:
 	dot -Tpng 11.dot -o 11.png
+	dot -Tsvg 11.dot -o 11.svg
 	dot 12.dot -T png -o 12.png
 
+
+
+# generate.sh 使用方法
+# ./generate.sh ./jeprof /app/ad3/bin/datarec_container     /data/outpp0/jeprof.datarec.out    ./out0
+# ./generate.sh ./jeprof /app/ad3/bin/lidar_container       /data/outpp0/jeprof.lidar.out      ./out0
+# ./generate.sh ./jeprof /app/ad3/bin/prediction_container  /data/outpp0/jeprof.prediction.out ./out0
+
+
+# ./generate.sh ./jeprof /app/ad3/bin/datarec_container     /data/outpp1/jeprof.datarec.out    ./out1
+# ./generate.sh ./jeprof /app/ad3/bin/lidar_container       /data/outpp1/jeprof.lidar.out      ./out1
+# ./generate.sh ./jeprof /app/ad3/bin/prediction_container  /data/outpp1/jeprof.prediction.out ./out1
+
+
+# ./generate.sh ./jeprof /app/ad3/bin/datarec_container     /data/outpp2/jeprof.datarec.out    ./out2
+# ./generate.sh ./jeprof /app/ad3/bin/lidar_container       /data/outpp2/jeprof.lidar.out      ./out2
+# ./generate.sh ./jeprof /app/ad3/bin/prediction_container  /data/outpp2/jeprof.prediction.out ./out2
+
+# ./generate.sh ./jeprof /app/ad3/bin/datarec_container     /data/outpp3/jeprof.datarec.out    ./out3
+# ./generate.sh ./jeprof /app/ad3/bin/lidar_container       /data/outpp3/jeprof.lidar.out      ./out3
+# ./generate.sh ./jeprof /app/ad3/bin/prediction_container  /data/outpp3/jeprof.prediction.out ./out3

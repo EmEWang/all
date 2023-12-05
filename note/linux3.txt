@@ -1,0 +1,54 @@
+
+
+Graphviz介绍
+它是大名鼎鼎的贝尔实验室的几位牛人开发的一个画图工具。
+它的理念和一般的“所见即所得”的画图工具不一样，是“所想即所得”。
+它提供了dot语言来编写绘图脚本。
+
+
+
+
+isBigEndian(){ //大端判断
+  union {    long l;    char c[sizeof(long)];  } u;
+  u.l = 1;  return (u.c[sizeof(long) - 1] == 1);}
+
+UTF8ToANSI(char*, string) ???
+
+clock_t clock(void); typedef long clock_t; #define CLOCKS_PER_SEC ((clock_t)1000)  头文件ctime(或time.h)
+gettimeofday
+void ftime(timeb*)   time_t time(time_t*)   tm* gmtime(time_t*)   tm* localtime(time_t*)   time_t mktime(&tm)
+
+
+
+
+
+strrchr strtok strcat strdup[POSIX] _strdup[win]将串拷贝到新建的位置处
+  内部调用了malloc()为变量分配内存 memmove memcpy stricmp _stricmp strlwr _strlwr strupr_strupr
+GetModuleFileName(HMODULE hModule,char* name,DWORD size)获取模块路径 || readlink("/proc/self/exe",buf,sizeof(buf)-1)获取当前程序路径 realpath(path,fullPath)将参数path所指的相对路径转换成绝对路径
+int _access(const char *name, int mode) 判断文件或目录是否存在  mode 00只检查文件是否存在 02写权限 04读权限 06读写权限 io.h || access  unistd.h
+CreateDirectory(const char *name, void* p) 创建目录 不能在不存在的目录里建立目录 || mkdir(lpPathName, S_IRWXG)
+SetUnhandledExceptionFilter 捕获让程序的崩溃            ||
+HANDLE hd=::CreateEvent(NULL,TRUE,FALSE,"Global\\MXSoft-netflow-instance") 创建或打开一个命名的或无名的事件对象
+GetLastError()==ERROR_ALREADY_EXISTS
+SetLastError(0)
+GetPrivateProfileString      读取配置ini文件
+ResetEvent、CreateEvent、SetEvent
+InterlockedIncrement win 实现数的原子性加减   || __sync_fetch_and_add linux
+MultiByteToWideChar WideCharToMultiByte 多字节字符转换
+CW2T
+GetPrivateProfileString 读配置ini文件
+                             ||   sem_open sem_close sem_unlink sem_post sem_wait sem_trywait sem_timedwait
+CreateEvent CloseHandle WaitForSingleObject WaitForMultipleObjects ResetEvent SetEvent
+
+
+window 头文件 winsock.h 也可以使用：Winsock2.h  lib(Ws2_32.lib) dll(Ws2_32.dll) linux 头文件：<arpa/inet.h>
+window char FAR* PASCAL FAR inet_ntoa( struct in_addr in); net_ntoa返回一个char *,而这个char *的空间是在inet_ntoa里面静态分配的，所以inet_ntoa后面的调用会覆盖上一次的调用 将一个32位网络字节序的二进制IP地址转换成相应的点分十进制的IP地址
+linux  char *inet_ntoa(struct in_addr in);将一个32位网络字节序的二进制IP地址转换成相应的点分十进制的IP地址(返回点分十进制的字符串在静态内存中的指针)。
+in_addr_t inet_addr(const char *cp); 字符串，一个点分十进制的IP地址 如果正确执行将返回一个无符号长整数型数。如果传入的字符串不是一个合法的IP地址，将返回INADDR_NONE。
+uint32_t htonl(uint32_t hostlong); 将主机数转换成无符号长整形的网络字节顺序
+uint16_t ntohs(uint16_t netshort); 将一个无符号短整型数从网络字节顺序转换为主机字节顺序
+uint32_t ntohl(uint32_t netlong);本函数将一个32位数由网络字节顺序转换为主机字节顺序
+uint16_t ntohs(uint16_t netshort);本函数将一个16位数由网络字节顺序转换为主机字节顺序。
+recvfrom
+
+

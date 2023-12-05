@@ -14,7 +14,8 @@ void test2()
 {
     int i = 100;
     while(i--) {
-        char *buf = new char[1024*1024];
+        char *buf = new char[1024];
+        delete buf;
     }
 }
 
@@ -32,7 +33,7 @@ void test4()
     int i = 100;
     while(i--) {
         char *buf = new char[1024];
-        delete buf;
+        // delete buf;
     }
 }
 
@@ -44,24 +45,30 @@ int main()
     int index = 0;
     while (1)
     {
-        int i = 1000;
+        int i = 100;
         while(i--) {
             char *buf = new char[1024];
             // delete buf;
         }
+        test2();
         test3();
         test4();
 
-        sleep(3);
+        sleep(1);
         printf("%d\n", ++index);
+        if (index > 4)
+        {
+            // break;
+        }
+
     }
 
-    int i = 100;
-    while(i--) {
-        char *buf = new char[1024*1024];
-    }
-    test1();
-    test2();
+    // int i = 100;
+    // while(i--) {
+    //     char *buf = new char[1024*1024];
+    // }
+    // test1();
+    // test2();
     // HeapProfilerStop();
-    return 0;
+    // return 0;
 }

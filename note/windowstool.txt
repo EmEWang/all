@@ -40,6 +40,16 @@ wmic /output:%desk%\重命名为中心部门+姓名+电脑SN码.txt product get 
 
 
 
+控制面板 切换成小图标 -> 凭据管理器   # Win11凭证管理
+
+https://blog.51cto.com/mshxuyi/5858715
+windows域环境中，域用户没有管理员权限。runas命令让用户可以以管理员权限运行指定程序。
+1 域用户以管理员运行向日葵远程软件
+@echo off
+runas /savecred /user:sbi\sh.it "C:\Program Files\Oray\SunLogin\SunloginClient\SunloginClient.exe"
+/savecred：用户不用每次打开都要输入管理员账户的密码，只需要第一次打开时输入，凭据会保存在当前电脑凭据管理器中
+runas /savecred /user:sbi\sh.it "D:\Program Files\SunloginClient\SunloginClient.exe"   # 运行sun
+
 
 thinkpad笔记本
 Windows 11系统的点设置-蓝牙和其他设备-触摸板，通过开关进行启用/禁用
@@ -200,6 +210,7 @@ win11 计划任务 执行powershell脚本
 win11,win10睡眠自动被唤醒
 1 powercfg /lastwake  # 命令行输入 查询最后一次被哪个设备唤醒
 2 PowerCfg -DEVICEQUERY wake_armed  # 命令行输入，查询所有可以唤醒电脑的设备
+  powercfg -devicequery wake_programmable  # 谁可能唤醒设备
 3 找到之后可以对某个设备允许唤醒关闭 或 软件唤醒卸载之
   计算机管理 -> 设备管理器 -> 某个设备 -> 右键属性 -> 电源管理，取消勾选 允许此设备唤醒计算机，确定即可
 

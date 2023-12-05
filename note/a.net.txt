@@ -1,0 +1,63 @@
+
+
+https://zz123.com/                                # 好歌网
+https://tonzhon.com/                              # 铜钟网
+https://www.zhihu.com                             # 知乎
+
+https://stackoverflow.com/                        # 查错经典网站
+https://github.com/                               # github
+https://github.dev/github/dev                     # 笔记
+
+https://cloud.tencent.com/developer               # 腾讯云 开发者社区
+https://cloud.tencent.com/developer/doc/1024      # 腾讯云 开发者社区 doc
+
+https://awesome-programming-books.github.io/      # 经典技术书籍 PDF 文件
+https://www.gnu.org/manual/manual.html            # gnu 文档
+https://www.runoob.com/                           # 菜鸟教程
+https://www.zhaixue.cc/                           # 宅学部落
+https://haicoder.net/                             # 海客网
+https://c.biancheng.net/sitemap/                  # C语言中文网
+https://book.itheima.net/course/223               # 黑马教程
+https://www.nowcoder.com/                         # 牛客网
+https://www.junmajinlong.com/categories/          # 骏马金龙
+
+
+https://www.coursera.org/                         # Coursera | Degrees, Certificates, & Free Online Courses
+https://ocw.mit.edu/                              # MIT OpenCourseWare | Free Online Course Materials
+https://www.icourse163.org/                       # 中国大学MOOC(慕课)_国家精品课程在线学习平台
+
+
+https://www.zhihu.com/question/398193048/answer/1266121538   # 有哪些网站，一旦知道，你就离不开了
+
+https://blog.csdn.net/wzh1378008099/article/details/105977731/?ops_request_misc=&request_id=&biz_id=102&utm_term=ACM%E4%BB%8B%E7%BB%8D&utm_medium=distribute.pc_search_result.none-task-blog-2~blog~sobaiduweb~default-9-105977731.pc_v2_rank_blog_default&spm=1018.2226.3001.4450 # ACM各OJ网站简介
+
+http://www.cenicloud.com/view                     # 央企融通资讯动态
+
+https://blog.csdn.net/weixin_30774063/article/details/103098005 # 车联网常见缩写
+https://blog.csdn.net/xuaho0907/article/details/82746973        # SoC和MCU的区别
+https://keyou.github.io/blog/2020/09/21/dds-middleware/         # DDS(Data Distribution Service) 中间件 | 柯幽
+https://cloud.tencent.com/developer/article/2222971             # 自动驾驶技术栈——DDS分布式通信协议
+https://zhuanlan.zhihu.com/p/132605337                          # 自动驾驶中间件--DDS Qos应用初步小结
+https://blog.csdn.net/fengbingchun/article/details/118443862    # C/C++包管理工具Conan简介
+https://www.zhihu.com/question/47298264                         # 如何评价c++包管理工具conan
+https://www.cnblogs.com/nufangrensheng/category/556026.html?page=1 # 随笔分类 -  嵌入式学习之应用程序开发篇
+https://www.cnblogs.com/fusheng11711/p/12247617.html            # 读书笔记——如何高效学习+费曼技巧
+https://www.zhihu.com/question/364147974/answer/2239628462      # 什么事情是你当了老板才知道的
+
+
+
+
+OpenCV
+FFmpeg
+十大流媒体开源项目
+http://ffmpeg.org/                            1 FFmpeg：全球领先的多媒体框架
+http://www.videolan.org/                      2 VLC：开源的跨平台多媒体播放器及框架
+http://www.live555.com/                       3 live555：开源流媒体服务项目
+https://github.com/EasyDarwin                 4 EasyDarwin： 企业级的流媒体平台框架
+https://github.com/Bilibili/ijkplayer         5 ijkplayer：B站基于ffplay 的跨平台播放器
+https://github.com/Red5/red5-server/releases  6 red5：Flash流媒体服务器
+https://github.com/arut/nginx-rtmp-module     7 NGINX-RTMP： nginx模块 支持rtmp和HLS
+https://github.com/winlinvip/srs              8 SRS：开源流媒体服务器系统
+https://sourceforge.net/projects/obsproject/  9 OBS：开源流媒体系统
+https://github.com/in66-dev/In-Prestissimo    10 绝影：移动端深度学习框架
+

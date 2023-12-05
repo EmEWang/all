@@ -1,169 +1,112 @@
 
 ssh -V   #版本
 
-SSH1和SSH2的区别
-SSH(Secure SHell)到目前为止有两个不兼容的版本——SSH1和SSH2。
-ssh1和ssh2协议端口都是采用22. 而Telnet是23.
-SSH1又分为1.3和 1.5两个版本。SSH1采用DES、3DES、Blowfish和RC4等对称加密算法保护数据安全传输，而对称加密算法的密钥是通过非对称加密算法（RSA）来完成交换的。SSH1使用循环冗余校验码（CRC）来保证数据的完整性，但是后来发现这种方法有缺陷。
-SSH2避免了RSA的专利问题，并修补了CRC的缺陷。SSH2用数字签名算法（DSA）和Diffie-Hellman（DH）算法代替RSA来完成对称密钥的交换，用消息证实代码（HMAC）来代替CRC。同时SSH2增加了AES和Twofish等对称加密算法。
-
 https://blog.csdn.net/qq_35246620/article/details/54317740
 https://wangdoc.com/ssh/key
 https://deepzz.com/post/how-to-setup-ssh-config.html
 
 
-sudo apt-get install openssh-server    # 安装 SSH客户端
-
 ssh 服务安装
-要在Ubuntu主机开启SSH服务，需要开启openssh-server
-1 sudo apt-get install openssh-server    #下载SSH服务
-2 ps -e | grep ssh  #验证下载后是否已经开启了服务 如果只有ssh-agent表示还没启动。
-3 /etc/init.d/ssh start   #执行下句，开启服务 如果显示sshd则说明已启动成功。
-service ssh restart或service sshd restart或/etc/init.d/ssh restart  #重启服务
-
-
-ssh参数说明
-格式 ssh [选项] [user@]host [command]
-选项：
--1：强制使用ssh协议版本1
--2：强制使用ssh协议版本2
--4：强制使用IPv4地址
--6：强制使用IPv6地址
--A：开启认证代理连接转发功能
--a：关闭认证代理连接转发功能
--b：使用本机指定地址作为对应连接的源ip地址
--C：请求压缩所有数据
--c：选择所加密的密码型式 （blowfish|3des 预设是3des）
--e：设定跳脱字符
--F：指定ssh指令的配置文件
--f：后台执行ssh指令
--g：允许远程主机连接主机的转发端口
--i：指定身份文件（预设是在使用者的家目录 中的 .ssh/identity）
--l：指定连接远程服务器登录用户名
--N：不执行远程指令
--n：重定向stdin 到 /dev/null
--o：指定配置选项
--p：指定远程服务器上的端口（默认22）
--P：使用非特定的 port 去对外联机（注意这个选项会关掉 RhostsAuthentication 和 RhostsRSAAuthentication）
--q：静默模式
--T：禁止分配伪终端
--t：强制配置 pseudo-tty
--v：打印更详细信息
--X：开启X11转发功能
--x：关闭X11转发功能
--y：开启信任X11转发功能
--L listen-port:host:port 指派本地的 port 到达端机器地址上的 port
-建立本地SSH隧道(本地客户端建立监听端口)
-将本地机(客户机)的某个端口转发到远端指定机器的指定端口.
--R listen-port:host:port 指派远程上的 port 到本地地址上的 port
-建立远程SSH隧道(隧道服务端建立监听端口)
-将远程主机(服务器)的某个端口转发到本地端指定机器的指定端口.
--D port 指定一个本地机器 “动态的’’ 应用程序端口转发.
+1 sudo apt-get install openssh-server    # Ubuntu安装SSH服务
+2 ps -e | grep ssh  # 验证是否已经开启了服务 如果只有ssh-agent表示还没启动
+3 /etc/init.d/ssh start   # 开启服务 显示sshd说明启动成功
+4 service ssh restart或service sshd restart或/etc/init.d/ssh restart  # 重启服务
 
 
 
 配置文件
 linux
-~/.ssh/authorized_keys   #授权配置文件 pub key
-/etc/ssh_config  #客户端的配置文件
-/etc/sshd_config #服务端的配置文件。两个配置文件都允许你通过设置不同的选项来改变客户端程序的运行方式。
-~/.ssh/known_hosts #保存的已知曾连接到的服务器
+~/.ssh/authorized_keys # 授权配置文件 公钥
+~/.ssh/known_hosts     # 保存服务器返回的的公钥
+~/.ssh/config          # 用户连接配置
+/etc/ssh/ssh_config    # 客户端配置文件
+/etc/ssh/sshd_config   # 服务端配置文件 这两个配置文件都允许设置不同的选项来改变客户端程序的运行方式
+/etc/ssh/ssh_known_hosts # 保存所有用户信任的服务器返回的的公钥
 windows
-~\.ssh\authorized_keys           #授权配置文件 pub key   ~ 表示 C:\Users\用户
-C:\ProgramData\ssh\sshd_config   #服务端的配置文件
-~\.ssh\config                    #客户端的配置文件
-~\.ssh\known_hosts               #保存的已知曾连接到的服务器
+~\.ssh\authorized_keys           # 授权配置文件 公钥   ~ 为 C:\Users\用户
+~\.ssh\config                    # 客户端的配置文件
+~\.ssh\known_hosts               # 保存的已知曾连接到的服务器
+C:\ProgramData\ssh\sshd_config   # 服务端的配置文件
 
 密码登录
-ssh user@host  远程登录 用户名user 登录远程主机host
-ssh host       本地用户名与远程用户名一致 登录时可以省略用户名
-ssh -p 2222 user@host   SSH 的默认端口是22 使用p参数可以修改这个端口
-第一次登录对方主机，系统会出现下面的提示 yes  host主机已经得到认可 输入密码 登录成功
-远程主机的公钥被接受以后，它就会被保存在文件$HOME/.ssh/known_hosts之中。
-下次再连接这台主机，系统就会认出它的公钥已经保存在本地了，从而跳过警告部分，直接提示输入密码。
-每个 SSH 用户都有自己的known_hosts文件，此外系统也有一个这样的文件，
-通常是/etc/ssh/ssh_known_hosts，保存一些对所有用户都可信赖的远程主机的公钥
-windows一般在下在C:\Users\用户\.ssh\目录下
-/etc/ssh/sshd_config，将PasswordAuthentication这一项设为no。 #关闭密码登录 重新启动 sshd，否则不会生效
+ssh user@host          # 远程登录 用户名user 登录远程主机host
+ssh host               # 本地与远程用户名一致 登录时可省略用户名
+ssh -p 2222 user@host  # -p 端口  默认端口 22
+首次登录 会警告 yes后 host公钥会被保存在~/.ssh/known_hosts
+以后登录都会验证该host返回的公钥是否与known_hosts中的一致 是则跳过警告 否则发出警告
+/etc/ssh/sshd_config   # PasswordAuthentication no/yes 关闭/打开密码登录 重启sshd才会生效
 
 密钥登陆
-ssh-keygen   生成密钥 如： ssh-keygen -t rsa -b 4096 -C "your_email@domain.com" -f mykey
-  -t rsa 指定密钥的加密算法 一般为dsa或rsa
-  -C username@host 为密钥文件指定新的注释 .pub文件中=后面的部分
-  -b 1024 指定密钥的二进制位数
-  -f mykey 指定生成的私钥文件 在当前目录生成私钥文件mykey和公钥文件mykey.pub
-  -F example.com  检查某个主机名是否在known_hosts文件里面
-  -N secretword 指定私钥的密码
-  -p 重新指定私钥的密码(与-N的不同之处在于，新密码不在命令中指定，而是执行后再输入)
-  -R example.com 将指定的主机公钥指纹移出known_hosts文件
-运行结束以后 在$HOME/.ssh/目录下 会新生成两个文件:id_rsa.pub和id_rsa 前者是你的公钥 后者是你的私钥
-ssh-copy-id user@host  将公钥传送到远程主机 host 上面
-如果还是不行，就打开远程主机的/etc/ssh/sshd_config这个文件，检查下面几行前面#注释是否取掉。
+1 ssh-keygen     # 生成密钥  如 ssh-keygen -t rsa -b 4096 -C "wjg" -f mykey
+  -t rsa         # 密钥的加密算法 一般为dsa或rsa
+  -C wjg         # 注释 .pub文件中=后面的部分
+  -b 1024        # 密钥的二进制位数
+  -f mykey       # 生成的私钥文件名 当前目录生成私钥文件mykey和公钥文件mykey.pub
+  -F example.com # 检查某个主机名是否在known_hosts文件里面
+  -N secretword  # 私钥密码
+  -p             # 私钥密码(与-N不同 新密码不在命令中指定 而是执行后再输入)
+  -R example.com # 将指定的主机公钥指纹移出known_hosts文件
+运行后 在$HOME/.ssh/目录下 生成两个文件 id_rsa.pub和id_rsa 前者是公钥 后者是私钥
+2 ssh-copy-id user@host   # 将公钥传送到远程主机 host 上
+如果还是不行，打开远程主机的/etc/ssh/sshd_config，检查下面几行前面#注释是否去掉。
   RSAAuthentication yes
   PubkeyAuthentication yes
   AuthorizedKeysFile .ssh/authorized_keys
-然后，重启远程主机的 SSH 服务。
-/* ubuntu系统 */
-service ssh restart
-/* debian系统 */
-/etc/init.d/ssh restart
+service ssh restart     # 重启远程主机SSH服务 ubuntu系统
+/etc/init.d/ssh restart # debian系统
+
 
 sshd_config文件
-ForwardAgent yes          #打开ForwardAgent no 关闭 貌似默认是打开的 没配置照样行
-PubkeyAuthentication yes  #允许公钥授权访问，确保条目不被注释
-AuthorizedKeysFile  .ssh/authorized_keys  #授权文件存放位置，确保条目不被注释
-PasswordAuthentication no #可选，关闭密码登录，提高安全性
-#Match Group administrators    #注释掉默认授权文件位置，确保以下条目被注释
+ForwardAgent yes            # 打开ForwardAgent no关闭 貌似默认是打开的 没配置照样行
+PubkeyAuthentication yes    # 允许公钥授权访问 确保不被注释
+AuthorizedKeysFile  .ssh/authorized_keys  # 授权文件 确保不被注释
+PasswordAuthentication no   # 关闭密码登录 yes打开 可选
+#Match Group administrators # 注释掉默认授权文件位置 确保以下条目被注释
 #       AuthorizedKeysFile __PROGRAMDATA__/ssh/administrators_authorized_keys
-PermitRootLogin           #是否允许以root登录 yes/no
+PermitRootLogin             # 是否允许以root登录 yes/no
 
 
 authorized_keys文件
-远程主机将用户的公钥，保存在登录后的用户主目录的$HOME/.ssh/authorized_keys文件中。
-公钥就是一段字符串，只要把它追加在authorized_keys文件的末尾就行了。每个公钥占据一行。
-1 ssh-copy-id -i key_file user@host   #公钥文件会自动匹配到~/.ssh/key_file.pub
-  -i参数用来指定公钥文件 公钥文件可以不指定路径和.pub后缀名，ssh-copy-id会自动在~/.ssh目录里面寻找。
-  ssh-copy-id是直接将公钥添加到authorized_keys文件的末尾。
-  务必保证authorized_keys文件的末尾是换行符，否则新的公钥添加到前一个公钥的末尾，两个公钥连在一起，使得它们都无法生效。
-2 $ ssh user@host 'mkdir -p .ssh && cat >> .ssh/authorized_keys' < ~/.ssh/id_rsa.pub
-  这条命令由多个语句组成，依次分解开来看：
-  $ ssh user@host，表示登录远程主机；
-  单引号中的mkdir .ssh && cat >> .ssh/authorized_keys，表示登录后在远程 Shell 上执行的命令：
-  $ mkdir -p .ssh"的作用是，如果用户主目录中的.ssh`目录不存在，就创建一个；
-  cat >> .ssh/authorized_keys < ~/.ssh/id_rsa.pub的作用是，将本地的公钥文件~/.ssh/id_rsa.pub，重定向追加到远程文件authorized_keys的末尾。
-写入authorized_keys文件后，公钥登录的设置就完成啦
-chmod 644 ~/.ssh/authorized_keys  注意authorized_keys文件的权限要设为644 否则 SSH 服务器可能会拒绝读取该文件
+1 远程主机将客户公钥 追加在$HOME/.ssh/authorized_keys文件尾 公钥是一段字符串 每个公钥占一行
+1.1 ssh-copy-id -i key_file user@host   # 直接将公钥添加到host的authorized_keys文件的末尾
+  -i 公钥文件 可不指定路径和.pub后缀 会自动在~/.ssh/下找 本例为 ~/.ssh/key_file.pub
+  确保authorized_keys末尾是换行符，否则新公钥与前公钥相连，都将无法生效。
+1.2 ssh user@host 'mkdir -p .ssh && cat >> .ssh/authorized_keys' < ~/.ssh/id_rsa.pub
+  ssh user@host  # 表示登录远程主机
+  'mkdir .ssh && cat >> .ssh/authorized_keys'  # 登录后在远程 Shell 上执行的命令
+  mkdir -p .ssh" # 如果用户主目录中的.ssh`目录不存在，就创建一个
+  cat >> .ssh/authorized_keys < ~/.ssh/id_rsa.pub # 将本地公钥~/.ssh/id_rsa.pub重定向追加到远程文件authorized_keys末尾
+2 chmod 644 ~/.ssh/authorized_keys  # 权限为644 否则SSH服务器可能会拒绝读取该文件 公钥登录设置完成
 
 config文件
-命令行参数 ssh -p xx -i xx name@ip  如-p 10086, -i /path/to/identity_file 等选项来设置SSH的端口号或认证证书位置
-~/.ssh/config        #用户配置文件
-/etc/ssh/ssh_config  #系统配置文件
-配置文件可分为多个配置区段，每个配置区段使用Host来区分。我们可以在命令行中输入不同的host来加载不同的配置段
-对每一个配置项来说，首次获取的参数值将被采用，因此通用的设置应该放到文件的后面，特定host相关的配置项应放到文件的前面
-配置项说明
-Host host1                    #别名
-HostName ip或者url            #远程主机名 主机名 你也可以使用 %h，它将自动替换，只要替换后的地址是完整的就 ok。
-User username1                #登录用户名
-Port 22                       #端口 默认为 22
-IdentityFile ~/.ssh/dc_1      #私钥文件路径 默认为 ~/.ssh/id_dsa, ~/.ssh/id_ecdsa, ~/.ssh/id_ed25519 或 ~/.ssh/id_rsa中的一个
-  值可以直接指定也可以用一下参数代替：
-  %d，本地用户目录 ~
-  %u，本地用户
-  %l，本地主机名
-  %h，远程主机名
-  %r，远程用户名
-IdentitiesOnly                      #只接受SSH key 登录     指定 ssh 只能使用配置文件指定的 identity 和 certificate 文件或通过 ssh 命令行通过身份验证，即使 ssh-agent 或 PKCS11Provider 提供了多个 identities。值可以为 no(default)/yes。
+~/.ssh/config        # 用户配置文件
+/etc/ssh/ssh_config  # 系统配置文件
+ssh -p xx -i xx name@ip  # -p 10086端口  -i /path/to/identity_file私钥文件
+配置文件分为多个配置区段，区段用Host分割。命令行中输入不同的host来加载不同的配置段
+首次获取的配置项参数被采用，故通用设置应放到文件后面，特定host配置项应放到前面
+说明
+Host host1                  # 别名
+HostName ip/url             # 远程主机名 可用 %h，自动替换，只要替换后的地址是完整
+User username1              # 登录用户名
+Port 22                     # 端口 默认为 22
+IdentityFile ~/.ssh/id_rsa  # 私钥文件 默认为 ~/.ssh/id_dsa(id_ecdsa id_ed25519 id_rsa)
+  %d # 本地用户目录 ~
+  %u # 本地用户
+  %l # 本地主机名
+  %h # 远程主机名
+  %r # 远程用户名
+IdentitiesOnly              # 只接受SSH key登录     指定 ssh 只能使用配置文件指定的 identity 和 certificate 文件或通过 ssh 命令行通过身份验证，即使 ssh-agent 或 PKCS11Provider 提供了多个 identities。值可以为 no(default)/yes。
 PreferredAuthentications publickey  #强制使用Public Key验证        不常用
-AddKeysToAgent     #是否自动将 key 加入到 ssh-agent，值可以为 no(default)/confirm/ask/yes。 如果是 yes，key 和密码都将读取文件并以加入到 agent ，就像 ssh-add。其他分别是询问、确认、不加入的意思。添加到 ssh-agent 意味着将私钥和密码交给它管理，让它来进行身份认证。
-AddressFamily      #指定连接的时候使用的地址族，值可以为 any(default)/inet(IPv4)/inet6(IPv6)。
-BindAddress        #指定连接的时候使用的本地主机地址，只在系统有多个地址的时候有用。在 UsePrivilegedPort 值为 yes 的时候无效。
+AddKeysToAgent              # 是否自动将 key 加入到 ssh-agent，值可以为 no(default)/confirm/ask/yes。 如果是 yes，key 和密码都将读取文件并以加入到 agent ，就像 ssh-add。其他分别是询问、确认、不加入的意思。添加到 ssh-agent 意味着将私钥和密码交给它管理，让它来进行身份认证。
+AddressFamily               # 指定连接的时候使用的地址族，值可以为 any(default)/inet(IPv4)/inet6(IPv6)。
+BindAddress                 # 指定连接的时候使用的本地主机地址，只在系统有多个地址的时候有用。在 UsePrivilegedPort 值为 yes 的时候无效。
 ChallengeResponseAuthentication  #是否响应支持的身份验证 chanllenge，yes(default)/no。
-Compression        #是否压缩，值可以为 no(default)/yes。
-CompressionLevel   #压缩等级，值可以为 1(fast)-9(slow)。6(default)，相当于 gzip。
-ConnectionAttempts #退出前尝试连接的次数，值必须为整数，1(default)。
-ConnectTimeout     #连接 SSH 服务器超时时间，单位 s，默认系统 TCP 超时时间。
-ControlMaster      #是否开启单一网络共享多个 session，值可以为 no(default)/yes/ask/auto。需要和 ControlPath 配合使用，当值为 yes 时，ssh 会监听该路径下的 control socket，多个 session 会去连接该 socket，它们会尽可能的复用该网络连接而不是重新建立新的。
-ControlPath        #指定 control socket 的保存路径，值可以直接指定也可以用一下参数代替：
+Compression                 # 是否压缩，值可以为 no(default)/yes。
+CompressionLevel            # 压缩等级，值可以为 1(fast)-9(slow)。6(default)，相当于 gzip。
+ConnectionAttempts          # 退出前尝试连接的次数，值必须为整数，1(default)。
+ConnectTimeout              # 连接 SSH 服务器超时时间，单位 s，默认系统 TCP 超时时间。
+ControlMaster               # 是否开启单一网络共享多个 session，值可以为 no(default)/yes/ask/auto。需要和 ControlPath 配合使用，当值为 yes 时，ssh 会监听该路径下的 control socket，多个 session 会去连接该 socket，它们会尽可能的复用该网络连接而不是重新建立新的。
+ControlPath                 # 指定 control socket 的保存路径，值可以直接指定也可以用一下参数代替：
   %L 本地主机名的第一个组件
   %l 本地主机名（包括域名）
   %h 远程主机名（命令行输入）
@@ -174,206 +117,266 @@ ControlPath        #指定 control socket 的保存路径，值可以直接指�
   %i 本地 ssh 正在使用 uid
   %C 值为 %l%h%p%r 的 hash
   请最大限度的保持 ControlPath 的唯一。至少包含 %h，%p，%r（或者 %C）。
-ControlPersist   #结合 ControlMaster 使用，指定连接打开后后台保持的时间。值可以为 no/yes/整数，单位 s。如果为 no，最初的客户端关闭就关闭。如果 yes/0，无限期的，直到杀死或通过其它机制，如：ssh -O exit。
-GatewayPorts     #指定是否允许远程主机连接到本地转发端口，值可以为 no(default)/yes。默认情况，ssh 为本地回环地址绑定了端口转发器。
-LocalCommand     #指定在连接成功后，本地主机执行的命令（单纯的本地命令）。可使用 %d，%h，%l，%n，%p，%r，%u，%C 替换部分参数。只在 PermitLocalCommand 开启的情况下有效。
-LocalForward     #指定本地主机的端口通过 ssh 转发到指定远程主机。格式：LocalForward [bind_address:]post host:hostport，支持 IPv6。
-PasswordAuthentication    #是否使用密码进行身份验证，yes(default)/no。
-PermitLocalCommand        #是否允许指定 LocalCommand，值可以为 no(default)/yes。
-ProxyCommand              #指定连接的服务器需要执行的命令。%h，%p，%r  如：ProxyCommand /usr/bin/nc -X connect -x 192.0.2.0:8080 %h %p
+ControlPersist              # 结合 ControlMaster 使用，指定连接打开后后台保持的时间。值可以为 no/yes/整数，单位 s。如果为 no，最初的客户端关闭就关闭。如果 yes/0，无限期的，直到杀死或通过其它机制，如：ssh -O exit。
+GatewayPorts                # 指定是否允许远程主机连接到本地转发端口，值可以为 no(default)/yes。默认情况，ssh 为本地回环地址绑定了端口转发器。
+LocalCommand                # 指定在连接成功后，本地主机执行的命令（单纯的本地命令）。可使用 %d，%h，%l，%n，%p，%r，%u，%C 替换部分参数。只在 PermitLocalCommand 开启的情况下有效。
+LocalForward                # 指定本地主机的端口通过 ssh 转发到指定远程主机。格式：LocalForward [bind_address:]post host:hostport，支持 IPv6。
+PasswordAuthentication      # 是否使用密码进行身份验证，yes(default)/no。
+PermitLocalCommand          # 是否允许指定 LocalCommand，值可以为 no(default)/yes。
+ProxyCommand                # 指定连接的服务器需要执行的命令。%h，%p，%r  如：ProxyCommand /usr/bin/nc -X connect -x 192.0.2.0:8080 %h %p
 
-
-config文件 配置相关技巧
-ssh username1@ip 简写为 ssh host1     #关键词登录 可以省略用户名和主机名
-scp a.txt username1@ip:/home/user_name  简写为  scp a.txt host1:/home/user_name #scp 简化
-git clone git@git.coding.net:deepzz/test.git  简写为   git clone coding:deepzz/test.git #git 简化
-vim scp://username1@ip//home/xxx  或者 vim scp://host1//home/centos/docker-compose.yml  #vim 可以直接编辑远程服务器上的文件
+config文件使用
+ssh host1                        # 同 ssh username1@ip  关键词登录 省略用户名和主机名
+scp a.txt host1:/home/user_name  # 同 scp a.txt username1@ip:/home/user_name
+git clone coding:deepzz/test.git # 同 git clone git@git.coding.net:deepzz/test.git
+vim scp://host1//home/1.txt      # 同 vim scp://username1@ip//home/1.txt  vim直接编辑远程服务器上的文件
+  scp是协议 第一个//用来隔离协议与主机名   第二个//来隔离主机名和路径 第一个/用来隔离 第二个/是根的意思
 
 远程服务当本地用
-通过 LocalForward 将本地端口上的数据流量通过 ssh 转发到远程主机的指定端口。感觉你是使用的本地服务，其实你使用的远程服务。如远程服务器上运行着 Postgres，端口 5432（未暴露端口给外部）。那么，你可以：
-Host db
+LocalForward将本地端口上数据通过ssh转发到远程主机的指定端口。感觉是用本地服务，其实用的远程服务。
+Host db      # 如远程服务器上运行着Postgres，端口5432（未暴露端口给外部）。
     HostName db.example.com
     LocalForward 5433 localhost:5432
-当你连接远程主机时，它会在本地打开一个 5433 端口，并将该端口的流量通过 ssh 转发到远程服务器上的 5432 端口。
-ssh db  #首先，建立连接：
-psql -h localhost -p 5433 orders #之后，就可以通过 Postgres 客户端连接本地 5433 端口：
+当连接远程主机时，会在本地开一个5433端口，并将该端口数据通过ssh转发到远程服务器上的5432端口。
+ssh db  # 建立连接
+psql -h localhost -p 5433 orders # 之后就可通过Postgres客户端连接本地5433端口
 
 多连接共享
-什么是多连接共享？在你打开多个 shell 窗口时需要连接同一台服务器，如果你不想每次都输入用户名，密码，或是等待连接建立，那么你需要添加如下配置到 ~/.ssh/config：
+打开多个shell窗口连接同一台服务器，不想每次都输入用户名和密码或等待连接建立，则需要添加如下配置到~/.ssh/config
 ControlMaster auto
-ControlPath /tmp/%r@%h:%p         <<--- 存储的 socket文件 为 /tmp/%r@%h:%p
+ControlPath /tmp/%r@%h:%p    # 存储的 socket文件 为 /tmp/%r@%h:%p
 ControlPersist 600
 
 禁用密码登录
-如果你对服务器安全要求很高，那么禁用密码登录是必须的。因为使用密码登录服务器容易受到暴力破解的攻击，有一定的安全隐患。那么你需要编辑服务器的系统配置文件 /etc/ssh/sshd_config：
+/etc/ssh/sshd_config # 编辑系统配置文件
 PasswordAuthentication no
 ChallengeResponseAuthentication no
 
 代理登录 中间可有多个跳板
-有的时候你可能没法直接登录到某台服务器，而需要使用一台中间服务器进行中转，如公司内网服务器。首先确保你已经为服务器配置了公钥访问，并开启了ForwardAgent yes，那么你需要添加如下配置到 ~/.ssh/config：
+没法直接登录到某台服务器，需要使用中间服务器进行中转。
+首先为服务器配置了公钥访问，并开启ForwardAgent yes，添加如下配置到 ~/.ssh/config
 Host tiaoban1
     HostName tiaoban1ip
     User root
+    # IdentityFile ~/.ssh/id_ecdsa           # 登录tiaoban1的认证文件
 Host mubiao
-    HostName mubiaoip                                 # 目标服务器地址
-    User root                                         # 用户名
-    # IdentityFile ~/.ssh/id_ecdsa                    # 认证文件
-    ProxyCommand ssh -q -x -W %h:%p tiaoban           # 代理命令
-那么你现在可以使用 $ ssh db 连接了。
--W host:port 将client过来的标准输入和输出forward到host和port指定的地方. 可以看到,这个选项直接就可以搭配上ProxyCommand的需求.
+    HostName mubiaoip                        # 目标服务器地址
+    User root                                # 用户名
+    # IdentityFile ~/.ssh/id_ecdsa           # 登录mubiao的认证文件
+    ProxyCommand ssh -q -x -W %h:%p tiaoban  # 代理命令
+ssh mubiao # 登录
+-W host:port  # 将client过来的标准输入和输出forward到host和port指定的地方
+-q 安静模式 -x X11 forwarding无效
 
-远程执行命令
-日常情况我们需要到服务器上去执行一些命令或拷贝文件，本来是很简单的一件事情，但做得多了就比较繁琐了。通过 SSH 帮我们远程执行相关命令或脚本，非常棒。
-如有不了解的知识点，请阅读前面。利用 SSH 来帮我们在本地执行命令：
-1、执行远程命令：
-$ ssh example "cd /; ls"
-bin
-boot
-data
-...
-2、执行多行命令：
-$ ssh example "
-dquote> cd /
-dquote> ls
-dquote> "
-bin
-boot
-data
-...
-3、执行本地脚本 有时候，我们会将经常用到命令，如将一个复杂命令写入到一个 shell 脚本中，但又不想拷贝到服务器上，那么：
-# 示例脚本
-$ echo "cd /; ls" > test.sh
-# 为脚本添加可执行权限
-$ chmod +x test.sh
-# 远程执行本地脚本
-$ ssh example < test.sh
-Pseudo-terminal will not be allocated because stdin is not a terminal.
-bin
-boot
-data
-...
-4、执行需要交互的命令
-ssh -t example "top"
+执行远程命令
+ssh example "cd /; ls"  # 1 执行单条远程命令
+
+ssh example "           # 2 执行多行远程命令
+> pwd
+> ls
+> "
+
+ssh example < 1.sh      # 3 远程执行本地脚本
+echo "pwd; cd /; pwd" > 1.sh  # 本地脚本
+chmod +x 1.sh           # 为脚本添加可执行权限
+
+ssh -t example "top"    # 4 执行需要交互的命令
 
 
-ssh-agent 命令
-私钥设置了密码以后，每次使用都必须输入密码，如，连续使用scp命令远程拷贝文件时，每次都要求输入密码。
-ssh-agent为了解决这个问题而设计 它让用户在整个 Bash 对话（session） 只需第一次使用命令时输入密码 然后将私钥保存在内存中
-ssh-agent bash   #第一步，使用下面的命令新建一次命令行对话。
-eval `ssh-agent` #如果想在当前对话启用ssh-agent，可以使用下面的命令。
-ssh-add    #第二步，在新建的 Shell 对话里面，使用ssh-add命令添加默认的私钥（比如~/.ssh/id_rsa，或~/.ssh/id_dsa，或~/.ssh/id_ecdsa，或~/.ssh/id_ed25519）。添加私钥时，会要求输入密码。
-ssh-add my-other-key-file  #如果添加的不是默认私钥，ssh-add命令需要显式指定私钥文件。
-ssh remoteHost  #第三步，使用 ssh 命令正常登录远程服务器。remoteHost是远程服务器的地址，ssh 使用的是默认的私钥。这时如果私钥设有密码，ssh 将不再询问密码，而是直接取出内存里面的私钥。
-ssh –i OpenSSHPrivateKey remoteHost #如果要使用其他私钥登录服务器，需要使用 ssh 命令的-i参数指定私钥文件。
-ssh-agent -k  #最后，如果要退出ssh-agent，可以直接退出子 Shell（按下 Ctrl + d），也可以使用下面的命令。
+ssh-agent # 是一个密钥管理器 意为ssh代理
+私钥设置了密码，每次使用都必须输入密码。
+为解决这个问题 在整个Bash对话(session)只需第一次使用命令时输入密码 然后将私钥保存在内存中
+1 手动运行
+ 1.1 ssh-agent $SHELL
+    在当前shell中启动一个默认shell，作为当前shell的子shell，ssh-agent会在子shell中运行；
+    也可以明确指定 $SHELL ，比如 ssh-agent bash；
+    ssh-agent会随者当前ssh会话的结束而结束，这是一种安全机制。
+  1.2 eval `shell-agent`
+    windows为 eval $(ssh-agent) 它并不会启动一个子shell，而是直接启动一个ssh-agent进程；
+    当退出当前bash后，ssh-agent进程并不会自动关闭。
+    当前bash退出前，使用 ssh-agent -k，或当前bash退出后，用kill，关闭对应的ssh-agent进程。
+  1.3 如果想在当前对话启用ssh-agent，可以直接使用下面的命令。
+2 ssh-add       # 添加默认私钥(如~/.ssh/id_rsa id_dsa id_ecdsa id_ed25519)。
+  ssh-add my-key-file  # 不是默认私钥，显式指定私钥文件。添加私钥时，会要求输入密码。
+  -d # 从内存中删除指定的私钥          如 ssh-add -d name-of-key-file
+  -D # 从内存中删除所有已经添加的私钥   如 ssh-add -D
+  -l # 列出所有已经添加的私钥          如 ssh-add -l
+3 ssh host      # ssh使用私钥登录远程服务器host 若私钥设有密码，ssh将不再询问密码 直接从内存取
+  ssh –i privatekey host # 使用其他私钥登录服务器 -i指定私钥文件
+4 ssh-agent -k  # 退出ssh-agent  可以直接退出子Shell(Ctrl + d)
 
-ssh-add命令
-ssh-add命令用来将私钥加入ssh-agent，它有如下的参数。
--d参数从内存中删除指定的私钥。  ssh-add -d name-of-key-file
--D参数从内存中删除所有已经添加的私钥。  ssh-add -D
--l参数列出所有已经添加的私钥。  ssh-add -l
+
+
+ssh命令  # man ssh 部分
+ssh [选项] [user@]host [command]
+-1 # 强制使用ssh协议版本1
+-2 # 强制使用ssh协议版本2
+-4 # 强制使用IPv4地址
+-6 # 强制使用IPv6地址
+-A # 开启认证代理连接转发功能
+-a # 关闭认证代理连接转发功能
+-b # 使用本机指定地址作为对应连接的源ip地址
+-C # 请求压缩所有数据
+-c # 选择所加密的密码型式 （blowfish|3des 预设是3des）
+-e # 设定跳脱字符
+-F # 指定ssh指令的配置文件
+-f # 后台执行ssh指令
+-g # 允许远程主机连接主机的转发端口
+-i # 指定身份文件（预设是在使用者的家目录 中的 .ssh/identity）
+-l # 指定连接远程服务器登录用户名
+-N # 不执行远程指令
+-n # 重定向stdin 到 /dev/null
+-o # 指定配置选项
+-p # 指定远程服务器上的端口（默认22）
+-P # 使用非特定的 port 去对外联机（注意这个选项会关掉 RhostsAuthentication 和 RhostsRSAAuthentication）
+-q # 静默模式
+-T # 禁止分配伪终端
+-t # 强制配置 pseudo-tty
+-v # 打印更详细信息
+-X # 开启X11转发功能
+-x # 关闭X11转发功能
+-y # 开启信任X11转发功能
+-L # listen-port:host:port 指派本地的 port 到达端机器地址上的 port
+  建立本地SSH隧道(本地客户端建立监听端口)
+  将本地机(客户机)的某个端口转发到远端指定机器的指定端口.
+-R # listen-port:host:port 指派远程上的 port 到本地地址上的 port
+  建立远程SSH隧道(隧道服务端建立监听端口)
+  将远程主机(服务器)的某个端口转发到本地端指定机器的指定端口.
+-D # port 指定一个本地机器 “动态的’’ 应用程序端口转发.
+
+
 
 绑定本地端口
-既然 SSH 可以传送数据，那么我们可以让那些不加密的网络连接，全部改走 SSH 连接，从而提高安全性。
-假定我们要让8080端口的数据，都通过 SSH 传向远程主机，命令就这样写：
-$ ssh -D 8080 user@host
-SSH 会建立一个 Socket，去监听本地的8080端口。一旦有数据传向那个端口，就自动把它转移到 SSH 连接上面，发往远程主机。
+SSH可传送数据，可让不加密的网络连接改走SSH连接
+ssh -D 8080 user@host   # 让8080端口的数据，都通过SSH传向远程主机
+SSH建立一个socket，监听本地的8080端口。一旦有数据传向那个端口，就自动把它转移到SSH连接上面，发往远程主机。
 可以想象，如果8080端口原来是一个不加密端口，现在将变成一个加密端口。
 
-本地端口转发
-有时，绑定本地端口还不够，还必须指定数据传送的目标主机，从而形成点对点的”端口转发”。为了区别后文的”远程端口转发”，我们把这种情况称为“本地端口转发（Local forwarding）”。
-假定 host1 是本地主机，host2 是远程主机。由于种种原因，这两台主机之间无法连通。但是，另外还有一台 host3，可以同时连通前面两台主机。因此，很自然的想法就是，通过 host3，将 host1 连上 host2。我们在 host1 执行下面的命令：
-ssh -L 2121:host2:21 host3
-命令中的L参数一共接受三个值，分别是本地端口:目标主机:目标主机端口，它们之间用冒号分隔。这条命令的意思，就是指定 SSH 绑定本地端口2121，然后指定 host3 将所有的数据，转发到目标主机 host2 的21端口（假定 host2 运行 FTP，默认端口为21）。这样一来，我们只要连接 host1 的2121端口，就等于连上了 host2 的21端口。
-ftp localhost:2121
-“本地端口转发”使得 host1 和 host3 之间仿佛形成一个数据传输的秘密隧道，因此又被称为”SSH 隧道”。下面是一个比较有趣的例子。
-ssh -L 5900:localhost:5900 host3
-它表示将本机的5900端口绑定 host3 的5900端口（这里的 localhost 指的是 host3，因为目标主机是相对 host3 而言的）。另一个例子是通过 host3 的端口转发，SSH 登录 host2。
-ssh -L 9001:host2:22 host3
-这时，只要 SSH 登录本机的9001端口，就相当于登录 host2 了。
-ssh -p 9001 localhost
-上面的-p参数表示指定登录端口。
 
-远程端口转发
-既然”本地端口转发”是指绑定本地端口的转发，那么“远程端口转发（Remote forwarding）”当然是指绑定远程端口的转发。
-还是接着看上面那个例子，host1 与 host2 之间无法连通，必须借助 host3 转发。但是，特殊情况出现了，host3 是一台内网机器，它可以连接外网的 host1，但是反过来就不行，外网的 host1 连不上内网的 host3。这时，本地端口转发就不能用了，怎么办？
-解决办法是，既然 host3 可以连 host1，那么就从 host3 上建立与 host1 的 SSH 连接，然后在 host1 上使用这条连接就可以了。我们在 host3 执行下面的命令：
-ssh -R 2121:host2:21 host1   #R参数也是接受三个值，分别是远程主机端口:目标主机:目标主机端口。这条命令的意思，就是让 host1 监听它自己的2121端口，然后将所有数据经由 host3，转发到 host2 的21端口。由于对于 host3 来说，host1 是远程主机，所以这种情况就被称为远程端口绑定。绑定之后，我们在host1就可以连接 host2 了：
-ftp localhost:2121    #这里必须指出，远程端口转发的前提条件是，host1 和 host3 两台主机都有 sshD 和 SSH 客户端。
+本地端口转发(Local forwarding)
+host1本地主机，host2远程主机。两台主机之间无法连通。host3同时连通前面两台主机。
+ssh -L 2121:host2:21 host3  # 在host1执行命令 通过host3，将host1连上host2
+  -L 三个值，分别是本地端口:目标主机:目标主机端口，冒号分隔。
+  意思是SSH绑定本地端口2121，然后指定host3将所有的数据，转发到目标主机host2的21端口。
+  这样只要连接host1的2121端口，就等于连上了host2的21端口。
+ftp localhost:2121  # 假定host2上开启的是ftp服务(默认21端口)
+本地端口转发使得host1和host3之间仿佛形成一个数据传输的秘密隧道，因此又被称为”SSH 隧道”。
+ssh -L 5900:localhost:5900 host3
+  将本机的5900端口绑定host3的5900端口(这里的localhost指的是host3，因为目标主机是相对host3而言的)。
+ssh -L 9001:host2:22 host3  # 通过host3的端口转发，SSH登录host2。
+ssh -p 9001 localhost       # SSH登录本机的9001端口，就相当于登录host2了。 -p 端口
+
+
+远程端口转发(Remote forwarding)
+host1与host2无法连通，借助host3转发。但host3是一台内网机器，它可以连接外网的host1，反之不行。
+本地端口转发就不能用了。解决办法是在host3上建立与host1的SSH连接，然后在host1上使用这条连接。
+ssh -R 2121:host2:21 host1    # 在host3执行  -R三个值，分别是远程主机端口:目标主机:目标主机端口。
+  意思是让host1监听它自己的2121端口，然后将所有数据经由host3，转发到host2的21端口。
+  对于host3，host1是远程主机，所以这种情况就被称为远程端口绑定。绑定之后，在host1就可以连接host2了
+ftp localhost:2121    # host1上执行  远程端口转发的前提条件是，host1和host3都有sshd和ssh客户端。
+
 
 SSH的其他参数
-SSH 还有一些别的参数，也值得介绍。N参数，表示只连接远程主机，不打开远程 Shell；T参数，表示不为这个连接分配 TTY。这个两个参数可以放在一起用，代表这个 SSH 连接只用来传数据，不执行远程操作。
-ssh -NT -D 8080 host  #f参数，表示 SSH 连接成功后，转入后台运行。这样一来，你就可以在不中断 SSH 连接的情况下，在本地 Shell 中执行其他操作。　
-ssh -f -D 8080 host   #要关闭这个后台连接，只能用kill命令去杀掉进程。
+-N 只连接远程主机，不打开远程Shell -T 不为这个连接分配TTY。
+ssh -NT -D 8080 host  # 这个两个参数放在一起，代表这个SSH连接只用来传数据，不执行远程操作。 　
+ssh -f -D 8080 host   # -f SSH连接成功后，转入后台运行。要关闭这个后台连接，只能用kill杀进程。
+  这样一来，就可以在不中断SSH连接的情况下，在本地Shell中执行其他操作。
 
-ssl是通讯链路的附加层。可以包含很多协议。https, ftps, .....
-ssh只是加密的shell，最初是用来替代telnet的。通过port forward，也可以让其他协议通过ssh的隧道而起到加密的效果。
-SSL是一种国际标准的加密及身份认证通信协议，您用的浏览器就支持此协议。SSL（Secure Sockets Layer）最初是由美国Netscape公司研究出来的，后来成为了Internet网上安全通讯与交易的标准。SSL协议使用通讯双方的客户证书以及CA根证书，允许客户/服务器应用以一种不能被偷听的方式通讯，在通讯双方间建立起了一条安全的、可信任的通讯通道。它具备以下基本特征：信息保密性、信息完整性、相互鉴定。 主要用于提高应用程序之间数据的安全系数。SSL协议的整个概念可以被总结为：一个保证任何安装了安全套接字的客户和服务器间事务安全的协议，它涉及所有TC/IP应用程序。
-SSH的英文全称是Secure SHell。通过使用SSH，你可以把所有传输的数据进行加密，这样“中间人”这种攻击方式就不可能实现了，而且也能够防止DNS和IP欺骗。还有一个额外的好处就是传输的数据是经过压缩的，所以可以加快传输的速度。SSH有很多功能，它既可以代替telnet，又可以为ftp、pop、甚至ppp提供一个安全的“通道”。SSH是由客户端和服务端的软件组成的，有两个不兼容的版本分别是：1.x和2.x。用SSH 2.x的客户程序是不能连接到SSH 1.x的服务程序上去的。OpenSSH 2.x同时支持SSH 1.x和2.x。SSH的安全验证是如何工作的从客户端来看，SSH提供两种级别的安全验证。第一种级别（基于口令的安全验证）只要你知道自己帐号和口令，就可以登录到远程主机。所有传输的数据都会被加密，但是不能保证你正在连接的服务器就是你想连接的服务器。可能会有别的服务器在冒充真正的服务器，也就是受到“中间人”这种方式的攻击。第二种级别（基于密匙的安全验证）需要依靠密匙，也就是你必须为自己创建一对密匙，并把公用密匙放在需要访问的服务器上。如果你要连接到SSH服务器上，客户端软件就会向服务器发出请求，请求用你的密匙进行安全验证。服务器收到请求之后，先在你在该服务器的家目录下寻找你的公用密匙，然后把它和你发送过来的公用密匙进行比较。如果两个密匙一致，服务器就用公用密匙加密“质询”（challenge）并把它发送给客户端软件。客户端软件收到“质询”之后就可以用你的私人密匙解密再把它发送给服务器。用这种方式，你必须知道自己密匙的口令。但是，与第一种级别相比，第二种级别不需要在网络上传送口令。第二种级别不仅加密所有传送的数据，而且“中间人”这种攻击方式也是不可能的（因为他没有你的私人密匙）。但是整个登录的过程可能需要10秒。
-OpenSSL------一个C语言函数库，是对SSL协议的实现。
-OpenSSH-----是对SSH协议的实现。
+
+
+SSH1和SSH2的区别
+SSH(Secure SHell)到目前为止有两个不兼容的版本——SSH1和SSH2。
+ssh1和ssh2协议端口都是采用22. 而Telnet是23.
+SSH1又分为1.3和 1.5两个版本。SSH1采用DES、3DES、Blowfish和RC4等对称加密算法保护数据安全传输，
+  而对称加密算法的密钥是通过非对称加密算法（RSA）来完成交换的。
+  SSH1使用循环冗余校验码（CRC）来保证数据的完整性，但是后来发现这种方法有缺陷。
+SSH2避免了RSA的专利问题，并修补了CRC的缺陷。
+  SSH2用数字签名算法（DSA）和Diffie-Hellman（DH）算法代替RSA来完成对称密钥的交换，
+  用消息证实代码（HMAC）来代替CRC。同时SSH2增加了AES和Twofish等对称加密算法。
+SSH只是加密的shell，最初用来替代telnet。通过port forward，也可以让其他协议通过ssh隧道而起到加密效果。
+
+ssl(Secure Sockets Layer)是通讯链路的附加层。包含很多协议。https, ftps, .....
+ssl是一种国际标准的加密及身份认证通信协议，浏览器就支持此协议。
+ssl最初由美国Netscape公司研究出来，后来成为Internet网上安全通讯与交易的标准。
+ssl协议使用通讯双方的客户证书以及CA根证书，允许客户/服务器应用以一种不能被偷听的方式通讯，
+在通讯双方间建立起了一条安全的、可信任的通讯通道。
+它具备以下基本特征：信息保密性、信息完整性、相互鉴定。 主要用于提高应用程序之间数据的安全系数。
+ssl协议整个概念可总结为：一个保证任何安装了安全套接字的客户和服务器间事务安全的协议，它涉及所有TC/IP应用程序。
+
+使用SSH把所有传输的数据进行加密，这样“中间人”这种攻击方式就不可能实现了，而且也能够防止DNS和IP欺骗。
+一个额外好处是传输数据经过压缩，能加快传输速度。可代替telnet，为ftp、pop、ppp提供一个安全通道。
+SSH由客户端和服务端软件组成，有两个不兼容的版本：1.x和2.x。2.x客户程序不能连接到1.x服务程序。
+OpenSSH 2.x同时支持SSH 1.x和2.x。
+SSH的安全验证工作原理，从客户端来看，SSH提供两种级别的安全验证。
+一基于口令的安全验证 知道帐号和口令就可登录。所有传输的数据都加密，但不能保证正在连接的服务器就是想连接的。
+可能会有别的服务器在冒充真正的服务器，也就是受到“中间人”这种方式的攻击。
+二基于密匙的安全验证 创建一对密匙，公匙放在服务器。连SSH服务器，客户端会向服务器发出请求，用密匙进行安全验证。
+服务器收到请求后，在家目录寻找公匙，把它和发来的公匙比较。一致，服务器用公匙加密“质询”（challenge）并发送给客户端。
+客户端收到“质询”后用私匙再把它发送给服务器。这种方式，必须知道密匙的口令。
+与一相比，二种不需要在网络上传送口令。二不仅加密所有传送的数据，而且“中间人”攻击方式也是不可能的（没有私匙）。
+但是整个登录的过程可能需要10秒。
+
+OpenSSL 一个C语言函数库，是对SSL协议的实现。
+OpenSSH 对SSH协议的实现。
 ssh 利用 openssl 提供的库。openssl 中也有个叫做 openssl 的工具，是 openssl 中的库的命令行接口。
-从编译依赖上看：
 openssh依赖于openssl，没有openssl的话openssh就编译不过去，也运行不了。
-HTTPS可以使用TLS或者SSL协议，而openssl是TLS、SSL协议的开源实现，提供开发库和命令行程序。openssl很优秀，所以很多涉及到数据加密、传输加密的地方都会使用openssl的库来做。
-可以理解成所有的HTTPS都使用了openssl。以root身份执行命令：grep -l 'libssl.*deleted' /proc/*/maps | tr -cd 0-9\\n | xargs -r ps u，可以看到哪些进程加载了老版本的openssl库。
+HTTPS可使用TLS或SSL协议，而openssl是TLS、SSL协议的开源实现，提供开发库和命令行程序。
+openssl很优秀，所以很多涉及到数据加密、传输加密的地方都会使用openssl的库来做。
+grep -l 'libssl.*deleted' /proc/*/maps | tr -cd 0-9\\n | xargs -r ps u # 哪些进程加载了老版本的openssl库 root执行
 
 
-Ubuntu终端连接出错：Couldn’t agree a client-to-server cipher (available: aes128-ctr,aes192-ctr......)
-在安装了SSH-Server之后终端连接的过程中被中断
-sudo apt-get install openssh-server
-抛出的异常信息
-Couldn’t agree a client-to-server cipher (available: aes128-ctr,aes192-ctr,aes256-ctr,chacha20-poly1305@openssh.com)
-原因
-CBC block cipher mode of operation已经不够安全了，所以新的SSH-Server不支持该模式，而用的终端又不支持上面的CTR的模式所以就被拒绝连接了
 
-解决方法 有两种方案
-一种是把你的终端更新至最新版本
-另一种是更改支持的加密算法
-vi /etc/ssh/sshd_config
-在最后一行添加
-Ciphers aes128-ctr,aes192-ctr,aes256-ctr,chacha20-poly1305@openssh.com,aes256-cbc
-然后重新启动ssh
-/etc/init.d/ssh restart
+sudo apt-get install openssh-server # 服务器安装了SSH-Server之后终端连接的过程中被中断
+Couldn’t agree a client-to-server cipher (available: aes128-ctr,aes192-ctr,aes256-ctr,chacha20-poly1305@openssh.com) # Ubuntu终端连接出错
+CBC block cipher mode of operation已经不够安全了，新SSH-Server不支持该模式，而用的终端又不支持上面的CTR的模式所以就被拒绝连接了  # 原因
+
+解决方法
+一是把你的终端更新至最新版本
+二是更改支持的加密算法
+  /etc/ssh/sshd_config     # 配置文件
+  Ciphers aes128-ctr,aes192-ctr,aes256-ctr,chacha20-poly1305@openssh.com,aes256-cbc # 最后一行添加
+  /etc/init.d/ssh restart  # 重新启动ssh
 
 
 
 
 
-windows11本地+windows服务器SSH配置教程
+windows11SSH配置
 https://www.cnblogs.com/sparkdev/p/10166061.html
 1.安装 OpenSSH Server
-  OpenSSH 客户端程序默认已经被系统安装好，点击开始，打开设置->应用->可选应用->添加可选功能，安装OpenSSH客户端和OpenSSH服务器。分别点击OpenSSH客户端和OpenSSH服务器显示卸载说明安装成功。
+  开始->设置->应用->可选应用->添加可选功能，安装OpenSSH客户端和OpenSSH服务器。
+  OpenSSH 客户端程序默认已经被系统安装好，点击OpenSSH客户端和OpenSSH服务器显示卸载说明安装成功。
 2.开启服务
-  打开服务，找到OpenSSH SSH Server , 右击打开属性，更改状态为启动即可。
-  或者 win+R,打开命令行，输入net start sshd,启动SSH。
-  输入sc config sshd start= auto，设置SSH为自动打开模式。
+  服务->OpenSSH SSH Server->右击 属性 更改状态为启动即可。
+  win+R->输入net start sshd   # 启动SSH 方法2
+    输入sc config sshd start= auto，设置SSH为自动打开模式。
 3.监听端口
-  默认22   netstat -an |findstr :22
+  netstat -an |findstr :22   # 默认22
   在安装 OpenSSH Server 的时候会在防火墙的入站规则中添加一条记录让防火墙放行对 22 号端口的访问
 4.文件目录
-  服务器端的配置文件在 C:\ProgramData\ssh 目录中
-  安装目录 C:\Windows\System32\OpenSSH，不管是客户端程序还是服务器端程序都这这个目录中. OpenSSH 服务器端程序的默认配置文件 sshd_config_default 也在这个目录中。这个目录会被添加到 PATH 环境变量中,这样就可以在 PowerShell 中直接执行相关的命令而无需写出完整的路径。
+  C:\ProgramData\ssh\  # 服务器端的配置目录
+  C:\Windows\System32\OpenSSH\ # 程序目录 客户端/服务器程序都在这.它会被添加到 PATH 环境变量中
+  sshd_config_default  # OpenSSH 服务器端程序的默认配置文件
 5.客户端
-  因为 SSH 客户端所在的目录被添加到了 PATH 环境变量中，在 PowerShell 中可以直接执行 OpenSSH 客户端的命令 ssh
-  连接远程 Linux 主机  ssh username@ip
-  连接远程 Windows 主机 ssh username@ip 其中username、ip和password都是服务器的名称、ip和密码。输入密码的时候是不可见的，显示连接成功，@前后分别代表服务器名称和本地电脑名称。
-  在 Windows 系统中，PowerShell 已逐渐成为主流，我们可以把默认的 shell 设置为 PowerShell。其实就是在运行 OpenSSH Server 的 Windows 系统的注册表中添加一个配置项，注册表路径为 HKEY_LOCAL_MACHINE\SOFTWARE\OpenSSH，项的名称为 DefaultShell，项的值为 C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe。我们可以以管理员身份启动 PowerShell，然后执行下面的命令完成注册表项的添加：
-    New-ItemProperty -Path "HKLM:\SOFTWARE\OpenSSH" -Name DefaultShell -Value "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe" -PropertyType String -Force
-  现在重新连接远程服务器，默认的 shell 已经变成了 PowerShell
+  ssh username@ip    # 连接远程主机
+  New-ItemProperty -Path "HKLM:\SOFTWARE\OpenSSH" -Name DefaultShell -Value "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe" -PropertyType String -Force  # 以管理员身份启动 PowerShell 执行之 完成注册表项的添加
+    作用是把默认的 shell 设置为 PowerShell。
+    HKEY_LOCAL_MACHINE\SOFTWARE\OpenSSH 系统的注册表中 添加项名称为 DefaultShell
+    的值为 C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+  重新连接远程服务器，默认的 shell 已经变成了 PowerShell
 配置过程中可能遇到的问题及解决办法：
-若显示命令无效，两种解决办法，一查看自己是否同时安装了OpenSSH客户端和OpenSSH服务器，缺一不可。二以管理员身份打开命令行。
+若显示命令无效，两种解决办法，一查看是否同时安装了OpenSSH客户端和OpenSSH服务器，缺一不可。二以管理员身份打开命令行。
 
 安装OpenSSH服务器，安装失败
 https://answers.microsoft.com/zh-hans/windows/forum/all/%E5%AE%89%E8%A3%85openssh%E6%9C%8D%E5%8A%A1/7e78d41a-bef2-4023-a283-18f72f06ae61
 以管理员身份打开 PowerShell 并运行
-Get-WindowsCapability -Online | Where-Object Name -like  'OpenSSH*' #检查是否已经安装了 OpenSSH
+Get-WindowsCapability -Online | Where-Object Name -like  'OpenSSH*' # 检查是否已经安装了 OpenSSH
 Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0       # 安装 OpenSSH 客户端
 Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0       # 安装 OpenSSH 服务器
 Remove-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0    # 删除 OpenSSH 客户端
 Remove-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0    # 删除 OpenSSH 服务器
-启动服务 sshd               #使 OpenSSH 服务在系统启动时自动启动并运行
-Set-Service -Name sshd -StartupType 'Automatic'  #将服务标记为自动启动
+启动服务 sshd               # 使 OpenSSH 服务在系统启动时自动启动并运行
+Set-Service -Name sshd -StartupType 'Automatic'  # 将服务标记为自动启动
 
 若Add-WindowsCapability : Add-WindowsCapability 失败。错误代码 = 0x800f0954
 所在位置 行:1 字符: 1
@@ -382,20 +385,23 @@ Set-Service -Name sshd -StartupType 'Automatic'  #将服务标记为自动启动
     + CategoryInfo : NotSpecified: (:) [Add-WindowsCapability], COMException
     + FullyQualifiedErrorId : Microsoft.Dism.Commands.AddWindowsCapabilityCommand
 解决方法：
-1 gpedit.msc->计算机配置->管理模板->系统->指定可选组件安装和组件修复的设置 右键编辑 1选择已启用 2勾选 直接从"windows更新"而不是"windows server更新服务(WSUS)" 下载修复内容和可选内容 确定   已测试好用
-2 gpedit.msc->计算机配置->管理模板->windows组件->windows更新->管理windows server update service提供的更新->指定intranet microsoft更新服务位置 右键编辑 选择 已禁用 确定    已测试没用
+1 gpedit.msc->计算机配置->管理模板->系统->指定可选组件安装和组件修复的设置 右键编辑
+  1选择已启用 2勾选 直接从"windows更新"而不是"windows server更新服务(WSUS)" 下载修复内容和可选内容 确定   已测试好用
+2 gpedit.msc->计算机配置->管理模板->windows组件->windows更新->管理windows server update service提供的更新
+  ->指定intranet microsoft更新服务位置 右键编辑 选择 已禁用 确定    已测试没用
 3 设置->windows更新->高级选项->传递优化->允许从其他电脑下载 选择 internaet和我的本地网络上的设备  已测试没用
 4 手动下载  未测试  https://blog.arey.fun/archives/19/
-  1. https://github.com/PowerShell/Win32-OpenSSH/releases           #去github下载安装包
-  2. 下载 OpenSSH-Win64.zip         #根基系统和版本选择下载
-  3. powershell.exe -ExecutionPolicy Bypass -File install-sshd.ps1  #解压后在解压到的目录下进入cmd，运行
-  4. sc config sshd start= auto     #安装完后设置下开机启动 管理员权限启动poweshell或者cmd运行
-  5. Start-Service sshd             #启动ssh服务  或 net start sshd
-     Restart-Service sshd           #重启ssh服务
-     Stop-Service sshd              #停止ssh服务
-     Get-Service sshd               #查看状态 Get-Service -name ssh* 查看匹配名字的服务
-     Set-Service sshd -StartupType Automatic  #设置服务类型自动 Manual 手动
-  6. ssh-agent 服务 客户端服务  sshd  为服务器服务
+  1. https://github.com/PowerShell/Win32-OpenSSH/releases           # 去github下载安装包
+  2. 下载 OpenSSH-Win64.zip         # 根基系统和版本选择下载
+  3. powershell.exe -ExecutionPolicy Bypass -File install-sshd.ps1  # 解压后在解压到的目录下进入cmd，运行
+  4. sc config sshd start= auto     # 安装完后设置下开机启动 管理员权限启动poweshell或者cmd运行
+  5. Start-Service sshd             # 启动ssh服务  或 net start sshd
+     Restart-Service sshd           # 重启ssh服务
+     Stop-Service sshd              # 停止ssh服务
+     Get-Service sshd               # 查看状态 Get-Service -name ssh* 查看匹配名字的服务
+     Set-Service sshd -StartupType Automatic  # 设置服务类型自动 Manual 手动
+  6. ssh-agent 为客户端服务   sshd 为服务器服务
+
 
 关于linux ssh 连接windows11 免密登录 失败问题
 https://learn.microsoft.com/zh-cn/windows-server/administration/openssh/openssh_keymanagement
@@ -405,43 +411,35 @@ https://learn.microsoft.com/zh-cn/windows-server/administration/openssh/openssh_
 管理用户
   C:\ProgramData\ssh\administrators_authorized_keys #公钥拷贝到这里
   # Appropriately ACL the authorized_keys file on your server
-  1 icacls.exe "C:\ProgramData\ssh\administrators_authorized_keys" /inheritance:r /grant "Administrators:F" /grant "SYSTEM:F"      #powershell 管理员 本机操作
-  2 ssh --% user1@domain1@contoso.com icacls.exe "C:\ProgramData\ssh\administrators_authorized_keys" /inheritance:r /grant "Administrators:F" /grant "SYSTEM:F"  #powershell 管理员 远程操作
+  1 icacls.exe "C:\ProgramData\ssh\administrators_authorized_keys" /inheritance:r /grant "Administrators:F" /grant "SYSTEM:F"      # powershell 管理员 本机操作
+  2 ssh --% user1@domain1@contoso.com icacls.exe "C:\ProgramData\ssh\administrators_authorized_keys" /inheritance:r /grant "Administrators:F" /grant "SYSTEM:F"  # powershell 管理员 远程操作
   注 1 2择一操作即可 改变授权文件的安全属性 不操作测试也没问题
 
 私钥文件
-私钥文件等效于密码，可使用 ssh-agent 来将私钥安全地存储在与你的 Windows 登录关联的 Windows 安全上下文中。 为执行该操作，请以管理员身份启动 ssh-agent 服务并使用 ssh-add 来存储私钥。
+私钥文件等效于密码，可使用 ssh-agent 来将私钥安全地存储在与你的 Windows 登录关联的 Windows 安全上下文中。
+为执行该操作，请以管理员身份启动 ssh-agent 服务并使用 ssh-add 来存储私钥。
 # By default the ssh-agent service is disabled. Allow it to be manually started for the next step to work.
-# Make sure you're running as an Administrator.
-Get-Service ssh-agent | Set-Service -StartupType Manual
-
-# Start the service
-Start-Service ssh-agent
-
-# This should return a status of Running
-Get-Service ssh-agent
-
-# Now load your key files into ssh-agent
-ssh-add ~\.ssh\id_ed25519
+Get-Service ssh-agent | Set-Service -StartupType Manual  # Make sure you're running as an Administrator.
+Start-Service ssh-agent   # Start the service
+Get-Service ssh-agent     # This should return a status of Running
+ssh-add ~\.ssh\id_ed25519 # Now load your key files into ssh-agent
 完成这些步骤后，每当从此客户端进行身份验证需要使用私钥时，ssh-agent 都会自动检索本地私钥，并将其传递到你的 SSH 客户端。
 强烈建议你将私钥备份到一个安全位置，将其添加到 ssh-agent，然后将其从本地系统中删除。
 
 有的资料说免密登录如下设置***
 服务端
-1 用户的 ssh pub key 添加到 ~\.ssh\authorized_keys 中。
-2 C:\ProgramData\ssh\sshd_config #修改配置文件
+1 用户的 公钥 添加到 ~\.ssh\authorized_keys 中。
+2 C:\ProgramData\ssh\sshd_config # 修改配置文件
 确保以下3条没有被注释
-PubkeyAuthentication yes
-AuthorizedKeysFile	.ssh/authorized_keys
-PasswordAuthentication no
+  PubkeyAuthentication yes
+  AuthorizedKeysFile	.ssh/authorized_keys
+  PasswordAuthentication no
 确保以下2条有注释掉
-#Match Group administrators
-#       AuthorizedKeysFile __PROGRAMDATA__/ssh/administrators_authorized_keys
+  #Match Group administrators
+  #       AuthorizedKeysFile __PROGRAMDATA__/ssh/administrators_authorized_keys
 其余不做修改，基本都是已注释不启用。
-
-重启服务：Restart-Service sshd
+3 Restart-Service sshd  # 重启服务
 备注 这种方式 可作为参考 我本机测试无效 也可能跟版本支持有关
-
 
 客户端
 配置 ~/.ssh/config

@@ -119,11 +119,11 @@ data101:
 # --show-branches=<value>                            - Show coverage for branch conditions
 #     =count                                           -   Show True/False counts
 #     =percent                                         -   Show True/False percent
-#   --show-expansions                                  - Show expanded source regions
-#   --show-instantiations                              - Show function instantiations
-#   --show-line-counts                                 - Show the execution counts for each line
-#   --show-line-counts-or-regions                      - Show the execution counts for each line, or the execution counts for each region on lines that have multiple regions
-#   --show-regions                                     - Show the execution counts for each region
+# --show-expansions                                  - Show expanded source regions
+# --show-instantiations                              - Show function instantiations
+# --show-line-counts                                 - Show the execution counts for each line
+# --show-line-counts-or-regions                      - Show the execution counts for each line, or the execution counts for each region on lines that have multiple regions
+# --show-regions                                     - Show the execution counts for each region
 
 # --region-coverage-lt=2 区域 功能 过滤
 # --region-coverage-gt=2
@@ -144,7 +144,7 @@ data101:
 
 # report 命令 generate a file-level summary of coverage statistics instead of a line-oriented report
 # html(不支持) text(支持) lcov 使用(llvm-cov export)
-#	 llvm-cov report ./$(target101) -instr-profile=$(target101).profdata --format=text
+#	llvm-cov report ./$(target101) -instr-profile=$(target101).profdata --format=text
 # html(不支持) text(支持 json 格式) lcov(支持)
 #	llvm-cov export ./$(target101) -instr-profile=$(target101).profdata --format=lcov
 

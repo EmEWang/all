@@ -16,17 +16,17 @@ SUBDIRS = stlTest \
 #		SynDBConfig\
 #		SysDb\
 #		SearchDevice \
-		
-		
+
+
 export
 
 
-.PHONY: all clean $(SUBDIRS) 
+.PHONY: all clean $(SUBDIRS)
 
 all: $(SUBDIRS)
 	@echo SUBDIRS=#$(SUBDIRS)#
 
-$(SUBDIRS):    
+$(SUBDIRS):
 #	make -C $@ RELEASE=${RELEASE} BITS=${BITS} CENTOS=${CENTOS}
 	make -C $@ $(label)
 
@@ -36,9 +36,9 @@ clean :
 	      echo dir1=$$; \
 	      echo dir2=$$(dir); \
         make -C $$dir clean; \
-    done 
+    done
 
 
 
 clean2 :
-	@for dir in ${SUBDIRS}; do echo $dir;   echo $$dir; done 
+	@for dir in ${SUBDIRS}; do echo $dir;   echo $$dir; done

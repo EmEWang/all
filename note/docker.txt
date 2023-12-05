@@ -1,78 +1,168 @@
 
 https://docs.docker.com/
+https://docs.docker.com/engine/reference/commandline/docker/
+https://www.cnblogs.com/Can-daydayup/p/16472375.html
+https://www.zhihu.com/question/628245655/answer/3271205799   # 为什么要使用Docker
 
-sudo apt-get remove docker \
-               docker-engine \
-               docker.io          #卸载旧版本 旧版本的 Docker 称为 docker 或者 docker-engine
 
+# 设置存储库
 sudo apt-get update
-sudo apt-get install     ca-certificates     curl     gnupg     lsb-release    #安装docker
+sudo apt-get install ca-certificates curl gnupg lsb-release  # 安装必备的软件包以允许apt通过HTTPS使用存储库
 sudo mkdir -m 0755 -p /etc/apt/keyrings
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-echo   "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
-  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg # 添加Docker官方版本库的GPG密钥
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null  # 设置存储库
 
-sudo systemctl enable docker
-sudo systemctl start docker        #启动 Docker
-service docker restart             #重启docker
+# 安装Docker
+sudo apt-get update
+sudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin
 
+# 切换阿里云镜像源安装Docker
+sudo apt-get remove docker docker-engine docker-ce docker.io  # 卸载docker
+curl -fsSL http://mirrors.aliyun.com/docker-ce/linux/ubuntu/gpg | sudo apt-key add -  # 添加阿里云的GPG密钥
+sudo add-apt-repository "deb [arch=amd64] http://mirrors.aliyun.com/docker-ce/linux/ubuntu $(lsb_release -cs) stable  # 设置存储库
+sudo apt-get update
+sudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin  # 安装最新版本的Docker
+
+
+# 启动Docker
+systemctl status docker            # 查看docker运行状态
+sudo systemctl enable docker       # 设置Docker服务在每次开机时自动启动
+sudo systemctl start docker        # 启动 Docker
+service docker restart             # 重启docker
+
+#
 sudo groupadd docker               # 建立 docker 组
-sudo usermod -aG docker $USER      #将当前用户加入 docker 组
+sudo usermod -aG docker $USER      # 将当前用户加入 docker 组
 
-sudo docker run hello-world #检测docker是否安装
-docker version              #检查docker的版本信息
-docker images               #查看当前系统中的镜像信息
-docker image ls             #同上
-docker system df            #便捷的查看镜像、容器、数据卷所占用的空间
-docker search ubuntu        #搜索ubuntu系统镜像 最新版
-docker search ubuntu:20.04  #搜索ubuntu系统镜像 版本为20.04
-docker pull ubuntu          #拉取ubuntu系统镜像 最新版
-docker pull ubuntu:20.04    #拉取ubuntu系统镜像 版本为20.04
-docker run -it ubuntu:latest /bin/bash      #启动一个容器ubuntu 最新版  -i:交互式操作，-t:终端  bash:放在镜像名后的是 命令
-docker run -it --rm ubuntu:20.04 /bin/bash       #启动一个容器ubuntu 20.04版 --rm：这个参数是说容器退出后随之将其删除。默认情况下，为了排障需求，退出的容器并不会立即删除，除非手动 docker rm
-docker ps                   #查看运行中容器
-docker ps -a                #查看当前正在运行或过去运行的所有容器
-docker exec -it 775c7c9ee1e1 /bin/bash  #进入运行中的容器 775c7c9ee1e1为容器ID ps命令查出来的
-docker rmi -f  $(docker images | grep "none" | awk '{print $3}')   #删除none镜像
-docker stop $(docker ps -a | grep "Exited" | awk '{print $1 }')    #停止容器
-docker rm $(docker ps -a | grep "Exited" | awk '{print $1 }')      #删除容器
-docker image ls -f dangling=true           #查看 虚悬镜像(dangling image) 也就是 none 镜像
-docker image prune                         #删除虚悬镜像
-docker image ls -a                         #显示包括中间层镜像在内的所有镜像
-docker image ls ubuntu                     #根据仓库名列出镜像
-docker image ls ubuntu:18.04               #列出特定的某个镜像，也就是说指定仓库名和标签
-docker image ls -f since=mongo:3.2         #在 mongo:3.2 之后建立的镜像 过滤器参数 --filter，或者简写 -f 想查看某个位置之前的镜像也可以，只需要把 since 换成 before 即可
-docker image ls -f label=com.example.version=0.1     #如果镜像构建时，定义了 LABEL，还可以通过 LABEL 来过滤
-docker image ls -q                         #只列出镜像ID    --filter 配合 -q 产生出指定范围的 ID 列表
-docker image ls --format "{{.ID}}: {{.Repository}}"
-docker image ls --format "table {{.ID}}\t{{.Repository}}\t{{.Tag}}"     #自定义格式化输出列
-docker image rm 501                        #根据镜像ID删除 一般取前3位足够区分了
-docker image rm centos                     #也可以用镜像名，也就是 <仓库名>:<标签>，来删除镜像。
-docker image ls --digests
-docker image rm node@sha256:b4f0e0bdeb578043c1ea6862f0d40cc4afe32a4a582f3be235a3b164422be228  #更精确的是使用 镜像摘要 删除镜像
-docker run --name webserver -d -p 80:80 nginx   #用 nginx 镜像启动一个容器，命名为 webserver，并且映射了 80 端口
-docker build -f ./dockertest2/Dockerfile_  -t wjg:1 ./dockertest   指定构造文件和指定目录去构造镜像
-docker logs [OPTIONS] CONTAINER #-f : 跟踪日志输出  --since :显示某个开始时间的所有日志  -t : 显示时间戳  --tail :仅列出最新N条容器日志
-如docker logs --since="2016-07-01" --tail=10 mynginx
 
+# 验证
+sudo docker run hello-world # 验证Docker是否运行正常
+docker version              # 检查docker的版本信息
+
+# image
+docker search ubuntu        # 搜索镜像 ubuntu最新版
+docker search ubuntu:20.04  # 搜索镜像 ubuntu版本为20.04
+
+docker pull ubuntu          # 拉取镜像 ubuntu最新版
+docker pull ubuntu:20.04    # 拉取镜像 ubuntu版本为20.04
+
+docker images --help        # 帮助
+docker images               # 显示镜像 当前系统所有 同 docker image ls
+docker images ubuntu        # 显示镜像 根据仓库名
+docker images ubuntu:18.04  # 显示镜像 根据仓库名和标签
+docker images -a            # 显示镜像 --all 包括中间层镜像在内的所有
+docker images --digests     # 显示摘要
+docker images -f dangling=true     # 过滤显示虚悬镜像(dangling image) 也就是 none 镜像  --filter
+  docker images -f since=mongo:3.2 # 过滤显示mongo:3.2 之后建立的镜像  before查看某个位置之前的镜
+  docker images -f label=lb1       # 过滤显示镜像 通过label来过滤 如果镜像构建时 定义了label
+docker images -q            # 只显示镜像ID --quiet  配合 -f 可过滤id范围
+docker images --format "{{.ID}}:{{.Repository}}"  # 自定义格式化输出
+  docker images --format "table {{.ID}}\t{{.Repository}}\t{{.Tag}}"  # table 显示表头
+
+docker image --help         # 帮助
+docker image rm 501         # 删除镜像 根据 ID 一般取前3位足够区分了 同 docker rmi
+  docker image rm centos    # 删除镜像 根据镜像名，<仓库名>:<标签>
+  docker image rm node@sha256:b4f0e0bdeb578043c1ea6862f0d40cc4afe32a4a582f3be235a3b164422be228  # 删除镜像 根据摘要
+docker rmi [opt] 镜像        # 删除镜像 或多个 -f 强制删除   --no-prune 不移除该镜像的过程镜像，默认移除
+  docker rmi -f  $(docker images | grep "none" | awk '{print $3}')   # 删除none镜像
+  docker rmi -f mongo:3.2   # 强制删除本地镜像 mongo:3.2
+docker image prune          # 删除 所有未被 tag 标记和未被容器使用的镜像
+  docker image prune -a     # 删除 所有未被容器使用的镜像
+
+
+
+# 容器
+docker ps                   # 显示运行中容器
+docker ps -a                # 显示正在运行或过去运行的所有容器
+
+docker run -it ubuntu:latest /bin/bash      # 启动容器 -i 交互式 -t 终端 后接镜像 和 命令
+  docker run -v $PWD:/all -it image_my /bin/bash # -v 挂载当前目录到容器下/all 同--volume
+  docker run -it --rm image_my /bin/bash    # --rm 停止时移除容器 默认不立即删除，除非手动 docker rm
+  docker run -d image_my    # -d 后台运行容器 返回容器ID 仅限于启动全新的容器，启动关闭的容器是不可以的
+  docker run --name webserver -d -p 80:80 nginx  # 启动nginx容器，命名为 webserver，并映射了80端口
+  docker run --rm -v "$PWD/data":/var/lib/mysql --name mysql -e MYSQL_ROOT_PASSWORD=admin-password -e MYSQL_DATABASE=my-database -p 3306:3306 mysql:8.0.28-debian
+    -e MYSQL_DATABASE=my-database 设置一个环境变量，自动创建一个名为my-database的新数据库
+    -e MYSQL_ROOT_PASSWORD=admin-password 设置一个环境变量来设置管理密码
+
+docker exec -it 775c7c9ee1e1 /bin/bash  # 进入运行中的容器 775c7c9ee1e1为容器ID ps命令查
+
+exit                        # 在容器内退出容器
+Ctrl + p + q                # 暂时离开容器 此时状态容器状态还是 up 运行中
+
+docker rm [opt] 容器        # 删除一个或多个 容器
+  docker rm -f db01 db02    # 强制删除容器db01、db02  -f 通过SIGKILL信号强制删除一个运行中的容器
+  docker rm -l db01         # 移除容器 my-nginx 对容器db01的连接，连接名db01  -l 移除容器间的网络连接，而非容器本身
+  docker rm -v my-nginx     # 删除容器 my-nginx，并删除容器挂载的数据卷  -v 删除与容器关联的卷
+  docker rm $(docker ps -a | grep "Exited" | awk '{print $1 }')      # 删除容器
+
+docker container prune      # 删除 所有停止运行的容器
+docker volume prune         # 删除 所有未被挂载的卷
+docker network prune        # 删除 所有网络
+docker system prune         # 删除 docker 所有资源
+
+docker stop $(docker ps -a | grep "Exited" | awk '{print $1 }')    # 停止容器
+
+docker logs [opt] 容器 # -f 跟踪日志输出  --since 显示某个开始时间的所有日志  -t 显示时间戳  --tail 最新N条容器日志
+  docker logs --since="2016-07-01" --tail=10 mynginx
+
+
+docker目录挂载的总结
+https://www.cnblogs.com/ivictor/p/4834864.html
+docker run -it -v /test:/soft centos /bin/bash # 启动centos容器 主机的/test目录挂载到容器的/soft目录
+1 主机目录:容器目录
+1.1 主机目录若不存在，则会自动生成；容器目录必须是绝对路径
+1.2 主机目录若为相对路径 其相对路径指的是/var/lib/docker/volumes/，与宿主机的当前目录无关。
+  通过docker inspect命令，查看容器“Mounts”那一部分 有 "Source": "/var/lib/docker/volumes/test1/_data"
+2 若只指定一个目录 即 -v dir1
+  2.1 dir1 代表容器目录/dir  绝对目录 相对目录 都可以
+  2.2 主机目录为/var/lib/docker/volumes/xxx/_data # xxx随机目录名 查询同1.2
+3 容器内修改了目录的属主和属组，那么对应的挂载点是否会修改呢？ 跟随UID改变
+4 容器销毁了，在宿主机上新建的挂载目录是否会消失？
+  4.1 指定主机目录，即 -v /test:/soft。即便容器销毁了，新建的挂载目录不会消失。
+      如果主机目录的属主和属组发生了变化，容器销毁后，宿主机目录的属主和属组不会恢复到挂载之前的状态。
+  4.2 没指定主机目录，即-v /soft。销毁容器，看目录是否存在；即便重启了docker服务，该目录依旧存在。
+5 挂载宿主机已存在目录后，在容器内对其进行操作，报“Permission denied”。
+  可通过两种方式解决：
+  5.1 关闭selinux。
+  临时关闭：# setenforce 0
+  永久关闭：修改/etc/sysconfig/selinux文件，将SELINUX的值设置为disabled。
+  5.2 以特权方式启动容器
+  指定--privileged参数
+  如：# docker run -it --privileged=true -v /test:/soft centos /bin/bash
+
+
+
+# system
+docker system df      # 显示镜像、容器、数据卷所占用的空间
+  docker system df -v # 使用verbose选项 -v 获得更多信息
+docker system prune      # 清理大部分docker资源，保留有标签的镜像 只删除悬空的镜像，是没有标记的镜像，与其他镜像没有关系
+  docker system prune -a # 尽可能地清理，不包括正在使用的组件 -a 包括未使用的和悬空的容器
+
+docker image prune       #  清理未使用和悬空的镜像
+  docker image prune -a  #  只清理悬空的镜像
+docker container prune   #  清理停止运行的容器
+docker volume prune      #  清理不再使用的卷
+
+
+docker build -f ./dockertest2/Dockerfile_  -t wjg:1 ./dockertest  # 指定构造文件和指定目录去构造镜像
 
 生成最简单的镜像 Docker中直接运行程序
-1. 创建目录
-mkdir hello-docker    # 创建应用程序目录
-cd hello-docker       # 进入该目录
-2. 编写程序
-vim hello.c
-3. 源码
-#include<stdio.h>
-int main ()
-{
-    printf("hello docker\n");
-}
-4. 编译
-gcc -static hello.c -o hello  将编写的c程序编译在hello-docker根目录 静态方式
-5. 在hello-docker文件夹下新建Dockerfile文件
-vim Dockerfile
-6. 编写Dockerfile中的内容
+1 创建目录
+  mkdir hello-docker    # 创建应用程序目录
+  cd hello-docker       # 进入该目录
+2 编写程序
+  vim hello.c
+3 源码
+  #include<stdio.h>
+  int main ()
+  {
+      printf("hello docker\n");
+  }
+4 编译
+  gcc -static hello.c -o hello  将编写的c程序编译在hello-docker根目录 静态方式
+5 在hello-docker文件夹下新建Dockerfile文件
+  vim Dockerfile
+6 编写Dockerfile中的内容
 FROM scatch
 ADD hello /
 CMD ["/hello"]
@@ -80,44 +170,21 @@ CMD ["/hello"]
      ADD: 添加文件到镜像执行位置，如上是根目录;
      RUN: 镜像的操作指令;
      CMD: 容器启动时执行指令
-7. 在hello-docker 根目录编译镜像
-docker build -t wjg:1 .                     # -t 增加标签
-8. 编译完成后，在命令行中查看镜像是否存在
-docker images
-9. 运行镜像
-docker run wjg:1
-
-
-Docker目录挂载的总结
-https://www.cnblogs.com/ivictor/p/4834864.html
-Docker容器启动的时候，如果要挂载宿主机的一个目录，可以用-v或--volume参数指定。
-譬如我要启动一个centos容器，宿主机的/test目录挂载到容器的/soft目录，可通过以下方式指定：
-# docker run -it -v /test:/soft centos /bin/bash
-这样在容器启动后，容器内会自动创建/soft的目录。通过这种方式，我们可以明确一点，即-v参数中，冒号":"前面的目录是宿主机目录，后面的目录是容器内目录。
-1 容器目录不可以为相对路径    docker run -it -v /test:soft centos /bin/bash 启动出错
-2 宿主机目录如果不存在，则会自动生成 docker run -it -v /test:/soft centos /bin/bash 宿主机创建 /test
-3 宿主机的目录如果为相对路径 docker run -it -v test1:/soft centos /bin/bash
-  通过docker inspect命令，查看容器“Mounts”那一部分 有 "Source": "/var/lib/docker/volumes/test1/_data" 此为宿主机上的目录，原来，所谓的相对路径指的是/var/lib/docker/volumes/，与宿主机的当前目录无关。
-4 如果只是-v指定一个目录，这个又是如何对应呢？ 同3类似  "Source": "/var/lib/docker/volumes/xxx/_data" 随机目录名
-5 如果在容器内修改了目录的属主和属组，那么对应的挂载点是否会修改呢？ 跟随UID改变
-6 容器销毁了，在宿主机上新建的挂载目录是否会消失？
-  一、指定了宿主机目录，即 -v /test:/soft。即便容器销毁了，新建的挂载目录不会消失。进一步也可验证，如果宿主机目录的属主和属组发生了变化，容器销毁后，宿主机目录的属主和属组不会恢复到挂载之前的状态。
-  二、没有指定宿主机目录，即-v /soft。销毁容器，看目录是否存在；即便重启了docker服务，该目录依旧存在。
-7 挂载宿主机已存在目录后，在容器内对其进行操作，报“Permission denied”。
-  可通过两种方式解决：
-  1> 关闭selinux。
-  临时关闭：# setenforce 0
-  永久关闭：修改/etc/sysconfig/selinux文件，将SELINUX的值设置为disabled。
-  2> 以特权方式启动容器
-  指定--privileged参数
-  如：# docker run -it --privileged=true -v /test:/soft centos /bin/bash
+7 在hello-docker 根目录编译镜像
+  docker build -t wjg:1 .                     # -t 增加标签
+8 编译完成后，在命令行中查看镜像是否存在
+  docker images
+9 运行镜像
+  docker run wjg:1
 
 
 
 
 
 
-基本概念------------------
+
+
+基本概念
 https://www.freecodecamp.org/chinese/news/where-are-docker-images-stored-docker-container-paths-explained/
 
 容器 Containers
@@ -131,91 +198,40 @@ https://www.freecodecamp.org/chinese/news/where-are-docker-images-stored-docker-
 
 
 Docker 的配置信息
-$ docker info
-  ...
-   Storage Driver: overlay2                  <-- 存储驱动
-   Docker Root Dir: /var/lib/docker          <-- docker 根目录的信息
-  ...
+$ docker info 中
+   Storage Driver: overlay2                  # 存储驱动
+   Docker Root Dir: /var/lib/docker          # docker 根目录的信息
 
 Docker 镜像和容器的存储路径
-Linux:
-cd /var/lib/docker - 容器与镜像存放在此目录下
-镜像位置: /var/lib/docker/image
-容器位置: /var/lib/docker/containers
-
-Windows:
-C:\ProgramData\DockerDesktop
-
-MacOS:
-容器和镜像在如下目录下,不同版本或许可能文件版本不一样
-/Users/xxxxmyname/Library/Containers/com.docker.docker/Data
-可以到上面的目录中，查看文件大小, du -sh *
-本机存放位置如下
+/var/lib/docker/              # Linux 保存着各种信息，如：容器数据、卷、构建文件、网络文件和集群数据。
+/var/lib/docker/overlay2/     # 镜像目录 默认使用 overlay2 存储驱动  最大的文件通常是镜像
+/var/lib/docker/image         # 镜像位置
+/var/lib/docker/containers    # 容器位置
+C:\ProgramData\DockerDesktop  # Windows系统
+/Users/xxxxmyname/Library/Containers/com.docker.docker/Data  # MacOS 系统
 /Users/xxxxmyname/Library/Containers/com.docker.docker/Data/vms/0/data/Docker.raw
 
-docker inspect nginx   #查看常规镜像的信息
-  ...
-  "UpperDir": "/var/lib/docker/overlay2/585...9eb/diff"   <--  linux 系统中的路径
-  ...
-
-docker run -it --privileged --pid=host debian nsenter -t 1 -m -u -i sh #连接镜像
+docker run -it --privileged --pid=host debian nsenter -t 1 -m -u -i sh # 连接镜像
 现在，可以进入指定路径：cd /var/lib/docker/overlay2/585...9eb/
 
-
-Docker 根目录的内部结构
-/var/lib/docker 目录中保存着各种信息，例如：容器数据、卷、构建文件、网络文件和集群数据。
-
-Docker 镜像 目录
-最大的文件通常是镜像。如果使用默认的 overlay2 存储驱动，Docker 镜像会保存在 /var/lib/docker/overlay2 目录。
-docker image inspect nginx 中
+docker image inspect nginx    # 查看常规镜像的信息  同 docker inspect nginx
   "GraphDriver": {
-              "Data": {
-                  "LowerDir": "/var/lib/docker/overlay2/585...9eb/diff:      <--LowerDir 包含镜像的只读层
-                               /var/lib/docker/overlay2/585...9eb/diff",
-                  "MergedDir": "/var/lib/docker/overlay2/585...9eb/merged",  <--MergedDir 表示 UpperDir 和 LowerDir 合并的结果，Docker 用它来运行容器。
-                  "UpperDir": "/var/lib/docker/overlay2/585...9eb/diff",     <--表示变更的读写层包含在 UpperDir 中
-                  "WorkDir": "/var/lib/docker/overlay2/585...9eb/work"       <--WorkDir 是 overlay2 的内部目录，应该是空的。
-              }
+    "Data": {
+      "LowerDir":"/var/lib/docker/overlay2/xx/diff:     # 包含镜像的只读层
+                  /var/lib/docker/overlay2/xx/diff",
+      "MergedDir":"/var/lib/docker/overlay2/xx/merged", # 表示UpperDir和LowerDir合并的结果 docker用它来运行容器 系统中的路径
+      "UpperDir":"/var/lib/docker/overlay2/xx/diff",    # 表示变更的读写层包含在 UpperDir 中
+      "WorkDir": "/var/lib/docker/overlay2/xx/work"     # WorkDir 是 overlay2 的内部目录，应该是空的。
+    }
 
-Docker 卷（Volumes）
-可以利用卷来持久化容器内的数据，容器和宿主机之间、容器和容器之间也可以通过共享卷来共享数据。使用 -v 选项可以让容器以挂载卷的方式启动
-  如 docker run --name nginx_container -v /var/log nginx
-如 docker inspect nginx_container 显示
-  "Mounts": [
-            {
-                "Source": "/var/lib/docker/volumes/1e4...d9c/_data",     <-- 挂载的外面的目录
-                "Destination": "/var/log",                               <-- docker中的目录
-            }
-        ],
-...
+Docker 卷(Volumes)
+用来持久化容器内的数据，容器和宿主机之间、容器和容器之间也可以通过共享卷来共享数据。
+docker run --name nginx_container -v /var/log nginx    # 启动容器时 -v 挂载卷
+docker inspect nginx_container 中显示
+"Mounts": [
+          {
+              "Source": "/var/lib/docker/volumes/1e4...d9c/_data",     # 挂载的外面的目录
+              "Destination": "/var/log",                               # docker中的目录
+          }
+      ],
 
-清理 Docker 使用的空间
-建议使用 Docker 命令来清理不再使用的容器。可以使用以下命令清理容器、网络文件、镜像和构建缓存：
-  docker system prune -a
-此外，也可以清除不再使用的卷：
-  docker volumes prune
-
-
-命令------------------------------
-https://docs.docker.com/engine/reference/commandline/docker/
-
-
-docker run 命令
-docker run --rm -v "$PWD/data":/var/lib/mysql --name mysql -e MYSQL_ROOT_PASSWORD=admin-password -e MYSQL_DATABASE=my-database -p 3306:3306 mysql:8.0.28-debian
-该命令使用了运行 Docker 容器的高级功能：
--v "$PWD/data" 映射了你的本地目录./data到 Docker 容器，这使你能够启动Docker容器而不丢失你的数据
--p 3306:3306 映射容器的 3306 端口到我们的机器的 3306 端口上，以便其他应用程序可以使用它
--e MYSQL_DATABASE=my-database 设置一个环境变量，自动创建一个名为my-database的新数据库
--e MYSQL_ROOT_PASSWORD=admin-password 设置一个环境变量来设置管理密码
---rm 停止时移除容器
-
-docker system 命令
-docker system df    #查看有多少空间被使用
-docker system df -v #使用verbose选项 -v 获得更多信息
-docker system prune -a   #尽可能地清理，不包括正在使用的组件
-  -a 包括未使用的和悬空的容器。不提供`-a'将只删除悬空的镜像，这些镜像是没有标记的镜像，与任何其他镜像没有关系。
-docker system prune      #清理大部分Docker资源，但仍然保留有标签的镜像
-docker image prune       #清理未使用和悬空的镜像
-docker image prune -a    #只清理悬空的镜像
-docker container prune   #清理停止运行的容器
-docker volume prune      #清理未使用的卷宗

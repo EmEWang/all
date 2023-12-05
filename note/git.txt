@@ -1,24 +1,24 @@
 
-https://blog.csdn.net/qq_35246620/article/details/66973794    #史上最简单的 GitHub 教程
+https://git-scm.com/
+https://git-scm.com/docs
+https://blog.csdn.net/qq_35246620/article/details/66973794    # 史上最简单的 GitHub 教程
+
 
 github
-ssh -T git@github.com   配置好ssh keys之后 验证绑定是否成功
-github 默认分支修改 切换到要修改的库->settings->branches->Default branch下的双箭头
-github 修改ssh keys 个人头像->Settins->SSH and GPG keys->SSH keys中增删改
+ssh -T git@github.com  # 配置好ssh keys之后 验证绑定是否成功
+github 切换到要修改的库->settings->branches->Default branch下的双箭头  # 默认分支修改
+github 个人头像->Settins->SSH and GPG keys->SSH keys中增删改          # 修改ssh keys
 
 本地文件上传/同步到github
-1 git init   建立git仓库，cd到你的本地项目根目录下，执行git命令
-2 git add .  将项目的所有文件添加到仓库中 或者git add *.c *.cpp makefile* 添加部分文件
-3 git commit -m "注释语句"   将add的文件commit到仓库
-4 github上创建自己的Repository，点击Clone or download按钮，复制弹出的地址git@github.com:***/test.git，
-  记得要用SSH的地址，尽量不要用HTTPS的地址
-5 git remote add origin git@github.com:***/test.git 将本地的仓库关联到github上---把上一步复制的地址放到下面
-6 git pull origin master 上传github之前，要先pull一下 也可以不用
-7 git push -u origin master 上传代码到github远程仓库
+1 git init             # 建立本地git仓库，cd 目录，执行git命令
+2 git add .            # 整个目录添加到仓库  git add *.c *.cpp makefile* 添加部分文件
+3 git commit -m "xxx"  #  将add的文件commit到仓库
+4 github创建Repository，Clone or download按钮，地址git@github.com:*/*.git，要用SSH的地址
+5 git remote add origin git@github.com:*/*.git    # 将本地的仓库关联到github上
+6 git pull origin master    # 先pull 也可以不用
+7 git push -u origin master # 上传到github
 
-
-期间可能需要配置
-git config --global user.name 'your_name'
+git config --global user.name 'your_name'     # 期间可能需要配置
 git config --global user.email 'your_email'
 
 https://stackoverflow.com/questions/29933918/ssh-key-permissions-0644-for-id-rsa-pub-are-too-open-on-mac
@@ -31,484 +31,317 @@ It is required that your private key files are NOT accessible by others.
 This private key will be ignored.
 bad permissions: ignore key: /Users/tudouya/.ssh/vm/vm_id_rsa.pub
 Permission denied (publickey,password).
-chmod 400 ~/.ssh/id_rsa             设置只读权限
+chmod 400 ~/.ssh/id_rsa             # 设置只读权限
 
-配置文件
-https://git-scm.com/book/zh/v2/%E8%87%AA%E5%AE%9A%E4%B9%89-Git-%E9%85%8D%E7%BD%AE-Git
-/etc/gitconfig  #系统配置文件  传递 --system 选项给 git config 就会读写该文件。含有系统里每位用户及他们所拥有的仓库的配置值。
-~/.gitconfig 或 ~/.config/git/config  #全局配置文件 传递 --global 选项让 Git 读写该文件。对应每一个用户。
-.git/config  #本都配置文件 它对应于向 git config 传递 --local 选项。这个文件中的值只对当前仓库有效。
-以上三个层次中每层的配置（系统、全局、本地）都会覆盖掉上一层次的配置，所以 .git/config 中的值会覆盖掉 /etc/gitconfig 中所对应的值。
-
-git mv OLD-FILENAME NEW-FILENAME    文件重命名
-git add -u                          只暂存已修改的文件 不管未追踪的文件
-git add xxx                         git commit之前一定要add 即使是修改过的文件
-git remote                          显示远程库别名
-git remote -v                       查看远程库链接地址
-git remote add origin 远程库地址     增加远程库别名
-git remote rm origin                删除远程库
-git remote rename master ttt        修改远程仓别名 从 master -> ttt
-git rm xxx                          删除文件
-git rm -r --cached .                对所有文件都取消跟踪 不删除本地文件
-git rm -r --f .                     对所有文件都取消跟踪 删除本地文件
-git rm --cached readme1.txt         删除readme1.txt的跟踪，并保留在本地
-git rm --f readme1.txt              删除readme1.txt的跟踪，并且删除本地文件
-.gitignore 文件                     忽略要提交的文件 每一行代表忽略一个或者一种
-git config --list --show-origin     显示配置 包含文件位置
-
-关于push -u的解释  -u为上游分支
-git branch --set-upstream-to=origin/master    手动设置当前分支的上游分支分支
-git push -u origin master                     1 设置上游分支 2 push
-设置了上游分支 每次pull 或者 push的时候就不用每次手动指定 git pull origin master 简化为 git pull
-在配置文件中体现为
-[branch "master"]
-    remote = origin
-    merge = refs/heads/develop
-
-https://segmentfault.com/a/1190000002783245  详细解释
-1 git push的默认行为
-在git的全局配置中，有一个push.default属性，其决定了git push操作的默认行为。
-git config --global push.default 'option'   可选值 nothing, current, upstream, simple, matching
-nothing - push操作无效，除非显式指定远程分支，例如git push origin develop。
-current - push当前分支到远程同名分支，如果远程同名分支不存在则自动创建同名分支。
-upstream - push当前分支到它的upstream分支上（这一项其实用于经常从本地分支push/pull到同一远程仓库的情景，这种模式叫做central workflow）。
-simple - simple和upstream是相似的，只有一点不同，simple必须保证本地分支和它的远程upstream分支同名，否则会拒绝push操作。
-matching - push所有本地和远程两端都存在的同名分支。
-因此如果我们使用了git2.0之前的版本，push.default = matching，git push后则会推送当前分支代码到远程分支，
-  而2.0之后，push.default = simple，如果没有指定当前分支的upstream分支，就会收到上文的fatal提示。
-
-git中存在upstream和downstream，简言之，当我们把仓库A中某分支x的代码push到仓库B分支y，此时仓库B的这个分支y就叫做A中x分支的upstream，而x则被称作y的downstream，这是一个相对关系，每一个本地分支都相对地可以有一个远程的upstream分支（注意这个upstream分支可以不同名，但通常我们都会使用同名分支作为upstream）。
-
-初次提交本地分支，例如git push origin develop操作，并不会定义当前本地分支的upstream分支，我们可以通过git push --set-upstream origin develop，关联本地develop分支的upstream分支，另一个更为简洁的方式是初次push时，加入-u参数，例如git push -u origin develop，这个操作在push的同时会指定当前分支的upstream。
-
-注意push.default = current可以在远程同名分支不存在的情况下自动创建同名分支，有些时候这也是个极其方便的模式，比如初次push你可以直接输入 git push 而不必显示指定远程分支。
-
-2 git pull的默认行为
-当我们执行git pull的时候，实际上是做了git fetch + git merge操作，fetch操作将会更新本地仓库的remote tracking，也就是refs/remotes中的代码，并不会对refs/heads中本地当前的代码造成影响。
-当我们进行pull的第二个行为merge时，对git来说，如果我们没有设定当前分支的upstream，它并不知道我们要合并哪个分支到当前分支，所以我们需要通过下面的代码指定当前分支的upstream：
-git branch --set-upstream-to=origin/<branch> develop
-// 或者git push --set-upstream origin develop
-
-实际上，如果我们没有指定upstream，git在merge时会访问git config中当前分支(develop)merge的默认配置，我们可以通过配置下面的内容指定某个分支的默认merge操作
-[branch "develop"]
-    remote = origin
-    merge = refs/heads/develop // [1]为什么不是refs/remotes/develop?
-或者通过command-line直接设置：
-git config branch.develop.merge refs/heads/develop
-这样当我们在develop分支git pull时，如果没有指定upstream分支，git将根据我们的config文件去merge origin/develop；如果指定了upstream分支，则会忽略config中的merge默认配置。
-
-[1]为什么merge = refs/heads/develop 而不是refs/remotes/develop?
-因为这里merge指代的是我们想要merge的远程分支，是remote上的refs/heads/develop，文中即是origin上的refs/heads/develop，这和我们在本地直接执行git merge是不同的(本地执行git merge origin/develop则是直接merge refs/remotes/develop)。
-
-
-改变远程库的地址
-1 进入git_test根目录 通过命令直接修改远程地址
-git remote set-url origin http://192.168.100.235:9797/john/git_test.git
-2 进入git_test根目录 通过命令先删除再添加远程仓库
-git remote rm origin
-git remote add origin http://192.168.100.235:9797/john/git_test.git
-3 进入git_test根目录 直接修改配置文件
-vim config .git/config
-4 通过第三方git客户端修改
-以SourceTree为例，点击 仓库 -> 仓库配置 -> 远程仓库 即可管理此项目中配置的所有远程仓库
-而且这个界面最下方还可以点击编辑配置文件，同样可以完成方法三。
-
-三个区的切换命令 Workspace工作区 Index/Stage暂存区 Repository仓库区(或本地仓库) Remote远程仓库
-git add readme.md Test1.py  工作区->暂存区
-git checkout -- file        暂存区->工作区 git checkout . 撤销所有工作区修改
-git commit -m "commit last" 暂存区->版本区
-git reset --soft d5d43ff    版本区 本地仓回滚到Y版本 但是暂存区和工作区保持不变
-git reset --mixed d5d43ff   版本区->暂存区(默认)可以不写--mixed 本地仓和暂存区都回滚到Y版本号 工作区代码不受影响
-git reset --hard d5d43ff    版本区->暂存区->工作区 本地仓 暂存区 工作区都回滚 撤销工作区中所有修改
-
-
-git stash #把所有没有提交的修改暂存到stash里面。可用git stash pop回复。
-git clean -df #返回到某个节点，（未跟踪文件的删除）
-git clean 参数
-    -n 不实际删除，只是进行演练，展示将要进行的操作，有哪些文件将要被删除。（可先使用该命令参数，然后再决定是否执行）
-    -f 删除文件
-    -i 显示将要删除的文件
-    -d 递归删除目录及文件（未跟踪的）
-    -q 仅显示错误，成功删除的文件不显示
-git reset 删除的是已跟踪的文件，将已commit的回退。
-git clean 删除的是未跟踪的文件
-
-git rebase -i commitid 丢弃指定提交 针对想撤销中间某次commit的情况 如:git rebase -i HEAD~2
-  commitid 是要修改的某个commit的前一个id  如提交顺序为A->B->C->D D为HEAD 要删除B 则commitid为A
-  `rebase -i`是 `rebase --interactive` 的缩写；
-  `git rebase -i` 不仅可以删除commit， 还可以修改commit。 具体的可以查看rebase 中提示的参数
-  删除了中间的commit 有时候需要解决冲突 如提交顺序为A->B->C->D 删除了B 可能需要解决 AC冲突 也有可能后续继续解决D的冲突
-git commit --amend 命令修订当前的提交
-git rebase --continue 命令继续代码的提交(推荐),执行之后,需要重新提交,
-  解决一下当前的代码冲突之后重新提交直至没有rebase提示,就可以正常提交了
-
-
-git show commitId            #查看某个commit的修改
-git show commitId fileName   #查看某次commit中具体某个文件的修改
-
-
-
-回滚提交
-git reset --hard [commit id] 通过git log查看提交id  也可以用下面的参数
-  HEAD^   最新提交HEAD位置往回数一个提交 HEAD当前版本 HEAD^ 上一个版本 HEAD^^ 上上一个版本 以此类推
-  HEAD~n  最新提交HEAD位置往回数n个提交  HEAD~0 表示当前版本 HEAD~1 上一个版本 HEAD~2 上上一个版本 以此类推
-  可以发现 reset 命令只能回滚最新的提交 若最后一次commit需要保留 而只想回滚之前的某次commit reset命令可能就无法满足了
-git push --force  本地修改强制推送到远端
-  完成这2步 本地和远程都回滚了
-
-如何撤销上一次push
-此时用--soft参数比较合适，只回滚本地仓到上一个版本，然后通过git push -f命令，撤销上次的push，最后更改好代码后重新push。
-git reset --soft HEAD~1     // 1将本地仓回滚到上一个版本号
-git push origin master -f   // 2通过-f命令，将回滚后的版本号强制推送上去 相当于撤销了最新的push
-// 修改代码
-// 修改好后，重新add，commit，push即可。
-
-
-
-本地修改了一些文件 (并没有使用 git add 到暂存区)，想放弃修改
-git checkout -- filename    #单个文件/文件夹
-git checkout .              #所有文件/文件夹
-
-本地新增了一些文件 (并没有 git add 到暂存区)，想放弃修改
-rm  -rf filename            #单个文件/文件夹 删除新增的文件，如果文件已经已经 git add 到暂存区，并不会删除！
-git clean -xdf              #所有文件  本命令删除新增的文件和文件夹，如果文件已经已经 git add 到暂存区，并不会删除！
-
-本地修改/新增了一些文件，已经 git add 到暂存区，想要把暂存区的修改回退到工作区
-git reset HEAD filename    #单个文件/文件夹  HEAD表示最新的版本
-git reset HEAD .           #所有文件/文件夹
-
-本地通过 git add 和 git commit 后，想要撤销此次 commit
-git reset commit_id        #撤销 commit, 同时保留该 commit 修改
-  这个 commit_id 是你想要回到的那个节点，可以通过 git log 查看，可以只选前 6 位。
-  撤销之后，你所做的已经 commit 的修改还在工作区！
-git reset --hard commit_id  #撤销 commit, 同时本地删除该 commit 修改
-  这个 commit_id 是你想要回到的那个节点，可以通过 git log 查看，可以只选前6位
-  [谨慎操作] 撤销之后，你所做的已经 commit 的修改将会清除，仍在工作区/暂存区的代码也将会清除！
-
-
-
-
-配置 修改用户名以及提交邮箱
-  git config --local --list  显示本地设置
-  git config user.name/email 设置本地属性
-  git config --list          git配置项 在~和项目文件夹中，会有些不同
-  --global全局Git项目配置。表示用户的global级别的参数，这些配置存放在~/.gitconfig文件中。
-  若在Git项目文件里面，忽略--global，就是在local环境下配置。local的配置文件，在.git/config文件中。
-  git config --local -l （-l = --list）需要在Git项目文件夹中使用
-  git config -l 在项目文件夹中 就是把global和local的配置都显示出来
-  git config --list --show-origin 这个命令还能显示出某个配置来自那个配置文件。
-  1 使用命令修改git的用户名和提交的邮箱
-    1 修改全局
-    如果你要修改当前全局的用户名和邮箱时，需要在上面的两条命令中添加一个参数，--global，代表的是全局。
-    git config --global --list  显示全局设置
-    命令分别为：git config --global user.name 你的用户名  $ git config --global user.name "Your Name"
-                git config --global user.email 你的邮箱名  $ git config --global user.email "email@example.com"
-    2 修改当前的 project
-    git config --local --list  显示当前project设置
-    git 修改当前的project的用户名的命令为：git config user.name 你的目标用户名;
-    git 修改当前的project提交邮箱的命令为：git config user.email 你的目标邮箱名;
-
-  2 直接修改git的配置文件的方式来进行修改
-    1 全局.gitconfig文件的命令为：$  vi ~/.gitconfig  然后在文件中直接修改即可
-    2 当前project的config文件在每个project中的.git目录下 vi ./.git/config
-      如果没有进行过修改的话 默认打开时没有对应的用户名和密码的 只有进行过修改之后 才会在config中产生对应字段
-
-报错如下：
-*** Please tell me who you are.
-Run
-  git config --global user.email "you@example.com"
-  git config --global user.name "Your Name"
-to set your account's default identity.
-Omit --global to set the identity only in this repository.
-fatal: unable to auto-detect email address (got 'root@bogon.(none)')
-原因：
-没有设置用户和邮箱
-解决办法：
-git config --global user.email "你的邮箱就是git的邮箱"
-git config --global user.name "你的用户名"
-
-
-
-重新提交：
 涉及到将GitHub的文件夹删掉重新提交的问题：则在本地仓库中直接删除，然后再提交一次（commit 时显示del ），
 接着将要上传的文件夹再次复制到本地仓库，最后提交，完成。
 现在就可以显示本人提交了：
 
 
-git clean
-  从你的工作目录中删除所有没有 tracked，没有被管理过的文件。删除了就找不回了，一定要慎用。但是如果被 git add . 就不会被删除。
-  git clean 和 git reset --hard 结合使用。
-  clean 影响没有被 track 过的文件（清除未被 add 或被 commit 的本地修改）
-  reset 影响被 track 过的文件 （回退到上一个 commit）
-  所以需要 clean 来删除没有 track 过的文件，reset 删除被 track 过的文件
-  结合两命令 → 让你的工作目录完全回到一个指定的 <commit> 的状态
-
-  参数说明：
-    n ：显示将要被删除的文件
-    d ：删除未被添加到 git 路径中的文件（将 .gitignore 文件标记的文件全部删除）
-    f ：强制运行
-    x ：删除没有被 track 的文件
-
-  git clean -n   是一次 clean 的演习, 告诉你哪些文件会被删除，不会真的删除
-  git clean -f   删除当前目录下所有没有 track 过的文件 不会删除 .gitignore 文件里面指定的文件夹和文件, 不管这些文件有没有被 track 过
-  git clean -f <path>   删除指定路径下的没有被 track 过的文件
-  git clean -df   删除当前目录下没有被 track 过的文件和文件夹
-  git clean -xf   删除当前目录下所有没有 track 过的文件 不管是否是 .gitignore 文件里面指定的文件夹和文件
-  git clean       对于刚编译过的项目也非常有用  如, 他能轻易删除掉编译后生成的 .o 和 .exe 等文件. 这个在打包要发布一个 release 的时候非常有用
-
-  git reset --hard
-  git clean -df
-  git status
-  运行后, 工作目录和缓存区回到最近一次 commit 时候一摸一样的状态。
-  此时建议运行 git status，会告诉你这是一个干净的工作目录, 又是一个新的开始了！
-
-  还有一个 very important 要说
-    git add .  git commit  后一定要记得 git push ，不然你又找不回来了。
+配置文件
+https://git-scm.com/book/zh/v2/%E8%87%AA%E5%AE%9A%E4%B9%89-Git-%E9%85%8D%E7%BD%AE-Git
+/etc/gitconfig  # 系统级配置文件       git config --system 读写该文件。
+~/.gitconfig    # 单用户全局配置文件   git config --global 读写该文件。
+.git/config     # 当前本地仓库配置文件  git config--local 写该文件。
+三层配置(系统、全局、本地)都会覆盖掉上一层次的配置，如.git/config中的值会覆盖掉/etc/gitconfig中所对应的值。
+.gitignore      # 忽略要本地提交的文件 每一行代表忽略一个或者一种
 
 
-git show commitId  查看该次commit的具体内容
-git show -n        查看最近n次commit的具体内容
-git log --raw     提交消息中指定了哪些文件发生变化
-git log --raw -n  最近n此提交消息中指定了哪些文件发生变化
-git log -p -n     n为数字，表示最近n次的修改内容
-git log BSmod/gather.cpp   查看一个文件的修改提交记录
-git log -n BSmod/gather.cpp    查看一个文件的最近n此修改提交记录
-git log -p BSmod/gather.cpp   查看一个文件的详细修改提交记录
-git log -p -n BSmod/gather.cpp    查看一个文件的最近n此详细修改提交记录
-git log  --pretty=oneline BSmod/gather.cpp   一行展示某个任务的提交记录
+git config --list               # 显示配置 global和local都显示 --list简写-l
+git config --list --show-origin # 显示配置 --show-origin显示文件位置
+git config --list --local       # 显示本地设置  --local本地
+git config --list --global      # 显示全局设置  --global全局
+git config user.name/email      # 设置本地用户名/邮箱  或 ./.git/config手动修改
+git config --global user.name "Your Name"           # 设置全局用户名  或 ~/.gitconfig手动修改
+git config --global user.email "email@example.com"  # 设置全局邮箱
+*** Please tell me who you are. # 如报错 需要设置用户名和邮箱
 
+git status                      # 查看状态
+git clone url                   # 克隆仓库到本地 在本地主机生成一个目录 与远程版本库同名
+git clone url dir               # 克隆仓库到本地指定的目录
+git add xxx                     # 将xxx写入缓存区
+git add -u                      # 只暂存追踪的已修改的文件 未追踪的文件不管
+git mv name1 name2              # 文件重命名
+git rm xxx                      # 删除文件
+git rm -r --cached .            # 对所有文件都取消跟踪 不删除本地文件 -r递归  --cached索引
+git rm -r --f .                 # 对所有文件都取消跟踪 删除本地文件  -f强制
+git rm --cached 1.txt           # 删除1.txt的跟踪，并保留在本地
+git rm --f 1.txt                # 删除1.txt的跟踪，并且删除本地文件
+git commit                      # 将暂存区的改动提交到本地版本库 生成40位哈希值commit-id 前6位就够用 reset回到这里
+git commit -m 'xxx'             # -m添加备注信息 单括号之间的信息可换行
+git commit --amend              # 可以修改上一次的提交信息  可以将最近的修改追加到上一次的提交上
+git commit -a -m "massage"      # 所有跟踪文件的修改/删除都提交到本地仓库 未追踪的文件不受影响 同 --all
 
-分支管理
-  新建分支 (有改动的可以先还原)
-  TortoiseGit->拉取
-  TortoiseGit->新建分支 f_ipmgmmod
-  TortoiseGit->推送
-  TortoiseGit->切换     f_ipmgmmod
-  命令方式下对于新分支先拉去在切换
+git show commitId               # 查看某个commit的修改
+git show commitId file1         # 查看某次commit中具体某个文件的修改
+git show -n                     # 查看最近n次commit的具体内容
 
-  删除分支TortoiseGit
-  1删除dev_1分支前 要将本地代码库切换到其它分支 比如:dev_2 右键 switch/checkout
-  2右键 Browsereferences，或者1的时候选择branch后面的单个点按钮 "..."
-  3删除本地分支 选择heads  右侧列出所有本地分支 右键 选择Delete branch进行删除
-  4删除远程分支 选择remote 右侧列出所有远程分支 右键 选择Delete remote branch进行删除
-  删除本地分支git
-    使用git branch --delete dev来执行 缩写git branch -d dev来代替
-    -d是--delete的缩写,在使用--delete删除分支时,该分支必须完全和它的上游分支merge完成,如果没有上游分支,必须要和HEAD完全merge
-    -D是--delete --force的缩写,这样写可以在不检查merge状态的情况下删除分支
-    --force简写-f,作用是将当前branch重置到初始点(startpoint),如果不使用--force的话,git分支无法修改一个已经存在的分支.
-  删除远程分支git
-    指令git push origin --delete branch,该指令也会删除追踪分支
+git remote                      # 显示远程库别名
+git remote -v                   # 查看远程库链接地址
+git remote add origin url       # 增加远程库别名
+git remote rm origin            # 删除远程库
+git remote rename master ttt    # 修改远程仓别名  master -> ttt
+git remote set-url origin http://xxx/test.git  # 改变远程库的地址
+git remote rm origin            # 同上  先删除再添加远程仓库
+git remote add origin http://xxx/test.git
+vim config .git/config          # 同上  直接修改配置文件
 
-  origin 为git地址的标志，可以建立当前分支与远程分支的映射关系
-  建立本地分支与远程分支的映射关系（或者为跟踪关系track）。
-  这样使用git pull或者git push时就不必每次都要指定从远程的哪个分支拉取合并和推送到远程的哪个分支了。
-  查看分支
-    git branch 		  查看本地分支				输出结果中，前面带* 的是当前分支
-    git branch  -a  查看所有分支
-    git branch  -r  查看远程
+git log                         # 查看提交log
+git log --raw --oneline         # 提交消息中指定了哪些文件发生变化
+git log --raw -n                # 最近n此提交消息中指定了哪些文件发生变化
+git log -p -n                   # n为数字，表示最近n次的修改内容
+git log BSmod/gather.cpp        # 查看一个文件的修改提交记录
+git log -n BSmod/gather.cpp     # 查看一个文件的最近n此修改提交记录
+git log -p BSmod/gather.cpp     # 查看一个文件的详细修改提交记录
+git log -p -n BSmod/gather.cpp  # 查看一个文件的最近n此详细修改提交记录
+git log --pretty=oneline BSmod/gather.cpp  # 一行展示某个任务的提交记录
 
-  分支改名
-  假设分支名称为oldName 想要修改为 newName
-    1. 本地分支重命名(还没有推送到远程) git branch -m oldName newName
-    2. 远程分支重命名 (已经推送远程-假设本地分支和远程对应分支名称相同)
-      a. 重命名远程分支对应的本地分支git branch -m oldName newName
-      b. 删除远程分支git push --delete origin oldName
-      c. 上传新命名的本地分支git push origin newName
-      d.把修改后的本地分支与远程分支关联git branch --set-upstream-to origin/newName
+git reflog show --date=iso <branch>  # 查看指定分支的历次更改记录，最下面一条的时间即是分支创建时间
+git reflog --date=local | grep <branch>    # 查看当前分支是从哪个分支拉下来的
+git log --graph --decorate --oneline --all # 查看当前分支来查看是从哪个分支拉的
 
-  关联分支
-    git checkout -b branch1                            创建本地分支
-    git checkout -b 本地分支名x origin/远程分支名x     在本地新建分支x,并自动切换到该本地分支x.采用此种方法建立的本地分支会和远程分支建立映射关系
-    git fetch origin 远程分支名x:本地分支名x           在本地新建分支x,但是不会自动切换到该本地分支x,需要手动checkout。采用此种方法建立的本地分支不会和远程分支建立映射关系
-    git branch -vv                                     查看当前的本地分支与远程分支的关联关系
-    git checkout --track                               如果远程新建了一个分支，本地没有该分支。可以利用 git checkout --track origin/branch_name ，这时本地会新建一个分支名叫 branch_name ，会自动跟踪远程的同名分支 branch_name。
-    git branch -u origin/远程分支名                    手动关联本地分支和远程分支映射关系 若不指定分支则默认当前分支
-      git branch -u origin/远程分支名 本地分支名       手动关联本地分支和远程分支 写两个分支名的话远程分支写前面，本地分支写后面
-    git branch --set-upstream-to=origin/分支名         在当前分支输入该命令，就会关联指定的远程分支
-      git branch --set-upstream-to=origin/remote_branch  your_branch        本地关联远程分支  其中，origin/remote_branch是你本地分支对应的远程分支；your_branch是你当前的本地分支 例:git branch --set-upstream-to=origin/dev dev
-    git branch --unset-upstream                        撤销本地分支与远程分支的映射关系
-      git branch --unset-upstream <branchname>         撤销本地某个分支与远程分支的映射关系
-  分支状态
-    git status                                      查看状态
-    git add xxx                                     将想要快照的内容写入缓存区
-    git commit  主要是将暂存区里的改动给提交到本地的版本库。每次使用git commit 命令我们都会在本地版本库生成一个40位的哈希值，这个哈希值也叫commit-id，commit-id在版本回退的时候是非常有用的，它相当于一个快照,可以在未来的任何时候通过与git reset的组合命令回到这里.
-      git commit -m '第一次版本提交'                -m选项添加备注信息  如果不加 -m参数，那么是不能直接输入message的，而是会调用一个编辑器一般是vim来让你输入这个message，message即是我们用来简要说明这次提交的语句  还有另外一种方法，当我们想要提交的message很长或者我们想描述的更清楚更简洁明了一点，我们可以使用这样的格式，如下：
-        还有另外一种方法，当我们想要提交的message很长或者我们想描述的更清楚更简洁明了一点，我们可以使用这样的格式，如下
-git commit -m ‘
+git  merge --abort              # 丢弃当前合并
+git  reflog                     # 查询回退到的版本号
+git  reset  --hard  f82cfd2     # 回退到这个版本号
 
-message1
-
-message2
-
-message3
-
-’
-      git commit -a                                 改动的文件添加到暂存区
-      git commit --amend                            可以修改上一次的提交信息  可以将最近的修改追加到上一次的提交上
-      git commit -a -m “massage”                    将所有已跟踪文件中的执行修改或删除操作的文件都提交到本地仓库
-    git push --set-upstream origin branch1          然后查看github网站上的分支， 分支1 添加成功
-    git clone url                                   使用 git clone 拷贝一个 Git 仓库到本地 该命令会在本地主机生成一个目录，与远程主机的版本库同名
-    git clone <版本库的网址> <本地目录名>           如果要指定不同的目录名，可以将目录名作为git clone命令的第二个参数
-    git remote -v                                   查看当前文件夹git地址
-  上传分支
-    git push origin :分支                      上传一个分支到仓库 origin
-    git push origin HEAD                       用来上传当前的分支
-    git push origin [远程分支名]:[本地分支名]  推送到远程分支
-    git config --global push.default current   设置默认使用git push上传当前分支 可以设置 push.default 的值为 nothing 不上传任何分支 matching 上传所有分支 upstream/tracking 上传当前跟踪分支 current 上传当前分支
-  删除分支
-    git branch -d branch1              删除branch1分支 提示：不能删除,  因为当前在branch1 分支里面，所以不能删除； 下面转换到master 分支里面，再删除branch1 分支。
-    git checkout master                转换到master 分支里面，
-    git branch -r -d origin/branch1    删除远程端分支
-    git push origin : branch1          把本地的操作推送到远程来执行 现在打开github网址，可以看到branch1  分支被删除了
-    git branch -D branch1              强制删除分支
-
-
-
-  tag
-  标记主要是指Git提交历史的某个点的引用（即里程碑）。tags允许你捕获你代码提交历史中某个记录，以便以后随时使用。
-  你可以将标签（tag）视作是不变的分支（branch）
-  标签代表某一时刻一个特殊分支的版本。也就是说，tags本质上是开发者在开发进程中标记的一个重要的检出点。
-    git tag                                  列出所有标签 使用-l或者--list选项使用正则表达式过滤输出的标签 例子:git tag -l "1.0*"
-    git show <tag_name>                      获取标签的详细信息   例子：git show v1.0.1   这会显示作者、标签消息、各自的commit、日期和其它详细信息
-    git tag -a v1.0.1 -m "first release"     带注解的标签（Annonated Git tags） -a 标签名 -m "标签说明
-    git tag v1.0.1                           轻量级标签（Lightweight Git tags） 只保存引用的commit的名字和hash  默认为HEAD，也可以指定一个commit id
-    git tag <tag_name> <commit_sha>          在某个commit 上打tag
-    git push origin <tag_name>               本地tag推送到线上
-    git push origin --tags                   推送全部未推送过的本地标签到远程版本库
-    git tag -d <tag_name>                    本地删除标签
-    git push origin :refs/tags/<tag_name>    本地tag删除了，再执行该句，删除远程tag
-    git fetch --tags                         拉取标签  使用这个命令可以将远程仓库的标签拉取（同步）到当前分支
-    git checkout <tag_name>                  切换tag  这时候 git 可能会提示你当前处于一个“detached HEAD" 状态。因为 tag 相当于是一个快照，是不能更改它的代码的。 当你像让代码仓库的状态回到某个特定标签（里程碑）的状态，你可以使用上述命令检出（checkout）特定的标签（tag）
-    git checkout -b branch_name <tag_name>   tag 创建一个分支，然后就和普通的 git 操作一样了。(如果要在 tag 代码的基础上做修改，你需要一个分支)
-
-    git branch <new-branch-name> <tag-name> 会根据tag创建新的分支
-    git checkout newbranch 切换到新的分支。
-    git push origin newbranch 把本地创建的分支提交到远程仓库
-
-  diff 查看执行 git status 的结果的详细信息
-  尚未缓存的改动：git diff
-  查看已缓存的改动： git diff --cached
-  查看已缓存的与未缓存的所有改动：git diff HEAD
-  显示摘要而非整个 diff：git diff --stat
-    git diff commit-id-1 commit-id-2          //对比两个commit之间的差异 "-"号开头的表示commit-id-2相对commit-id-1减少了的内容 "+"号开头的表示commit-id-2相对commit-id-1增加了的内容
-    git diff branch1 branch2 --stat           //显示出所有有差异的文件列表
-    git diff branch1 branch2 文件名(带路径)   //显示指定文件的详细差异
-    git diff branch1 branch2                  //显示出所有有差异的文件的详细差异
-
-	提交修改的文件
-	仓库区 <-- 暂存区 <-- 工作区
-	git add xxx                                     将想要快照的内容写入缓存区  暂存区 <-- 工作区
-    git commit -m '第一次版本提交'                -m选项添加备注信息          仓库区 <-- 暂存区
-      git commit -a                               跳过git add 提交缓存的流程  仓库区 <-- 暂存区 <-- 工作区
-  恢复修改的文件
-    对于恢复修改的文件，就是将文件从仓库中拉到本地工作区，即 仓库区 --> 暂存区 --> 工作区。
-    1 只是修改了文件，没有任何 git 操作
-    2 修改了文件，并提交到暂存区（即编辑之后，gitadd但没有 git commit -m ....）
-    3 修改了文件，并提交到仓库区（即编辑之后，gitadd和 git commit -m ....）
-
-    1 只是修改了文件，没有任何 git 操作，直接一个命令就可回退：
-      $ git checkout -- aaa.txt # aaa.txt为文件名 丢弃某个文件
-      $ git checkout -- .       # 丢弃全部
-      注意：git checkout – . 丢弃全部，也包括：
-        新增的文件会被删除、删除的文件会恢复回来、修改的文件会回去。
-        这几个前提都说的是，回到暂存区之前的样子。对之前保存在暂存区里的代码不会有任何影响。
-        对commit提交到本地分支的代码就更没影响了。当然，如果你之前压根都没有暂存或commit，
-        那就是回到你上次pull下来的样子了。
-    2 修改了文件，并提交到暂存区（即编辑之后，gitadd但没有 git commit -m ....）
-      $ git log --oneline    # 可以省略
-      $ git reset HEAD       # 回退到当前版本(git reset HEAD . 有的说是这个命令)    或 git reset HEAD aaa.txt 回退某个文件
-      $ git checkout -- aaa.txt    # aaa.txt为文件名
-    3 修改了文件，并提交到仓库区（即编辑之后，gitadd和 git commit -m ....）
-      $ git log --oneline    # 可以省略 得到你需要回退一次提交的commit id
-      $ git reset HEAD^    # 回退到上一个版本
-      $ git checkout -- aaa.txt    # aaa.txt为文件名
-
-
-    注1 情况2 和 情况3 只有回退的版本不一样
-      对于情况2，并没有 $ git commit，仓库版本也就不会更新和记录，所以回退的是当前版本
-        [root@localhost SearchDevice]#git log --oneline
-        c5a62ae test
-      对于情况3，一旦 $ git commit，仓库版本就会更新并记录，所以要回退的也就是上一个版本
-        [root@localhost SearchDevice]#git commit -m 'change aa.cpp' aa.cpp
-        [root@localhost SearchDevice]#git log --oneline
-        1a9b6e6 change aa.cpp
-        c5a62ae test
-    注2 $ git reset 版本号    ----  将暂缓区回退到指定版本
-    根据 $ git log --oneline 显示的版本号（下图第一列的字），可以回退到任何一个版本，也可通过 HEAD 来指定版本（下图第三列的字）。
-      f91331f 修改3      HEAD     当前版本
-      6eb567d 修改2      HEAD^    上一个版本
-      29807ba 修改1      HEAD^^   上上一个版本
-      d0e5a40 xxx
-      8b4ccc0 1
-      c2c9eee 1          HEAD~n   第n个版本
-      0aa2bba ping少
-      ce3e4b5 第一个提交
-
-  取消当前合并时的冲突
-    1取消这次合并
-      git  merge --abort   #丢弃当前合并
-    2回退该分支的正确的版本号
-      git  reflog   #查询回退到的版本号
-      git  reset  --hard  f82cfd2 #回退到这个版本号
-
-
-  TortoiseGit不同分支合并代码
-    现在有主分支master和分支day2.现在要把day2上的变更合并到主分支master上
-    1.首先切换到目标分支master上。
-    2.在master分支上查看提交记录,即show log一下。 右键 显示日志
-    3.切换到源分支上                              点击右上角的分支
-    4.选中你所有的提交，右键，Cherry pick selected commits
-    5.选中你的提交记录
-    这里要注意的一点就是：你想合并到哪个分支上，就要首先切换到该分支！
-
-    此操作与上面的一样
-    1.切换到要修改的分支
-    2.显示日志
-    3.点击左上角 切换到要复制的分支上
-    4.找到目标提交
-    5.右键 Cherry pick(摘取此提交)
-    6.continue done
-
-    如果采用
-    右键 merge commit 某个提交 可能合并多个提交进来
-
-  还原
-    1.没有commit的 右键 revert 选择文件
-    2.已经commit的 右键 log 对某个提交 reset "XXX" to this 然后在执行上一步
-
+git stash                       # 把所有没有提交的修改暂存到stash里面。
+git stash pop                   # 恢复
+git rebase -i commitid          # 丢弃指定提交 针对想撤销中间某次commit的情况 如 git rebase -i HEAD~2
+  commitid 是要修改的某个commit的前一个id  如提交顺序为A->B->C->D D为HEAD 要删除B 则commitid为A
+  rebase --interactive简写rebase -i   git rebase -i 不仅可以删除commit，还可以修改commit。
+  删除了中间的commit 有时要解决冲突 如提交顺序为A->B->C->D 删除了B 可能需要解决 AC冲突 也有可能后续继续解决D的冲突
+git rebase --continue 命令继续代码的提交(推荐),执行之后,需要重新提交,解决冲突后重新提交直至没有rebase提示
 
 
 合并某个提交commit到指定的分支上
-  git log 查看提交的信息 记住commit id
-  git checkout 到要修改的分支     //git checkout master
-  git cherry-pick 某个commit id   //git cherry-pick 62ecb3 把某个commit id的提交合并到当前分支
-  cherry-pick 和merge比较类似 如果git不能合并代码改动（比如遇到合并冲突） git需要你自己来解决冲突并手动添加commit
+git log                   # 查看提交的信息 记住commit id
+git checkout 到要修改的分支 # 如 git checkout master
+git cherry-pick 某个commit id  #  如 git cherry-pick 62ecb3 把某个commit id的提交合并到当前分支
+cherry-pick和merge比较类似 如git不能合并代码改动（如遇到合并冲突） 需要手动解决冲突并添加commit
 
 合并某个分支上的一系列commits
-  这种情况下就不要选择cherry-pick了，rebase 更适合
-  首先需要基于feature创建一个新的分支，并指明新分支的最后一个commit 假设你需要合并feature分支的commit76cada ~62ecb3 到master分支
-  git checkout -b newbranch 62ecb3
-  然后，rebase这个新分支的commit到master（--ontomaster）。76cada^ 指明你想从哪个特定的commit开始。
-  git rebase --ontomaster 76cada^
-  得到的结果就是feature分支的commit 76cada ~ 62ecb3 都被合并到了master分支。
+这种情况下就不要选择cherry-pick了，rebase 更适合
+首先需要基于feature创建一个新的分支，并指明新分支的最后一个commit 如需要合并feature分支的commit76cada~62ecb3到master分支
+git checkout -b newbranch 62ecb3
+然后，rebase这个新分支的commit到master（--ontomaster）。76cada^ 指明你想从哪个特定的commit开始。
+git rebase --ontomaster 76cada^
+得到的结果就是feature分支的commit 76cada ~ 62ecb3 都被合并到了master分支。
 
 
 
-TortoiseGit右键没有pull
-    选择revert，还原代码
-    选择切换分支，如果 报git did not exit cleanly (exit code 128) ，选择clean up,清除一下。
-    完成后，选择切换分支，之后再次切回原分支，即可显示pull。
+git branch                      # 查看本地分支   前面带 * 的是当前分支
+git branch -a                   # 查看所有分支
+git branch -r                   # 查看远程分支
+git checkout b1                 # 转换到b1分支
+git checkout -b b1              # 创建本地分支b1
+git checkout -b b1 origin/b1    # 创建本地分支b1,自动切换到b1,且建立本地分支b1和远程分支b1的映射关系
+git fetch origin 远程分支x:本地分支x # 创建本地分支x,不自动切换到x,且不建立本地分支和远程分支的映射关系
+git checkout --track origin/b1  # 本地新建分支b1,自动跟踪远程同名分支b1,若本地没有该分支。
 
-查看当前分支是从哪个分支拉的
-    git reflog --date=local | grep +分支名      来查看当前分支是从哪个分支拉下来的。
-    git log --graph --decorate --oneline --all  来查看当前分支来查看是从哪个分支拉的。
-    TortoiseGit->pull->remote branch ...->remote branch  选定拉取的拉取远程分支
+git push --set-upstream origin b1 # 推送分支
+git push origin :b1             # 上传本地分支b1到仓库origin
+git push origin HEAD            # 上传当前的分支
+git push origin [远程分支名]:[本地分支名]  # 推送到远程分支
+git config --global push.default current # 设置默认推送分支为当前分支
 
-git 查看分支创建时间
-    git reflog show --date=iso <branch name>
-    可以查看到指定分支的历次更改记录，最下面一条的时间即是分支创建时间。
+git branch -m oldName newName     # 1 本地分支重命名 1-4重命名远程分支(假定远程和本地分支同名且已推动到远端)
+git push --delete origin oldName  # 2 删除远程分支
+git push origin newName           # 3 上传新命名的本地分支
+git branch --set-upstream-to origin/newName # 4 把修改后的本地分支与远程分支关联
+
+git branch -vv                  # 查看当前本地分支与远程分支的映射关系
+git branch -u origin/远程分支    # 手动关联当前本地分支和远程分支映射关系
+git branch -u origin/远程分支 本地分支 # 手动关联本地分支和远程分支
+git branch --set-upstream-to=origin/分支名 # 当前分支关联指定的远程分支
+git branch --set-upstream-to=origin/远程分支 本地分支 # 本地关联远程分支
+git branch --unset-upstream     # 删除当前本地分支与远程分支的映射关系
+git branch --unset-upstream 本地分支 # 删除本地某个分支与远程分支的映射关系
+
+git branch -d b1                # 删除b1分支  需要先切换到其他分支
+git branch -r -d origin/b1      # 删除远程端分支
+git push origin : b1            # 把本地的操作推送到远程来执行 看到b1分支被删除了
+git branch -D b1                # 强制删除分支
+
+git branch --delete dev         # 删除本地分支 --delete简写-d
+   该分支必须完全和它的上游分支merge完成,如果没有上游分支,必须要和HEAD完全merge
+   --delete --force简写-D,这样写可以在不检查merge状态的情况下删除分支
+   --force简写-f,作用是将当前branch重置到初始点(startpoint),如果不使用--force的话,git分支无法修改一个已经存在的分支.
+git push origin --delete branch # 删除远程分支  该指令也会删除追踪分支 origin 为git地址的标志
 
 
+
+tag标签
+指Git提交历史的某个点的引用(即里程碑)。代表某一时刻一个特殊分支的版本，可以将其视为不变的branch。
+git tag                         # 列出所有标签 -l或--list使用正则表达式过滤标签 如git tag -l "1.0*"
+git show t1                     # 获取标签t1的详细信息  会显示作者、标签消息、各自的commit、日期和其它详细信息
+git tag -a t1 -m "xxx"          # 带注解的标签(Annonated Git tags) -a 标签名 -m 标签说明
+git tag t1                      # 轻量级标签(Lightweight Git tags) 只保存引用的commit的名字和hash 默认HEAD 可指定commit
+git tag t1 <commit_sha>         # 在某个commit上打标签
+git push origin t1              # 推送本地标签t1到远程
+git push origin --tags          # 推送全部未推送过的本地标签到远程版本库
+git tag -d t1                   # 本地删除标签
+git push origin :refs/tags/t1   # 本地tag删除了，再执行该句，删除远程tag
+git fetch --tags                # 拉取标签  将远程仓库的标签拉取到当前分支
+git checkout t1                 # 切换tag  可能会提示当前处于"detached HEAD"状态。tag相当于快照，不能更改它的代码。
+git checkout -b b1 t1           # 用tag创建一个分支，然后就能操作了。如在tag代码的基础上做修改
+
+git branch b1 t1                # 根据tag创建新的分支
+git checkout b1                 # 切换到新的分支。
+git push origin b1              # 推送本地分支到远程仓库
+
+
+
+diff   查看执行 git status 的结果的详细信息
+git diff                        # 尚未缓存的改动
+git diff --cached               # 查看已缓存的改动
+git diff HEAD                   # 查看已缓存的与未缓存的所有改动
+git diff --stat                 # 只显示摘要
+git diff commit-id-1 commit-id-2 # 两个commit之间的差异 "-"开头表示2相对1减少了的内容 "+"开头的表示2相对1增加了的内容
+git diff branch1 branch2 --stat # 显示出所有有差异的文件列表
+git diff branch1 branch2 文件名(带路径) # 显示指定文件的详细差异
+git diff branch1 branch2        # 显示出所有有差异的文件的详细差异
+
+
+
+clean 删除所有没有被追踪(tracked)的文件。
+git reset --hard   # 影响被 track 过的文件  回退到上一个 commit
+git clean          # 影响没有被 track 过的文件 清除未被 add 或被 commit 的本地修改
+  -n # 显示将要被删除的文件
+  -d # 删除未跟踪的目录及文件 （将.gitignore文件标记的文件全部删除）
+  -f # 强制运行
+  -x # 删除没有被 track 的文件 (不考虑.gitignore设置)
+  -X # Remove only files ignored by Git
+  -q # 仅显示错误，成功删除的文件不显示
+  -i # 显示将要删除的文件
+
+git clean -n        # 显示将要被删除的文件，不会真的删除
+git clean -f        # 删除当前目录没有 track 过的文件和文件夹;不会删除 .gitignore 指定的,不管其有没有被 track 过
+git clean -f dir    # 删除指定路径下的没有被 track 过的文件
+git clean -df       # 删除当前目录下没有被 track 过的文件和文件夹
+git clean -xf       # 删除当前目录下所有没有 track 过的文件 不管是否是 .gitignore 文件里面指定的文件夹和文件
+git clean           # 对于刚编译过的项目也非常有用
+
+git reset --hard    # 这3条全部还原
+git clean -df
+git status
+
+
+
+三个区的切换命令 Workspace工作区 Index/Stage暂存区 Repository仓库区(本地仓库) Remote远程仓库
+git add file1             # 工作区->暂存区  仓库区
+git checkout -- file1     # 工作区<-暂存区  仓库区 git checkout . 撤销所有工作区修改
+git commit -m "xxx"       # 工作区  暂存区->仓库区
+git commit -a -m "xxx"    # 工作区->暂存区->仓库区
+git reset --soft d5d43ff  # 工作区  暂存区  仓库区 本地仓库回滚到Y版本 暂存区和工作区不变
+git reset --mixed d5d43ff # 工作区  暂存区<-仓库区 (默认) 本地仓和暂存区都回滚到Y版本 工作区不变
+git reset --hard d5d43ff  # 工作区<-暂存区<-仓库区 本地仓库 暂存区 工作区都回滚 撤销工作区中所有修改
+
+git reset HEAD filename   # 单个文件 HEAD表示最新的版本
+git reset HEAD .          # 所有文件
+git reset HEAD^           # 回退到上一个版本
+git reset commit_id       # 撤销 commit, 同时保留该 commit 修改
+  撤销之后，你所做的已经 commit 的修改还在工作区！
+git reset --hard commit_id # 撤销 commit, 同时本地删除该 commit 修改
+  撤销之后，你所做的已经 commit 的修改将会清除，仍在工作区/暂存区的代码也将会清除！
+
+git reset --hard [commit id]  # 回滚提交  git log查看提交id  也可用下面的参数
+  HEAD^  最新提交HEAD位置上一个提交 HEAD当前版本 HEAD^上个版本 HEAD^^上上个版本 以此类推
+  HEAD~n 最新提交HEAD位置上n个提交  HEAD~0 表示当前版本 HEAD~1 上个版本 HEAD~2 上上个版本 以此类推
+  reset 只能回滚最新的提交 若最后一次commit需要保留 而只想回滚之前的某次commit reset可能就无法满足了
+git push --force  本地修改强制推送到远端  完成这2步 本地和远程都回滚了
+
+撤销上一次push 用--soft，只回滚本地仓到上一个版本，然后git push -f，撤销上次的push，修改代码，重新push。
+git reset --soft HEAD~1     # 1将本地仓回滚到上一个版本号
+git push origin master -f   # 2通过-f命令，将回滚后的版本号强制推送上去 相当于撤销了最新的push
+
+
+
+push -u 上游分支
+git push origin master                      # 不会定义当前本地分支的upstream分支
+git branch --set-upstream-to=origin/master  # 手动设置当前分支的上游分支分支
+git push -u origin master                   # 1 设置上游分支 2 push
+git pull origin master 简化为 git pull      # 设置了上游分支 pull 或 push时 就不用每次手动指定
+在配置文件中表现为
+  [branch "master"]
+    remote = origin
+    merge = refs/heads/master
+
+
+https://segmentfault.com/a/1190000002783245  详细解释
+1 git push的默认行为
+在git的全局配置中，有一个push.default属性，其决定了git push操作的默认行为。
+git config --global push.default 'option' # 可选值 nothing, current, upstream, simple, matching
+  nothing  # push操作无效，除非显式指定远程分支，例如git push origin develop。
+  current  # push当前分支到远程同名分支，如果远程同名分支不存在则自动创建同名分支。
+  upstream # push当前分支到它的upstream分支上（实用于经常从本地分支push/pull到同一远程仓库的情景，叫central workflow）。
+  simple   # 和upstream相似，不同点，simple必须保证本地分支和它的远程upstream分支同名，否则会拒绝push操作。
+  matching # push所有本地和远程两端都存在的同名分支。
+git2.0之前，push.default = matching；2.0之后，push.default = simple，没指定当前分支的upstream分支，会收到fatal提示。
+
+upstream和downstream，如把仓库A中x分支push到仓库B分支y，则B中y叫A中x的upstream，x叫y的downstream。
+注意这个upstream分支可以不同名，但通常都会使用同名分支作为upstream。
+
+
+2 git pull的默认行为
+git pull = git fetch + git merge，fetch更新本地仓库的remote tracking，即refs/remotes，refs/heads则无影响。
+merge，若没设定当前分支的upstream，git不知道要合并哪个分支到当前分支，下面为设置上游分支
+git branch --set-upstream-to=origin/<branch> develop 或 git push --set-upstream origin develop
+
+若没有指定upstream，merge时会访问git config中当前分支merge的默认配置，配置下面内容指定某个分支的默认merge操作
+  [branch "develop"]
+      remote = origin
+      merge = refs/heads/develop   # [1]为什么不是refs/remotes/develop?
+git config branch.develop.merge refs/heads/develop   # 或者通过command-line直接设置
+在develop分支git pull时，没指定upstream分支，根据config去merge origin/develop；指定upstream，则忽略config。
+
+# [1]为什么merge = refs/heads/develop 而不是refs/remotes/develop?
+因为这里merge指代的是我们想要merge的远程分支，是remote上的refs/heads/develop，文中即是origin上的refs/heads/develop，
+这和我们在本地直接执行git merge是不同的(本地执行git merge origin/develop则是直接merge refs/remotes/develop)。
+
+
+
+
+TortoiseGit
+新建分支
+  右键->拉取
+  右键->新建分支 f_ipmgmmod
+  右键->推送
+  右键->切换     f_ipmgmmod
+
+删除分支
+  1 切换到其它分支 右键switch/checkout
+  2 右键Browsereferences，或1时选branch后面的单个点按钮 "..."
+  3 删除本地分支 选择heads  右侧列出所有本地分支 右键 选择Delete branch进行删除
+  4 删除远程分支 选择remote 右侧列出所有远程分支 右键 选择Delete remote branch进行删除
+
+不同分支合并代码
+  现在有主分支master和分支day2.现在要把day2上的变更合并到主分支master上
+  1 首先切换到目标分支master上。
+  2 在master分支上查看提交记录,即show log一下。 右键 显示日志
+  3 切换到源分支上                              点击右上角的分支
+  4 选中你所有的提交，右键，Cherry pick selected commits
+  5 选中你的提交记录
+  这里要注意的一点就是：你想合并到哪个分支上，就要首先切换到该分支！
+
+  此操作与上面的一样
+  1 切换到要修改的分支
+  2 显示日志
+  3 点击左上角 切换到要复制的分支上
+  4 找到目标提交
+  5 右键 Cherry pick(摘取此提交)
+  6 continue done
+
+  如果采用
+  右键 merge commit 某个提交 可能合并多个提交进来
+
+还原
+  1 没有commit的 右键 revert 选择文件
+  2 已经commit的 右键 log 对某个提交 reset "XXX" to this 然后在执行上一步
+
+右键没有pull
+  选择revert，还原代码
+  选择切换分支，如果 报git did not exit cleanly (exit code 128) ，选择clean up,清除一下。
+  完成后，选择切换分支，之后再次切回原分支，即可显示pull。
 
 使用Tortoise结合Git比较两个版本的差异
 1、右键项目，TortoiseGit -------> Diff with previous version
@@ -517,3 +350,7 @@ git 查看分支创建时间
     show log ----->通过按Shift 和鼠标左键, 可以选中两个版本, 接着再按鼠标右键, 选中Compare revisions, 就可以比较两个revision 了.
 
 git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative --all
+
+查看当前分支是从哪个分支拉的
+  TortoiseGit->pull->remote branch ...->remote branch  选定拉取的拉取远程分支
+
