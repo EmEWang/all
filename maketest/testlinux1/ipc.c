@@ -9,7 +9,7 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 
-
+// https://cloud.tencent.com/developer/article/1551288 宋宝华：世上最好的共享内存(Linux共享内存最透彻的一篇)
 
 void printerr(const char* str);
 void testpipe();
@@ -174,9 +174,15 @@ void testpopen2()
     printf("ret:%d\n", ret);
 }
 
+// 在open() FIFO文件的时候卡住
 // 如果“只写”方式打开文件，写进程会阻塞直到有一个读进程来读这个FIFO管道。
-// 就是说：没有进程来读文件，则写进程会阻塞在open语句。
-// 所以要read和write两个程序一起运行才能顺利运行
+// 就是说：没有进程来读文件，则写进程会阻塞在open语句。所以要read和write两个程序一起运行才能顺利运行
+// O_NONBLOCK
+// When opening a FIFO with O_RDONLY or O_WRONLY set:
+// If O_NONBLOCK is set, an open() for reading-only shall return without delay. An open() for writing-only shall
+// return an error if no process currently has the file open for reading.
+// If O_NONBLOCK is clear, an open() for reading-only shall block the calling thread until a thread opens the file
+// for writing. An open() for writing-only shall block the calling thread until a thread opens the file for reading.
 void testfifo()
 {
     const char * pname = "./fifo.file";
@@ -221,6 +227,7 @@ struct msg_st
     long int msg_type;
     char text[BUFSIZ];
 };
+// https://blog.csdn.net/modi000/article/details/122099163
 void testmsg_send()
 {
     int running = 1;
@@ -313,6 +320,7 @@ void testmsg_recv()
 
 #include <sys/types.h>
 #include <sys/ipc.h>
+// https://www.cnblogs.com/cangqinglang/p/13754849.html
 void testsem()
 {
     // 奇怪的一点创建的信号不能直接申请资源 必须先释放才能在申请 开始资源默认为0
@@ -449,6 +457,7 @@ void testsem()
     exit(0);
 }
 
+// https://developer.aliyun.com/article/47682
 void testshmsrver()
 {
     int shmid = shmget((key_t)1212, 1024, 0666|IPC_CREAT);
@@ -531,6 +540,7 @@ void testshmcilent()
 //                 "-lrt"         <---------------   放到这里 若放到 "-pthread"之后则报错
 //             ],
 
+// https://cloud.tencent.com/developer/article/1496490
 // 消息队列和管道和FIFO有很大的区别，主要有以下两点：
 // 一个进程向消息队列写入消息之前，并不需要某个进程在该队列上等待该消息的到达，而管道和FIFO是相反的，
 //  进程向其中写消息时，管道和FIFO必需已经打开来读，否则写进程就会阻塞（默认情况下），那么内核会产生SIGPIPE信号。
@@ -740,6 +750,8 @@ void testposixmsg()
 }
 
 // gcc 编译时，要加 -pthread
+// https://www.cnblogs.com/Davirain/p/13291278.html
+// https://www.cnblogs.com/yikoulinux/p/13824222.html
 void testposixsem()
 {
     // 命名信号量
@@ -851,6 +863,7 @@ void testposixsem2()
     shm_unlink(name);
 }
 
+// https://www.cnblogs.com/tianzeng/p/10711499.html
 void testposixshm()
 {
     const char* name = "posixshm";

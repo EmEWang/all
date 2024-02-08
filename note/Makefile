@@ -300,9 +300,12 @@ https://www.cnblogs.com/lidabo/p/6068448.html
 CC         # 一般指 gcc   C   编译器命令
 CXX        # 一般指 g++   C++ 编译器命令
 CPPFLAGS   # 预处理阶段的选项   will be given to the C preprocessor
-CFLAGS     # C 编译器的选项
+CFLAGS     # C 编译器的选项  指定头文件.h的路径 如：CFLAGS=-I/usr/include -I/path/include
 CXXFLAGS   # C++ 编译器的选项 这两个变量实际上涵盖了编译和汇编两个步骤
-LDFLAGS    # 传递给连接器的选项
+LDFLAGS    # 传递给连接器的选项  告诉链接器从哪里寻找库文件  如 LDFLAGS=-L/usr/lib -L/path/to/your/lib
+  若LDFLAGS指定-L虽然链接器能找到库，但运行时链接器却找不到，若要让软件运行时库文件的路径也得到扩展，需要增加这两个库给"-Wl,R"
+  LDFLAGS = -L/var/xxx/lib -L/opt/mysql/lib -Wl,R/var/xxx/lib -Wl,R/opt/mysql/lib
+LIBS       # 链接器要链接哪些库文件，如LIBS = -lpthread -liconv
 LINK.c     # 表示 cc
 COMPILE.c  # 表示 cc -c
 
@@ -669,9 +672,9 @@ GNU建议把编译器为每一个源文件的自动生成的依赖关系放到�
 所有 .d 文件都依赖于 .c 文件。
 
 %.d: %.c
-　$(CC) -M $(CPPFLAGS) $< > $@.$$$$; \
-　sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
-　rm -f $@.$$$$
+  $(CC) -M $(CPPFLAGS) $< > $@.$$$$; \
+  sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
+  rm -f $@.$$$$
 
 本人用的是下面这个  作用是头文件变动则重新编译相关的文件 因为添加了 .o 依赖 .h
 seq.d : seq.c

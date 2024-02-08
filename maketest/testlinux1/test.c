@@ -243,6 +243,7 @@ void print_pids(char* str)
     printf("%s pid=%d ppid=%d pgid=%d tpgid=%d sid=%d\n",
         str, getpid(), getppid(),getpgrp(),tcgetpgrp(STDIN_FILENO),getsid(0));
 }
+// https://www.cnblogs.com/klb561/p/12051027.html SIGHUP系统信号
 void testsigal1()
 {
     char c;
@@ -386,11 +387,51 @@ void testthread_barrier()
 #include <syslog.h>
 void testsyslog()
 {
-    // /var/log/syslog
+    // https://zhuanlan.zhihu.com/p/62793386
+    // /var/log/syslog 或 /var/log/messages
+    // <34>Oct 10 20:13:14 mymachine myprogram: To be, or not to be, that is the question.
+    // priority number: <34>，由 facility 和 severity 计算而来
+    // timestampe: Oct 10 20:13:14
+    // hostname: mymachine
+    // tag: myprogram 这个通常是 program name，当其拥有 PID 时，会显示 myprogram[1234]:
+    // message: To be, or not to be, that is the question.
+    // facility
+    // 用于表示日志的来源，人们约定用 program name 来表示日志来自哪里。具体包括：
+
+    // LOG_USER A miscellaneous user process
+    // LOG_MAIL Mail
+    // LOG_DAEMON A miscellaneous system daemon
+    // LOG_AUTH Security (authorization)
+    // LOG_SYSLOG Syslog
+    // LOG_LPR Central printer
+    // LOG_NEWS Network news (e.g. Usenet)
+    // LOG_UUCP UUCP
+    // LOG_CRON Cron and At
+    // LOG_AUTHPRIV Private security (authorization)
+    // LOG_FTP Ftp server
+    // LOG_LOCAL0～LOG_LOCAL7
+    // 以上定义均由数字表示，如 LOG_LOCAL0 是 16，具体可以参见 RFC5424。
+
+    // priority
+    // 定义了日志的严重程度，priority 也可以用 level 来表示。包括：
+
+    // LOG_EMERG The message says the system is unusable.
+    // LOG_ALERT Action on the message must be taken immediately.
+    // LOG_CRIT The message states a critical condition.
+    // LOG_ERR The message describes an error.
+    // LOG_WARNING The message is a warning.
+    // LOG_NOTICE The message describes a normal but important event.
+    // LOG_INFO The message is purely informational.
+    // LOG_DEBUG The message is only for debugging purposes.
+    // 以上定义均由数字表示，如 LOG_DEBUG 是 7，具体可以参见 RFC5424。
+
     if(0)
     {
     // setlogmask (LOG_UPTO (LOG_NOTICE));  //设置日志级别
     // setlogmask (0);
+    // 参数1是个 char * 类型，为program name，若为空，会被设置成可执行文件名，也就是 argv[0]。注意"" 或 NULL，二者的意思不同。
+    // ""，不包含 program name  -> Apr 16 11:21:53 10.0.0.101 [30325]: started by User 1000
+    // NULL，program name 会被设置成可执行文件名 -> Apr 16 11:30:40 10.0.0.101 my_exe[31170]: started by User 1000
     openlog ("exampleprog", LOG_CONS | LOG_PID | LOG_NDELAY, LOG_LOCAL1);
     syslog (LOG_NOTICE, "Program started by User %d", getuid ());
     syslog (LOG_INFO, "A tree falls in a forest %m");

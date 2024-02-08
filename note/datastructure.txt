@@ -387,3 +387,7 @@ B*树：一棵丰满的B+树。
 内存中B+树是没有优势的，但是一到磁盘，B+树的威力就出来了
 
 
+
+迪杰斯特拉算法（Dijkstra）
+https://www.zhihu.com/question/37941732/answer/3345258244
+

@@ -40,15 +40,18 @@ dirto=dirto/
 dirsrc=gtestsrc/
 allcfile:=$(wildcard *.c)
 allcppfile:=$(wildcard *.cpp  $(dirsrc)*.cpp)
-notusedfile:=testall.cpp testalldemo.cpp $(wildcard *gmock*)
-usedcppfile:=$(filter-out $(notusedfile),$(allcppfile))
+target2_src=$(dirsrc)gtestsub.cpp
+target3_src=$(dirsrc)gmock1.cpp
+notusedfile=$(dirsrc)gtestall.cpp $(dirsrc)gtestalldemo.cpp
+usedcppfile=$(filter-out $(notusedfile) ${target2_src} ${target3_src},$(allcppfile))
 objc=$(patsubst %.c,%.o,$(allcfile))
 objc:=$(addprefix $(dirto),$(objc))
 objcpp=$(notdir $(usedcppfile))
 objcpp:=$(patsubst %.cpp,%.o,$(objcpp))
 objcpp:=$(addprefix $(dirto),$(objcpp))
 target=$(dirto)main
-
+target2=$(dirto)gtestub
+target3=$(dirto)gmock1
 # 命令中输入的参数会替换掉makefile中的变量 override指示符会保留 makefile中的变量
 # 如下使用make DDD=abc EEE=cba 则 DDD还是123 EEE变为cba
 # override DDD+=123 则DDD为 abc 123
@@ -97,9 +100,9 @@ vpath %.cpp ./ $(dirsrc)
 #CPPFLAGS := -I./
 
 # 自动推到代替main2
-
-all:$(target)
-	mkdir -p $(dirto)
+.PHONEY : all
+all:$(target) $(target2) $(target3)
+#	mkdir -p $(dirto)
 #	./$(target)
 
 $(target):$(objcpp) $(objc)
@@ -107,7 +110,10 @@ $(target):$(objcpp) $(objc)
 #	g++ -o $@ $(objc) $(objcpp)  -lgtest -pthread
 	g++ -o $@ $^ -lgtest -pthread
 
-
+# .PHONEY:${dirto}
+# ${dirto}:
+# 	@echo 222
+# 	if [ ! -d ${dirto} ]; then mkdir -p ${dirto}; fi;
 
 ####这部分生成.d文件的操作 本程序暂时没用 大工程可能有用
 # 说明
@@ -132,7 +138,9 @@ $(target):$(objcpp) $(objc)
 # 这样.d文件会自动更新。
 # 之后吧这些生成的规则放到Makefile中，通过include命令。要注意顺序，不然可能就会作为make的默认target了。
 $(dirto)%.d: %.c
-	@set -e; rm -f $@; \
+#	@set -e; echo 1;rm -f $@;
+#	@set -e; echo 1;if [ ! -d ${dirto} ]; then echo 1_1; mkdir -p ${dirto}; fi; rm -f $@;
+	@set -e; if [ ! -d ${dirto} ]; then mkdir -p ${dirto}; fi; rm -f $@; \
 	gcc -MM $(CPPFLAGS) $< > $@.$$$$; \
 	sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
 	rm -f $@.$$$$
@@ -140,17 +148,27 @@ $(dirto)%.d: %.c
 # g++的查找和make的查找不同 vpath不能用于g++ 增加 -I./ 否则 部分.h 文件找不到 或者 CPPFLAGS 中添加
 CPPFLAGS+=-I./
 $(dirto)%.d: %.cpp
-	$(info $$@:$@  $$<:$<  $$^:$^ )
-	@set -e; rm -f $@; \
+#	$(info $$@:$@  $$<:$<  $$^:$^ )
+#	@set -e; echo 2;rm -f $@;
+#	@set -e; echo 2;if [ ! -d ${dirto} ]; then echo 2_1; mkdir -p ${dirto}; fi; rm -f $@;
+	@set -e; if [ ! -d ${dirto} ]; then mkdir -p ${dirto}; fi; rm -f $@; \
 	g++ -MM $(CPPFLAGS) $< > $@.$$$$; \
 	sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
 	rm -f $@.$$$$
 
 
 # 下面是通过include引入.d文件
-alldfile = $(patsubst %.c,$(dirto)%.d,$(allcfile)) $(patsubst %.cpp,$(dirto)%.d,$(notdir $(usedcppfile)))
-include $(alldfile)
-####
+targetdfile = $(patsubst %.c,$(dirto)%.d,$(allcfile)) $(patsubst %.cpp,$(dirto)%.d,$(notdir $(usedcppfile)))
+include $(targetdfile)
+
+
+# ! 其实下边方式是不对的 原因是 跟顺序有关 上面已经有了目标生成方式 若添加了下面 就会忽略掉上面的
+# ! 其结果就是只生成 ${dirto}文件夹 而没有生成.d文件 因为 $(dirto)%.d: %.cpp 被 ${alldfile}: 替换掉了
+# ${targetdfile}:
+# 	@echo 1
+# 	@if [ ! -d ${dirto} ]; then echo 2;mkdir -p ${dirto}; fi;
+#	$(shell sleep 3)
+
 
 #下面这2个也可以不写 利用自动推导
 #若写入临时目录 这需要放开
@@ -161,16 +179,29 @@ $(objcpp):$(dirto)%.o:%.cpp
 	g++ -o $@ -I./ -c $<
 
 
+# 没有main函数
+${target2}:${target2_src}
+	g++ $< -o $@ -lgtest -lgtest_main -pthread
 
-gmock1_tar:=gmock1_
-.PHONEY:
-gmock1:$(gmock1_tar)
-	./$(gmock1_tar)
-$(gmock1_tar):gmock1.cpp
-	g++ gmock1.cpp -o $(gmock1_tar) -lgtest -lgmock -pthread
+# mock1
+${target3}:${target3_src}
+	g++ $< -o $@ -lgtest -lgmock -pthread
 
-gmock1clean:
-	rm $(gmock1_tar)
+
+.PHONY: clean
+clean:
+	@pwd
+#	-rm -f $(objcpp) $(objc) $(target) $(alldfile) $(gmock1_tar)  $(target2)  $(target3)
+	-rm -rf ${dirto}
+
+# gmock1_tar:=gmock1_
+# .PHONEY:
+# mock:$(gmock1_tar)
+# 	./$(gmock1_tar)
+# $(gmock1_tar):gmock1.cpp
+# 	g++ gmock1.cpp -o $(gmock1_tar) -lgtest -lgmock -pthread
+# mockclean:
+# 	rm $(gmock1_tar)
 
 .PHONY: main2
 main2:
@@ -182,9 +213,6 @@ main2:
 	g++ -o testFixtures.o -c testFixtures.cpp
 	g++ -o testmain.o -c testmain.cpp
 	g++ -o main *.o  -lgtest -pthread
-
-clean:
-	-rm $(objcpp) $(objc) $(target) $(alldfile)
 
 
 allsrc=$(wildcard *.cpp)
@@ -204,7 +232,19 @@ test:
 #	$(info $(allsrc))
 #	$(info $(allo))
 #	$(info $(allo2))
-#	@echo allcppfile
-#	@echo $(allcppfile)
+	@echo allcppfile:${allcppfile}
+	@echo notusedfile:${notusedfile}
+	@echo usedcppfile:$(usedcppfile)
 #	@echo objcpp
 #	@echo $(objcpp)
+
+
+
+# camke方式生成
+.PHONEY:cmake cmakeclean
+cmake:
+	cmake -S . -B build
+	cmake --build build
+
+cmakeclean:
+	-rm -rf build

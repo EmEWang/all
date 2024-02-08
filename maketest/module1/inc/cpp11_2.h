@@ -9,6 +9,8 @@
 #include <vector>
 #include <list>
 #include <map>
+#include <set>
+#include <cassert>
 
 #include <algorithm>                // 算法
 #include <functional>               // 仿函数
@@ -16,19 +18,14 @@
 #include <memory>                   //
 #include <atomic>                   // 原子
 
-
-
 // 主要用于测试c++11 基本应用 基本库
-
-// *** 字符串
-#include <string>
-void test1_cpp11_2_string();  // 包含c串
 
 // *** 线程
 #include <thread>
 #include <mutex>
 void test1_cpp11_2_thread();
 void test1_cpp11_2_threadpool(); //线程池
+void test1_cpp11_2_atomic();
 
 // *** 异步
 void test1_cpp11_2_async();
@@ -38,10 +35,10 @@ void test1_cpp11_2_packaged_task();
 
 // *** 智能指针
 #include <memory>
-void test1_cpp11_2_memory();
-void test1_cpp11_2_shareptr();
-void test1_cpp11_2_uniqueptr();
-void test1_cpp11_2_weakptr();
+void test1_cpp11_2_memory();      // https://zhuanlan.zhihu.com/p/672745555
+void test1_cpp11_2_unique_ptr();  // https://zhuanlan.zhihu.com/p/670068158
+void test1_cpp11_2_shared_ptr();  // https://zhuanlan.zhihu.com/p/150555165
+void test1_cpp11_2_weak_ptr();    // https://zhuanlan.zhihu.com/p/667078179
 
 // *** 标准时间库
 #include <chrono>
@@ -63,6 +60,14 @@ void test1_cpp11_2_regex_other();
 #include <array>
 void test1_cpp11_2_array(); // 新增加容器—静态数组array、forward_list以及unordered系列
 void test1_cpp11_2_tuple_pair(); // tuple pair    #include <tuple>
+void test1_cpp11_2_data();       // std::data
+void test1_cpp11_2_size();       // std::size
+void test1_cpp11_2_null_ptr();
+
+
+
+
+
 
 
 #endif

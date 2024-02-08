@@ -25,7 +25,7 @@ add_library(lib STATIC ${SOURCES_LIB})
 # target_include_directories(lib PUBLIC ${PROJECT_SOURCE_DIR}/module1/inc ${PROJECT_SOURCE_DIR}/module2/inc ${PROJECT_SOURCE_DIR}/module3/inc ${PROJECT_SOURCE_DIR}/module4/inc)
 file(GLOB SOURCES_INC  module*/inc)         # 自动过滤文件夹
 target_include_directories(lib PUBLIC ${SOURCES_INC})
-target_link_libraries(maketest PRIVATE lib -rdynamic -ldl -pthread)
+target_link_libraries(maketest PRIVATE lib -rdynamic -ldl -pthread )
 
 add_subdirectory(testlinux1)          # 子目录
 add_subdirectory(testlinux2)          # 子目录

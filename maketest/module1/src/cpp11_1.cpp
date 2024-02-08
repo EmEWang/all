@@ -191,58 +191,38 @@ void test1_cpp11_1_auto()
 }
 
 
-void* GetMemory(size_t size)
-{
-    return malloc(size);
-}
+void* GetMemory(size_t size){return malloc(size);}
 template<class T1, class T2>
-T1 Add(const T1& left, const T2& right)
-{
-    return left + right;
-}
+T1 Add(const T1& left, const T2& right){return left + right;}
 void test1_cpp11_1_decltype()
 {
     // 1 为什么需要decltype
     // auto使用的前提是：必须要对auto声明的类型进行初始化，否则编译器无法推导出auto的实际类型。
     // 但有时候可能需要根据表达式运行完成之后结果的类型进行推导，因为编译期间，代码不会运行，此时auto也就无能为力。
-
     // 如 上面的模板 T1 Add(const T1& left, const T2& right)
     // 如果能用加完之后结果的实际类型作为函数的返回值类型就不会出错，
     // 但这需要程序运行完才能知道结果的实际类型，即RTTI(Run - Time Type Identiﬁcation 运行时类型识别)。
 
     // 2 decltype
     // decltype是根据表达式的实际类型推演出定义变量时所用的类型，比如：
-
-    // 推演表达式类型作为变量的定义类型
     double a = 10.9887;
     int b = 20;
-
-    // 用decltype推演a+b的实际类型，作为定义c的类型
     decltype(a + b) c;
     c = a + b;
     cout << typeid(c).name() << endl;             // double
     cout << c << endl;                            // 30.98807
 
     // 推演函数返回值的类型
-    // 如上面的函数GetMemory
-
     // 如果没有带参数，推导函数的类型
     cout << typeid(decltype(GetMemory)).name() << endl;   // void * __cdecl(unsigned int)
-
     // 如果带参数列表，推导的是函数返回值的类型,注意：此处只是推演，不会执行函数
     cout << typeid(decltype(GetMemory(0))).name() << endl;  // void*
 }
 
 template<typename T>
-void printtype(T t)
-{
-    printf("type:%s\n", typeid(t).name());
-}
+void printtype(T t){printf("type:%s\n", typeid(t).name());}
 template<typename T>
-void printtype()
-{
-    printf("type:%s\n", typeid(T).name());
-}
+void printtype(){printf("type:%s\n", typeid(T).name());}
 void test1_cpp11_1_decltype2()
 {
     int i = 4;
@@ -280,6 +260,85 @@ void test1_cpp11_1_decltype2()
     // std::cout << (typeid(var6) == typeid(int&)) << std::endl;
 }
 
+class Student{
+public:
+    static int total;
+    string name;
+    int age;
+    float scores;
+    int x;
+};
+void test1_cpp11_1_decltype3()
+{
+    {
+    // 1变量
+    int n = 0;
+    const int &r = n;
+    Student stu;
+    decltype(n) a = n;     //n 为 int 类型，a 被推导为 int 类型
+    decltype(r) b = n;     //r 为 const int& 类型, b 被推导为 const int& 类型
+    decltype(Student::total) c = 0;  //total 为类 Student 的一个 int 类型的成员变量，c 被推导为 int 类型
+    decltype(stu.name) url = "http://c.biancheng.net/cplus/";  //total 为类 Student 的一个 string 类型的成员变量， url 被推导为 string 类型
+    }
+
+    {
+    // 2函数声明
+    int& func_int_r(int, char);  //返回值为 int&
+    int&& func_int_rr(void);  //返回值为 int&&
+    int func_int(double);  //返回值为 int
+    const int& fun_cint_r(int, int, int);  //返回值为 const int&
+    const int&& func_cint_rr(void);  //返回值为 const int&&
+    //decltype类型推导
+    int n = 100;
+    decltype(func_int_r(100, 'A')) a = n;  //a 的类型为 int&
+    decltype(func_int_rr()) b = 0;  //b 的类型为 int&&
+    decltype(func_int(10.5)) c = 0;   //c 的类型为 int
+    decltype(fun_cint_r(1,2,3))  x = n;    //x 的类型为 const int &
+    decltype(func_cint_rr()) y = 0;  // y 的类型为 const int&&
+    }
+
+    {
+    // 3左值或被()包围
+    Student obj;
+    //带有括号的表达式
+    decltype(obj.x) a = 0;    //obj.x 为类的成员访问表达式，符合推导规则一，a 的类型为 int
+    decltype((obj.x)) b = a;  //obj.x 带有括号，符合推导规则三，b 的类型为 int&。
+    //加法表达式
+    int n = 0, m = 0;
+    decltype(n + m) c = 0;  //n+m 得到一个右值，符合推导规则一，所以推导结果为 int
+    decltype(n = n + m) d = c;  //n=n+m 得到一个左值，符号推导规则三，所以推导结果为 int&
+    }
+
+    {
+    // 4区别 cv限制符
+    //非指针非引用类型
+    const int n1 = 0;
+    auto n2 = 10;
+    n2 = 99;  //赋值不报错
+    decltype(n1) n3 = 20;
+    // n3 = 5;  //赋值报错
+    //指针类型
+    const int *p1 = &n1;
+    auto p2 = p1;
+    // *p2 = 66;  //赋值报错
+    decltype(p1) p3 = p1;
+    // *p3 = 19;  //赋值报错
+    }
+    {
+    // 5却别 引用
+        int n = 10;
+    int &r1 = n;
+    //auto推导
+    auto r2 = r1;
+    r2 = 20;
+    cout << n << ", " << r1 << ", " << r2 << endl; // 10, 10, 20
+    //decltype推导
+    decltype(r1) r3 = n;
+    r3 = 99;
+    cout << n << ", " << r1 << ", " << r3 << endl; // 99, 99, 99
+    }
+
+}
 
 void test1_cpp11_1_type()
 {
@@ -691,7 +750,26 @@ void test1_cpp11_1_perfect()
     // 3 ---
 }
 
-
+void otherdef(int & t) {cout << "lvalue\n";}
+void otherdef(const int & t) {cout << "rvalue\n";}
+//重载函数模板，分别接收左值和右值
+template <typename T>void functperf03(const T& t) {otherdef(t);}  //接收右值参数
+template <typename T>void functperf03(T& t) {otherdef(t);}        //接收左值参数
+void test1_cpp11_1_perfect2()
+{
+    // 事实上，C++98/03 标准下的 C++ 也可以实现完美转发，只是实现方式比较笨拙。
+    // C++ 98/03 标准中只有左值引用，并且可以细分为非 const 引用和 const 引用。
+    // 其中，使用非 const 引用作为函数模板参数时，只能接收左值，无法接收右值；
+    // 而 const 左值引用既可以接收左值，也可以接收右值，但考虑到其 const 属性，
+    // 除非被调用函数的参数也是 const 属性，否则将无法直接传递。
+    // 这也就意味着，单独使用任何一种引用形式，可以实现转发，但无法保证完美。
+    // 因此如果使用 C++ 98/03 标准下的 C++ 语言，我们可以采用函数模板重载的方式实现完美转发
+    // 显然，使用重载的模板函数实现完美转发也是有弊端的，此实现方式仅适用于模板函数仅有少量参数的情况，
+    // 否则就需要编写大量的重载函数模板，造成代码的冗余。
+    int a = 10;
+    functperf03(a);   // lvalue
+    functperf03(10);  // rvalue
+}
 
 
 // 模板参数的按值传递和引用传递

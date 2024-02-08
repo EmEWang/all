@@ -28,6 +28,14 @@ sudo systemctl set-default graphical.target
 sudo reboot
 
 
+ubuntu上安装http-server
+sudo apt install npm             # 1安装npm包管理器
+sudo npm install http-server -g  # 2 -g表示全局安装，这样它就可以从终端运行，否则在终端输入http-server将提示找不到此命令
+http-server                      # 启动http-server    Hit CTRL-C to stop the server
+
+sudo apt-getinstall gcov         # 安装 gcov
+sudo apt-getinstall lcov         # 安装 lcov
+
 
 addr2line: getting error "DWARF error: section .debug_str is larger than its filesize  错误
 https://bugs.launchpad.net/ubuntu/+source/binutils/+bug/1977958
@@ -40,458 +48,6 @@ sudo dpkg -i 文件名.deb   # 安装
 sudo dpkg -r sunloginclient  # 卸载
 /usr/local/sunlogin/bin/sunloginclient # 启动命令
 966 690 042 123456        # 账户
-
-
-https://github.com/microsoft/mimalloc     # 微软
-
-
-编译gperftools
-https://blog.51cto.com/quantfabric/2568961
-https://github.com/gperftools/gperftools
-1 cmake方式
-  mkdir build; cd build ;cmake .. ; make
-  注意 CMakeLists.txt 中没有优化 开头需要添加 打开优化
-  set(CMAKE_CXX_FLAGS " -O2 ")
-  set(CMAKE_C_FLAGS " -O2 ")
-
-  set(default_tcmalloc_pagesize 8)  为设置页大小 默认为8K
-
-2 configure 方式
-  1 ./autogen.sh
-  2 ./configure
-  3 make            # lib 放到 .libs/ 下
-  4 make install    # 可省
-  注意 可能需要安装
-  sudo apt-get install autoconf         # Command 'autoconf' not found, but can be installed with
-  sudo apt-get install libunwind8-dev   # configure.ac:179: error: possibly undefined macro: AC_PROG_LIBTOOL
-  sudo apt-get install libtool          # error: Libtool library used but 'LIBTOOL' is undefined
-
-  # config.status: error: cannot find input file: `Makefile.in  出现这个错误可能需要如下操作
-  aclocal                     # 1  有的说只需要 1 3 步骤
-  libtoollize-force           # 2
-  automake --add-missing      # 3  若提示缺少一些文件 根据提示手动创建缺少的文件，然后在再执行一遍3就可以了
-  autoconf                    # 4
-
-  说明:
-  以下都是在2中选项说明 也就是 ./configure
-  1 交叉编译模式下需要添加 --host=xxxx 如:--host=aarch64-linux-gnu 实际使用 aarch64-linux-gnu-g++ 编译
-  2 在默认情况下自动 开启 -O2 -g选项 可以 添加 CFLAGS=-O0 CPPFLAGS=-O0 更改选项
-  3 tcmalloc默认page=8k 可以通过 --with-tcmalloc-pagesize=xx 更改
-    xx 一般取 4 8 16 32 64 128 256
-    page越大，TCMalloc的速度相对越快，但其占用的内存也会越高。简单说，就是空间换时间的道理。
-    默认的page大小通过减少内存碎片 来最小化内存使用，但跟踪这些page会花费更多的时间。
-    使用更大的page则会带来更多的内存碎片，但速度上会有所提升
-
-3 Install "google-perftools" Package on Ubuntu   # apt安装
-sudo apt-get update -y
-sudo apt-get install -y google-perftools
-
-
-
-如何去除configure的默认选择-g O2
-1 在生成的Makefile中
-  CFLAGS = -g -O2                      <--            直接改之 更方便
-  CXX = g++ -std=gnu++11
-  CXXCPP = g++ -std=gnu++11 -E
-  CXXDEPMODE = depmode=gcc3
-  CXXFLAGS = -g -O2                    <--            直接改之 更方便
-
-2 ./configure CC=gcc CFLAGS=-O0 CXXFLAGS=-O0   个选项根据需求更改
-  CC 为编译器 CFLAGS C编译选项 CXXFLAGS c++编译选项 CPPFLAGS 预处理选项 等等  效果同1
-
-3  https://www.cnblogs.com/tfanalysis/p/4093400.html   个人测试没效果
-autoconf生成的编译选项默认是"-g -O2"。这个"-g"选项将我迷惑了，以为生成了GDB调试所需的信息，所以也就没有管后面的"-O2“选项。
-实际上在用GDB进行调试的时候，单步跟踪代码，GDB显示的代码非常混乱。要么某些代码行未显示，要么中间插入了很多看起来像库函数的代码。
-  甚至有时检查变量值都不对，但是根据此变量生成的后续结果却是正确的。
-查看GCC文档，发现-g与-O选项虽然允许同时使用，但是会产生"surprise”的结果。
-为了方便开发阶段的调试工作，需要给autoconf添加一个调试选项来控制其生成的编译选项。
-  这可以通过在configure.ac中使用AC_ARG_ENABLE宏来实现。
-
-AC_ARG_ENABLE宏的格式为：
-    AC_ARG_ENABLE(feature, help-string, [action-if-given], [action-if-not-given])
-
-在configure.ac中添加如下配置：
-# enable debug or not
-AC_ARG_ENABLE(debug, AS_HELP_STRING([--enable-debug], [enable DEBUG mode(default=no)]),
-              [],
-              [enable_debug=no])
-AS_IF([test "x$enable_debug" = "xyes"], [CXXFLAGS="-g2 -O0 -DDEBUG -Wall"],
-    [test "x$enable_debug" = "xno"], [CXXFLAGS="-O2 -Wall"],
-    [])
-
-上面配置的意思是：给最后生成的configure脚本添加一个--enable-debug选项，如果指定了此选项，则CXXFLAGS="-g2 -O0 -DDEBUG -Wall"，否则CXXFLAGS="-O2 -Wall"。
-
-每一个enable选项都有一个enable_feature变量与之对应，可以通过此变量取得用户指定的值。以上面的场景为例：
-（1）如果指定--enable-debug，不带参数，则enable_debug变量值为"yes"。
-（2）如果指定--enable-debug=no，则enable_debug变量值为"no"。
-（3）如果指定--disable-debug，则与--enable-debug=no效果相同。
-
-AS_IF宏与C语言中的if语句功能相似，格式为：
-    AS_IF (test1, [run-if-true1], . . . , [run-if-false])
-
-例：
-AS_IF([test "xfoo"=xyes],[HANDLEFOO([yes])],[test"x
-foo" != xno], [HANDLE_FOO([maybe])],
-        [echo foo not specified])
-
-AS_IF的行为是：首先检查第一个条件，如果成立，执行相应操作；如果第一个条件不成立，继续检查下一个条件；如果所有条件都不成立，则执行run-if-false。
-
-添加了debug选项以后，执行./configure --help可以看到我们指定的文档字串：
- --enable-debug          enable debug mode(default=no)
-
-这样我们就可以通过configure的选项来控制编译出的可执行文件是否带有调试信息了。
-
-
-
-使用libtcmalloc.so 中设置环境变量
-TCMALLOC_MAX_TOTAL_THREAD_CACHE_BYTES # 线程缓存 默认是16M 即 16777216
-LD_PRELOAD=paht/libtcmalloc.so TCMALLOC_MAX_TOTAL_THREAD_CACHE_BYTES=167772160 ./xxx # 临时设置并运行
-
-系统参数 透明大页 THP 需要root权限 貌似对tcmalloc 影响不大
-设置tcmalloc文档中说明
-echo always >/sys/kernel/mm/transparent_hugepage/enabled  ; \
-echo defer+madvise >/sys/kernel/mm/transparent_hugepage/defrag ; \
-echo 0 >/sys/kernel/mm/transparent_hugepage/khugepaged/max_ptes_none ; \
-echo 1 >/proc/sys/vm/overcommit_memory
-
-还原本地
-echo madvise > /sys/kernel/mm/transparent_hugepage/enabled ; \
-echo madvise >  /sys/kernel/mm/transparent_hugepage/defrag ; \
-echo 511 > /sys/kernel/mm/transparent_hugepage/khugepaged/max_ptes_none ; \
-echo 0 > /proc/sys/vm/overcommit_memory
-
-
-
-使用 google-perftool 分析内存 cpu 性能
-补充一点，要用google-perftool来分析程序，必须保证程序能正常退出
-功能
-1 heap profile 堆内存分析
-主要是在程序中替代glibc的内存分配, 转而使用 google-perftool提供的tcmalloc:thread cache malloc,
-使用这个内存管理,一方面使用tcmalloc的内存分配;另一方面它具有内存统计功能。
-优点是内存allocate/deallocate的速度，通常情况下比glibc所提供的malloc要快；另一个方面是小内存(< =32K)的管理，
-它的小内存是在thread cache里面管理的，一方面减少了加锁的开销，另一方面用来表示小内存所用的额外的空间也比较小，
-比较节省空间。因此，对于多线程下，经常小内存的allocation/deallocation的程序（尤其多线程下使用STL比较多的程序），
-可以尝试使用一下tcmalloc
-  1 计算任意时间点的内存使用情况
-  2 定位内存泄露
-  3 定位何处大量分配内存
-2 cpu-profile cpu分析
-主要功能就是通过采样的方式，给程序中cpu的使用情况进行“画像”，通过它所输出的结果，我们可以对程序中各个函数耗时情况一目了然。
-在对程序做性能优化的时候，这个是很重要的，先把最耗时的若干个操作优化好，程序的整体性能提升应该十分明显，
-这也是做性能优化的一个最为基本的原则—先优化最耗时的。
-3 heap checker 堆内存泄漏检测工具
-
-使用方法
-1 代码直接调用提供的api
-2 编译链接静态库    如 gcc -o helloworld –lprofiler
-3 链接动态库
-4 preload方式  如 env LD_PRELOAD=/usr/lib/libprofiler.so ./exe   env是linux下插入环境变量的shell命令 可省
-
-1 使用google工具 git@github.com:gperftools/gperftools.git 源码方式 或 直接apt 安装
-2 heap profiler 必须使用tcmalloc来分配内存 链接tcmalloc库 编译链接-ltcmalloc或LD_PRELOAD进程加载
-  cpu profiler  编译链接-lprofiler或LD_PRELOAD进程加载
-  heap checker  使用 -ltcmalloc
-  -ltcmalloc_and_profiler 是两者的和
-  2.1 heap profiler
-    https://gperftools.github.io/gperftools/heapprofile.html
-    分析特定代码 格式如下
-    HeapProfilerStart("转储文件");
-    。。。   代码段
-    HeapProfilerStop();
-
-    google/heap-profiler.h   #  引用头文件
-    HeapProfilerStart("转储文件") 和 HeapProfilerStop() #把要分析的代码块包起来
-    HeapProfilerDump() or GetHeapProfile()来检查分析情况 确定代码段，输出profile文件等
-    HeapProfilerStart的参数是周期性输出文件的前缀，HeapProfilerDump的参数是当前heap的profile输出文路径
-    两种方式都会周期性生成 prefix.0000.heap, prefix.0001.heap一系列profile文件
-    周期性是指一旦一定数量的对内存被allocated就生成新的profile文件。HEAP_PROFILE_ALLOCATION_INTERVAL来控制这一数量
-    IsHeapProfilerRunning() 会告诉你是否已经调用过HeapProfilerStart
-
-    分析整个程序 进程环境变量配置
-    HEAPPROFILE=/tmp/mybin.hprof env1=xxx env2=yyy ./exe # 编译时候链接 -ltcmalloc_and_profiler
-    HEAPPROFILE=/tmp/mybin.hprof LD_PRELOAD=path/libtcmalloc_and_profiler.so ... ./exe # preload方式
-    默认统计规则是, 程序每分配 1 GB, 或每占用 100 MB, 统计一次. 可通过环境变量控制
-    HEAPPROFILE 开启内存统计 设置命名转储的分析文件. 如 HEAPPROFILE=server ./server
-      生成的文件 server.0001.heap  server.0002.heap 等
-    HEAP_PROFILE_ALLOCATION_INTERVAL # 每分配多少字节的内存统计一次. 默认为 1073741824 (1 GB).
-      Dump heap profiling information each time the specified number of bytes has been allocated by the program.
-    HEAP_PROFILE_INUSE_INTERVAL # 每占用多少字节的内存统计一次. 默认为 104857600 (100 MB).
-      Dump heap profiling information whenever the high-water memory usage mark increases by the specified number of bytes.
-    HEAP_PROFILE_TIME_INTERVAL # 每隔多少秒统计一次. 默认为 0.
-      Dump heap profiling information each time the specified number of seconds has elapsed.
-    HEAPPROFILESIGNAL # 每当收到指定信号统计一次. 默认为 disabled.
-      Dump heap profiling information whenever the specified signal is sent to the process.
-    HEAP_PROFILE_MMAP # 默认为 false
-      Profile mmap, mremap and sbrk calls in addition to malloc, calloc, realloc, and new. NOTE:
-      this causes the profiler to profile calls internal to tcmalloc, since tcmalloc and friends
-      use mmap and sbrk internally for allocations. One partial solution is to filter these allocations out
-      when running pprof, with something like
-      pprof --ignore='DoAllocWithArena|SbrkSysAllocator::Alloc|MmapSysAllocator::Alloc.
-    HEAP_PROFILE_ONLY_MMAP # 默认为 false
-      Only profile mmap, mremap, and sbrk calls; do not profile malloc, calloc, realloc, or new.
-    HEAP_PROFILE_MMAP_LOG # Log mmap/munmap calls. 默认为 false
-    注 1 信号是数字编号   可用 kill 等工具发送(kill -xx pid)
-       2 若编译时没连接tcmalloc库 启动进程前需要添加 LD_PRELOAD=path/libtcmalloc_and_profiler.so ...
-       3 链接tcmalloc_debug动态库，然后gdb挂着程序跑，出现内存错误，程序可能会出现崩溃，然后结合gdb调试,查找内存错误。
-  2.2 cpu profiler
-    https://gperftools.github.io/gperftools/cpuprofile.html
-    google/profiler.h   引用头文件
-    ProfilerStop(char*)和ProfilerStop()  在需要统计的代码段前后调用函数
-    可对多个代码段作profile，但是如果使用同样的输出文件，后一次 profile的输出会完全覆盖前一次的输出
-    推荐使用-O0编译选项，否则可能无法得到函数调用关系图
-    生成 profile输出文件，输出文件是人不可识别的二进制文件
-    CPUPROFILE            开启cpu统计 设置命名转储的分析文件
-    CPUPROFILE_FREQUENCY  每秒钟的采样次数，默认为100
-    CPUPROFILESIGNAL      指定触发的信号  kill触发dump，再次kill关闭dump，将这两次kill之间的cpu使用情况dump下来
-  2.3 heap check
-    google/heap-checker.h   头文件
-    HeapLeakChecker heap_checker("test_foo");
-    ... <leaky code>
-    if (!heap_checker.SameHeap()) assert(NULL == "heap memory leak");
-    进入代码段前建立当前堆内存使用情况的snapshot，结束时通过与记录的snapshot对比检查是否有泄漏。
-    NoLeaks()例子。
-    HeapLeakChecker heap_checker("fun");
-    ... <leaky code>
-    assert(!heap_checker.NoLeaks());
-    注意被检查程序的main函数必须为带2个参数的形式，否则会在编译时报告重复定义。运行env命令行将会报告assert失败。
-    另外，还可以跳过某些代码段的检查，方式如下：
-        {
-        HeapLeakChecker::Disabler disabler;
-        <leaky code>
-    }
-    <leaky code>处的代码将被heap-checker忽略。
-
-    g++ -O0 -g test_heap_checker.cpp -ltcmalloc -o test_heap_checker
-    env HEAPCHECK=normal ./test_heap_checker
-    输出中包含
-    Leak of 400 bytes in 1 objects allocated from 显示有400字节内存泄漏 并提示使用pprof跟踪泄漏来源的方法
-
-    HEAPCHECK=normal  检查的结果会以屏幕报告的形式给出
-      minimal，忽略进入main函数之前的初始化过程；normal，报告所有的无法再引用的内存对象；
-      strick，在normal的基础上增加一些额外的检查；draconian，在程序退出的时候存在未释放的内存的情况下报错。
-
-3 分析结果
-  https://github.com/google/pprof/blob/main/doc/README.md
-  pprof --option [--focus=<regexp>] [--ignore=<regexp>] [--line or addresses or functions] ./exe  对应的profile路径
-    是一个perl的脚本
-    option值有：text，gv，dot，ps，pdf，gif，list=<regexp>，disasm=<regexp>  表示不同的输出形式
-    list=<regexp>表示输出匹配正则表达式的函数的源代码，diasm=<regexp>表示输出匹配正则表达式的函数的反汇编代码
-    text是字符统计输出形式，其它的对应不同的图形文件格式
-    --focus=<regexp>表示只统计函数名匹配正则表达式的函数的采样
-    --ignore=<regexp>表示不统计函数名匹配正则表达式的函数的采样。
-    [--line or addresses or functions]表示生成的统计是基于代码行，指令地址还是函数的，默认是函数
-    --gv选项需要安装 graphviz 和 gv
-    pprof不带任何选项调用(只有可执行文件路径和profile文件路径)则进入互动模式，
-      在互动模式下可使用gv，gif，text等命令来替代前面介绍的带选项的pprof调用。
-  pprof --text ./exe  logfile                       # 查看文件1的统计 文本格式
-  pprof --text ./exe  --base=logfile  logfile2      # 查看2个文件的差值
-  pprof --pdf  ./exe  logfile  > 1.pdf 文件         # pdf文件方式
-  pprof --gif  ./exe  logfile  > 1.gif 文件         # gif文件方式
-  pprof --svg  ./exe  logfile  > 1.svg 文件         # svg文件方式
-  pprof --gv   ./exe  logfile  > 1.gv 文件          # gv文件方式
-  3.1 pprof 是一个工具  gperftools/src/pprof(git下载源文件)  google-pprof(apt安装成品工具)
-  3.2 若要生成图形需要安装图形工具
-    # Ubuntu 系统中安装 graphviz 和 dot   （Graph Visualization Software）
-    # sudo apt-get update               # 更新软件包列表
-    # sudo apt-get install graphviz     # 安装 graphviz   有说只需要这一步
-    # sudo apt-get install graphviz-dev # 安装 graphviz-dev
-    # sudo apt-get install dot          # 安装 dot
-    # which dot                         # 显示路径表示安装成功
-    # sudo apt-get install gv           # 安装 gv
-
-    # 工具官网以及源码 仅供参考 可用apt-get安装现成的
-    https://graphviz.gitlab.io/_pages/Download/Download_source.html    # graphviz
-    https://www.ghostscript.com/download/gsdnld.html    # ghostscript 转PDF
-
-    手动安装 graphviz_2.42.2-3build2_arm64.deb 下面lib为其依赖
-    graphviz_2.42.2-3build2_arm64.deb
-    libann0_1.1.2+doc-7build1_arm64.deb
-    libcdt5_2.42.2-3build2_arm64.deb
-    libcgraph6_2.42.2-3build2_arm64.deb
-    libgraphviz-dev_2.42.2-3build2_arm64.deb
-    libgtk2.0-0_2.24.32-4ubuntu4_arm64.deb           # 貌似这3个可省
-    libgtk2.0-bin_2.24.32-4ubuntu4_arm64.deb         #
-    libgtk2.0-common_2.24.32-4ubuntu4_all.deb        #
-    libgts-0.7-5_0.7.6+darcs121130-4_arm64.deb
-    libgts-bin_0.7.6+darcs121130-4_arm64.deb
-    libgvc6-plugins-gtk_2.42.2-3build2_arm64.deb
-    libgvc6_2.42.2-3build2_arm64.deb
-    libgvpr2_2.42.2-3build2_arm64.deb
-    liblab-gamut1_2.42.2-3build2_arm64.deb
-    libpathplan4_2.42.2-3build2_arm64.deb
-    libxdot4_2.42.2-3build2_arm64.deb
-
-  3.3 结果格式
-    内存分析
-    # ./pprof --text testheaparm --base=server.0001.heap server.0004.heap
-    # Using local file testheaparm.
-    # Using local file server.0004.heap.
-    # Total: 197.1 MB
-    #     65.7  33.3%  33.3%    197.1 100.0% main
-    #     65.7  33.3%  66.7%     65.7  33.3% test3
-    #     65.6  33.3% 100.0%     65.6  33.3% test4
-    #      0.0   0.0% 100.0%    197.1 100.0% __libc_start_main
-    #      0.0   0.0% 100.0%    197.1 100.0% _start
-    # 第一列为以MB为单位的内存分配情况
-    # 第二列和第五列是第一列和第四列的百分比表示
-    # 第三列是第二列累加之和，如：第二行的第三列就是第一行的第二列+第二行的第二列
-    # 第四列代表所有的进程和它调用函数的内存之和
-    The first column contains the direct memory use in MB.
-    The fourth column contains memory use by the procedure and all of its callees.
-    The second and fifth columns are just percentage representations of the numbers in the first and fourth columns.
-    The third column is a cumulative sum of the second column (i.e., the kth entry in the third column
-      is the sum of the first k entries in the second column.)
-
-    cpu分析
-    pprof --text ./RBtree ./RBtree.prof 生成的字符统计结果如下。
-         501  62.2%  62.2%      714  88.6% RBTree::insert
-          84  10.4%  72.6%       84  10.4% RBTree::defaultCmp
-          80   9.9%  82.5%      154  19.1% RBTree::nodeCmp
-          61   7.6%  90.1%       73   9.1% RBTree::insertFixup
-          47   5.8%  95.9%       47   5.8% malloc_trim
-           9   1.1%  97.0%      746  92.6% main
-           6    0.7%  97.8%        6   0.7% RBTree::rightRotate
-           6   0.7%  98.5%        6   0.7% RBTree::leftRotate
-           5   0.6%  99.1%        5   0.6% malloc
-           3   0.4%  99.5%        3   0.4% operator new
-           3   0.4%  99.9%        3   0.4% random_r
-           1   0.1% 100.0%        1   0.1% rand
-           0   0.0% 100.0%      755  93.7% __libc_start_main
-    每行对应一个函数的统计。第一，二列是该函数的本地采样（不包括被该函数调用的函数中的采样次数）次数和比例，
-    第三列是该函数本地采样次数占当前所有已统计函数的采样次数之和的比例。
-    第四，五列是该函数的累计采样次数（包括其调用的函数中的采样次数）和比例。
-
-
-jemalloc
-https://github.com/jemalloc/jemalloc
-git@github.com:jemalloc/jemalloc.git
-http://mysql.taobao.org/monthly/2019/08/04/   # JeMalloc-5.1.0 实现分析
-https://zhuanlan.zhihu.com/p/635155570        # Jemalloc内存分配与优化实践
-
-1 编译
-https://github.com/jemalloc/jemalloc/blob/dev/INSTALL.md
-./autogen.sh       # 开启堆检测 则 ./autogen.sh --enable-prof
-./configure        # 可省 或者添加其他选项 如 ./configure --enable-prof 等等
-make
-make install
-
-lib/libjemalloc.so  # 动态库
-bin/jeprof          # 前端工具
-bin/jemalloc-config # 脚本 获取编译属性
-
-2 使用
-https://github.com/jemalloc/jemalloc/wiki/Getting-Started
-http://jemalloc.net/jemalloc.3.html
-
-2.1 进程方式
-MALLOC_CONF  环境变量 配置jemalloc运行时参数
-  https://github.com/jemalloc/jemalloc/wiki/Use-Case%3A-Heap-Profiling
-  http://jemalloc.net/jemalloc.3.html#tuning
-  MALLOC_CONF=prof_leak:true,lg_prof_sample:0,prof_final:true # 程序正常退出时报告泄漏情况 产生一个dump文件
-  MALLOC_CONF=prof:true,lg_prof_interval:20  # 运行程序时，每分配(大约)1MB就会dump产生一个文件
-  MALLOC_CONF=prof:true,prof_gdump:true      # 每次达到新高时dump
-  MALLOC_CONF=prof:true,prof_active:false,prof_prefix:jeprof.out  # 程序启动时开启profiling且disabled之
-  MALLOC_CONF=par1:val1,par2:val2      # 格式
-  prof:true           # 开启堆检测(profiling)  总开关  每次malloc时进行信息采集
-  prof_active:false   # 程序启动时profiling是disabled  默认true 代码中可手动设置
-  prof_leak:true      # 是否开启profiling memory leak，默认是false  常与 prof_final 一起使用
-  prof_final:true     # 程序正常结束时输出结果dump   <prefix>.<pid>.<seq>.f.heap
-  prof_gdump:true     # 当总分配量创新高时就dump 默认 fasle
-  g_prof_interval:32  # 内存变化2^32(4G)时dump一次 <prefix>.<pid>.<seq>.i<iseq>.heap
-  prof_prefix:xxx     # 修改ump文件名前缀<prefix> 默认jeprof
-  lg_prof_sample:0    # 平均每分配出2^N个字节 采一次样  默认19(512KB)  0每次分配都采样
-  prof_accum:true     # 报告抽样数量积累的开关 默认 fasle
-
-  转储采样统计，就是产生dump文件(堆占用剖析工具，大体可以分为间隔采样，转储采样统计)，有三种方式
-    MALLOC_CONF="lg_prof_interval:N"   # 分配活动中，每流转1^N字节，将采样统计数据转储到文件。
-    MALLOC_CONF="prof_gdump:true"      # 当总分配量创新高时，将采样统计数据转储到文件。
-    mallctl("prof.dump", NULL, NULL, NULL, 0)  # 在程序内主动触发转储
-
-2.2 代码方式
-  2.2.1 Heap Profiling
-  jemalloc/jemalloc.h   # 头文件
-  -ljemalloc            # 链接库
-  bool active;
-  mallctl("prof.dump", NULL, NULL, NULL, 0);  # 调用dump 记录内存现场 生成prof
-  active = true;  mallctl("prof.active", NULL, NULL, &active, sizeof(bool)); # profiling enable
-  active = false; mallctl("prof.active", NULL, NULL, &active, sizeof(bool)); # profiling disabled
-  setenv("MALLOC_CONF", "prof:true,prof_active:false,prof_prefix:jeprof.out", 1); # 设置环境变量
-
-  2.2.2 Mem Statistics
-  je_malloc_stats_print(NULL, NULL, NULL)   # memory 的统计输出到stderr上面 东西较多
-  je_mallctl 函数，得到一些关键的统计数据
-    uint64_t epoch = 1;
-    size_t sz = sizeof(epoch);
-    je_mallctl("epoch", &epoch, &sz, &epoch, sz);
-    size_t allocated, active, mapped;
-    sz = sizeof(size_t);
-    je_mallctl("stats.allocated", &allocated, &sz, NULL, 0);
-    je_mallctl("stats.active", &active, &sz, NULL, 0);
-    je_mallctl("stats.mapped", &mapped, &sz, NULL, 0);
-    printf("allocated/active/mapped: %zu/%zu/%zu\n", allocated, active, mapped);
-
-  上面我们在每次 do_something 后面得到 allocated，active 以及 mapped 这些指标，然后输出：
-    allocated/active/mapped: 54919648/58540032/64831488
-    allocated/active/mapped: 55034336/58658816/64950272
-    allocated/active/mapped: 55149024/58777600/65069056
-    allocated/active/mapped: 55263712/58896384/65187840
-
-  2.2.3 Leak Check
-  JE_MALLOC_CONF="prof_leak:true,lg_prof_sample:0,prof_final:true" ./leak  # 程序退出后，会生成一个dump文件
-
-  jeprof leak jeprof.9001.0.f.heap   # jeprof 工具查看
-
-    Using local file leak.
-    Using local file jeprof.9001.0.f.heap.
-    Welcome to jeprof!  For help, type 'help'.
-    (jeprof) top
-    Total: 52.1 MB
-        52.1 100.0% 100.0%     52.1 100.0% je_prof_backtrace
-        0.0   0.0% 100.0%     52.1 100.0% __libc_start_main
-        0.0   0.0% 100.0%     52.1 100.0% _start
-        0.0   0.0% 100.0%     52.1 100.0% do_something
-        0.0   0.0% 100.0%     52.1 100.0% imalloc (inline)
-        0.0   0.0% 100.0%     52.1 100.0% imalloc_body (inline)
-        0.0   0.0% 100.0%     52.1 100.0% je_malloc
-        0.0   0.0% 100.0%     52.1 100.0% je_prof_alloc_prep (inline)
-        0.0   0.0% 100.0%     52.1 100.0% main
-
-
-3 结果
-  jemalloc/bin/jeprof  # perf工具  基于pprof  用法类似于tcmalloc
-  --show_bytes   # 以字节的形式    如 Total: 2173680 B
-  --lines        # 显示行号
-  jeprof --show_bytes a.out jeprof.28954.1.m1.heap    # 只能看到部分调用链
-  jeprof --pdf a.out jeprof.28954.1.m1.heap > je.pdf  # 依赖 ghostscript graphviz
-  jeprof --dot a.out -base=jeprof.28954.0.m0.heap jeprof.28954.1.m1.heap  # 生成dot文件
-    http://www.webgraphviz.com/ 在线查看
-
-https://tinylab.org/the-builtin-heap-profiling-of-jemalloc/  # jemalloc4.0.3 之堆占用剖析·内部实现
-4 je_malloc/imalloc_body 函数 采样过程 可能略有出入
-  1 opt.prof - 剖析总开关。由环境变量 MALLOC_CONF="prof:true" 来打开。
-    s2u: 剖析打开时，会 提前 将请求分配的内存大小，“规整”到内部实际分配的大小。故，采样统计的都是规整后内存分配数。
-    prep: 准备阶段，判断是否进行采样，及采样的准备工作。
-  2 prof.active - 剖析激活与否的开关。MALLOC_CONF="prof:true,prof_active:false"默认禁用，代码通过mallctl激活。
-  3 opt.lg_prof_sample - 采样平均间隔（以字节计）。累计本线程分配出的内存，若超过阀值，则触发采样，同时清零、设置新阀值。
-      注意：a) 阀值以“平均 2^lg_prof_sample 字节”做随机分布；b) lg_prof_sample 为 0 时，对每次分配都采样。
-  4 thread.prof.active - 本线程之剖析激活与否的开关。
-  5 准备进行采样：确保 bt（backtrace）已记录在本地哈希表。这里提到的哈希表，键（key）为 bt，值（value）为 prof_tctx_t 类型，
-      该类型含有数据成员 cnts，其类型为 prof_cnt_t，这是一组计数器：
-    curobjs：已分配 内存对象 计数，或者说是内存分配计次（因为每次分配，分配一个 内存对象）。
-    curbytes: 已分配内存字节数。
-    accumobjs，accumbytes：类似上述（相应）计数。不同的是，上面两计数会在 free（相应内存）时减小，而 accum* 计数不会，
-      换言之，只增不减。
-    注意：标号为 5.1) 过程，当 bt 未见于本地哈希表，需在全局哈希表中找到，并插入本地哈希表。全局哈希表，键（key）为 bt，
-      值（value）为 prof_gctx_t 类型。若全局哈希表中也无有，则新建记录：bt 存于 prof_gctx_t，并作为键（key）。
-  6 分配内存：有两特点。一是 Chunk 头部元数据有 arena_chunk_map_misc_t 之数组，其中每项对应一页（Chunk 含有多个内存页）。
-      arena_chunk_map_misc_t 保存了 ❺ 返回的 prof_tctx_t 地址。另，此处可见，分配的内存必须在页级大小，于是就有了第二个特点：
-    不足页级大小的分配，或者说 small 量级的分配，晋级（promote）到 large 量级分配。此时，对应的 arena_chunk_map_bits_t，
-      large 位和 run size 均设置；但同时 binid 也设置。binid 指示了 promote 前应该分配的尺寸：
-  7 增加 prof_tctxt_t 中相应计数。
-    再来看看内存释放时，prof_tctxt_t 中计数如何减小，函数路径je_free/ifree/prof_free/prof_free_sampled_object：通过
-      待释放内存块 之指针，找到 prof_tctx_t（参见 ❻）。若计数减为 0， 则进一步考虑销毁 prof_tctx_t 甚至于 prof_gctx_t 结构。
-    此处注意：prof_tctx_t 位于分配发起线程的本地存储，而释放可能位于其他线程。故需锁保护。
-
 
 
 
@@ -518,7 +74,9 @@ aarch64_be-elf             Bare-Metal   ARMv8            big          64        
 
 Ubuntu 20.04安装arm-linux-gcc交叉编译器
 https://blog.csdn.net/wu10188/article/details/86542418
-https://blog.csdn.net/weixin_45866346/article/details/121765262
+https://blog.csdn.net/weixin_45866346/article/details/121765262  Ubuntu20.04配置交叉编译环境arm-linux-gcc
+https://blog.csdn.net/lile777/article/details/81389098
+https://github.com/riscvarchive/riscv-fesvr/blob/68c12d06ebbdfe20856b886570822fe66804fd26/scripts/config.sub#L244
 在线安装
 sudo apt-get install gcc-arm-linux-gnueabihf    # arm-linux-gcc的安装 编译的台架上不能运行
 sudo apt-get install g++-arm-linux-gnueabihf    # arm-linux-g++的安装 安装的是 arm-linux-gnueabihf 系列
@@ -1156,10 +714,53 @@ org > gnome > desktop > terminal   # 打开dconf-tools,就像Windows的注册表
   exec-arg -e
   默认为Terminator
 
-ctrl+shift+o    #上下分屏
-ctrl+shift+e    #左右分屏
+右键窗口 > 配置文件首选项 > 配置 > 滚动 > 无限回滚   # 缓存行数无限  默认500
+
 Alt+A           #广播到所有终端
 Alt+O           #停止广播到所有终端
+
+第一部份：关于在同一个标签内的操作
+Alt+Up                          # 移动到上面的终端
+Alt+Down                        # 移动到下面的终端
+Alt+Left                        # 移动到左边的终端
+Alt+Right                       # 移动到右边的终端
+Ctrl+Shift+O                    # 水平分割终端
+Ctrl+Shift+E                    # 垂直分割终端
+Ctrl+Shift+Right                # 在垂直分割的终端中将分割条向右移动
+Ctrl+Shift+Left                 # 在垂直分割的终端中将分割条向左移动
+Ctrl+Shift+Up                   # 在水平分割的终端中将分割条向上移动
+Ctrl+Shift+Down                 # 在水平分割的终端中将分割条向下移动
+Ctrl+Shift+S                    # 隐藏/显示滚动条
+Ctrl+Shift+F                    # 搜索
+Ctrl+Shift+C                    # 复制选中的内容到剪贴板
+Ctrl+Shift+V                    # 粘贴剪贴板的内容到此处
+Ctrl+Shift+W                    # 关闭当前终端
+Ctrl+Shift+Q                    # 退出当前窗口，当前窗口的所有终端都将被关闭
+Ctrl+Shift+X                    # 最大化显示当前终端
+Ctrl+Shift+Z                    # 最大化显示当前终端并使字体放大
+Ctrl+Shift+N or Ctrl+Tab        # 移动到下一个终端
+Ctrl+Shift+P or Ctrl+Shift+Tab  # Crtl+Shift+Tab 移动到之前的一个终端
+
+第二部份：有关各个标签之间的操作
+F11                             # 全屏开关
+Ctrl+Shift+T                    # 打开一个新的标签
+Ctrl+PageDown                   # 移动到下一个标签
+Ctrl+PageUp                     # 移动到上一个标签
+Ctrl+Shift+PageDown             # 将当前标签与其后一个标签交换位置
+Ctrl+Shift+PageUp               # 将当前标签与其前一个标签交换位置
+Ctrl+Plus (+)                   # 增大字体
+Ctrl+Minus (-)                  # 减小字体
+Ctrl+Zero (0)                   # 恢复字体到原始大小
+Ctrl+Shift+R                    # 重置终端状态
+Ctrl+Shift+G                    # 重置终端状态并clear屏幕
+Super+g                         # 绑定所有的终端，以便向一个输入能够输入到所有的终端
+Super+Shift+G                   # 解除绑定
+Super+t                         # 绑定当前标签的所有终端，向一个终端输入的内容会自动输入到其他终端
+Super+Shift+T                   # 解除绑定
+Ctrl+Shift+I                    # 打开一个窗口，新窗口与原来的窗口使用同一个进程
+Super+i                         # 打开一个新窗口，新窗口与原来的窗口使用不同的进程
+
+所有快捷键，都可以通过"man terminator"找到对应的英文帮助说明。
 
 
 
@@ -1216,10 +817,13 @@ perf(Performance Event)
 https://goodcommand.readthedocs.io/zh_CN/latest/command/perf.html
 https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/monitoring_and_managing_system_status_and_performance/profiling-memory-accesses-with-perf-mem_monitoring-and-managing-system-status-and-performance
 https://access.redhat.com/documentation/zh-cn/red_hat_enterprise_linux/8/html/monitoring_and_managing_system_status_and_performance/profiling-memory-accesses-with-perf-mem_monitoring-and-managing-system-status-and-performance#the-purpose-of-perf-mem_profiling-memory-accesses-with-perf-mem
+https://access.redhat.com/documentation/zh-cn/red_hat_enterprise_linux/8/html/monitoring_and_managing_system_status_and_performance/profiling-cpu-usage-with-perf-top_profiling-cpu-usage-in-real-time-with-top
 https://www.cnblogs.com/conscience-remain/p/16142279.html
 https://wiki.csie.ncku.edu.tw/embedded/perf-tutorial
 https://zhuanlan.zhihu.com/p/664546779 # 学会使用perf性能分析工具--这一篇就够了
 https://zhuanlan.zhihu.com/p/664396453 # 从小白到精通：揭秘perf工具的全部功能与操作技巧
+https://goodcommand.readthedocs.io/zh-cn/latest/command/perf.html
+
 Linux kernel 2.6.31后自带系统性能优化工具，原理是对目标进行取样，记录特定条件下所侦测的事件是否发生以及发生的次数。
 通过它，程序利用PMU(Performance Monitor Unit)，tracepoint和内核中的特殊计数器来进行性能统计。
 它可分析应用程序的性能问题(per thread)，内核的性能问题，从而全面理解应用程序中的性能瓶颈。
@@ -1244,7 +848,7 @@ perf安装
 
   2 https://blog.csdn.net/z1026544682/article/details/115329534
   Perf软件包默认在Ubuntu 20.04默认存储库中不可用。  # 根据系统版本自动选择版本 这个好用
-  apt-get install linux-tools-$(uname -r) linux-tools-generic -y # 安装命令
+   sudo apt-get install linux-tools-$(uname -r) linux-tools-generic -y # 安装命令
 
   3 yum install perf    # 红帽 centos
 
@@ -1255,30 +859,33 @@ perf list                # 列出所有的采样事件 event
 perf list sw             # 性能清单 显示软件预定义事件的列表
 perf list stat           # 性能清单 打印所有strace事件
 
-Perf top                 # 实时显示系统的性能统计信息。可查看最耗时的内核函数或某个用户进程 -a默认
-perf top -p $pid         # 指定进程
-perf top -e cpu-clock    # 显示与CPU时钟相关的事件，请使用-e选项
-perf top -e cache-misses -c 5000 # -c取样频率 默认4000
+perf top                 # 实时显示系统的性能统计信息。可查看最耗时的内核函数或某个用户进程 -a默认
+  perf top -p $pid         # 指定进程
+  perf top -e cpu-clock    # 显示与CPU时钟相关的事件，请使用-e选项
+  perf top -e cache-misses -c 5000 # -c取样频率 默认4000
 
 perf stat                # 有要优化的目标，对目标进行特定或一些列的 event 检查
-perf stat -p pid         # 收集性能统计信息 指定进程,ctrl+c 杀死进程之后，就可以看到相应的数据了
-perf stat ls -ld /etc/   # 性能统计 获取ls -ld / etc命令的性能统计信息
-perf stat free -m        # 运行“ free -m”命令时系统中会发生什么
-perf stat --repeat 5 -e cache-misses,cache-references,instructions,cycles ./perf_stat_cache_miss #
-  --repeat n或-r n 重复执行 n 次该程序，并显示每个 event 的变化区间
+  perf stat -p pid         # 收集性能统计信息 指定进程,ctrl+c 杀死进程之后，就可以看到相应的数据了
+  perf stat ls -ld /etc/   # 性能统计 获取ls -ld / etc命令的性能统计信息
+  perf stat free -m        # 运行“ free -m”命令时系统中会发生什么
+  perf stat --repeat 5 -e cache-misses,cache-references,instructions,cycles ./perf_stat_cache_miss #
+    --repeat n或-r n 重复执行 n 次该程序，并显示每个 event 的变化区间
 
 perf record/report       # 有別于 stat，record 可以针对函数级别进行 event 统计，方便对程序 热点 作更精細的分析和优化
-perf record df -h        # 性能记录 运行df -h命令，并使用以下命令将其概要文件记录到当前工作目录perf.data中
-perf record –e cpu-clock ./test1  # 查找时间上的热点函数
-perf record -e cpu-clock -g -p 2548 # 程序运行完(或Ctrl+c结束),生成perf.data文件，若之前已有，覆盖之前的
-  -g perf record额外记录函数的调用关系
-  -e cpu-clock 指perf record监控的指标为cpu周期  -p 指定需要record的进程pid
+  -g 额外记录函数的调用关系 即 调用栈
+  -e cpu-clock 指perf record监控的指标为cpu周期
+  -p 指定需要record的进程pid
   -F <frequcncy>调整取样频率  cat /proc/sys/kernel/perf_event_max_sample_rate 取样频率最大值
-perf record -e branch-misses:u,branch-instructions:u ./perf_record_example # :u只统计 user space 的 event
+  --call-graph dwarf 记录调用链和堆栈 包含-g  如--call-graph dwarf,4096 其中数字为用户堆栈可省 默认为8192B
+  -- sleep n  持续n秒 如果不加则一直采样到手动中断(CRTL+C)为止
+  perf record -e branch-misses:u,branch-instructions:u ./perf_record_example # :u只统计 user space 的 event
+  perf record df -h        # 性能记录 运行df -h命令，并使用以下命令将其概要文件记录到当前工作目录perf.data中
+  perf record –e cpu-clock ./test1  # 查找时间上的热点函数
+  perf record -e cpu-clock -g -p 2548 # 程序运行完(或Ctrl+c结束),生成perf.data文件，若之前已有，覆盖之前的
 
 perf report              # 性能报告 用于分析由perf记录生成的文件，并生成平面或图形轮廓
-perf report -i perf.data # -i 指定要查看的文件
-perf script -i perf.data &> perf.unfold  # 用perf script工具对perf.data进行解析
+  perf report -i perf.data # -i 指定要查看的文件
+  perf script -i perf.data &> perf.unfold  # 用perf script工具对perf.data进行解析
 
 perf bench mem all       # 性能基准 在系统上执行多个基准测试。如检查所有内存速度测试
 perf diff perf.data perf.data.old  # 进行两次record对比
@@ -1287,15 +894,17 @@ perf应用
 1 cpu分析  基于linux perf dump程序数据 并生成火焰图查看
 2 perf top函数性能分析  perf top -p `pidof server_name_xxx`
 3 函数调用链的性能占比  perf record -F 99 -p ${pid} --call-graph dwarf sleep ${采样时间}  在执行perf report
-  --call-graph dwarf 记录调用链和堆栈 包含-g  如--call-graph dwarf,4096 其中数字为用户堆栈可省 默认为8192B
+
 
 火焰图 Flame Graph
+https://www.brendangregg.com/flamegraphs.html
 https://www.cnblogs.com/happyliu/p/6142929.html
 https://github.com/brendangregg/FlameGraph     # GitHub
 https://github.com/brendangregg/FlameGraph.git # git仓库
 https://perf.wiki.kernel.org/index.php/Main_Page
+https://www.zhihu.com/question/561942682/answer/3318075623 # linux 的性能工具需要 BPF 技术
 
-sudo perf record -e cpu-clock -g -p 28591          # 1 Ctrl+c结束执行后，在当前目录下会生成采样数据perf.data.
+sudo perf record -e cpu-clock -g -p 28591          # 1 Ctrl+c结束执行后，在当前目录下会生成采样数据perf.data
 sudo perf record -F 10000 -p pid -g -- sleep 30    # 1 sleep持续采样时间 -p 进程id 用的这个 -F 采样频率
 sudo perf script -i perf.data &> perf.unfold       # 2 用perf script工具对perf.data进行解析
 ~/FlameGraph/stackcollapse-perf.pl perf.unfold &> perf.folded # 3 将perf.unfold中的符号进行折叠

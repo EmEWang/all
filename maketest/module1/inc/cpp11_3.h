@@ -18,6 +18,8 @@ using namespace std;
 // *** 类模版特化
 // *** std::enable_if
 
+// https://blog.51cto.com/waleon/5525989  万字长文 | 最好的 C++ 模板元编程干货！
+// https://sg-first.gitbooks.io/cpp-template-tutorial/content/TMP_ji_chu_md.html 模板元编程基础
 
 // *** C 可变参数
 #include <cstdarg>
@@ -111,9 +113,11 @@ private:
 
 
 
-
+// https://kernel.blog.csdn.net/article/details/50953564
 #include <cstring>
 // *** 函数模板特化
+// 1 可以特化
+// 2 可以偏特化
 // 函数模版
 template <class T>
 int compare(const T left, const T right)
@@ -121,7 +125,7 @@ int compare(const T left, const T right)
     std::cout <<"in template<class T> compare..." << std::endl;
     return (left - right);
 }
-// 特化函数模版
+// 特化函数模版1
 template <>
 inline int compare<const char*>(const char* left, const char* right)  // inline 否则重复定义
 {
@@ -129,7 +133,7 @@ inline int compare<const char*>(const char* left, const char* right)  // inline 
     return strcmp(left, right);
 }
 
-// 特化的函数模版, 两个特化的模版本质相同, 因此编译器会报错
+// 特化函数模版2（1和2都可以，只能定义一个）, 两个特化的模版本质相同, 因此编译器会报错
 // error: redefinition of 'int compare(T, T) [with T = const char*]'|
 //template < >
 //int compare(const char* left, const char* right)
@@ -359,6 +363,7 @@ inline void test1_cpp11_3_template()
 
 
 // *** std::enable_if
+// https://blog.csdn.net/jeffasd/article/details/84667090
 // std::enable_if 顾名思义，满足条件时类型有效
 // template <bool, typename T=void>
 // struct enable_if {
@@ -508,6 +513,232 @@ dumps(const T &value) {
 }
 
 
+
+
+// https://zhuanlan.zhihu.com/p/646752343 C++ 禁忌黑魔法 : STMP
+class ADL_A;
+void touch1 (ADL_A& ref);
+void touch3 (ADL_A  ref);
+void touch5 (ADL_A  ref);
+
+class ADL_A
+{
+    int member = 0;
+    friend void touch1 (ADL_A&);
+    friend void touch2 (ADL_A& ref){std::cout << ref.member << std::endl;} // 友元声明在类内部
+    friend void touch3 (ADL_A);
+    friend void touch4 (ADL_A ref) {std::cout << ref.member << std::endl;} // ADL查找
+    friend void touch5 (ADL_A ref) {std::cout << ref.member << std::endl;} //
+    public:
+    ADL_A(int a) : member(a) {}
+};
+inline void touch1 (ADL_A& ref){std::cout << ref.member << std::endl;}
+inline void touch3 (ADL_A ref) {std::cout << ref.member << std::endl;}
+
+
+inline void test1_cpp11_3_adl()
+{
+    ADL_A a(10);
+    // 在全局空间声明的友元函数，和普通的函数一样，作用域也是一样的。都在全局命名空间，和全局普通的函数访问是一模一样的。
+    // 而在类内部声明的友元函数，只能通过C++的 Argument-dependent lookup 进行访问。
+    touch1(a); // 10
+    touch2(a); // 10
+
+    touch3(a); // 10       非ADL查找
+    touch3(1); // 1        发生隐式类型转换，正确调用
+    // ADL_A::touch3(1); // error 找不到函数   error: ‘touch3’ is not a member of ‘ADL_A’
+
+    // 这里你就会发现了，第一次调用成功了，第二，三次调用失败了。这是因为，ADL会在函数参数对应的类型的命名空间中查找函数。
+    // 在第一种情况下，touch函数的参数类型是A，发生了ADL查找。而1的类型是int，两者并不相关，所以ADL不会发生。
+    touch4(a); // 10       ADL 查找
+    // touch4(1); // error 找不到函数  error: ‘touch4’ was not declared in this scope
+    // ADL_A::touch4(1); // error 找不到函数   error: ‘touch4’ is not a member of ‘ADL_A’
+
+    touch5(a); // 10
+    touch5(1); // 1    // 这样可以 因为在外部声明了 就不是adl查找
+    // ADL_A::touch5(1);
+}
+
+
+
+// 模板显式实例化
+auto flag(auto);      // 注掉则 error: ‘flag’ was not declared in this scope
+
+template<bool val>
+struct flag_setter
+{
+    friend auto flag(auto){}    // warning: use of ‘auto’ in parameter declaration only available with ‘-fconcepts’
+};
+
+inline void test1_cpp11_3_tmp_explicit()
+{
+    // flag(1); // error: use of ‘auto flag(auto:1) [with auto:1 = int]’ before deduction of ‘auto’
+    flag_setter<true>{};
+    flag(1); //ok
+
+    // 首先直接调用flag会发生错误，因为它的返回值类型尚未确定。需要在函数定义里面推导。所以第一个调用就失败了。
+    // 后面我们进行了一次类模板显式实例化，可以认为模板显式实例化的时候会在全局命名空间添加一个该类型模板的特化（通过友元函数），
+    // 而这个特化版本实现了flag()。因为flag函数有了定义，返回值类型也就确定了，所以第二次调用就成功了。
+}
+
+
+// auto flag2(auto);
+
+// template<bool val>
+// struct flag_setter2
+// {
+//     friend auto flag2(auto){}
+//     bool value = false;
+// };
+
+// template<auto arg = 0, auto condition = requires{flag2(arg);}>
+// consteval auto value()
+// {
+//     if constexpr (!condition)
+//     {
+//         return flag_setter2<condition>{}.value;
+//     }
+//     return condition;
+// }
+
+// inline void test1_cpp11_3_tmp_const()
+// {
+//     constexpr auto a = value();
+//     constexpr auto b = value();
+//     static_assert(a != b);
+// }
+
+// 它的原理很简单，首先C++20加入的requires语句可以用于检查表达式的合法性。最开始的时候，由于flag_setter还尚未实例化，
+// 所以flag函数还没有定义，所以flag(arg)是不合法的表达式的。所以condition的值就会是false。
+// 然后我们通过if constexpr来判断condition的值，如果是false，那么我们就实例化一个flag_setter，并且返回false的值。
+// 如果是true，那么我们就返回condition的值。这样就实现了一元常量表达式开关。相比于C++14的版本，这个版本更加的简洁也更好理解。
+
+// 值得注意的一点是，可能有人会问为什么不能直接写requries{ flag(0); }呢，还要多此一举写个auto arg = 0。
+// 这里主要是利用了模板的一种技巧，延迟实例化。
+// 如果直接写requries{ flag(0); }在一些编译器上，无法通过编译。你就直接理解为，骗过编译器的检查吧。
+
+
+
+// template<std::size_t N>
+// struct reader
+// {
+//     friend auto counted_flag(reader<N>);
+// };
+
+// template<std::size_t N>
+// struct setter
+// {
+//     friend auto counted_flag(reader<N>) {}
+//     std::size_t value = N;
+// };
+
+// template<auto N = 0, auto tag = []{}, bool condition = requires(reader<N> red){ counted_flag(red); }>
+// consteval auto next()
+// {
+//     if constexpr (!condition)
+//     {
+//         constexpr setter<N> s;
+//         return s.value;
+//     }
+//     else
+//     {
+//         return next<N + 1>();
+//     }
+// }
+
+// inline void test1_cpp11_3_tmp_const2()
+// {
+//     constexpr auto a = next();
+//     constexpr auto b = next();
+//     constexpr auto c = next();
+//     static_assert(a == 0 && b == 1 && c == 2);
+// }
+
+// 让我们来解释一下上面的代码。基本原理和一元开关情况类似。reader用来判断函数有没有被实现，setter用来生成实现的函数。
+// 然后在next里面，我们首先查看当前的N对应的函数，有没有被实现。如果被没有被实现，就实例化一个setter<N>的模板。
+// 如果实现了的话，就递归的查看N+1的情况。
+
+// 为了防止有些读者想不通，这里直接从第一次调用开始举例子
+
+// 第一次调用这个函数：
+
+// N = 0时，检查发现setter<0>尚未实现，也就是condition是false。这样的话会走第一个分支，实例化一个setter<0>，并且返回0。
+// 第二次调用这个函数：
+
+// N = 0时，检查发现setter<0>已经实现了，也就是condition是true。这样的话会走第二个分支，递归调用next<1>()。
+// N = 1时，检查发现setter<1>尚未实现，也就是condition是false。这样的话会走第一个分支，实例化一个setter<1>，并且返回1。
+// 第三次调用这个函数：
+
+// N = 0时，检查发现setter<0>已经实现了，也就是condition是true。这样的话会走第二个分支，递归调用next<1>()。
+// N = 1时，检查发现setter<1>已经实现了，也就是condition是true。这样的话会走第二个分支，递归调用next<2>()。
+// N = 2时，检查发现setter<2>尚未实现，也就是condition是false。这样的话会走第一个分支，实例化一个setter<2>，并且返回2。
+// ......，也就是说，我们每一次调用这个函数，就会实例化一个对应的模板函数，这个计数器，其实记录的就是已经实例化的模板函数的数量。
+
+// 值得一提的是，上面有一个奇怪的写法。auto tag = []{}，你可能看的一脸懵逼。事实上，[]{}是一个简写的lambda表达式，其实就相当于[](){}。
+// 如果用不到函数参数的话，这个小括号可以省略。那为什么我们要在这里添加一个这个玩意呢，完全用不到啊。
+// 你可以尝试把它去掉，就会发现得到了错误的结果。变量的值并没有按照预期的结果进行递增。
+
+// 这里的原因是，编译器会对常量表达式的求值结果进行缓存，也就是说编译器认为next函数是常量表达式，返回的值应该是不会变的。
+// 那既然不会变，我只要求一次不就行了。于是它就把所有next的返回值都记录成相同的了。
+// 但是这不是我们想要的结果，我们想要它每次调用的时候都能计算表达式的值。
+// 加上这个标签之后，每次调用的模板参数实际是不同的，于是编译器就会重新计算了它的值了。
+
+
+template<auto arg = []{}>
+void test_arg()
+{
+    std::cout << typeid(arg).name() << std::endl;
+}
+
+inline void test1_cpp11_3_tmp_arg_lambda()
+{
+    test_arg();   // Z28test1_cpp11_3_tmp_arg_lambdavEUlvE0_
+    test_arg();   // Z28test1_cpp11_3_tmp_arg_lambdavEUlvE1_
+    test_arg();   // Z28test1_cpp11_3_tmp_arg_lambdavEUlvE2_
+}
+// 打印出来的结果不同，表面每一次调用的test()的模板参数其实是不同的，那么这三个test()其实是三个不同的函数。
+// 利用这个特性，我们在每次调用next的时候，其实就是不同的模板函数（因为lambda模板参数类型不同）。
+// 这样我们就阻止了编译器的缓存。代码就像我们预期的那样进行调用了。
+
+
+
+
+// 彩蛋：合法访问类的私有成员
+class Bank
+{
+    double money = 999'999'999'999;
+public:
+    void check() const
+    {
+        std::cout << money << std::endl;
+    }
+};
+
+template<auto mp>
+struct Thief
+{
+    friend double& steal(Bank& bank)
+    {
+        return bank.*mp;
+    }
+};
+
+template struct Thief<&Bank::money>;
+double& steal(Bank& bank);
+
+// 模板显示实例化的时候可以忽略类作用域的访问权限 可以直接访问类的私有成员
+// The C++11/14 standards state the following in note 14.7.2/12 [temp.explicit]:
+// -The usual access checking rules do not apply to names used to specify explicit instantiations.
+// [ Note: In particular, the template arguments and names used in the function declarator
+// (including parameter types, return types and exception speciﬁcations) may be private types or
+// objects which would normally not be accessible and the template may be a member template or
+// member function which would not normally be accessible. — end note ]
+inline void test1_cpp11_3_private()
+{
+    Bank bank;
+    steal(bank) = 100;
+    bank.check();            // 100
+}
 
 
 #endif

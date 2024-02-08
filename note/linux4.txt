@@ -1,0 +1,155 @@
+
+内核开发
+
+https://linux.fasionchan.com/zh_CN/latest/system-programming/kernel-programming/module-development.html # 内核模块开发
+https://www.zhaixue.cc/kernel/kernel-debug.html  # Linux内核编程
+https://zhuanlan.zhihu.com/p/673120247           # linux内核源码：文件系统——挂载和卸载
+https://zhuanlan.zhihu.com/p/652682080           # Debug Linux kernel on WSL2 with VScode
+
+
+Linux内核模块是一段编译后的二进制代码，直接插入Linux内核中，在Ring 0（x86–64处理器中执行最低和受保护程度最低的执行环）上运行。
+这里的代码完全不受检查，但是运行速度很快，可以访问系统中的所有内容。与硬件交互或访问系统中特权信息时，就需要一个内核模块。
+Intel x86架构使用了4个级别来标明不同的特权级。
+Linux中 Ring 0 是内核态，拥有最高权限；Ring 3 一般应用程序处于状态-用户态；Ring 1 和Ring 2，一般归属驱动程序的级别。
+Windows中没有 Ring 1 和 Ring 2 ，只用 Ring 0 内核态和 Ring 3 用户态。
+在权限约束上，高特权等级状态可以阅读低特权等级状态的数据，例如进程上下文、代码、数据等等，但反之则不可。
+Ring 0 最高可以读取 Ring 0-3 所有的内容，Ring 1 可以读 Ring 1-3 的，Ring 2 以此类推，Ring 3 只能读自己的数据。
+
+
+内核模块开发
+1 结构
+内核模块与普通程序不同，没有执行流。 可以这样理解，内核模块实现一些函数，作为回调函数注册到内核中。
+在内核加载/卸载时，或者其他应用程序调用系统调用时，注册的回调函数才得到调用。
+有两个最基本的回调函数 init 和 exit ，分别由 module_init 和 module_exit 登记，分别在模块加载和卸载的时候执行。
+内核模块支持 参数 ，用户借此控制内核模块的行为。参数有默认值，可以在加载时指定，也可以在通过 proc 伪文件系统等手段动态修改。
+内核模块还需要带一些描述信息，包括许可证、作者、描述以及版本等。描述信息由 MODULE_ 系列宏指定， modinfo 等命令可以展示这些信息。
+
+2 编码  maketest/testlinux3/hello.c
+
+3 编译  maketest/testlinux3/Makefile all
+生成 .ko 文件
+
+4 运行    maketest/testlinux3/Makefile test
+
+
+
+
+printk
+内核最经常使用的打印函数，使用方法和用户空间的printf函数一样。不同的是，printk可以通过参数指定打印等级，
+对应的控制台也有打印等级，只有优先级高于控制台的printk打印才会显示到屏幕上，低优先级的打印都会被过滤掉。
+
+printk的打印等级如下：
+#defineKERN_EMERG"<0>"    /*紧急事件消息，系统崩溃之前提示，表示系统不可用*/
+#defineKERN_ALERT"<1>"    /*报告消息，表示必须立即采取措施*/
+#defineKERN_CRIT"<2>"     /*临界条件，通常涉及严重的硬件或软件操作失败*/
+#defineKERN_ERR"<3>"      /*错误条件，驱动程序常用KERN_ERR来报告硬件的错误*/
+#defineKERN_WARNING"<4>"  /*警告条件，对可能出现问题的情况进行警告*/
+#defineKERN_NOTICE"<5>"   /*正常但又重要的条件，用于提醒。常用于与安全相关的消息*/
+#defineKERN_INFO"<6>"     /*提示信息，如驱动程序启动时，打印硬件信息*/ 如 printk(KERN_INFO "hello zhaixue.cc/n");
+#defineKERN_DEBUG"<7>"    /*调试级别的消息*/
+
+cat  /proc/sys/kernel/printk   # 查看和修改控制台的打印等级
+7    4    1    7
+
+这四个数字分别代表
+控制台打印等级：优先级高于该值的printk打印才会输出到控制台重定向的串口或屏幕上
+默认的消息日志级别
+最低的控制台日志级别
+默认的控制台日志级别
+数字越小，优先级越高。内核默认的printk打印等级是4，高于控制台的打印优先级7，所以在内核模块中使用printk打印，
+ 都可以在屏幕上看到输出的。如果我们将控制台打印等级修改为3，就看不到内核模块的打印信息：
+
+echo 3 4 1 7 > /proc/sys/kernel/printk     # 修改控制台的打印等级
+insmod hello.ko 或  rmmod hello.ko
+低于控制台等级的内核打印信息，虽然不能输出到屏幕上，但会保存中内核的日志缓存中，可以通过dmesg命令查看。
+
+不同级别的打印函数
+在头文件中，通过对printk打印等级的封装，实现了不同级别的打印函数，更方便内核开发者直接调用
+pr_err：
+pr_warn：
+pr_notice：
+pr_info：
+pr_err、pr_warn、pr_info的使用方式和 printf、printk 相同：
+  int num = 100;
+  pr_err("hello %d\n", num);
+  pr_info("hello %d\n", num);
+
+在内核中可以看到它们的定义：
+#define pr_emerg(fmt, ...) \
+        printk(KERN_EMERG pr_fmt(fmt), ##__VA_ARGS__)
+#define pr_alert(fmt, ...) \
+        printk(KERN_ALERT pr_fmt(fmt), ##__VA_ARGS__)
+#define pr_crit(fmt, ...) \
+        printk(KERN_CRIT pr_fmt(fmt), ##__VA_ARGS__)
+#define pr_err(fmt, ...) \
+        printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
+#define pr_warning(fmt, ...) \
+        printk(KERN_WARNING pr_fmt(fmt), ##__VA_ARGS__)
+#define pr_notice(fmt, ...) \
+        printk(KERN_NOTICE pr_fmt(fmt), ##__VA_ARGS__)
+#define pr_info(fmt, ...) \
+        printk(KERN_INFO pr_fmt(fmt), ##__VA_ARGS__)
+#define pr_cont(fmt, ...) \
+        printk(KERN_CONT fmt, ##__VA_ARGS__)
+
+打印函数调用栈
+内核中存在大量的函数指针多态调用，阅读内核源码时，如果你不太清楚内核中这些函数调用的具体路径，可以通过一些特定的函数，打印函数的调用栈，将函数的上下文调用关系打印到屏幕上，可以帮助更快地分析内核源码的调用过程。笔者经常使用的打印函数是： dump_stack()
+
+#include <linux/init.h>
+#include <linux/module.h>
+static int __init hello_init(void)
+{
+    printk(KERN_INFO"Hello world\n");
+    dump_stack();
+    return 0;
+}
+static void __exit hello_exit(void)
+{
+    printk("Goodbye world\n");
+}
+module_init(hello_init);
+module_exit(hello_exit);
+MODULE_LICENSE("GPL");
+MODULE_AUTHOR("wit@zhaixue.cc");
+
+在hello内核模块的hello_init函数内添加dump_stack()，当使用isnmod加载模块到内核执行，就会打印当前函数的调用关系。
+
+[root@vexpress ]# insmod hello.ko
+[ 3543.891700] Hello world
+[ 3543.892289] CPU: 0 PID: 181 Comm: insmod Tainted: G           O      5.10.0-rc3+ #10
+[ 3543.892748] Hardware name: ARM-Versatile Express
+[ 3543.894048] [<8010f4bc>] (unwind_backtrace) from [<8010b3a8>] (show_stack+0x10/0x14)
+[ 3543.894545] [<8010b3a8>] (show_stack) from [<808594c4>] (dump_stack+0x98/0xac)
+[ 3543.895453] [<808594c4>] (dump_stack) from [<7f005014>] (hello_init+0x14/0x1000 [hello])
+[ 3543.896038] [<7f005014>] (hello_init [hello]) from [<80101f80>] (do_one_initcall+0x58/0x244)
+[ 3543.896457] [<80101f80>] (do_one_initcall) from [<801aab5c>] (do_init_module+0x60/0x228)
+[ 3543.896821] [<801aab5c>] (do_init_module) from [<801ace94>] (load_module+0x2070/0x2484)
+[ 3543.897200] [<801ace94>] (load_module) from [<801ad3ec>] (sys_init_module+0x144/0x184)
+[ 3543.897548] [<801ad3ec>] (sys_init_module) from [<80100060>] (ret_fast_syscall+0x0/0x54)
+[ 3543.898053] Exception stack(0x81a21fa8 to 0x81a21ff0)
+[ 3543.898521] 1fa0:                   00000000 000151b4 002154d0 000151b4 001fdfd0 00000000
+[ 3543.899033] 1fc0: 00000000 000151b4 00000000 00000080 7ec3ee48 7ec3ee4c 001fdfd0 001e967c
+[ 3543.899481] 1fe0: 7ec3eb18 7ec3eb08 000367d0 00011350
+
+跟踪内核异常
+在调试内核是，在一些需要调试的执行路径，我看可以通过一些手段，导致内核发生异常或OOPS，打印一些必要的调试信息，常用的调试函数或宏如下：
+
+WARN(condition, format…)：，condition为出发异常的条件，打印格式类似 printk
+WARN_ON(condition)：调用dump_stack，不会OOPS
+BUG()：内核界的断言，触发内核OOPS，输出log
+BUG_ON(condition)：条件触发内核OOPS，输出log
+panic(fmt…)：系统crashed，输出log
+WARN只是在可能出发condition的地方设置打印点，而BUG和BUG_ON则会触发内核OOPS，将CPU寄存器内核栈dump出来，panic就更严重了，不仅会触发OOPS，还会导致系统死机。在的内核或驱动调试中，可以根据自己的需要选择合适的打印方式。
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -7,18 +7,7 @@
 #include <vector>
 #include <map>
 
-
-
 // 主要用于测试c++11 基本概念
-// *** 列表初始化
-// *** 类型推导 auto decltype
-// *** type
-// *** 流同步
-// *** 类
-// *** 完美转发
-// *** ref
-// *** bind placeholders
-
 
 void test1_cpp11_1_for(); //范围for循环
 
@@ -29,9 +18,11 @@ void test1_cpp11_1_listinitialization3();
 
 
 // *** 类型推导 auto decltype
+// auto name = value; 根据初始化值推到出类型
+// 1不能在函数的参数中使用 2不能作用于类的非静态成员变量中 3 不能定义数组 auto a[22]=xx 4 不能作用于模板参数 A<auto> a=xx
 void test1_cpp11_1_auto();
 
-// decltype推导四规则
+// decltype推导规则
 // 如果e是一个没有带括号的标记符表达式或者类成员访问表达式，那么的decltype(e)就是e所命名的实体的类型。
 //   此外，如果e是一个被重载的函数，则会导致编译错误。
 // 否则，假设e的类型是T，如果e是一个将亡值，那么decltype(e)为T&&
@@ -39,6 +30,19 @@ void test1_cpp11_1_auto();
 // 否则，假设e的类型是T，则decltype(e)为T。
 void test1_cpp11_1_decltype();
 void test1_cpp11_1_decltype2();
+// 1 exp 是一个不被括号()包围的表达式，或是一个类成员访问表达式，或是一个单独的变量，那么 decltype(exp) 的类型就和 exp 一致
+// 2 exp 是函数调用，那么 decltype(exp) 的类型就和函数返回值的类型一致，重载的函数，则会导致编译错误。
+// 3 exp 是一个左值，或者被括号()包围，那么 decltype(exp) 的类型就是 exp 的引用,即 T&
+void test1_cpp11_1_decltype3();
+
+// decltype 与 auto 区别
+// 1 decltype根据exp推导 auto根据初始化推导
+// 2 decltype 会保留 cv 限定符，而 auto 有可能会去掉 cv 限定符。const 和 volatile 关键字的统称
+// 以下是 auto 关键字对 cv 限定符的推导规则：
+// 如果表达式的类型不是指针或者引用，auto 会把 cv 限定符直接抛弃，推导成 non-const 或者 non-volatile 类型。
+// 如果表达式的类型是指针或者引用，auto 将保留 cv 限定符。
+// 3 decltype 会保留引用类型，而 auto 会抛弃引用类型，直接推导出它的原始类型。
+
 
 // *** type
 // RTTI（Run-Time Type Identification)-运行时类型识别
@@ -83,7 +87,7 @@ void test1_cpp11_1_cls_tmp();        // 模板类中的模板函数
 // *** 完美转发
 #include <type_traits>    // remove_reference
 void test1_cpp11_1_perfect();
-
+void test1_cpp11_1_perfect2(); // C++03 实现完美转发 适用于少量参数情况 否则需要写大量函数
 
 // #include <algorithm>
 // #include <type_traits>

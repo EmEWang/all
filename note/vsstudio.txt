@@ -223,3 +223,76 @@ _CRT_NONSTDC_NO_DEPRECATE
 RELEASE 模式下：
 _CRT_SECURE_NO_WARNINGS
 _CRT_NONSTDC_NO_DEFPRECATES
+
+
+
+
+内存泄漏的检测方法（CRT）：
+在debug模式下以F5运行：
+#define CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
+//在入口函数中包含 _CrtDumpMemoryLeaks();
+//即可检测到内存泄露
+
+//以如下测试函数为例：
+int main(){
+	char* pChars = new char[10];
+	_CrtDumpMemoryLeaks();
+	return 0;
+}
+
+
+检测内存泄漏，定位泄漏代码位置方法
+检查方法：
+在main函数最后面一行，加上一句_CrtDumpMemoryLeaks()。调试程序，自然关闭程序让其退出（不要定制调试），查看输出：
+Detected memory leaks!
+Dumping objects ->
+{453} normal block at 0x02432CA8, 868 bytes long.
+ Data: <404303374       > 34 30 34 33 30 33 33 37 34 00 00 00 00 00 00 00
+{447} normal block at 0x024328B0, 868 bytes long.
+ Data: <404303374       > 34 30 34 33 30 33 33 37 34 00 00 00 00 00 00 00
+{441} normal block at 0x024324B8, 868 bytes long.
+ Data: <404303374       > 34 30 34 33 30 33 33 37 34 00 00 00 00 00 00 00
+{435} normal block at 0x024320C0, 868 bytes long.
+ Data: <404303374       > 34 30 34 33 30 33 33 37 34 00 00 00 00 00 00 00
+{429} normal block at 0x02431CC8, 868 bytes long.
+ Data: <404303374       > 34 30 34 33 30 33 33 37 34 00 00 00 00 00 00 00
+{212} normal block at 0x01E1BF30, 44 bytes long.
+ Data: <`               > 60 B3 E1 01 CD CD CD CD CD CD CD CD CD CD CD CD
+{204} normal block at 0x01E1B2C8, 24 bytes long.
+ Data: <                > C8 B2 E1 01 C8 B2 E1 01 C8 B2 E1 01 CD CD CD CD
+{138} normal block at 0x01E15680, 332 bytes long.
+ Data: <                > 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+{137} normal block at 0x01E15628, 24 bytes long.
+ Data: <(V  (V  (V      > 28 56 E1 01 28 56 E1 01 28 56 E1 01 CD CD CD CD
+Object dump complete.
+取其中一条详细说明：{453} normal block at 0x02432CA8, 868 bytes long.
+被{}包围的453就是我们需要的内存泄漏定位值，868 bytes long就是说这个地方有868比特内存没有释放。
+在main函数第一行加上：_CrtSetBreakAlloc(453);意思就是在申请453这块内存的位置中断。然后调试程序，……程序中断了。查看调用堆栈
+
+> msvcr90d.dll!_heap_alloc_dbg_impl(unsigned int nSize=868, init nBlockUse=1,const char * szFileName=0x00000000, int   nLinne=0, int *errno_tmc C++
+  msvcr90d.dll!_nh_malloc_dbg_impl(unsigned int nSize=868, int nhFlag=0,int nBlockUse=1,const char * szFleName=0x00000000,   int nLine=0, in C++
+  msvcr90d.dll!_nh_malloc_dog(unsigned int nSize=863, int nhFlag=0, int nBlockUse=1, const char * szFileName=0x00000000,   int nLine=0)行296 C++
+  msvcr90d.dll!malloc(unsigned int nsize=868)行56 + 0x15字节
+  msvcr90d.dll!operator new(unsigned int size=868)行59 + 0x9字节
+→ TradeServer.exelCDbQuery::UpdateDatas()行135 + 0xa字节
+  TradeServer.exe!CDbQuery::Init()行76 + 0x8字节
+  TradeServer.exe!InitobThread(void *lpParam=0x00020b3a)行54 + 0xb字节
+  kernel32.dll 753a338a()
+  [下面的框架可能不正确和/或缺失,没有为kernel32.dll加载符号]
+
+双击我们的代码调用的最后一个函数，这里是CDbQuery::UpdateDatas()，就定位到了申请内存的代码：
+
+  while( !query.eof() ){
+→   pOrder = new ORDER_INFO;
+    ip( NULL == pOrder)
+      continue;
+
+总算知道是哪里出问题了，这块内存没有释放啊。改代码，修复好这个。然后继续，直到调试输出中没有normal block ，程序没有内存泄漏了。
+记得加上头文件：#include <crtdbg.h>
+最后要注意一点的，并不是所有normal block一定就有内存泄漏，当你的程序中有全局变量的时候，全局变量的释放示在main函数退出后，
+ 所以在main函数最后_CrtDumpMemoryLeaks（）会认为全局申请的内存没有释放，造成内存泄漏的假象。
+ 如何规避？我通常是把全局变量声明成指针在main函数中new 在main函数中delete，然后再调用_CrtDumpMemoryLeaks（），这样就不会误判了。
+
+

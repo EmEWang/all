@@ -398,7 +398,7 @@ S s(1, 2);     // deduced T = int, equivalent to S<int>
 模板的特化(Template Specialization)允许我们替换一部分或全部的形参，并定义一个对应改替换的模板实现。
 其中，替换全部形参的特化称为全特化(Full Specialization)，
 替换部分形参的特化称为偏特化(Partial Specialization)，非特化的原始模板称为主模板(Primary Template)。
-只有类模板和变量模板可以进行偏特化，函数模板只能全特化。
+只有类模板和变量模板可以进行偏特化，函数模板只能全特化。(测试函数模板也可以偏特化gcc9.4)
 在实例化模板的时候，编译器会从所有的特化版本中选择最匹配的那个实现来做替换(Substitution)，
 如果没有特化匹配，那么就会选择主模板进行替换操作。
 

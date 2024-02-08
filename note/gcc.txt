@@ -16,7 +16,8 @@ gcc -m32 -o testByteAlign testByteAlign.c   # 编译程序
 
 g++ test.cpp -I../base/include/chen -L../base/lib/c7 -lchen     # test.cpp
 
-
+gcc -posix -E -dM - </dev/null       # 查看GCC宏定义
+touch dummy.hxx;cpp -dM ./dummy.hxx  # 查看linux系统宏定义  (ubuntu20.04下 2这一样)
 
 从#pragma GCC system_header 开始到文件尾的代码被看作是系统头文件的一部分。所有警告信息都不显示(除了#warnings 指示字)
 
@@ -94,10 +95,19 @@ In file included from test.c:18:
 /usr/include/pthread.h:200:15: note: expected ‘void * (*)(void *)’ but argument is of type ‘void (*)()’
   200 |       void *(*__start_routine) (void *),
       |       ~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~
-8 warning: implicit declaration of function ‘waitpid’ [-Wimplicit-function-declaration]
+7 warning: implicit declaration of function ‘waitpid’ [-Wimplicit-function-declaration]
   缺少头文件  #include <sys/types.h>  #include <sys/wait.h>
   570 |     waitpid(-1, &i, 0);
       |     ^~~~~~~
+8 warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+   91 |         pthread_create(&(test_thread_ctrl[i]), NULL, (void*)test_thread, (void*)i);
+      |                                                                          ^
+  长度不匹配 (void*)(long)i 这样就ok
+9 warning: pointer of type ‘void *’ used in arithmetic [-Wpointer-arith]
+   42 |     if(addr >= start && addr < (start + len))
+      |                                 ~~~~~~^~~~~
+   void指针加法运算 if(addr >= start && addr < ((const char*)start + len)) ok
+
 
 
 符号的可见性(visibility)
@@ -286,14 +296,16 @@ gcc/g++ 编译选项
 
   -v      # 显示详细的编译、汇编、连接命令  Display the programs invoked by the compiler
   -x      # 指定语言  如  -x c++
-  -std=c++0x  # 使用c++0x
-  -std=c++11  # 使用c++11
-  -std=c++2a  # 使用c++20
+  -std=c++98  # 使用标准 c++11 c++14 c++17 c++2a
 
   -D_GNU_SOURCE  # 以GNU规范标准编译，如果不加上这个参数会报RTLD_NEXT未定义的错误
   -Wl,options    # 把参数(options)传递给链接器ld。若options中有逗号,就将options分成多个选项传递给链接程序
   -fno-builtin-malloc -fno-builtin-calloc -fno-builtin-realloc -fno-builtin-free #
     阻止编译器优化时使用内置版本的malloc,calloc,realloc,free函数
+  -fno-exceptions  # 禁用异常 对所有使用"throw"抛出异常的地方，替换为std::abrot()调用
+  -flto          # 链接时优化，包括内联优化、程序间分析（IPA）和程序间优化（IPO）等
+  -fprofiling-generate=dir   # 编译工程 运行程序生成profiling文件
+  -fprofiling-use            # 基于profiling文件进行编译优化
 
   -lz     # 是link libz，链接压缩库(Z)
   -lrt    # 实时库(real time)：shm_open系列
@@ -311,6 +323,17 @@ gcc/g++ 编译选项
   -lomniDynamic4
   -lomniORB4
   -lomnithread
+
+-D_GNU_SOURCE -D__USE_GNU 2个宏的区别
+__USE_GNU   是内部定义的宏 自己手动定义会引起问题 其开关位于 features.h 中
+_GNU_SOURCE 是面向用户使用的宏 如果要用 其应该放在头文件的第一行  gcc默认没开此选项 g++默认打开
+见maketest/testlinux1/sched.c测试 gcc与g++会有不同的编译选项
+/usr/include/features.h 中
+  #undef	__USE_GNU    先取消定义
+
+  #ifdef	_GNU_SOURCE  再这样打开
+  # define __USE_GNU	1
+  #endif
 
 
 echo | g++ -v -x c++ -E -     # 查询gcc编译时查找的头文件目录，库文件目录

@@ -1,18 +1,166 @@
 
-Ubuntu20中安装gtest 依次使用以下指令即可安装gtest:
-git clone https://github.com/google/googletest.git
+
+https://google.github.io/googletest/                # 官网
+https://www.cnblogs.com/jycboy/p/gtest_catalog.html # Google C++单元测试框架GoogleTest(总)
+https://www.cnblogs.com/jycboy/p/gmock_summary.html # Google C++单元测试框架GoogleTest---Google Mock简介--概念及基础语法
+https://zhangyuyu.github.io/cpp-unit-test/          # 单元测试成神之路——C++篇
+https://www.tsingfun.com/it/cpp/google_mock.html    # google mock分享
+
+源码方式安装  Ubuntu20中依次使用以下指令
+git clone https://github.com/google/googletest.git   # github仓库
 cd googletest
 mkdir build
 cd build
 cmake ..
 make
-sudo make install
+sudo make install            ***安装过程*** 见下
+
+sudo apt-get install -y libgtest-dev  # Ubuntu 二进制方式安装
+sudo yum install -y gtest             # CentOS 二进制方式安装
+
+
+GoogleTest 包含 3 个基础组件：
+gtest/gtest.h  (头文件)                           # 代码中需要引用 #include <gtest/gtest.h>
+gtest 库       (libgmock.a libgtest.a)            #
+gtest_main 库  (libgmock_main.a libgtest_main.a)  # 连接没有写main函数的文件
+
+
+gtest本身使用c++写的，要测试c代码需要加 extern "C"  详见 gtest/gtestsrc/samplemy1_c_gtest.cpp
+extern "C" { // 在这里包裹
+#include "calc.h"
+}
+
+
+编译方式            要求至少时c++11  即 g++ -std=c++11 xxx.cpp -lgtest -lpthread -o xxx
+gcc -c a.c -o a.o
+g++ -c b.cpp -o b.o
+g++ -c a_test.cpp -o a_test.o
+g++ -c b_test.cpp -o b_test.o
+g++ a.o a_test.o b.o b_test.o -lgtest -pthread -o thetest  # 若没有main则还要加 -lgtest_main
+./thetest                                                  # 运行
+
+
+1  Test、Test Case和Test Suite
+这三者在某些场景下容易混淆。由于某些历史原因，GoogleTest 使用 Test Case 来将相关的 Test 归为一组，然而，当前 ISTQB(International Software Testing Qualifications Board) 和很多关于软件质量书籍都使用 Test Suite 替换 Test Case；而 GoogleTest 中的 Test 则对应 ISTQB 的 Test Case。
+
+GoogleTest Term   ISTQB Term      Meaning
+TEST()            Test Case       Exercise a particular program path with specific input values and verify the results
+Test Case         Test Suite      A set of several tests related to one component
+
+2 断言（assertion）
+类似函数调用的宏。当断言失败时，打印断言的源文件和行号位置及失败消息。还可以提供自定义失败消息，该消息将附加到gtest消息中。
+两种断言可供使用：
+ASSERT_* ：当断言失败时，产生致命错误，并终止当前函数。直接从当前函数返回的，可能会导致一些资源没有释放，存在内存泄漏。
+EXPECT_* ：当断言失败时，产生非致命错误，并且不会终止当前函数。通常 EXPECT_* 是首选。
+
+自定义失败信息
+ASSERT_EQ(x.size(), y.size()) << "Vectors x and y are of unequal length";   # 使用流操作符 <<
+
+断言的结果分为3种
+成功       # 断言成功，程序的行为符合预期，程序允许继续向下运行。可以在代码中调用 SUCCEED() 来表示这个结果。
+非致命错误 # 断言失败，但是程序没有直接中止，而是继续向下运行。可以在代码中调用 FAIL() 来表示这个结果。
+致命错误   # 中止当前函数或者程序崩溃。可以在代码中调用 ADD_FAILURE() 来表示这个结果。
+
+详见 gtest/gtestsrc/samplemy1(23)_gtest.cpp
+
+3 宏
+3.1 TEST(test_suit_name, test_name)  是一个没有返回值的宏函数   其测试名称格式为test_suit_name.test_name
+3.2 TEST_F(test_fixture_name, test_name)  让多个test使用同一套数据。  详见 gtest/gtestsrc/gtestFixtures.cpp
+3.3 TEST_P
+TEST 和 TEST_F 会隐式向 gtest 注册这些测试函数
+
+4 main函数
+详见 gtest/gtestsrc/gtestmain.cpp
 
 
 
 
-gtest 安装
 
+
+
+Bazel  (安装 GoogleTest  环境搭建)
+1 首先创建一个工作区目录
+$ mkdir my_workspace && cd my_workspace
+
+2 接着在工作区的根目录中创建一个 WORKSPACE 文件，并在其中引入外部依赖 GoogleTest，此时 Bazel 会自动去 Github 上拉取文件：
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+
+http_archive(
+  name = "com_google_googletest",
+  urls = ["https://github.com/google/googletest/archive/609281088cfefc76f9d0ce82e1ff6c30cc3591e5.zip"],
+  strip_prefix = "googletest-609281088cfefc76f9d0ce82e1ff6c30cc3591e5",
+)
+
+3 接着选取一个目录作为包目录，在该目录下进行代码的编写，例如一个 hello_test.cc 文件：
+#include <gtest/gtest.h>
+TEST(HelloTest, BasicAssertions) {   // Demonstrate some basic assertions.
+  EXPECT_STRNE("hello", "world");    // Expect two strings not to be equal.
+  EXPECT_EQ(7 * 6, 42);              // Expect equality.
+}
+
+4 在同目录下的 BUILD 文件中说明目标编译的规则：
+cc_test(
+  name = "hello_test",
+  size = "small",
+  srcs = ["hello_test.cc"],
+  deps = ["@com_google_googletest//:gtest_main"],
+)
+
+5 此时执行以下命令即可构建并运行测试程序：
+bazel test --test_output=all //:hello_test
+
+
+
+
+Cmake
+1 首先创建一个目录：
+$ mkdir my_project && cd my_project
+
+2 接着创建 CMakeLists.txt 文件，并声明对 GoogleTest 的依赖，此时 Cmake 会自动去下载对应的库：
+cmake_minimum_required(VERSION 3.14)
+project(my_project)
+# GoogleTest requires at least C++11
+set(CMAKE_CXX_STANDARD 11)
+
+include(FetchContent)
+FetchContent_Declare(
+  googletest
+  URL https://github.com/google/googletest/archive/609281088cfefc76f9d0ce82e1ff6c30cc3591e5.zip
+)
+# For Windows: Prevent overriding the parent project's compiler/linker settings
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(googletest)
+
+3 此时我们就可以在代码中使用 GoogleTest，我们创建一个 hello_test.cc 文件：
+#include <gtest/gtest.h>
+TEST(HelloTest, BasicAssertions) {   // Demonstrate some basic assertions.
+  EXPECT_STRNE("hello", "world");    // Expect two strings not to be equal.
+  EXPECT_EQ(7 * 6, 42);              // Expect equality.
+}
+
+4 然后在 CMakeLists.txt 的末尾加上 hello_test.cc 的构建规则：
+enable_testing()                            --- 1
+
+add_executable(hello_test hello_test.cc)    --- 2
+target_link_libraries(hello_test gtest_main  -pthread -lgtest)
+
+include(GoogleTest)                         --- 3
+gtest_discover_tests(hello_test)
+
+貌似不写 1 3 部分也可以 详见 gtest/CMakeLists.txt
+5 运行下面的命令构建并允许测试程序：
+cmake -S . -B build
+cmake --build build
+cd build && ctest
+
+
+
+
+
+
+
+
+***安装过程***
 uuug@nnn:~/code/googletest/build$ sudo make install
 [ 25%] Built target gtest
 [ 50%] Built target gmock

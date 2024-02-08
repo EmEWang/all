@@ -3,175 +3,8 @@
 // using namespace std;
 # include <stdio.h>
 # include <stdlib.h>
-void test1_cpp11_2_string(){
-    using std::string;
-    #define valname(val) (#val)
-    #define valprint(val) std::cout << valname(val) << ":" << val << std::endl;
-    // 1 定义
-    // 定义的字符串过长自动截断 str=...large...
-    {
-    string str1 = "abc";  // 简单定义
-    string str2 =         // 分行定义
-        "abc\
-123\
-        end";
-    string str3 =         // 拼接定义
-        "abc"
-        "123";
-    string str4(          // C++ 11开始支持Raw string literal,格式 R"delimiter(raw_characters)delimiter"
-        R"EOF(
-<Auto>
-    <Disk mxproptype="1">
-        <Disk Name="F1" Label="L1" />
-    </Disk>
-</Auto>
-)EOF");
-    string str5 =
-        R"(
-<Auto>
-    <Disk mxproptype="1">
-        <Disk Name="F1" Label="L1" />
-    </Disk>
-</Auto>
-)";
 
-    valprint(str1)
-    valprint(str2)
-    valprint(str3)
-    valprint(str4)
-    valprint(str5)
-
-    int len = 0;
-    char cstr1[10] = "hello";      // 默认 窄字符
-    wchar_t wcstr[10] = {0};       // 宽字符
-    wchar_t wcstr2[10] = L"hello"; // L告诉编译器，这个字符串按照宽字符来存储(一个字符占两个字节)
-    char* pc = (char*)wcstr;
-    char* pc2 = (char*)(wcstr+1);
-    len = (wcstr+1) - (wcstr);   valprint(len)                  // 1
-    len = (char*)(wcstr+1) - (char*)(wcstr);   valprint(len)    // 4
-    len = (cstr1+1) - (cstr1);   valprint(len)                  // 1
-    }
-
-    // 字符串 数字
-    {
-        string str1;
-        char tmp[100] = {0};
-        int i = atoi("123");  valprint(i)
-        int i2,i3;
-        str1="123 456"; sscanf(str1.c_str(), "%d %d", &i2, &i3);  valprint(i2)  valprint(i3)
-        str1="1234567891234"; long long l1 = atoll(str1.c_str()); valprint(l1)
-
-        // itoa函数头文件是stdio.h, 它不是一个标准的C函数，而是Windows特有的，如果在linux系统使用itoa函数，编译会通不过。
-        // printf("%s\n", std::iota(123, tmp, 10));
-
-
-        // 字符串中按照规定的格式选择字符 直到不匹配的字符停止 贪婪算法尽可能的多读
-        str1 = "ccu_1 - 1#123";                    printf("%%origin:%s\n", str1.c_str());
-        sscanf(str1.c_str(), "%[a-z]", tmp);       printf("%%[a-z]:%s\n", tmp); //字符串中按照 a-z 范围选择字符
-        sscanf(str1.c_str(), "%[abcdefgu_]", tmp); printf("%%[abcdefgu_]:%s\n", tmp);//字符串中按照 abcdefgu_ 范围选择字符
-        sscanf(str1.c_str(), "%[^#]", tmp);        printf("%%[^#]:%s\n", tmp);//字符串中 直到第一个 # 字符 停止  不包含 #
-        sscanf(str1.c_str(), "%[a-z_1]", tmp);     printf("%%[a-z_1]:%s\n", tmp);//字符串中按照 a-z以及_1 范围选择字符
-    }
-    // 比较
-    {
-        string s1= "1";
-        string s2 = "2";
-        std::cout << "s1.compare(s2):" << s1.compare(s2) << std::endl;
-        if (s1 == s2)
-            std::cout << "equl" << std::endl;
-        else
-            std::cout << "no equl" << std::endl;
-    }
-
-    {
-        // 自定义trim函数
-        auto funcTrim = [](string szSrc, const char* pStr) -> string{
-        std::string m_szSrc = szSrc;
-        string::size_type pos = m_szSrc.find_last_not_of(pStr);
-        if (pos != string::npos) {
-            m_szSrc.erase(pos + 1);
-            pos = m_szSrc.find_first_not_of(pStr);
-            if (pos != string::npos) m_szSrc.erase(0, pos);
-        }
-        else
-            m_szSrc.erase(m_szSrc.begin(), m_szSrc.end());
-        return m_szSrc;
-        };
-
-        string str, str2;
-        str = "abc def  ";       str2 = funcTrim(str, " ");  valprint(str)
-        str = "abc11def112211 "; str2 = funcTrim(str, "11"); valprint(str)
-        str = "abc11def112211";  str2 = funcTrim(str, "11"); valprint(str)
-        str = "11abcdef11";      str2 = funcTrim(str, "11"); valprint(str)
-    }
-
-    {
-        string szLabel = "ip-192.1681.1.1.1-company-co_123_test-net-Net_1234_test";
-        string strTIp = "ip-";
-        string strTCompany = "-company-";
-        string strTNet = "-net-";
-        size_t sCompanny = szLabel.find("-company-");
-        size_t sNet = szLabel.find("-net-");
-        string szCCU = szLabel.substr(strTIp.size(), sCompanny - strTIp.size());
-        string strCompany = szLabel.substr(sCompanny + strTCompany.size(), sNet - sCompanny - strTCompany.size());
-        string strNet = szLabel.substr(sNet + strTNet.size());
-        valprint(szCCU) valprint(strCompany) valprint(strNet)
-    }
-    {
-        // 从末尾开始提取IP
-        string tmp = "1.3.6.1.4.1.25506.2.67.1.1.2.1.4.634.1.4.192.168.11.254";
-        size_t pos = string::npos;
-        string::reverse_iterator it = tmp.rbegin();
-        string ret = "";
-        string ret2 = "";
-        string ret3 = "";
-        string ret4 = "";
-        int i = 0;
-        int i2 = 0;
-        for (it = tmp.rbegin(); it != tmp.rend() && i < 4; ++it)        {
-            if (*it == '.')
-                ++i;
-            ++i2;
-        }
-
-        if (it == tmp.rend() || i < 4) { }
-
-        int ii = std::distance(tmp.rbegin(), it);
-        int ii2 = it - tmp.rbegin();
-        ret = tmp.substr(tmp.length() - (it - tmp.rbegin()) + 1);
-        ret2 = tmp.substr(tmp.length() - i2 + 1);
-        ret3 = tmp.substr(tmp.length() - ii2 + 1);
-        ret4.assign(it.base(), tmp.end());
-        printf("ret:%s\n", ret.c_str());
-    }
-
-    {
-        string str1 = "abc123 abc123";
-        string str2 = "abc abc";
-        string str3 = "";
-
-        str3 = str1.replace(str1.find("123"), 2, "qazx");
-        std::cout << str3 << std::endl;    // abcqazx3 abc123
-        // str3 = str2.replace(str2.find("123"), 2, "qazx");  // 没找到则挂掉 string::npos
-    }
-    {
-        string str = "abc fopen 123";
-        if (str.find("fopen") != string::npos)
-        {
-            str.erase(str.find("fopen"), 1);        // 删除一个字符
-        }
-        std::cout << str << std::endl;     // abc open 123
-    }
-}
-
-
-
-
-
-
-void thread_foo(){
-    std::this_thread::sleep_for(std::chrono::seconds(1));
-}
+void thread_foo(){std::this_thread::sleep_for(std::chrono::seconds(1));}
 void thread_foo2(){
     std::this_thread::sleep_for(std::chrono::seconds(1));
     std::cout << "[tid]" << std::this_thread::get_id() << std::endl;
@@ -536,7 +369,6 @@ void test1_cpp11_2_thread()
 }
 
 
-
 #include <mutex>
 #include <condition_variable>
 #include <functional>
@@ -612,10 +444,7 @@ private:
     };
     std::shared_ptr<data> _data;
 };
-void printTest()
-{
-    std::cout << "Thread start id = " << std::this_thread::get_id() << std::endl;
-}
+void printTest(){std::cout << "Thread start id = " << std::this_thread::get_id() << std::endl;}
 void test1_cpp11_2_threadpool()
 {
     FixedThreadPool p(4);         //有4个线程的线程池
@@ -626,7 +455,72 @@ void test1_cpp11_2_threadpool()
     getchar();
 }
 
+void test1_cpp11_2_atomic()
+{
+    // #include <atomic>
+    // https://zhuanlan.zhihu.com/p/672623300
+    // 内存顺序
+    // 顺序一致性（Sequential Consistency）：这是最直观的内存顺序，保证了所有操作按照程序的顺序执行。
+    // 松散顺序（Relaxed Ordering）：允许操作重排序，但仍保证原子性。适用于某些性能敏感的场景。
+    // memory_order_relaxed：最弱的内存顺序，只保证了操作的原子性，不保证操作间的顺序。
+    // memory_order_acquire 和 memory_order_release：用于控制操作之间的重排序。
+    //   acquire 防止之后的读写操作被重排序到它之前，而 release 防止之前的读写操作被重排序到它之后。
+    // memory_order_acq_rel 和 memory_order_seq_cst：更严格的顺序保证。特别是 cst 提供了类似于单线程的执行顺序，默认。
 
+    // 无锁编程
+    std::atomic<int> counter = 0;
+    int value;
+    int value_new = 10;
+    counter.store(10, std::memory_order_relaxed);    // 原子赋值
+    value = counter.load(std::memory_order_relaxed); // 原子读取
+    counter.fetch_add(1, std::memory_order_relaxed); // 原子加法
+    counter.fetch_sub(1, std::memory_order_relaxed); // 原子减法
+    counter++;                                       // 原子自增
+    counter.compare_exchange_strong(value_new, 20);  // 原子比较并交换 允许在值未被其他线程更改的情况下更新一个原子变量
+                                                     // 若 counter 的当前值等于 value_new，它被设置为 20。否则，操作失败
+
+    // 举例
+    // 1 is_ready.load确保了当 is_ready 变为真时，数据处理相关的操作能够安全地执行。
+    std::atomic<bool> is_ready = true;
+    while (!is_ready.load(std::memory_order_acquire)) {
+        // 等待数据准备好
+    }
+    // 处理数据
+
+    // 2 无锁队列 可改为模板 template<typename T> 需要外面定义
+    class LockFreeQueue {
+    private:
+        struct Node {
+            std::shared_ptr<int> data;
+            std::atomic<Node*> next;
+            Node(int newData) : data(std::make_shared<int>(newData)), next(nullptr) {}
+        };
+        std::atomic<Node*> head;
+        std::atomic<Node*> tail;
+
+    public:
+        void enqueue(int newData) { // 入队操作
+            Node* newNode = new Node(newData);
+            Node* oldTail = tail.load();
+            while (!tail.compare_exchange_weak(oldTail, newNode)) {
+                // 循环直到尾部指针更新成功
+            }
+            oldTail->next = newNode;
+        }
+        std::shared_ptr<int> dequeue() { // 出队操作
+            Node* oldHead = head.load();
+            while (oldHead && !head.compare_exchange_weak(oldHead, oldHead->next)) {
+                // 循环直到头部指针更新成功
+            }
+            return oldHead ? oldHead->data : std::shared_ptr<int>();
+        }
+    };
+
+    // ABA问题
+    // 是无锁编程中一个著名的问题，线程1读取一个值 A，然后在它能够执行更新之前，线程2将该值改变为 B，再改回 A。
+    // 导致线程1错误地认为自己可以安全地继续执行操作。ABA 问题的存在不仅是技术挑战，也是对我们理解和处理复杂系统中变化的挑战。
+
+}
 
 
 #include <future>
@@ -649,8 +543,8 @@ void test1_cpp11_2_async()
     // https://blog.csdn.net/fengbingchun/article/details/104133494
     // std::async异步调用函数，在某个时候以Args作为参数(可变长参数)调用Fn，不等待Fn执行完就返回，结果是std::future对象。
     //  Fn返回的值可通过std::future对象的get成员函数获取。一旦完成Fn的执行，共享状态将包含Fn返回的值并ready。
-    // template <class Fn, class... Args>  future<typename result_of<Fn(Args...)>::type>    async (Fn&& fn, Args&&... args);
-    // template <class Fn, class... Args>  future<typename result_of<Fn(Args...)>::type>    async (launch policy, Fn&& fn, Args&&... args);
+    // template <class Fn, class... Args> future<typename result_of<Fn(Args...)>::type> async (Fn&& fn, Args&&... args);
+    // template <class Fn, class... Args> future<typename result_of<Fn(Args...)>::type> async (launch policy, Fn&& fn, Args&&... args);
     // 参数Fn：可以为函数指针、成员指针、任何类型的可移动构造的函数对象(即类定义了operator()的对象)。
     //  Fn的返回值或异常存储在共享状态中以供异步的std::future对象检索。
     // 参数Args：传递给Fn调用的参数，它们的类型应是可移动构造的。
@@ -800,9 +694,6 @@ void test1_cpp11_2_async()
 // Data = DB_Data :: File_Data
     }
 }
-
-
-
 void test1_cpp11_2_future()
 {
     // https://blog.csdn.net/fengbingchun/article/details/104115489
@@ -819,7 +710,6 @@ void test1_cpp11_2_future()
     // 7. wait函数：(1).等待共享状态就绪。(2).如果共享状态尚未就绪(即提供者尚未设置其值或异常)，则该函数将阻塞调用的线程直到就绪。(3).当共享状态就绪后，则该函数将取消阻塞并void返回。
     // 8. wait_for函数：(1).等待共享状态在指定的时间内(time span)准备就绪。(2). 如果共享状态尚未就绪(即提供者尚未设置其值或异常)，则该函数将阻塞调用的线程直到就绪或已达到设置的时间。(3).此函数的返回值类型为枚举类future_status。此枚举类有三种label：ready：共享状态已就绪；timeout：在指定的时间内未就绪；deferred：共享状态包含了一个延迟函数(deferred function)。
     // 9. wait_until函数：(1). 等待共享状态在指定的时间点(time point)准备就绪。(2). 如果共享状态尚未就绪(即提供者尚未设置其值或异常)，则该函数将阻塞调用的线程直到就绪或已达到指定的时间点。(3).此函数的返回值类型为枚举类future_status。
-
 
     // http://www.cplusplus.com/reference/future/future/
     { // constructor/get/operator=
@@ -961,8 +851,6 @@ void test1_cpp11_2_future()
 // 35
     }
 }
-
-
 void test1_cpp11_2_promise()
 {
     // https://blog.csdn.net/fengbingchun/article/details/104124174
@@ -981,6 +869,7 @@ void test1_cpp11_2_promise()
     // 7. set_value：(1).将值存储进共享状态即设置共享状态的值，准备就绪。(2).set_value(void)只是简单使共享状态就绪而无须设置任何值。
     // 8. set_value_at_thread_exit：设置共享状态的值，但并不将该共享状态的标志设置为ready，当线程退出时，该promise对象会自动设置为ready(Stores val as the value in the shared state without making it ready immediately. Instead, it will be made ready automatically at thread exit, once all objects of thread storage duration have been destroyed)。
     // 9. swap/非成员模板函数swap：交换共享状态。
+
     { // constructor/get_future/set_value
         std::cout << "test promise -- 1 -- constructor/get_future/set_value\n";
         std::promise<int> foo; // create promise
@@ -1125,7 +1014,6 @@ void test1_cpp11_2_promise()
     #endif
     }
 }
-
 #include <cmath>
 void test1_cpp11_2_packaged_task()
 {
@@ -1280,11 +1168,11 @@ void test1_cpp11_2_packaged_task()
     }
 
     // reference: https://stackoverflow.com/questions/18143661/what-is-the-difference-between-packaged-task-and-async
-	// sleeps for one second and returns 1
-	auto sleep = []() {
-		std::this_thread::sleep_for(std::chrono::seconds(1));
-		return 1;
-	};
+    // sleeps for one second and returns 1
+    auto sleep = []() {
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+        return 1;
+    };
     { // std::packaged_task
         std::cout << "test promise -- 4 -- packaged_task\n";
         // >>>>> A packaged_task won't start on it's own, you have to invoke it
@@ -1336,480 +1224,423 @@ void test1_cpp11_2_memory()
     std::cout << "num: " << wp.use_count() << '\n';    // 2
 }
 
-
-
-void test1_cpp11_2_shareptr()
+std::unique_ptr<int> get_unique_ptr(){return std::unique_ptr<int>(new int(520));}
+void delete_unique_ptr(int*p){delete p;}
+void test1_cpp11_2_unique_ptr()
 {
     using namespace std;
+    {
+        // 创建
+        // 有两种版本：一普通版本，管理一个动态分配的资源对象；二数组版本，是一个偏特化版本，用于管理一个动态分配的数组。
+        unique_ptr<int> ptra1(new int(10));         // 通过构造函数初始化
+        unique_ptr<int> ptra2 = move(ptra1);        // 通过转移所有权的方式初始化
+        // unique_ptr<int> ptra3 = ptr1;            // 编译报错 是 move-only 的
+        unique_ptr<int> ptra4 = get_unique_ptr();   // 通过函数返回初始化
+        unique_ptr<int> ptra5;                      // 使用缺省构造函数创建的是不拥有任何资源的空对象
+        unique_ptr<int[]> ptra6;
+        // std::unique_ptr<int> ptra7 = new int(4); // error 不能直接把裸指针赋值给unique_ptr对象，没有提供这样的隐式转换
+        std::unique_ptr<int> ptra8(nullptr);        // 可以使用nullptr直接构造
+        std::unique_ptr<int> ptra9 = nullptr;       // 可以使用nullptr直接赋值
+        ptra9.reset(nullptr);
+        int *pi = new int(1);
+        unique_ptr<int> ptra10(pi);                 // 可以 但是不建议这样做
 
-    shared_ptr<int> spi1;
-    cout << "spi1:" << spi1.use_count() << endl;
+        // std::make_shared是c++11的一部分，但std::make_unique不是。它是在c++14里加入标准库的。
+        // 使用new的版本重复了被创建对象的键入，但是make_unique函数则没有。
+        unique_ptr<int> ptrb1(std::make_unique<int>()); // with make func 需要设置c++14
+        unique_ptr<int> ptrb2(new int); // without make func
 
-    shared_ptr<int> spi2(new int(1));
-    cout << "spi2:" << spi2.use_count() << endl;
+        unique_ptr<int[]> ptrc1 = std::make_unique<int[]>(10);  // 指向一个数组
+        for (int i = 0; i < 10; i++)  ptrc1[i] = i * i;
+        unique_ptr<int[]> ptrc2(new int[10]);                   //
+        ptrc2[9] = 9;
+        // unique_ptr<int[10]> ptrc3(new int[10]); // 无法编译
+        // unique_ptr<int> ptrc4(new int[10]);     // 可以编译，运行会出错  因为销毁时，使用delete，不是delete[]。
+    }
+    {
+        // 指定删除器 是可调用对象，类型可以是函数指针、函数对象、lambda表达式、function对象等。
+        // 如果没有指定删除器，会使用缺省删除器，缺省使用delete和delete[]来销毁对象，分别用于普通版本和数组版本。
+        struct FileCloser {void operator()(FILE* fp) const {if (fp != nullptr)  fclose(fp);}};
+        unique_ptr<FILE, FileCloser> ptra1(fopen("1.txt", "w"));  // 使用 函数对象
+        unique_ptr<FILE, function<void(FILE*)>> ptra2(fopen("1.txt", "w"), [](FILE* fp) {fclose(fp);}); // 使用 function
+        unique_ptr<FILE, void(*)(FILE*)> ptra3(fopen("1.txt", "w"), [](FILE* fp) {fclose(fp);}); // 使用 函数指针
+        struct MyDelete{void operator()(int *p){cout << "delete" << endl;delete p;}};
+        unique_ptr<int,MyDelete> ptra4(new int(1));
 
+        // 删除器是模板类型的一部分，必须先声明，不能像 shared_ptr 那样直接指定删除器。
+        shared_ptr<int> ptrb1(new int(10), [](int* p) {delete p; });           // ok
+        // unique_ptr<int> ptrb2(new int(10), [](int* p) {delete p; });        // error
+        using func_ptr = void(*)(int*); // func_ptr 的类型和 lambda表达式的类型是一致的
+        unique_ptr<int, func_ptr> ptrb3(new int(10), [](int* p) {delete p; }); // ok
+        unique_ptr<int, func_ptr> ptrb4(new int(10), delete_unique_ptr);       // ok
+
+        // lambda 不捕获变量时是正确的；捕获了变量，则编译报错。
+        // lambda 不捕获变量时，可直接转换为函数指针，一旦捕获了就无法转换了，
+        // 如果想要让编译器成功通过编译，那么需要使用可调用对象包装器来处理声明的函数指针：
+        unique_ptr<int, void(*)(int*)> ptrc1(new int(10), [](int* p) {delete p; }); // ok
+        // unique_ptr<int, func_ptr> ptrc2(new int(10), [&](int* p) {delete p; }); // 编译报错
+        unique_ptr<int, function<void(int*)>> ptrc3(new int(10), [&](int* p) {delete p; }); // ok
+
+        // 移动操作要求两个对象的类型必须完全一样，即删除器的类型也必须一样。
+        unique_ptr<int, function<void(int*)>> ptrd1(new int(4), [](int *ptr){delete ptr;});
+        // unique_ptr<int> ptrd2(move(ptrd1));  // 无法编译
+    }
+    {
+        // 使用
+        // std::shared_ptr 和 std::unique_ptr共有操作
+        // p.get()              返回p中保存的指针，不会影响p的引用计数。
+        // p.reset()            释放p指向的对象，将p置为空。
+        // p.reset(q)           释放p指向的对象，令p指向q。
+        // p.reset(new T)       释放p指向的对象，令p指向一个新的对象。
+        // p.swap(q)            交换p和q中的指针。
+        // swap(p, q)           交换p和q中的指针。
+        // p.operator*()        解引用p。
+        // p.operator->()       成员访问运算符，等价于(*p).member。
+        // p.operator bool()    检查p是否为空指针。
+
+        unique_ptr<int> ptra1(new int(1));
+        unique_ptr<int> ptra2(new int(1));
+        unique_ptr<int[]> ptrb1(new int[10]);
+        int i = 0;
+
+        int *p1 = ptra1.get();     // 返回裸指针，如果unique_ptr对象是个空对象，则返回nullptr。
+        int *p2 = ptra2.release(); // ! 返回裸指针，放弃控制权，并将ptra1置空  注意这个p2 必须手动释放 否则内存泄露
+
+        i = *ptra1;    // 重载了操作符*，->可以象使用指针那样使用它们
+        *ptra1 = 2;
+        i = ptrb1[0];  // 对于数组版本，还重载了数组操作符[]，可以通过它访问指定位置的数组元素
+        // i = ptrb1[10];  // ! 同裸指针访问数组一样，不进行越界检查
+        ptrb1[0] = 1;  // 操作符[]返回的是引用，可以作为左值使用
+        unique_ptr<int> ptrb2(new int[10]);   // 不是一个指向数组的智能指针，而是普通版本的智能指针，没有提供[]操作符重载
+        // ptrb2[0] = 1;  // 编译失败
+        *ptrb2 = 1;            //  ok 访问的是位置0处的元素
+
+        // 没有重载+，-，++，–，+=，-=等算术运算操作符，如果访问其它位置的元素，只能通过裸指针
+        std::cout << *(ptra1.get()+0) << std::endl; // 2
+        std::cout << (ptra1.get)()[0] << std::endl; // 2
+
+        // 可以直接判断是否为nullptr，有两种方式，和使用裸指针的形式完全一样。
+        assert(ptra1 != nullptr);
+        if(!ptra1)          std::cout<<"up is nullptr"<<std::endl;
+        if(ptra1== nullptr) std::cout<<"up is nullptr"<<std::endl;
+
+        // 也可象普通指针那样，当指向一个类继承体系的基类对象时，也具有多态性质，如同使用裸指针管理基类对象和派生类对象那样。
+        // unique_ptr<base> up_base(new base); // up_base指向基类
+        // up_base->foo(); // 调用基类的成员函数
+        // up_base->bar(); // 调用基类的成员函数
+        // unique_ptr<derive> up_derive(new derive);
+        // up_base = move(up_derive); // unique_ptr可以进行隐式转换，基类指针指向派生类对象
+        // up_base->foo(); // 不是多态，调用基类对象的成员函数
+        // up_base->bar(); // 由多态机制调用派生类对象的成员函数
+        // up_base.reset(); // 调用派生类的析构函数
+
+        ptra1.reset();                       // 释放ptra1对象指向的资源对象，显式释放 解除对原始内存的管理
+        ptra1.reset(new int(222));           // 释放ptra1指向的资源对象，同时指向新的对象，隐式释放
+        ptra1.reset(nullptr);                // 释放ptra1对象指向的资源对象，显式释放
+    }
+    {
+        // 注意
+    }
+}
+
+void delete_shared_ptr(int *p) {delete p;}
+void delete_shared_ptr2(int *p) {delete []p;}
+void test1_cpp11_2_shared_ptr()
+{
+    using namespace std;
+    {
+// operator=()       重载赋值号，使得同一类型的 shared_ptr 智能指针可以相互赋值。
+// operator*()       重载 * 号，获取当前 shared_ptr 智能指针对象指向的数据。
+// operator->()      重载 -> 号，当智能指针指向的数据类型为自定义的结构体时，通过 -> 运算符可以获取其内部的指定成员。
+// swap()            交换 2 个相同类型 shared_ptr 智能指针的内容。
+// reset()           当函数没有实参时，该函数会使当前 shared_ptr 所指堆内存的引用计数减 1，同时将当前对象重置为一个空指针；当为函数传递一个新申请的堆内存时，则调用该函数的 shared_ptr 对象会获得该存储空间的所有权，并且引用计数的初始值为 1。
+// get()             获得 shared_ptr 对象内部包含的普通指针。
+// use_count()       返回同当前 shared_ptr 对象（包括它）指向相同的所有 shared_ptr 对象的数量。
+// unique()          判断当前 shared_ptr 对象指向的堆内存，是否不再有其它 shared_ptr 对象再指向它。
+// operator bool()   判断当前 shared_ptr 对象是否为空智能指针，如果是空指针，返回 false；反之，返回 true。
+
+    // 创建
+    // 对资源做引用计数——当引用计数为 0 的时候，自动释放资源。
+    // 实现包含了两部分，指向堆上创建的对象的裸指针:raw_ptr，指向内部隐藏的、共享的管理对象:share_count_object
+
+    // 通过构造函数、std::shared_ptr辅助函数和reset方法来初始化
+    shared_ptr<int> ptra1(new int(1));
+    shared_ptr<int> ptra2 = make_shared<int>(1);  // 优先这种，更高效。相当于shared_ptr<int> ptra4(new int(1));
+    // shared_ptr<int> ptra3 = new int(1);        // ! 错误  不能将一个原始指针直接赋值给一个智能指针
+    shared_ptr<int> ptra4(ptra1);                 // 拷贝构造 引用计数+1
+    shared_ptr<int> ptra41 = ptra1;               // 同上
+    shared_ptr<int> ptr42(move(ptra1));           // 移动构造 ptr42替代ptr1  ptr1转让了所有权 变为空
     int* pi1 = new int(2);
+    shared_ptr<int> ptra5(pi1);                   // 可以 不建议这样
+    // shared_ptr<int> ptra51(pi1);               // 不可以 运行会出错
+    shared_ptr<int> ptra6;                        // 不管理任何内存 空 引用计数为 0
+    shared_ptr<int> ptra7(nullptr);               // 同上
 
-    shared_ptr<int> spi3(pi1);
-    cout << "spi3:" << spi3.use_count() << endl;
+    shared_ptr<int[]> ptrb1(new int[10]);    // 指向数组
+    shared_ptr<int[]> ptrb2 = make_shared<int[]>(10);  // C++20 才支持 std::make_shared<int[]>
+    ptrb2[1] = 1;
+    shared_ptr<int[]> ptrb3 = ptrb2;
+    cout << "ptrb3[1]:" << ptrb3[1]  << " ptrb3.use_count():" << ptrb3.use_count() << endl; // 1 2
 
-    spi3 = spi2;
-    cout << "spi2:" << spi2.use_count() << endl;
-    cout << "spi3:" << spi3.use_count() << endl;
+    shared_ptr<int[]> ptrc1(new int(0), [](int* p){delete p;}); // 指定删除器
+    shared_ptr<int[]> ptrc2(new int(0), delete_shared_ptr);     // 引用计数为0时，自动调用删除器来释放对象的内存。
+    shared_ptr<int[]> ptrc3(new int[10], delete_shared_ptr2);   // 默认的释放规则是不支持释放数组，要自定义对应的释放规则
+    shared_ptr<int[]> ptrc4(new int[10], std::default_delete<int[]>()); // C++11提供 default_delete 模板类释放数组
 
-    spi3.reset();
-    cout << "spi2:" << spi2.use_count() << endl;
-    cout << "spi3:" << spi3.use_count() << endl;
+    shared_ptr<int> ptrd1;
+    ptrd1.reset();           // 没有参数就是释放资源
+    ptrd1.reset(new int(1)); // 有参数就是重新分配资源   原引用计数减1
+    if(ptrd1) cout << "ptrd1 is not null";              // 判断是否空指针
+    if(ptrd1 != nullptr) cout << "ptrd1 is not null";   // 判断是否空指针
+    int* pi = ptrd1.get();   // 返回裸指针  和使用普通指针一样
+    shared_ptr<char> ptrd2(new char[32]);
+    char* add = ptrd2.get();memset(add, 0, 32);strcpy(add, "sss");cout << "string: " << add << endl; // sss
 
-    cout << "-------------------------" << endl;
-
-    {
-        // 使用智能指针管理一块 int 型的堆内存
-        shared_ptr<int> ptr1(new int(520));
-        cout << "ptr1管理的内存引用计数: " << ptr1.use_count() << endl; // 1
-
-        // 使用智能指针管理一块字符数组对应的堆内存
-        shared_ptr<char> ptr2(new char[12]);
-        cout << "ptr2管理的内存引用计数: " << ptr2.use_count() << endl; // 1
-
-        // 创建智能指针对象, 不管理任何内存
-        shared_ptr<int> ptr3;
-        cout << "ptr3管理的内存引用计数: " << ptr3.use_count() << endl;// 0
-
-        // 创建智能指针对象, 初始化为空
-        shared_ptr<int> ptr4(nullptr);
-        cout << "ptr4管理的内存引用计数: " << ptr4.use_count() << endl; // 0
-
-        //如果智能指针被初始化了一块有效内存，那么这块内存的引用计数 + 1，
-        //如果智能指针没有被初始化或者被初始化为 nullptr 空指针，引用计数不会 + 1。
-        //另外，不要使用一个原始指针初始化多个 shared_ptr。
-        //例如：
-        //int* p = new int;
-        //shared_ptr<int> p1(p);
-        //shared_ptr<int> p2(p);        // error, 编译不会报错, 运行会出错
+    shared_ptr<int> ptre1; cout << "ptre1:" << ptre1.use_count() << endl;             // 0   引用计数
+    shared_ptr<int> ptre2(new int(1)); cout << "ptre2:" << ptre2.use_count() << endl; // 1
+    shared_ptr<int> ptre3 = ptre2; cout << "ptre2:" << ptre2.use_count() << endl;     // 2
+    ptre3.reset();cout << "ptre2:" << ptre2.use_count() << endl;                      // 1
     }
-
-    cout << "-------------------------" << endl;
-
     {
-        //通过拷贝和移动构造函数初始化
-        //当一个智能指针被初始化之后，就可以通过这个智能指针初始化其他新对象。
-        //在创建新对象的时候，对应的拷贝构造函数或者移动构造函数就被自动调用了。
-
-        // 使用智能指针管理一块 int 型的堆内存, 内部引用计数为 1
-        shared_ptr<int> ptr1(new int(520));
-        cout << "ptr1管理的内存引用计数: " << ptr1.use_count() << endl; //1
-
-        //调用拷贝构造函数
-        shared_ptr<int> ptr2(ptr1); //使用ptr1初始化新的智能指针对象
-        cout << "ptr2管理的内存引用计数: " << ptr2.use_count() << endl; //2
-
-        shared_ptr<int> ptr3 = ptr1;
-        cout << "ptr3管理的内存引用计数: " << ptr3.use_count() << endl; //3
-
-        //调用移动构造函数
-        shared_ptr<int> ptr4(std::move(ptr1));
-        cout << "ptr4管理的内存引用计数: " << ptr4.use_count() << "  ptr1管理的内存引用计数: " << ptr1.use_count() << endl; //3  0
-
-        std::shared_ptr<int> ptr5 = std::move(ptr2);
-        cout << "ptr5管理的内存引用计数: " << ptr5.use_count() << "  ptr2管理的内存引用计数: " << ptr2.use_count() << endl; //3  0
-
-        //如果使用拷贝的方式初始化共享智能指针对象，这两个对象会同时管理同一块堆内存，堆内存对应的引用计数也会增加；
-        //如果使用移动的方式初始智能指针对象，只是转让了内存的所有权，管理内存的对象并不会增加，因此内存的引用计数不会变化。
-    }
-
-    cout << "-------------------------" << endl;
-
-    {
+        // 使用
         //std::make_shared() 是模板函数。
         //template< class T, class... Args >
         //shared_ptr<T> make_shared(Args&&... args);
         //T：模板参数的数据类型
         //Args&&... args ：要初始化的数据，如果是通过 make_shared 创建对象，需按照构造函数的参数列表指定
-        class Test
-        {
+        class Test{
         public:
-            Test()
-            {
-                cout << "construct Test..." << endl;
-            }
-            Test(int x)
-            {
-                cout << "construct Test, x = " << x << endl;
-            }
-            Test(string str)
-            {
-                cout << "construct Test, str = " << str << endl;
-            }
-            ~Test()
-            {
-                cout << "destruct Test ..." << endl;
-            }
+            Test(){cout << "construct Test..." << endl;}
+            Test(int x){cout << "construct Test, x = " << x << endl;}
+            Test(string str){cout << "construct Test, str = " << str << endl;}
+            ~Test(){cout << "destruct Test ..." << endl;}
         };
 
-        // 使用智能指针管理一块 int 型的堆内存, 内部引用计数为 1
-        shared_ptr<int> ptr1 = make_shared<int>(520);
-        cout << "ptr1管理的内存引用计数: " << ptr1.use_count() << endl;
-
-        shared_ptr<Test> ptr2 = make_shared<Test>();
-        cout << "ptr2管理的内存引用计数: " << ptr2.use_count() << endl;
-
-        shared_ptr<Test> ptr3 = make_shared<Test>(520);
-        cout << "ptr3管理的内存引用计数: " << ptr3.use_count() << endl;
-
-        shared_ptr<Test> ptr4 = make_shared<Test>("我是要成为海贼王的男人!!!");
-        cout << "ptr4管理的内存引用计数: " << ptr4.use_count() << endl;
-
-
-        //ptr1管理的内存引用计数: 1
-        //construct Test...
-        //ptr2管理的内存引用计数 : 1
-        //construct Test, x = 520
-        //ptr3管理的内存引用计数 : 1
-        //construct Test, str = 我是要成为海贼王的男人!!!
-        //ptr4管理的内存引用计数 : 1
-        //destruct Test ...
-        //destruct Test ...
-        //destruct Test ...
+        shared_ptr<int>  ptr1 = make_shared<int>(520);   cout << "ptr1:"<< ptr1.use_count() << endl; // 1
+        shared_ptr<Test> ptr2 = make_shared<Test>();     cout << "ptr2:"<< ptr2.use_count() << endl; // 1
+        shared_ptr<Test> ptr3 = make_shared<Test>(520);  cout << "ptr3:"<< ptr3.use_count() << endl; // 1
+        shared_ptr<Test> ptr4 = make_shared<Test>("xxx");cout << "ptr4:"<< ptr4.use_count() << endl; // 1
     }
-
-    cout << "-------------------------" << endl;
-
     {
-        // 使用智能指针管理一块 int 型的堆内存, 内部引用计数为 1
-        shared_ptr<int> ptr1 = make_shared<int>(520);
-        shared_ptr<int> ptr2 = ptr1;
-        shared_ptr<int> ptr3 = ptr1;
-        shared_ptr<int> ptr4 = ptr1;
-        cout << "ptr1管理的内存引用计数: " << ptr1.use_count() << endl;    // 4
-        cout << "ptr2管理的内存引用计数: " << ptr2.use_count() << endl;    // 4
-        cout << "ptr3管理的内存引用计数: " << ptr3.use_count() << endl;    // 4
-        cout << "ptr4管理的内存引用计数: " << ptr4.use_count() << endl;    // 4
+        // 注意
+        // 1 不要用一个原始指针初始化多个shared_ptr
+        int *ptr = new int;
+        shared_ptr<int> ptr1(ptr);
+        // shared_ptr<int> ptr2(ptr); // ! 逻辑错误
 
-        cout << endl << "after ptr4.reset();" << endl;
-        ptr4.reset();
-        cout << "ptr1管理的内存引用计数: " << ptr1.use_count() << endl;    // 3
-        cout << "ptr2管理的内存引用计数: " << ptr2.use_count() << endl;    // 3
-        cout << "ptr3管理的内存引用计数: " << ptr3.use_count() << endl;    // 3
-        cout << "ptr4管理的内存引用计数: " << ptr4.use_count() << endl;    // 0
+        // 2 不要在函数实参中创建shared_ptr
+        // myfunc(shared_ptr<int>(new int), myfunc2()); //有缺陷  函数参数顺序不同编译器可能是不一样的
+        // 可能的过程是先new int，然后调用g()，如果恰好g()发生异常，而shared_ptr还 没有创建， 则int内存泄漏了
+        // shared_ptr<int> p(new int); myfunc(p, g());  // 正确的写法
 
-        shared_ptr<int> ptr5;
-        ptr5.reset(new int(250));
-        cout << "ptr5管理的内存引用计数: " << ptr5.use_count() << endl;    // 1
 
-        shared_ptr<int> ptr6 = ptr1;
-        cout << "ptr6管理的内存引用计数: " << ptr6.use_count() << endl;    // 4
-        ptr6.reset(new int(250));
-        cout << "ptr6管理的内存引用计数: " << ptr6.use_count() << endl;    // 1
+        // 3 通过shared_from_this()返回this指针。
+        // 不要将this指针作为shared_ptr返回，因为this指针本质上是一个裸指针，会导致重复析构。
+        class A {
+        public:
+            shared_ptr<A>GetSelf(){return shared_ptr<A>(this);} // ! 不要这么做
+            ~A(){cout << "Deconstruction A" << endl;}
+        };
+        shared_ptr<A> ptra1(new A);
+        cout << "ptra1~~~:" << ptra1.use_count() << endl;  // 1
+        // shared_ptr<A> ptra2 = ptra1->GetSelf();   // 导致析构2次  this构造了两个智能指针，这二者之间是没有任何关系的
+        // cout << "ptra2:" << ptra2.use_count() << endl; // 1
 
-        //对于一个未初始化的共享智能指针，可以通过 reset 方法来初始化，当智能指针中有值的时候，调用 reset 会使引用计数减 1。
+        // 这个问题可以通过 weak_ptr 来解决，通过 wek_ptr 返回管理 this 资源的共享智能指针对象 shared_ptr。
+        // C++11 模板类 std::enable_shared_from_this<T>，这个类中有一个方法叫做 shared_from_this()，
+        // 这个方法返回shared_ptr，内部使用 weak_ptr 来监测 this 对象，调用 weak_ptr 的 lock() 返回 shared_ptr 对象。
+        // 强调一个细节：调用 enable_shared_from_this 类的 shared_from_this() 方法前，必须先初始化函数内部 weak_ptr 对象，
+        // 否则该函数无法返回一个有效的 shared_ptr 对象。
+        // shared_ptr构造时(因为是友元)，其底层调用enable_shared_from_this的_M_weak_assign给其初始化
+        class B:public std::enable_shared_from_this<B>{
+        public:
+            shared_ptr<B>GetSelf(){return shared_from_this();} // ! 这么做
+            ~B(){cout << "Deconstruction B" << endl;}
+        };
+        shared_ptr<B> ptrb1(new B);
+        cout << "ptrb1:" << ptrb1.use_count() << endl;  // 1
+        shared_ptr<B> ptrb2 = ptrb1->GetSelf();
+        cout << "ptrb2:" << ptrb2.use_count() << endl;  // 2   析构一次
+
+
+        // 避免循环引用。循环引用会导致内存泄漏
+        class D;
+        class C {
+        public:
+            std::shared_ptr<D> m_ptr;
+            ~C(){cout << "Deconstruction C" << endl;}
+        };
+        class D {
+        public:
+            std::shared_ptr<C> m_ptr;
+            ~D(){cout << "Deconstruction D" << endl;}
+        };
+        std::shared_ptr<C> ptrc1(new C);
+        std::shared_ptr<D> ptrd1(new D);
+        cout << "ptrc1:" << ptrc1.use_count() << endl;  // 1
+        cout << "ptrd1:" << ptrd1.use_count() << endl;  // 1
+        ptrc1->m_ptr = ptrd1;
+        ptrd1->m_ptr = ptrc1;
+        cout << "ptrc1:" << ptrc1.use_count() << endl;  // 2  离开作用域 引用计数变为1 不能释放
+        cout << "ptrd1:" << ptrd1.use_count() << endl;  // 2
+        ptrc1->m_ptr.reset();                           // 手动释放成员变量才行
+        ptrd1->m_ptr.reset();
+        ptrc1.reset();      // 只这样写不起作用 因为离开作用域ptrc1会自动释放 但ptrc1->m_ptr不会
+        // ptrc1,ptrd1 对 C,D 实例对象的引用计数为 2，离开作用域之后引用计数-1，不会去删除智能指针管理的内存，
+        // 导致 C,D 的实例对象不能被析构，最终造成内存泄露。
+        // 使用 weak_ptr 可以解决这个问题，只要将类 C 或 D 的任意一个成员改为 weak_ptr：
+
+        {
+        class D;
+        class C {
+        public:
+            std::weak_ptr<D> m_ptr; // ! 修改为weak_ptr
+            ~C(){cout << "Deconstruction C x" << endl;}
+        };
+        class D {
+        public:
+            std::shared_ptr<C> m_ptr;
+            ~D(){cout << "Deconstruction D x" << endl;}
+        };
+        std::shared_ptr<C> ptrc1(new C);
+        std::shared_ptr<D> ptrd1(new D);
+        cout << "ptrc1 x:" << ptrc1.use_count() << endl;  // 1
+        cout << "ptrd1 x:" << ptrd1.use_count() << endl;  // 1
+        ptrc1->m_ptr = ptrd1; // 由于 m_ptr 是 weak_ptr，这个赋值操作并不会增加引用计数，ptrd1 的引用计数仍然为 1
+        ptrd1->m_ptr = ptrc1;
+        cout << "ptrc1 x:" << ptrc1.use_count() << endl;  // 2
+        cout << "ptrd1 x:" << ptrd1.use_count() << endl;  // 1  离开作用域后 ptrd1 的引用计数为 0，类 D 实例对象被析构
+        // 在类 D 的实例对象被析构时，内部的 m_ptr 也被析构，其对 C 对象的管理解除，内存的引用计数减为 1，
+        // 当 ptrc1 离开作用域之后，对 C 对象的管理也解除了，内存的引用计数减为 0，类 C 的实例对象被析构。
+        }
     }
-
-    cout << "-------------------------" << endl;
-
     {
-        //对基础数据类型来说，通过操作智能指针和操作智能指针管理的内存效果是一样的，可以直接完成数据的读写。
-        //但是如果共享智能指针管理的是一个对象，那么就需要取出原始内存的地址再操作，可以调用共享智能指针类提供的 get() 方法得到原始地址，其函数原型如下：
-        int len = 128;
-        shared_ptr<char> ptr(new char[len]);
-        // 得到指针的原始地址
-        char* add = ptr.get();
-        memset(add, 0, len);
-        strcpy(add, "我是要成为海贼王的男人!!!");
-        cout << "string: " << add << endl;             //string: 我是要成为海贼王的男人!!!
+        // 实现细节
+        // https://zhuanlan.zhihu.com/p/150555165
+        std::cout << sizeof(int*) << std::endl;  // 8
+        std::cout << sizeof(std::unique_ptr<int>) << std::endl;  // 8
+        std::cout << sizeof(std::unique_ptr<FILE, std::function<void(FILE*)>>) << std::endl;  // 40
+        std::cout << sizeof(std::shared_ptr<int>) << std::endl;  // 16
+        std::shared_ptr<FILE> ptra1(fopen("test_file.txt", "w"), [](FILE* fp) {
+            std::cout << "close " << fp << std::endl;
+            fclose(fp);
+        });
+        std::cout << sizeof(ptra1) << std::endl;  // 16
 
-        shared_ptr<int> p(new int);
-        *p = 100;
-        cout << *p.get() << "  " << *p << endl;       //100  100
+        // 内部有2个指针实现，分别指向共享资源和控制信息
+        // (std::shared_ptr<T> sptr1(new T))栈内存                          堆内存
+        //          ptr to T       ------------------------------------------------------> T-共享资源
+        //          ptr to control ------------------------------>|ref count(1)       |-------^
+        //                                                        |weak ref count(1)  |
+        //                                                        |deleter            |
+        //                                                        |ptr   --------------
+        // std::shared_ptr<T> sptr2 = sptr1;
+        //          栈内存                                                   堆内存
+        //          ptr to T       ------------------------------------------------------> T-共享资源
+        //          ptr to control ------------------------------>|ref count(1)       |-------^   ^
+        //                                                        |weak ref count(1)  |           |
+        //      --- ptr to T                                      |deleter            |           |
+        //      |   ptr to control ------------------------------>|ptr   --------------           |
+        //      |----------------------------------------------------------------------------------
+
+        // 控制信息和每个 shared_ptr 对象都需要保存指向共享资源的指针
+        // 因为 shared_ptr 对象中的指针指向的对象不一定和控制块中的指针指向的对象一样。
+        struct Fruit {int juice;};
+        struct Vegetable {int fiber;};
+        struct Tomato : public Fruit, Vegetable {int sauce;};
+        // 由于继承的存在，shared_ptr 可能指向基类对象
+        std::shared_ptr<Tomato> tomato = std::make_shared<Tomato>();
+        std::shared_ptr<Fruit> fruit = tomato;
+        std::shared_ptr<Vegetable> vegetable = tomato;
+        std::cout << tomato << " " << fruit << " " << vegetable << std::endl;  // 0x55fc0a4dcf60 0x55fc0a4dcf60 0x55fc0a4dcf64
+
+        // template< class Y > shared_ptr( const shared_ptr<Y>& r, element_type* ptr ) noexcept; // aliasing constructor
+        // shared_ptr 对象和参数 r 指向同一个控制块（会影响 r 指向的资源的生命周期），但是指向共享资源的指针是参数 ptr。
+        auto elts = {0, 1, 2, 3, 4}; // initializer_list类型 一块内存+size
+        std::shared_ptr<vector<int>> pvec = std::make_shared<vector<int>>(elts);
+        std::shared_ptr<int>ptrb1(pvec, &(*pvec)[2]);
+        for (int i = -2; i < 3; ++i)  printf("%d\n", ptrb1.get()[i]); // 0 1 2 3 4 5
+        //          栈内存                                         堆内存
+        //          int*       ------------------------------------------------------> 0 1 2 3 4
+        //          ptr to control ------------------------------>|ref count(1)             ^
+        //                                                        |weak ref count(1)        |
+        //                                                        |deleter                  |
+        //                                                        |ptr   -->vector<int> (内部数据)
+        // 看上面的例子，使用 std::shared_ptr 时，会涉及两次内存分配：一次分配共享资源对象；一次分配控制块。
+        // C++ 标准库提供了 std::make_shared 函数来创建一个 shared_ptr 对象，只需要一次内存分配。
     }
-
-    cout << "-------------------------" << endl;
-
-    {
-        //当智能指针管理的内存对应的引用计数变为 0 的时候，这块内存就会被智能指针析构掉了。
-        //另外，我们在初始化智能指针的时候也可以自己指定删除动作，这个删除操作对应的函数被称之为删除器，
-        //这个删除器函数本质是一个回调函数，我们只需要进行实现，其调用是由智能指针完成的。
-
-
-        // 自定义删除器函数，释放int型内存
-        //void deleteIntPtr(int* p)
-        //{
-        //    delete p;
-        //    cout << "int 型内存被释放了...";
-        //}
-        //shared_ptr<int> ptr(new int(250), deleteIntPtr);
-        shared_ptr<int> ptr2(new int(250), [](int* p) {delete p; }); //删除器函数也可以是 lambda 表达式
-    }
-
 }
-
-
-std::unique_ptr<int> func()
-{
-    return std::unique_ptr<int>(new int(520));
-}
-void test1_cpp11_2_uniqueptr()
+#include <array>
+void test1_cpp11_2_weak_ptr()
 {
     using namespace std;
+    // 是弱引用智能指针 可以看做是 shared_ptr 的助手，它不管理 shared_ptr 内部的指针。
+    // 没有重载操作符* 和->，因为它不共享指针，不能操作资源，所以它的构造/析构不会增加/减少引用计数，
+    // 主要作用就是作为一个旁观者监视 shared_ptr 中管理的资源是否存在。还可以返回this指针和解决循环引用的问题。
     {
-        //初始化
-        //std::unique_ptr 是一个独占型的智能指针，它不允许其他的智能指针共享其内部的指针，可以通过它的构造函数初始化一个独占智能指针对象，但是不允许通过赋值将一个 unique_ptr 赋值给另一个 unique_ptr。
-        //std::unique_ptr 不允许复制，但是可以通过函数返回给其他的 std::unique_ptr，还可以通过 std::move 来转译给其他的 std::unique_ptr，这样原始指针的所有权就被转移了，这个原始指针还是被独占的。
-
-        // 通过构造函数初始化
-        unique_ptr<int> ptr1(new int(10));
-        // 通过转移所有权的方式初始化
-        unique_ptr<int> ptr2 = move(ptr1);
-        unique_ptr<int> ptr3 = func();
-
-        ptr1.reset();    //使用 reset 方法可以让 unique_ptr 解除对原始内存的管理
-        ptr2.reset(new int(250)); //重新指定智能指针管理的原始内存
-
-        //如果想要获取独占智能指针管理的原始地址，可以调用 get () 方法
-        cout << *ptr2.get() << endl;    // 得到内存地址中存储的实际数值 250
-    }
-
-    {
-        //删除器
-        //unique_ptr 指定删除器和 shared_ptr 指定删除器是有区别的，unique_ptr 指定删除器的时候需要确定删除器的类型，所以不能像 shared_ptr 那样直接指定删除器。
-        shared_ptr<int> ptr1(new int(10), [](int* p) {delete p; });    // ok
-        //unique_ptr<int> ptr1(new int(10), [](int* p) {delete p; });    // error
-
-        using func_ptr = void(*)(int*);
-        // func_ptr 的类型和 lambda表达式的类型是一致的
-        unique_ptr<int, func_ptr> ptr2(new int(10), [](int* p) {delete p; });
-
-        //在 lambda 表达式没有捕获任何变量的情况下是正确的，如果捕获了变量，编译时则会报错。
-        //在 lambda 表达式没有捕获任何外部变量时，可以直接转换为函数指针，一旦捕获了就无法转换了，如果想要让编译器成功通过编译，那么需要使用可调用对象包装器来处理声明的函数指针：
-        using func_ptr = void(*)(int*);
-        unique_ptr<int, function<void(int*)>> ptr3(new int(10), [&](int* p) {delete p; });
-    }
-}
-
-void test1_cpp11_2_weakptr()
-{
-    using namespace std;
-    //弱引用智能指针 std::weak_ptr 可以看做是 shared_ptr 的助手，它不管理 shared_ptr 内部的指针。
-    //std::weak_ptr 没有重载操作符* 和->，因为它不共享指针，不能操作资源，所以它的构造不会增加引用计数，析构也不会减少引用计数，
-    //它的主要作用就是作为一个旁观者监视 shared_ptr 中管理的资源是否存在。
-
-    {
-        //初始化
-        // 默认构造函数
-        //constexpr weak_ptr() noexcept;
-
-        // 拷贝构造
-        //weak_ptr(const weak_ptr & x) noexcept;
-
-        //template <class U>
-        //weak_ptr(const weak_ptr<U>&x) noexcept;
-
-        // 通过shared_ptr对象构造
-        //template <class U>
-        //weak_ptr(const shared_ptr<U>&x) noexcept;
+        // 创建
+        // constexpr weak_ptr() noexcept;         // 默认构造函数
+        // weak_ptr(const weak_ptr & x) noexcept; // 拷贝构造
+        // template <class U> weak_ptr(const weak_ptr<U>&x) noexcept;
+        // template <class U> weak_ptr(const shared_ptr<U>&x) noexcept; // 通过shared_ptr对象构造
 
         shared_ptr<int> sp(new int);
-
-        weak_ptr<int> wp1;         //造了一个空 weak_ptr 对象
-        weak_ptr<int> wp2(wp1);    //通过一个空 weak_ptr 对象构造了另一个空 weak_ptr 对象
-        weak_ptr<int> wp3(sp);     //通过一个 shared_ptr 对象构造了一个可用的 weak_ptr 实例对象
+        weak_ptr<int> wp1;         // 空 weak_ptr 对象
+        // shared_ptr<int> sp2(wp1);  // ! throw std::bad_weak_ptr  用空weak_ptr构造shared_ptr
+        weak_ptr<int> wp2(wp1);    // 空 weak_ptr 对象构造了另一个空 weak_ptr 对象
+        weak_ptr<int> wp3(sp);     // shared_ptr 对象构造了一个可用的 weak_ptr 实例对象
         weak_ptr<int> wp4;
-        wp4 = sp;                  //通过一个 shared_ptr 对象构造了一个可用的 weak_ptr 实例对象（这是一个隐式类型转换）
+        wp4 = sp;                  // shared_ptr 对象构造了一个可用的 weak_ptr 实例对象（这是一个隐式类型转换）
         weak_ptr<int> wp5;
-        wp5 = wp3;                 //通过一个 weak_ptr 对象构造了一个可用的 weak_ptr 实例对象
+        wp5 = wp3;                 // weak_ptr 对象构造了一个可用的 weak_ptr 实例对象
     }
 
     {
-        //常用方法
-        //use_count()
-        //通过调用 std::weak_ptr 类提供的 use_count() 方法可以获得当前所观测资源的引用计数。
+        // 使用
+        // std::weak_ptr 一些内置方法
+        // use_count()       返回与之共享对象的shared_ptr的数量
+        // expired()         检查所指对象是否已经被释放
+        // lock()            返回一个指向共享对象的shared_ptr，若对象不存在则返回空shared_ptr
+        // owner_before()    提供所有者基于的弱指针的排序
+        // reset()           释放所指对象
+        // swap()            交换两个weak_ptr对象
 
-        //expired()
-        //判断观测的资源是否已经被释放。
-
-        // 返回true表示资源已经被释放, 返回false表示资源没有被释放
-        //bool expired() const noexcept;
-        //lock()
-        //通过调用 std::weak_ptr 类提供的 lock() 方法来获取管理所监测资源的 shared_ptr 对象，函数原型如下：
-        //shared_ptr<element_type> lock() const noexcept;
-
-        shared_ptr<int> sp1, sp2;
-        weak_ptr<int> wp;
-
+        shared_ptr<int> sp1, sp2,sp3;
+        weak_ptr<int> wp,wp2,wp3;
         sp1 = std::make_shared<int>(520);
         wp = sp1;
 
-        //通过调用 lock() 方法,得到一个用于管理 weak_ptr 对象所监测的资源的 共享智能指针对象,
-        //使用这个对象初始化 sp2，此时所监测资源的引用计数为 2
-        sp2 = wp.lock();
-        cout << "use_count: " << wp.use_count() << endl; //2
-
-        sp1.reset(); //共享智能指针 sp1 被重置，weak_ptr 对象所监测的资源的引用计数减 1
-        cout << "use_count: " << wp.use_count() << endl; //1
-
-        //sp1 重新被初始化，并且管理的还是 weak_ptr 对象所监测的资源，因此引用计数加 1
-        sp1 = wp.lock();
-        cout << "use_count: " << wp.use_count() << endl; //2
-
-        //共享智能指针对象 sp1 和 sp2 管理的是同一块内存，因此最终打印的内存中的结果是相同的，都是 520
-        cout << "*sp1: " << *sp1 << endl; //520
-        cout << "*sp2: " << *sp2 << endl; //520
-
-
-        //reset()
-        //清空对象，使其不监测任何资源。
-        //返回管理 this 的 shared_ptr
-        //如果在一个类中编写了一个函数，通过这个函数，得到管理当前对象的共享智能指针，我们可能会写出如下代码：
-
-        struct Test
-        {
-            shared_ptr<Test> getSharedPtr()
-            {
-                return shared_ptr<Test>(this);
-            }
-
-            ~Test()
-            {
-                cout << "class Test is disstruct ..." << endl;
-            }
-
-        };
-
-        {
-            shared_ptr<Test> sp1(new Test);
-            cout << "use_count: " << sp1.use_count() << endl;
-            shared_ptr<Test> sp2 = sp1->getSharedPtr();
-            cout << "use_count: " << sp1.use_count() << endl;
-        }
-        //use_count: 1
-        //use_count : 1
-        //class Test is disstruct ...
-        //class Test is disstruct ...
-
-
-        //通过输出的结果可以看到一个对象被析构了两次，其原因是这样的：在这个例子中使用同一个指针 this 构造了两个智能指针对象 sp1 和 sp2，
-        //这二者之间是没有任何关系的，因为 sp2 并不是通过 sp1 初始化得到的实例对象，在离开作用域之后 this 将被构造的两个智能指针各自析构，导致重复析构的错误。
-
-
-
-        //这个问题可以通过 weak_ptr 来解决，通过 wek_ptr 返回管理 this 资源的共享智能指针对象 shared_ptr。
-        //C++11 中为我们提供了一个模板类叫做 std::enable_shared_from_this<T>，这个类中有一个方法叫做 shared_from_this()，
-        //通过这个方法可以返回一个共享智能指针，在函数的内部就是使用 weak_ptr 来监测 this 对象，并通过调用 weak_ptr 的 lock() 方法返回一个 shared_ptr 对象。
-        {
-            struct Test : public enable_shared_from_this<Test>
-            {
-                shared_ptr<Test> getSharedPtr()
-                {
-                    return shared_from_this();
-                }
-                ~Test()
-                {
-                    cout << "class Test is disstruct ..." << endl;
-                }
-            };
-
-            shared_ptr<Test> sp1(new Test);
-            cout << "use_count: " << sp1.use_count() << endl;
-            shared_ptr<Test> sp2 = sp1->getSharedPtr();
-            cout << "use_count: " << sp1.use_count() << endl;
-
-            //use_count: 1
-            //use_count: 2
-            //class Test is disstruct ...
-            //最后需要强调一个细节：在调用 enable_shared_from_this 类的 shared_from_this() 方法之前，必须要先初始化函数内部 weak_ptr 对象，
-            //否则该函数无法返回一个有效的 shared_ptr 对象（具体处理方法可以参考上面的示例代码）。
-        }
-
-
-        //解决循环引用问题
-        //智能指针如果循环引用会导致内存泄露：
-
-        {
-            struct TA;
-            struct TB;
-
-            struct TA
-            {
-                shared_ptr<TB> bptr;
-                ~TA()
-                {
-                    cout << "class TA is disstruct ..." << endl;
-                }
-            };
-
-            struct TB
-            {
-                shared_ptr<TA> aptr;
-                ~TB()
-                {
-                    cout << "class TB is disstruct ..." << endl;
-                }
-            };
-
-            shared_ptr<TA> ap(new TA);
-            shared_ptr<TB> bp(new TB);
-            cout << "TA object use_count: " << ap.use_count() << endl;
-            cout << "TB object use_count: " << bp.use_count() << endl;
-
-            ap->bptr = bp;
-            bp->aptr = ap;
-            cout << "TA object use_count: " << ap.use_count() << endl;
-            cout << "TB object use_count: " << bp.use_count() << endl;
-
-
-            //TA object use_count : 1
-            //TB object use_count : 1
-            //TA object use_count : 2
-            //TB object use_count : 2
-        }
-
-        //在测试程序中，共享智能指针 ap、bp 对 TA、TB 实例对象的引用计数变为 2，在共享智能指针离开作用域之后引用计数只能减为1，这种情况下不会去删除智能指针管理的内存，
-        //导致类 TA、TB 的实例对象不能被析构，最终造成内存泄露。通过使用 weak_ptr 可以解决这个问题，只要将类 TA 或者 TB 的任意一个成员改为 weak_ptr：
-
-        {
-            struct TA;
-            struct TB;
-
-            struct TA
-            {
-                weak_ptr<TB> bptr;
-                ~TA()
-                {
-                    cout << "class TA is disstruct ..." << endl;
-                }
-            };
-
-            struct TB
-            {
-                shared_ptr<TA> aptr;
-                ~TB()
-                {
-                    cout << "class TB is disstruct ..." << endl;
-                }
-            };
-
-            shared_ptr<TA> ap(new TA);
-            shared_ptr<TB> bp(new TB);
-            cout << "TA object use_count: " << ap.use_count() << endl;
-            cout << "TB object use_count: " << bp.use_count() << endl;
-
-            ap->bptr = bp;
-            bp->aptr = ap;
-            cout << "TA object use_count: " << ap.use_count() << endl;
-            cout << "TB object use_count: " << bp.use_count() << endl;
-
-            //TA object use_count : 1
-            //TB object use_count : 1
-            //TA object use_count : 2
-            //TB object use_count : 1
-            //class TB is disstruct ...
-            //class TA is disstruct ...
-
-            //上面程序中，在对类 TA 成员赋值时 ap->bptr = bp; 由于 bptr 是 weak_ptr 类型，这个赋值操作并不会增加引用计数，所以 bp 的引用计数仍然为 1，在离开作用域之后 bp 的引用计数减为 0，类 TB 的实例对象被析构。
-            //在类 TB 的实例对象被析构的时候，内部的 aptr 也被析构，其对 TA 对象的管理解除，内存的引用计数减为 1，当共享智能指针 ap 离开作用域之后，对 TA 对象的管理也解除了，内存的引用计数减为 0，类 TA 的实例对象被析构。
-        }
+        cout << "use_count: " << wp.use_count() << endl; // 1 获得当前所观测资源的引用计数
+        cout << "expired: " << wp.expired() << endl;     // 0 判断观测的资源是否已经被释放  true/false资源已/没释放
+        sp2 = wp.lock();                                 // 获取所监测资源的 shared_ptr 对象
+        cout << "use_count: " << wp.use_count() << endl; // 2
+        cout << "*sp1: " << *sp1 << endl;                // 520   sp1 和 sp2 管理的是同一块内存
+        cout << "*sp2: " << *sp2 << endl;                // 520
+        sp1.reset();                                     // sp1重置 引用计数减 1
+        cout << "use_count: " << wp.use_count() << endl; // 1
+        wp.reset();                                      // 释放所指对象
+        cout << "use_count: " << wp.use_count() << endl; // 0
+        sp1.reset(new int(2));
+        wp2=sp2;
+        wp.swap(wp2);                                    // 交换两个weak_ptr对象
+        cout << "wp2: " << *(wp.lock()) << endl;         // 520
+        wp2=sp1;
+        cout << wp.lock() << " " << wp2.lock() << endl;  // 0x563ad73f9f00 0x563ad73fa4f0
+        cout << "owner_before: " << wp.owner_before(wp2) << endl;  // 1  提供所有者基于的弱指针的排序
+        // C++中的弱序：ptr和ptr1是不是同类型指针；ptr指针指向的地址小于ptr1指针指向的地址；满足这两条，就可以称“ptr<ptr1”。
+        // https://blog.csdn.net/weixin_45590473/article/details/113040456
     }
-
+    {
+        // 注意
+        // weak_ptr在使用前需要检查合法性 expired()
+        weak_ptr<int> wp;
+        {
+            shared_ptr<int> sp(new int(1)); //sp.use_count()==1
+            wp = sp; //wp不会改变引用计数，所以sp.use_count()==1
+            shared_ptr<int> sp_ok = wp.lock(); //wp没有重载->操作符。只能这样取所指向的对象
+        }
+        shared_ptr<int> sp_null = wp.lock(); //sp_null .use_count()==0;
+    }
 }
 
 
@@ -2792,5 +2623,123 @@ void test1_cpp11_2_tuple_pair()
     p2 = std::make_pair(1, 1.2);
     p2 = p1;                                      // 一个含有成员函数的结构体
     //pair可以使用typedef进行简化声明
+
+
+    // std::tie 将 tuple 解包为独立对象，或 能用于引入字典序比较到结构体。
+    // std::tie 返回含左值引用的 std::tuple 对象。
+    // std::tie 可用于解包 std::pair ，因为 std::tuple 拥有从 pair 的转换赋值
+    // std::ignore 任何值均可赋给而无效果的未指定类型的对象。目的是令 std::tie 在解包 std::tuple 时作为不使用的参数的占位符使用。
+    struct S {int n;std::string s;float d;
+    bool operator<(const S& rhs) const {
+        return std::tie(n, s, d) < std::tie(rhs.n, rhs.s, rhs.d);// 比较 n 与 rhs.n,然后为 s 与 rhs.s,然后为 d 与 rhs.d
+    }
+    };
+    S value{42, "Test", 3.14};
+    std::set<S> set_of_s;  // S 为可比较小于 (LessThanComparable)
+    std::set<S>::iterator iter;
+    bool inserted;
+    std::tie(iter, inserted) = set_of_s.insert(value);  // 解包 insert 的返回值为 iter 与 inserted
+    if (inserted) std::cout << "Value was inserted successfully\n";  // Value was inserted successfully
+    std::set<std::string> set_of_str;
+    inserted = false;
+    std::tie(std::ignore, inserted) = set_of_str.insert("Test");
+    if (inserted) std::cout << "Value was inserted successfully\n";  // Value was inserted successfully
 }
+
+
+
+#include <cstring>
+#include <cassert>
+void test1_cpp11_2_data()
+{
+    // 1 std:data
+    // https://en.cppreference.com/w/cpp/iterator/data
+    // 参数   含有data()的容器 或 an array of arbitrary type 或 an initializer list
+    // 返回值 一段内存   Returns c.data(). Returns array. Returns il.begin().
+    // 如下4个版本 C++17
+    // template<class C>  constexpr auto data(C& c) -> decltype(c.data()){return c.data();}
+    // template<class C>  constexpr auto data(const C& c) -> decltype(c.data()){return c.data();}
+    // template<class T, std::size_t N> constexpr T* data(T (&array)[N]) noexcept {return array;}
+    // template<class E> constexpr const E* data(std::initializer_list<E> il) noexcept {return il.begin();}
+    {
+    std::string s{"Hello world!\n"};
+    char a[20]; // storage for a C-style string
+    std::strcpy(a, std::data(s));  // #include <cstring>
+//  [s.data(), s.data() + s.size()] is guaranteed to be an NTBS since C++11
+    std::cout << a;  // Hello world!
+    }
+}
+
+void test1_cpp11_2_size()
+{
+    // 2 std::size
+    // https://en.cppreference.com/w/cpp/iterator/size
+    // 参数   含有size()的容器 或 an array of arbitrary type
+    // 返回值 Returns c.size() 或 Returns N.
+    // 如下4个版本 C++17 C++20
+    // template<class C> constexpr auto size(const C& c) -> decltype(c.size()){return c.size();}
+    // template<class C> constexpr auto ssize(const C& c) -> std::common_type_t<std::ptrdiff_t,std::make_signed_t<decltype(c.size())>>
+    //  { using R = std::common_type_t<std::ptrdiff_t,std::make_signed_t<decltype(c.size())>>;return static_cast<R>(c.size());}
+    // template<class T, std::size_t N> constexpr std::size_t size(const T (&array)[N]) noexcept {return N;}
+    // template<class T, std::ptrdiff_t N> constexpr std::ptrdiff_t ssize(const T (&array)[N]) noexcept {return N;}
+
+    {
+    // Works with containers
+    std::vector<int> v{3, 1, 4};
+    assert(std::size(v) == 3); // #include <cassert>
+
+    // And works with built-in arrays too
+    int a[]{-5, 10, 15};
+    // Returns the number of elements (not bytes) as opposed to sizeof
+    assert(std::size(a) == 3);
+    std::cout << "size of a[]: " << sizeof a << '\n'; // 12, if sizeof(int) == 4
+
+    // Provides a safe way (compared to sizeof) of getting string buffer size
+    const char str[] = "12345";
+    // These are fine and give the correct result
+    assert(std::size(str) == 6);
+    assert(sizeof(str) == 6);
+
+    // But use of sizeof here is a common source of bugs
+    const char* str_decayed = "12345";
+    // std::cout << std::size(str_decayed) << '\n'; // Usefully fails to compile
+    std::cout << sizeof(str_decayed) << '\n'; // 8   Prints the size of the pointer!
+
+    // Since C++20 the signed size (std::ssize) is available
+    // auto i = std::ssize(v);
+    // for (--i; i != -1; --i)
+    //     std::cout << v[i] << (i ? ' ' : '\n');
+    // assert(i == -1);
+    }
+}
+
+void isnull(void *c){std::cout << "void*c" << std::endl;}
+void isnull(int n){  std::cout << "int n" << std::endl;}
+void test1_cpp11_2_null_ptr()
+{
+    // std::nullptr
+    // 三种方法来获取一个 空指针
+    int *pa1 = NULL; // 需要引入cstdlib头文件
+    int *pa2 = 0;
+    int *pa3 = nullptr;
+
+    // #define NULL ((void *)0)  在C中的定义 实质上是一个void *指针
+    // #define NULL 0            在C++中的定义 被明确定义为整数0  之所以不同于C，根本原因和C++的函数重载机制有关。
+    // void Func(char *);
+    // void Func(int);
+    // Func(NULL);               如果C++让NULL也支持void *的隐式类型转换，这样编译器就不知道应该调用哪一个函数。
+    // 但是又引入了另一个问题 从程员的角度，Func(NULL)应该调用的是Func(char *)但实际上NULL的值是0，所以调用了Func(int)。
+    // nullptr关键字真是为了解决这个问题而引入的，是std::nullptr_t类型的(constexpr)变量。
+    // 它可以转换成任何指针类型和bool布尔类型，主要是为了兼容普通指针可以作为条件判断语句的写法，但是不能被转换为整数。
+    char *pb1 = nullptr;  // 正确   编译器分别将 nullptr 隐式转换成 char*
+    int  *pb2 = nullptr;  // 正确   编译器分别将 nullptr 隐式转换成 int*
+    // bool b = nullptr;  // converting to ‘bool’ from ‘std::nullptr_t’ requires direct-initialization [-fpermissive]
+    if(nullptr) ;     // 正确
+    // int a = nullptr;     // error   cannot convert ‘std::nullptr_t’ to ‘int’
+
+    // isnull(NULL);    // int n     //  error: call of overloaded ‘isnull(NULL)’ is ambiguous
+    isnull(nullptr); // void*c
+}
+
+
 

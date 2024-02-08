@@ -10,6 +10,7 @@
 
 
 // 用户态使用 glibc/backtrace 追踪函数调用堆栈定位段错误
+// https://kernel.blog.csdn.net/article/details/84189280
 // #include <execinfo.h>
 
 //  Store up to SIZE return address of the current program state in

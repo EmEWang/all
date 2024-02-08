@@ -3,16 +3,22 @@ https://code.visualstudio.com/          官网
 https://code.visualstudio.com/updates   官方历史版本以及更新记录
 
 https://geek-docs.com/vscode/vscode-tutorials/introduction-to-vscode.html#ftoc-heading-1  部分技巧
+https://zhuanlan.zhihu.com/p/654567416  配置更优体验的C++环境
 
-file->close remote connection                    # 关闭远程连接
-file->open folder(只能是打开文件夹)->show local    # 打开即可切换到本地
-file->preferences->settings->search trim->Trim Trailing Whitespace  # trim行尾空格
-file->preferences->settings->search renderControlCharacters,勾选框  # 显示tab为箭头
-file->preferences->settings->search renderWhitespace,选择all        # 显示空格为点
-file->preferences->settings->search explorer.autoReveal             # 设置文件目录的自动定位跟踪功能
-file->preferences->settings->search Enable Preview,去勾Workbench>Editor:Enable Preview # 打开新文件窗口，不覆盖前一个窗口
-  或者 工作区右上 ... 去勾 Enable Preview Editors
+
 右下角状态栏 UTF-8(Select Encoding)->Save with Encoding   # 改变编码
+file->close remote connection                    # 关闭远程连接
+file->open folder->show local                    # 打开即可切换到本地 只能是打开文件夹
+file->preferences->settings == 左下角齿轮->settings
+settings->search trim->Trim Trailing Whitespace  # trim行尾空格
+settings->search renderControlCharacters         # 显示tab为箭头
+settings->search renderWhitespace->all           # 显示空格为点
+settings->search explorer.autoReveal->true       # 设置文件目录的自动定位跟踪功能
+settings->search Enable Preview->Workbench>Editor:Enable Preview # 打开新文件是否覆盖当前窗口 或 工作区右上->...->Enable Preview Editors
+settings->search update->Update:Mode             # VScode升级设置 none不自动更新 manual手动更新 default自动更新
+                         Update:Enable Windows Background Updates  # 后台自动下载安装
+                         Extensions: Auto Update # VSCode是否自动检测升级插件 或 左侧插件栏->右上角...->Disable Auto Updating Extensions
+
 
 搭配c/c++环境出现“#include errors detected. Please update your includePath...”问题的解决 引用头文件飘红
   1 gcc -v -E -x c++ -  # 检测c++环境 详见gcc

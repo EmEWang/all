@@ -6,6 +6,213 @@ Graphviz介绍
 它提供了dot语言来编写绘图脚本。
 
 
+https://zhuanlan.zhihu.com/p/669988948  # 由浅入深探讨Linux进程间通信 1
+https://zhuanlan.zhihu.com/p/670634082  # 由浅入深探讨Linux进程间通信 2
+https://zhuanlan.zhihu.com/p/671402695  # 由浅入深探讨Linux进程间通信 3
+https://zhuanlan.zhihu.com/p/671006475  # 超详细的linux进程间通信及其优缺点
+
+
+
+
+Time
+                      内核
+    gettimeofday ↙     |      ↘ clock_gettime
+          tv_sec       ↓      tv_sec
+  timval  ---->    time_t   <----   timespec
+                   日历时间
+             gettime | |  ↑ mktime
+                     ↓ |  |
+             localtime ↓  |
+                    struct tm
+                    分解时间
+            strptime ↙    ↖ strftime/strftime_l
+            字符串           格式化字符串
+
+
+
+
+Linux内核调度
+https://mp.weixin.qq.com/s?__biz=MzkyNDIyNzU4Mg==&mid=2247484426&idx=1&sn=1874e9b0bd13082a160a7d23032d1f9f&chksm=c1d8469bf6afcf8db197c01cce1474ad53aafb2647dbbcc3a2771bd10ab8ca6a5197885e2ed4&cur_album_id=3175944346809679874&scene=189#wechat_redirect
+进程调度是操作系统内核中的一个重要组成部分，它负责决定哪个进程可以在CPU上运行。
+进程调度的目标是合理分配CPU资源，提高系统的整体运行效率和响应能力。
+进程调度系统主要由：调度类，调度策略，调度实体，调度器，CPU运行队列组成。
+
+struct task_struct {
+...
+const struct sched_class *sched_class;    // 调度类             1
+struct sched_entity se;                   // 完全公平调度实体    3
+struct sched_rt_entity rt;                // 实时调度实体
+struct sched_dl_entity dl;                // 截止调度实体
+unsigned int policy;                      // 调度策略           2
+};
+
+1 调度类
+内核定义的5种调度类(优先级由高到低)
+stop_sched_class            # 停止调度类 最高优先级
+dl_sched_class              # 截至调度类
+rt_sched_class              # 实时调度类
+fair_sched_class            # 完全公平调度类
+idle_sched_class            # 空闲类 最低优先级
+
+2 度策略
+#define SCHED_OTHER    0
+#define SCHED_FIFO     1
+#define SCHED_RR       2
+#ifdef __USE_GNU
+#define SCHED_BATCH    3
+#define SCHED_ISO      4
+#define SCHED_IDLE     5
+#define SCHED_DEADLINE 6
+
+#define SCHED RESET ON FORK  0x40000000
+
+3 调度实体
+进程调度实体是操作系统中负责进行进程调度的组件或对象。
+它通常是一个数据结构，用于存储进程的相关信息，包括进程的标识符、状态、优先级以及其他调度所需的属性。
+
+4 调度器
+Linux进程调度通过主调度器和周期性调度器发起。
+主调度器：schedule()
+周期性调度器：schedule_tick()
+
+5 CPU运行队列
+Linux为每个CPU分配一个运行队列。
+struct rq {
+...
+struct cfs_rq       cfs;
+struct rt_rq        rt;
+struct dl_rq        dl;
+}；
+
+ 100-139    调度类               调度实体  内核数据结构  rq运行队列     CPU
+普通进程 -> fair_sched_class ->    se ->     RBTree ->  cfs        -> cpu
+           SCHED_OTHER(调度策略)       struct rb_root_cached tasks_timeline
+           SCHED_BATCH                完全公平运行队列 采用红黑树存储调度实体
+           SCHED_IDLE
+ 0-99
+实时进程 -> rt_sched_class   ->    rt ->     Queue  ->  rt         -> cpu
+           SCHED_FIFO                 struct list_head queue[100]
+           SCHED_RR                   实时运行队列 0-99每个优先级对应一个队列
+
+实时进程 -> dl_sched_class   ->    dl ->     RBTree ->  dl         -> cpu
+                                       struct rb_root_cached root
+                                       截止运行队列 采用红黑树存储调度实体
+
+
+进程优先级  maketest/testlinux1/sched.c
+https://mp.weixin.qq.com/s?__biz=MzkyNDIyNzU4Mg==&mid=2247484435&idx=1&sn=b6f30489cf388f1024d6883abb8237c8&chksm=c1d84682f6afcf94c1af14678d5401d558d2b728f0e6c853dbe4efe02c12dfa147369ceee13f&cur_album_id=3175944346809679874&scene=189#wechat_redirect
+分为实时优先级和普通优先级
+实时优先级用于实时应用程序，如硬实时任务和实时控制系统，而普通优先级用于非实时应用程序。
+0                  99 100   -nice   120   nice   139
+实时进程     0-99     采用实时调度算法调度
+普通进程   100-139    采用完全公平调度算法调度
+nice值               用于调整普通进程优先级的参数。范围：-20-19。
+静态优先级 100-139
+动态优先级   0-139
+
+task_struct优先级
+task_struct {
+...
+int             prio;        # 动态优先级 有效优先级，调度器最终使用的优先级数值，0-139，值越小，优先级越高。
+int             static_prio; # 静态优先级 采用SCHED_NORMAL和SCHED_BATCH调度策略的进程(普通进程)用于计算动态优先级的，100-139。
+                               prio = static_prio = nice + DEFAULT_PRIO = nice + 120。
+int             normal_prio; # 归一化优先级 用于计算prio的中间变量，不需要太关心。
+unsigned int    rt_priority; # 实时优先级 采用SCHED_FIFO和SCHED_RR调度策略进程(实时进程)用于计算动态优先级，范围0-99。
+                               prio = MAX_RT_PRIO - 1 - rt_prio = 100 - 1 - rt_priority;
+                               实时优先级数值越大，得到的动态优先级数值越小，优先级越高。
+};
+
+查看进程优先级
+ps -elf       # PRI:进程优先级，数值越小，优先级越高。（并非动态优先级）  NI:nice值。
+cat /proc/PID/sched  # policy:调度策略  prio:动态优先级
+
+修改进程优先级
+int nice(int inc); # 设置进程的nice值
+  输入：输入参数inc时，inc会以加的形式设置优先级，如：原优先级为1，而inc为2，则优先级为3；若inc为-1，则优先级为0
+  输出：成功设置输出inc的值，错误返回-1
+  进程调度优先级为，nice的取值范围是0~（2*NZERO）-1
+  #if defined(NZERO)           // 一般头文件会定义：优先级的最大值NZERO;
+	  nzero = NZERO;
+  #elif defined(_SC_NZERO)     // 如果没有可以通过这个函数得到：sysconf(_SC_NZERO);
+    nzero = sysconf(_SC_NZERO);
+  #else
+    #error NZERO undefined
+  #endif
+int setpriority(int which, id_t who, int prio);  # 设置进程nice值
+  which # 指定要修改nice值的对象，可以是以下值之一：
+    PRIO_PROCESS：用于修改指定进程的优先级。
+    PRIO_PGRP：用于修改指定进程组的优先级。
+    PRIO_USER：用于修改指定用户的所有进程的优先级。
+  who # 指定被修改优先级的对象的标识符。
+    如果which为PRIO_PROCESS，则who为目标进程的进程ID（PID）。
+    如果which为PRIO_PGRP，则who为目标进程组的进程组ID（PGID）。
+    如果which为PRIO_USER，则who为目标用户的用户ID（UID）。
+  prio # 新的nice值，范围通常为-20到19之间。
+  返回值 # 成功：返回0。失败：返回-1，并设置errno。
+int getpriority(int which, id_t who);            # 获取进程nice值
+  which：指定要获取nice值的对象，可以是以下值之一：
+    PRIO_PROCESS：用于修改指定进程的优先级。
+    PRIO_PGRP：用于修改指定进程组的优先级。
+    PRIO_USER：用于修改指定用户的所有进程的优先级。
+  who：指定获取nice值的对象的标识符。
+    如果which为PRIO_PROCESS，则who为目标进程的进程ID（PID）。
+    如果which为PRIO_PGRP，则who为目标进程组的进程组ID（PGID）。
+    如果which为PRIO_USER，则who为目标用户的用户ID（UID）。
+  返回值 # 成功：返回nice值。失败：返回-1，并设置errno。
+int sched_setscheduler(pid_t pid, int policy, const struct sched_param *param); # 设置进程调度策略和优先级的系统调用
+  pid：进程ID，0表示当前进程。
+  policy：表示要设置的调度策略，常用的调度策略有以下几种选项：
+    SCHED_OTHER：普通进程调度策略。
+    SCHED_FIFO：先进先出调度策略。
+    SCHED_RR：轮转调度策略。
+  param：是一个指向sched_param结构的指针，用于指定优先级参数。
+  struct sched_param {
+                 ...
+                 int sched_priority;
+   };
+  返回值： 成功：返回0。失败：返回-1，并设置errno。
+  sched_setscheduler使用注意事项：
+  进程类型    策略                       sched_priority  解析
+  实时进程   SCHED_FIFO/SCHED_RR               1-99      sched_priority为进程实时优先级,实时优先级转换动态优先级参考进程优先级原理。
+  非实时进程 SCHED_OTHER/SCHED_BACH/SCHED_IDLE  0        sched_priority必须设置为0,否则调用失败,sched_priority无效。此时只能用来修改调度策略。
+int sched_getscheduler(pid_t pid);   # 用于获取指定进程的调度策略。
+  pid：进程id，0表示当前进程。
+  返回值：成功：返回调度策略：SCHED_OTHER SCHED_FIFO SCHED_RR SCHED_BATCH SCHED_IDLE   失败：返回-1，并设置errno。
+int sched_setparam(pid_t pid, const struct sched_param *param);  # 用于设置进程实时优先级，该函数不能设置调度策略。
+  pid：进程id，0表示当前进程。
+  param：参数sched_setscheduler函数。
+  返回值：成功：返回0。 失败：返回-1，并设置errno。
+int sched_getparam(pid_t pid, struct sched_param *param);  # 用于获取指定进程的实时优先级。
+  pid：进程id，0表示当前进程。
+  param：参数sched_setscheduler函数。
+  返回值： 成功：返回0。 失败：返回-1，并设置errno。
+
+
+绑定指定线程在某个固定CPU上  maketest/testlinux1/sched.c
+绑定的方法主要是靠 setaffinity / getaffinity 一组方法来做的，其中有
+#define _GNU_SOURCE
+#include <sched.h>
+int sched_setaffinity(pid_t pid, size_t cpusetsize, const cpu_set_t *mask);
+int sched_getaffinity(pid_t pid, size_t cpusetsize, const cpu_set_t *mask);
+
+#define _GNU_SOURCE
+#include <pthread.h>
+int pthread_setaffinity_np(pthread_t thread, size_t cpusetsize, const cpu_set_t *cpuset);
+int pthread_getaffinity_np(pthread_t thread, size_t cpusetsize, const cpu_set_t *cpuset);
+
+其中的 CPU_SET 可以直接看 manual，但是我把它的一些使用放在下面：
+#define _GNU_SOURCE
+#include <sched.h>
+void CPU_ZERO(cpu_set_t *set);                  // 清空 cpu_set
+void CPU_SET(int cpu, cpu_set_t *set);          // 加入 \cpu 到 cpu_set
+void CPU_CLR(int cpu, cpu_set_t *set);          // 删除 \cpu 从 cpu_set 中
+int  CPU_ISSET(int cpu, cpu_set_t *set);        // 尝试 \cpu 是否在 cpu_set 中
+int  CPU_COUNT(cpu_set_t *set);                 // 将 cpu_set 中设置的 cpu 数量返回
+
+
+
+
+
 
 
 isBigEndian(){ //大端判断

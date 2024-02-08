@@ -1,5 +1,27 @@
 
 
+https://oraclechang.files.wordpress.com/2013/05/c11-a-cheat-sheete28094alex-sinyakov.pdf # C++11对比C++03
+https://www.stroustrup.com/C++11FAQ.html                                                 # C++11
+https://www.cnblogs.com/shadow-lr/p/Introduce_Std-move.html  # 一文带你详细介绍c++中的std::move函数
+https://zhuanlan.zhihu.com/p/581739392                       # 从示例到源码深入了解std::ref
+
+
+
+后置返回类型
+https://www.imlb6.com/cpp11-trailing-return-type/
+double foo(int i);           # 声明函数时，都是把返回值类型写在前面
+auto foo(int i) -> double;   # 引入了一种新的函数声明语法，可以将返回值类型后置
+template <typename T1, typename T2>
+decltype(a + b) sum(T1 a, T2 b){return a + b;}          # 编译器会报错  为什么不能这样写?
+原因是编译器在尝试对decltype(a + b)进行推导时，a和b还未声明，尽管它们就在后面，你可以理解为编译器只能从左到右进行处理。
+auto sum(T1 a, T2 b) -> decltype(a + b){return a + b;}  # 引入一种新的语法，将返回值后置的主要原因。
+
+int& foo(int& i);                                             # 返回类型后置和decltype结合还经常用在转发函数中。
+float foo(float& f);
+template <typename T>
+auto forward(T& val) -> decltype(foo(val)){return foo(val);}  # 这种统一的转发函数在 C++11 之前是无法实现的。
+
+
 
 
 Everything about Rvalue Reference

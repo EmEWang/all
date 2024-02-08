@@ -4,6 +4,8 @@ https://zz123.com/                                # 好歌网
 https://tonzhon.com/                              # 铜钟网
 https://www.zhihu.com                             # 知乎
 
+https://claude.ai/login?returnTo=%2F              # ai
+
 https://stackoverflow.com/                        # 查错经典网站
 https://github.com/                               # github
 https://github.dev/github/dev                     # 笔记
@@ -21,6 +23,8 @@ https://book.itheima.net/course/223               # 黑马教程
 https://www.nowcoder.com/                         # 牛客网
 https://www.junmajinlong.com/categories/          # 骏马金龙
 
+https://share.pkemb.com/books                     # pkemb共享网盘 book
+https://chartcube.alipay.com/upload               # ChartCube - 在线图表制作工具
 
 https://www.coursera.org/                         # Coursera | Degrees, Certificates, & Free Online Courses
 https://ocw.mit.edu/                              # MIT OpenCourseWare | Free Online Course Materials
@@ -29,7 +33,7 @@ https://www.icourse163.org/                       # 中国大学MOOC(慕课)_国
 
 https://www.zhihu.com/question/398193048/answer/1266121538   # 有哪些网站，一旦知道，你就离不开了
 
-https://blog.csdn.net/wzh1378008099/article/details/105977731/?ops_request_misc=&request_id=&biz_id=102&utm_term=ACM%E4%BB%8B%E7%BB%8D&utm_medium=distribute.pc_search_result.none-task-blog-2~blog~sobaiduweb~default-9-105977731.pc_v2_rank_blog_default&spm=1018.2226.3001.4450 # ACM各OJ网站简介
+https://blog.csdn.net/wzh1378008099/article/details/105977731 # ACM各OJ网站简介
 
 http://www.cenicloud.com/view                     # 央企融通资讯动态
 

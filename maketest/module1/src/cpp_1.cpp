@@ -114,140 +114,104 @@ void test1_cpp_1_float_int()
 
 
 
-void test1_cpp_1_hash_simple()
+
+
+class MyInt_t{
+public:
+    explicit MyInt_t(int val) :m_t(val) {}
+    ~MyInt_t(){
+        std::cout << m_t << '\n';
+    }
+private:
+    int m_t;
+};
+void funcCopy(MyInt_t t) {}
+void funcPtr(MyInt_t* t) {}
+void funcRef(MyInt_t& t) {}
+void funcUniqPtr(std::unique_ptr<MyInt_t>t) {}
+void funcSharedPtr(std::shared_ptr<MyInt_t>t){}
+void test1_cpp_1_paramowner()
 {
-#ifdef __linux__
-    __gnu_cxx::hash_map<int, std::string> hsm;
-    __gnu_cxx::hash_set<int> hss;
-#else
-    stdex::hash_map<int, std::string> hsm;
-    stdex::hash_set<int> hss;
-#endif
+    // func(value)              func 是资源所有者          F.16
+    // func(pointer*)           func 借用了资源            I.11 和 F.7
+    // func(reference&)         func 借用了资源            I.11 和 F.7
+    // func(std::unique_ptr)    func 是资源的独占所有者     F.26
+    // func(std::shared_ptr)    func 是资源的共享所有者     F.27
+    //   func(value):          函数 func 自己有一份 value 的拷贝并且就是其所有者。func 会自动释放该资源。
+    //   func(pointer*):       func 借用了资源，所以无权删除该资源。func 在每次使用前都必须检查该指针是否为空指针。
+    //   func(reference&):     func 借用了资源。与指针不同，引用的值总是合法的。
+    //   func(std::unique_ptr):func 是资源的新所有者。func 的调用方显式地把资源的所有权传给了被调用方。func 会自动释放该资源。
+    //   func(std::shared_ptr):func 是资源的额外所有者。func 会延长资源的生存期。在 func 结束时，它也会结束对资源的所有权。如果 func 是资源的最后一个所有者，那么它的结束会导致资源的释放。
+    // 传统 C++ 编写的，只能使用原始指针来表达指针、引用、std::unique_ptr 或 std::shared_ptr 这四种传参方式的所有权语义。
+    // 下面的代码说明了我的观点：
+    //   void func(double* ptr){  ...}
+    //   double* ptr = new double[5];
+    //   func(ptr);
+    // 1 传统 C++ 的关键问题是，谁是所有者？是使用该数组的 func 中的被调用方，还是创建该数组的 func 的调用方？并不明确
+    // 2 所以在应用层面使用 std::move 的意图并不在于移动，而是所有权的转移。
+    //   举例来说，若对 std::unique_ptr 应用 std::move，会将内存的所有权转移到另一个 std::unique_ptr。
+    //   智能指针 uniquePtr1 是原来的所有者，而 uniquePtr2 将成为新的所有者。
+    //   auto uniquePtr1 = std::make_unique<int>(2011);
+    //   std::unique_ptr<int> uniquePtr2{ std::move(uniquePtr1) };
+    std::cout << "--- test1_cpp_1_paramowner Begin" << '\n';
 
-    // 或者使用 hash_multimap
-    hsm[1] = "a";
-    hsm[2] = "ab";
-    hsm[3] = "abc";
-    hsm[4] = "abcd";
-    printf("hsm size %lu buck %lu\n", hsm.size(), hsm.bucket_count()); // hsm size 4 buck 193
+    MyInt_t myInt{ 2000 };
+    MyInt_t* myIntPtr = &myInt;
+    MyInt_t& myIntRef = myInt;
+    auto uniqPtr = std::make_unique<MyInt_t>(2011);
+    auto sharedPtr = std::make_shared<MyInt_t>(2014);
 
-    // 或者使用 hash_multiset
-    hss.insert(1);
-    hss.insert(2);
-    hss.insert(3);
-    hss.insert(4);
-    printf("hss size %lu buck %lu\n", hss.size(), hss.bucket_count()); // hss size 4 buck 193
+    funcCopy(myInt);
+    funcPtr(myIntPtr);
+    funcRef(myIntRef);
+    funcUniqPtr(std::move(uniqPtr));
+    funcSharedPtr(sharedPtr);
 
-    std::unordered_map<int, std::string> uom;
-    uom[1] = "a";
-    uom[2] = "ab";
-    uom[3] = "abc";
-    uom[4] = "abcd";
-    printf("uom size %lu buck %lu\n", uom.size(), uom.bucket_count()); // uom size 4 buck 13
+    std::cout << "--- test1_cpp_1_paramowner End" << '\n';
+// --- test1_cpp_1_paramowner Begin
+// 2000
+// 2011
+// --- test1_cpp_1_paramowner End
+// 2014
+// 2000
 
-    std::unordered_set<int> uos;
-    uos.insert(1);
-    uos.insert(2);
-    uos.insert(3);
-    uos.insert(4);
-    printf("uos size %lu buck %lu\n", uos.size(), uos.bucket_count()); // uos size 4 buck 13
+// 运行结果显示，有两个析构函数在 main 函数结束之前被调用，还有两个析构函数在 main 函数结束的地方被调用。
+// 在 main 函数结束之前析构的是 被拷贝到函数中（funcCopy(myInt)），以及被移动到函数中 （funcUniqPtr(std::move(uniqPtr))）。
+// 拷贝拷贝了一份新的 MyInt 到函数 func 中，func 结束的时候，自然进行析构，打印 1998。
+// 移动转移了智能指针资源的所有权，所以在 func 结束的时候，RAII 释放了内存，打印 2011。
+// shared_ptr 对象的资源并没有转移，它是共享的，有两个对象共享资源，分别是 main 函数局部的，以及 func 函数中的，
+//  所以当 func 结束的时候，只是引用计数减一，不会释放资源。只能等到 main 函数也结束的时候才会析构，释放内存，打印 2014 。
+// MyInt myInt 析构，打印 1998。其实你可以注意到，打印了两次 1998，因为第一次析构的是复制到函数中的。
 }
 
 
-struct st_key1_cpp_1{
-    int i;
-    int j;
-    st_key1_cpp_1():i(0),j(0){}
-    st_key1_cpp_1(int a, int b):i(a),j(b){}
+class g_cls{
+public:
+    static int m_s_i;
 };
-struct hash1_cpp_1{
-    size_t operator () (const st_key1_cpp_1 &t) const {return size_t(t.i);}
-};
-struct equal1_cpp_1{
-    bool operator () (const st_key1_cpp_1 &t1, const st_key1_cpp_1 &t2) const {return t1.i == t2.i;}
-};
-void test1_cpp_1_hash_selfdef()
+int g_cls::m_s_i = 1;
+int g_i_a = 1;
+static int gs_i_a = 11;
+void test1_cpp_1_static()
 {
-#ifdef __linux__
-    typedef __gnu_cxx::hash_map<st_key1_cpp_1, std::string, hash1_cpp_1, equal1_cpp_1> myhsm;
-    typedef __gnu_cxx::hash_set<st_key1_cpp_1, hash1_cpp_1, equal1_cpp_1> myhss;
-#else
-    typedef stdext::hash_map<st_key1_cpp_1, std::string, hash1_cpp_1, equal1_cpp_1> myhsm;
-    typedef stdext::hash_set<st_key1_cpp_1, hash1_cpp_1, equal1_cpp_1> myhss;
-#endif
+    static int ls_i_a;
+    int l_i_a;
+    static int ls_i_10[10];
+    int l_i_10[10];
 
-    // 或者使用 hash_multimap
-    myhsm hsm;
-    hsm[st_key1_cpp_1(1,2)] = "a";
-    hsm[st_key1_cpp_1(2,2)] = "b";
-    // hsm.insert(make_pair(st_key1_cpp_1(1,2), "a")); // hash_multimap
-    // hsm.insert(make_pair(st_key1_cpp_1(2,2), "b")); // hash_multimap
-    // hsm.insert(make_pair(st_key1_cpp_1(2,2), "c")); // hash_multimap
-    printf("hsm size %lu buck %lu\n", hsm.size(), hsm.bucket_count());      // hsm size 2 buck 193
-    printf("hsm find %s\n", hsm.find(st_key1_cpp_1(2,2))->second.c_str());  // hsm find b
+    char aa[111];
+    int bb[111];
+    printf("aa=%ld bb=%ld\n", sizeof(aa), sizeof(bb) ); // 111 444
 
-    // 或者使用 hash_multiset
-    myhss hss;
-    hss.insert(st_key1_cpp_1(1,2));
-    hss.insert(st_key1_cpp_1(2,2));
-    printf("hss size %lu buck %lu\n", hss.size(), hss.bucket_count());      // hss size 2 buck 193
-
-    typedef std::unordered_map<st_key1_cpp_1, std::string, hash1_cpp_1, equal1_cpp_1> myuom;
-    myuom uom;
-    uom[st_key1_cpp_1(1,2)] = "a";
-    uom[st_key1_cpp_1(2,2)] = "b";
-    uom[st_key1_cpp_1(2,2)] = "c";
-    printf("uom size %lu buck %lu\n", uom.size(), uom.bucket_count());      // uom size 2 buck 13
-
-    typedef std::unordered_set<st_key1_cpp_1, hash1_cpp_1, equal1_cpp_1> myuos;
-    myuos uos;
-    uos.insert(st_key1_cpp_1(1,2));
-    uos.insert(st_key1_cpp_1(2,2));
-    printf("uos size %lu buck %lu\n", uos.size(), uos.bucket_count());      // uos size 2 buck 13
+    printf("ls_i_a=%d l_i_a=%d\n", ls_i_a, l_i_a );  // 0  随机数
+    printf("g_i:%p gs_i:%p ls_i:%p l_i:%p g_cls:%p\n", &g_i_a, &gs_i_a, &ls_i_a, &l_i_a, &(g_cls::m_s_i));
+    printf("ls_i_10:%p l_i_10:%p\n", ls_i_10, l_i_10);
+// g_i:0x55a36dbd702c gs_i:0x55a36dbd7030 ls_i:0x55a36dbd7034 l_i:0x7ffd85b26b2c g_cls:0x55a36dbd7028
+// ls_i_10:0x55a36dbd78a0 l_i_10:0x7ffd85b26b30
 }
 
-
-struct hash2_cpp_1{
-    // size_t operator () (const std::string &t) const {return t.size();}
-    size_t operator () (const std::string &t) const {return __gnu_cxx::__stl_hash_string(t.c_str());} // 利用系统定义的字符串hash函数
-};
-struct equal2cpp_1{
-    bool operator () (const std::string &t1, const std::string &t2) const {return t1 == t2;}
-};
-void test1_cpp_1_hash_selfdef2()
+void test1_cpp_1_memory()
 {
-#ifdef __linux__
-    __gnu_cxx::hash_map<std::string, std::string, hash2_cpp_1> hmss; // hash_map<std::string, std::string>编译不过
-    // __gnu_cxx::hash_map<string, string, hash2_cpp_1, equal2cpp_1> hmss;
-#else
-    stdext::hash_map<string, string> hmss;  // vs2019
-#endif
 
-    hmss["1"] = "111";
-    hmss["2"] = "222";
-    hmss["3"] = "333";
-    for (auto it : hmss)
-    {
-        printf("%s : %s\n", it.first.c_str(), it.second.c_str());
-    }
-    printf("szie:%ld bucket_count:%ld\n", hmss.size(), hmss.bucket_count()); // 元素个数 桶大小
-// 3 : 333
-// 2 : 222
-// 1 : 111
-// szie:3 bucket_count:193
-
-    std::unordered_map<std::string, std::string> umss;
-    umss["11"] = "111";
-    umss["12"] = "222";
-    umss["13"] = "333";
-    for (auto it : umss)
-    {
-        printf("%s : %s\n", it.first.c_str(), it.second.c_str());
-    }
-    printf("szie:%ld bucket_count:%ld\n", umss.size(), umss.bucket_count());
-// 13 : 333
-// 12 : 222
-// 11 : 111
-// szie:3 bucket_count:13
 }
 

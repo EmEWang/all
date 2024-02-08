@@ -3,6 +3,11 @@ https://docs.docker.com/
 https://docs.docker.com/engine/reference/commandline/docker/
 https://www.cnblogs.com/Can-daydayup/p/16472375.html
 https://www.zhihu.com/question/628245655/answer/3271205799   # 为什么要使用Docker
+https://blog.csdn.net/kwdecsdn/article/details/121354765     # Docker基本介绍
+https://www.cnblogs.com/cocowool/p/make-your-own-image.html  # docker 从入门到实践
+https://pythondjango.cn/python/tools/2-docker-dockerfile/    # Docker命令大全及Dockerfile详解(附示例)
+https://www.freecodecamp.org/chinese/news/the-docker-handbook/  # Docker 完全手册
+https://www.runoob.com/docker/docker-tutorial.html           # Docker 教程
 
 
 # 设置存储库
@@ -147,6 +152,8 @@ docker volume prune      #  清理不再使用的卷
 docker build -f ./dockertest2/Dockerfile_  -t wjg:1 ./dockertest  # 指定构造文件和指定目录去构造镜像
 
 生成最简单的镜像 Docker中直接运行程序
+https://developer.aliyun.com/article/582488
+https://www.cnblogs.com/cocowool/p/make-your-own-image.html
 1 创建目录
   mkdir hello-docker    # 创建应用程序目录
   cd hello-docker       # 进入该目录
@@ -179,9 +186,10 @@ CMD ["/hello"]
 
 
 
-
-
-
+http://blog.51yip.com/cloud/1859.html  # 删除none镜像
+docker stop $(docker ps -a | grep "Exited" | awk '{print $1 }')   // 1 停止容器
+docker rm   $(docker ps -a | grep "Exited" | awk '{print $1 }')   // 2 删除容器
+docker rmi  $(docker images | grep "none"  | awk '{print $3}')    // 3 删除镜像
 
 
 基本概念
@@ -195,6 +203,29 @@ https://www.freecodecamp.org/chinese/news/where-are-docker-images-stored-docker-
 
 仓库 Registry
 镜像仓库是一个集中式的位置，可以在其中上传镜像，也可以下载其他人创建的镜像。
+
+dockerfile
+镜像的源代码，指定需要哪些程序、依赖什么样的配置；docker就是"编译器"，使用docker build命令，生成的可执行程序就是镜像。
+
+docker是cs架构，docker client负责处理用户输入的各种命令，如docker build、docker run，真正工作是docker demon。
+docker client   ------>   docker daemon         ------>   registry
+  docker build            images    containers            image store
+  docker run
+  docker pull
+  docker push
+
+
+docker的底层实现
+docker基于Linux内核提供这样几项功能实现的：
+NameSpace
+Linux中的PID、IPC、网络等资源是全局的，而NameSpace机制是一种资源隔离方案，在该机制下这些资源就不再是全局的了，
+而是属于某个特定的NameSpace，各个NameSpace下的资源互不干扰，这就使得每个NameSpace看上去就像一个独立的操作系统一样，
+但是只有NameSpace是不够。
+Control groups
+虽然有了NameSpace技术可以实现资源隔离，但进程还是可以不受控的访问系统资源，比如CPU、内存、磁盘、网络等，
+为了控制容器中进程对资源的访问，Docker采用control groups技术(也就是cgroup)，有了cgroup就可以控制容器中进程对系统资源的消耗了，
+比如你可以限制某个容器使用内存的上限、可以在哪些CPU上运行等等。
+有了这两项技术，容器看起来就真的像是独立的操作系统了。
 
 
 Docker 的配置信息
@@ -217,7 +248,7 @@ docker run -it --privileged --pid=host debian nsenter -t 1 -m -u -i sh # 连接�
 docker image inspect nginx    # 查看常规镜像的信息  同 docker inspect nginx
   "GraphDriver": {
     "Data": {
-      "LowerDir":"/var/lib/docker/overlay2/xx/diff:     # 包含镜像的只读层
+      "LowerDir":"/var/lib/docker/overlay2/xx/diff:     # 包含镜像的只读层   没有表示为基础镜像
                   /var/lib/docker/overlay2/xx/diff",
       "MergedDir":"/var/lib/docker/overlay2/xx/merged", # 表示UpperDir和LowerDir合并的结果 docker用它来运行容器 系统中的路径
       "UpperDir":"/var/lib/docker/overlay2/xx/diff",    # 表示变更的读写层包含在 UpperDir 中

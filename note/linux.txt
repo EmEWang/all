@@ -5,7 +5,9 @@ https://zhuanlan.zhihu.com/p/436454953   # Linux vDSO概述
 https://zq99299.github.io/linux-tutorial/  # linux 系统教程学习笔记
 https://awesome-programming-books.github.io/linux/UNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B(%E7%AC%AC%E4%B8%89%E7%89%88).pdf # UNIX环境高级编程(第三版).pdf
 https://www.zhihu.com/question/47528537/answer/2770074755 # linux的内存管理是怎么样的
-https://gityuan.com/2015/12/20/signal/    # Linux信号(signal)机制
+https://zhuanlan.zhihu.com/p/488123510   # 一篇长文叙述Linux内核虚拟地址空间的基本概括
+https://zhuanlan.zhihu.com/p/676385200   # 一口气搞懂【Linux内存管理】，就靠这60张图、59个问题了
+https://gityuan.com/2015/12/20/signal/   # Linux信号(signal)机制
 
 Linux版本
   内核版本
@@ -62,6 +64,45 @@ poweroff   # 进入关机模式
 reboot     # 直接重新启动
 suspend    # 进入休眠模式
 
+
+
+登录信息
+/var/run/utmp    记录当前登陆到系统的各个用户  登录时login程序写入 注销时init擦除    who命令读取
+/vat/log/wtmp    追踪各个登录和注销事件       登录时login程序写入 注销时init追加    last命令读取
+使用utmp结构体
+
+
+
+文本文件的行尾与结束符
+win/DOS      CRLF  \r\n  回车+换行 回车键=回车+换行，即 ^M$(\r对应符号^M，\n对应符号$)
+UNIX/linux   LF    \n    换行      Line Feed
+Mac          CR    \r    回车      Carriage Return   Mac OS X换行符采用 \n
+很久以前，老式的电传打字机使用两个字符来另起新行，一个字符把滑动架移回首位(回车)，另一个字符把纸上移一行(换行)。
+计算机问世后，UNIX决定用\n表示行尾；Apple规定了用\r；MS-DOS则决定沿用老式的\r\n。
+Unix/Mac文件在win/DOS打开，可能变成一行；win/DOS文件在Unix/Mac打开，行尾可能会多车一个 ^M。
+
+        换行符                             文件结束符
+        unix(/n)    win/dos(/r/n)         unix   win/dos
+Ctrl:   ^J          ^M^J                  ^D     ^Z
+Dec:    10          13+10                 04     26
+Hex:    0A          0D+0A                 04     1A
+Code:   LF          CR+LF
+
+Windows平台 三种文件换行符互换
+UltraEdit  文件->转换       视图->显示换行符
+Notepad++  编辑->档案格式转换(Edit->EOL Conversion)  视图->显示符号->显示行尾符(View->Show Symbol->Show End of Line)
+VSCode     右下角 LF CRLF
+
+Unix/Linux平台
+dos2unix  dos2unix f1
+sed       sed 's/^M//' f1 > f2  ^M回车Ctrl+V+M按出来的  或 sed 's/\r//' f1 > f2
+          或 sed -i 's/\r//g' f1  或 sed -i 's/\r$//g' f1
+vim       vim f1   :set fileformat=unix 或 :%s/^M//g   :set list显示特殊字符  二进制模式(vim -b f1)才显示出^M
+  fileformat简写为ff   set ff=unix 使用unix换行符   set ff=dos 使用dos换行符
+tr        cat -v f1 | tr -d '^M'  > f2  同 cat f1 |tr -d '\015' > f2 (八进制下，^m 是 015；^Z 是 032；tab 是 011；^是136)
+
+cat -A f1  # -A(=-vET) 查看文本所有的字符 -T以^I显示tab -E 以$显示行尾 aaa bbbb^M$
+cat -v f1  # -v 使用^显示出非打印字符 除了行尾符\n和tab    aaa bbbb^M
 
 
 

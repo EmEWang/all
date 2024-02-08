@@ -101,3 +101,30 @@ root连接拒绝密码，但使用其他普通用户则没有问题，这是ssh�
 sudo vim /etc/ssh/sshd_config -> 将 PermitRootLogin 改为yes -> sudo /etc/init.d/ssh restart
 
 
+
+VMWare
+  现象
+    1 VMWare 编辑 虚拟网路编辑器 不能改成桥接模式 且没有 VMnet0
+    2 在其中还原默认值 卡半天 后 还是不行 重装VMWare也不行
+    3 计算机管理 设备管理器 中 VMware Virtual Ethernet Adapter for VMnet1 和 8 图标有个异常标志
+    4 其 右键 属性 设备状态 网卡出现“Windows 仍在设置此设备的类配置。 (代码 56)“
+  解决方案
+    1 键盘按win+r，弹出运行窗口，输入“redegit”，进入注册表，删除HKEY_CLASSES_ROOT\CLSID{3d09c1ca-2bcc-40b7-b9bb-3f3ec143a87b}
+    2 VMWare 编辑 虚拟网路编辑器 还原默认值
+  扩展
+    设备管理器中找到设备的【类GUID】，这是Windows系统给每个设备分配的唯一的识别标志。
+    计算机管理 设备管理器 右键 某个设备 属性 详细信息 属性选择 类GUID 其值 就是那个ID
+    复制这个GUID字符串，打开注册表编辑器，利用它的搜索功能搜索这个GUID的位置。
+    在本案例中，出现问题的注册表项位于
+    仅供参考 试了没发现
+
+NAT模式
+   1 VMWare 编辑 虚拟网路编辑器 VMnet8 NAT设置 如 网关为 192.168.80.2
+   2 右键某个虚拟机 设置 网络适配器 NAT模式
+   3 虚拟机内设置网络 ip为192.168.80.235 掩码255.255.255.0 网关 192.168.80.2
+   3 或者为vi /etc/sysconfig/network-scripts/ifcfg-ens33(网卡文件)中设置
+     IPADDR=192.168.80.235
+     PREFIX=24  or NETMASK=255.255.255.0
+     GATEWAY=192.168.80.2
+   4 重启网络 systemctl restart network.service
+

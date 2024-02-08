@@ -71,6 +71,8 @@ log=tcmalloc# 日志1
 log2=jemalloc# 日志2
 gccarm=aarch64-linux-gnu-g++
 
+${out}:${file}
+	g++ -o ${out} ${file}
 
 # 默认编译     需要LD_PRELOAD加载库
 all:

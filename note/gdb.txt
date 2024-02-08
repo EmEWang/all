@@ -1,80 +1,213 @@
 
 
+要调试需要编译时增加 -g 选项(否则看不到源程序) 保留调试信息 否则不能使用gdb进行调试
 
-gdb启动
-1 gdb ./my_exe         # 直接启动  run/r运行gdb调试
-2 gdb ./my_exe core1   # 同时调试程序和core文件
-3 gdb ./my_exe pid     # attach 到运行中的进程
-4 gdb -p pid           # 调试正在运行的程序 同 gdb attach pid
+判断有没调试信息
+gdb ./my_exe                 #  no debugging symbols found 没有调试信息
+readelf -S my_exe|grep debug #  没有任何debug信息，则不能被调试
+file my_exe                  #  最后是stripped不能使用gdb调试；但not stripped并不能说明能够被调试
 
-gdb启动传递参数程序调试
-1 gdb ./my_exe   # run [arg]
-2 gdb --args ./my_exe [arg]   # run/r
-3 gdb # exec-file my_exe -> set args [arg] -> run/r  # show args 查看设置的运行参数
+启动
+1 gdb ./my_exe        # 直接启动  run/r运行gdb调试
+  gdb -> exec-file my_exe # 同上 先进入gdb 然后指定程序 也可使用file my_exe
+2 gdb ./my_exe core1  # 同时调试程序和core文件
+3 gdb ./my_exe pid    # attach 到运行中的进程 或  gdb ./my_exe --pid pid
+4 gdb -p pid          # 调试正在运行的程序 同 gdb attach pid 或 gdb -> attach pid
+kernel.yama.ptrace_scope = 0 # 若attach出错 用root将/etc/sysctl.d/10-ptrace.conf该改 1 -> 0
+gdb -> file my_exe2 -> attach pid # 调试已经运行的没有调试信息的程序，再编译出一个带调试信息的版本，先file再attach
+4 env e1=x1 e2=x2 gdb ./my_exe        # 带环境变量启动程序   env 可省
+  show environment [envname]          # 指定某个或所有   environment可简写为env
+  set environment envname [=value]    # 修改环境变量
+  unset environment envname           # 删除环境变量
+  show path                           # 查看环境变量path
+5 set cwd [directory] ｜ cd [directory]  # 工作目录
+  pwd                                    # 查看当前目录
+6 gdb my_exe -tui   # 启动时，带上tui(Text User Interface)参数，它会将调试在多个文本窗口呈现
 
+程序参数
+show args             # 查看设置的运行参数
+1 gdb ./my_exe -> run/r [arg]   # 默认用shell对入参进行分词
+2 gdb ./my_exe -> set args [arg] -> run/r
+3 gdb --args ./my_exe [arg]  -> run/r
 
-gdb 启动参数  # gdb [opts] ./my_exe    gdb --help
---args              # 设置程序的运行参数
---symbols=SYMFILE   # 从指定文件中读取符号表   同 -s file
---se=FILE           # 从指定文件中读取符号表信息，并把他用在可执行文件中
---core=COREFILE     # 调试时core dump的core文件  同 -c file
---directory=DIR     # 加入一个源文件的搜索路径。默认搜索路径是环境变量中PATH所定义的路径 同 -d dir
+gdb [args]            # 启动参数  gdb [opts] ./my_exe    gdb --help
+--args                # 设置程序的运行参数
+--symbols=SYMFILE     # 从指定文件中读取符号表   同 -s file
+--se=FILE             # 从指定文件中读取符号表信息，并把他用在可执行文件中
+--core=COREFILE       # 调试时core dump的core文件  同 -c file
+--directory=DIR       # 加入一个源文件的搜索路径。默认搜索路径是环境变量中PATH所定义的路径 同 -d dir
   以gdb ./my_exe方式启动，gdb会在PATH路径和当前目录中搜索my_exe的源文件，可用list/l命令，看gdb是否能列出源代码。
 
 
 
-gdb调试命令 /后面表示命令的简写
+命令 /后面表示命令的简写
 help/h [cmd]          # 帮助
-list/l  [line][func]  # 查看源码   l n 第n行前后10行;l 4,6 行范围;l func 查看函数
-  l file:line ; l file:func 指定文件
 info/i                # 查看各种信息
 quit/q                # 退出gdb
+set follow-fork-mode child  # Makefile项目管理：选择跟踪父子进程（fork()
 
-break/b [line][func]  # 打断点   b n 第n行断点; b func 函数入口断点; b file:n; b file:func 指定文件
-  b +offset/-offset 在当前行前/后offset停止; b addr 地址处停止; b 下一行停止
+变量
+set $foo = *obj_ptr   # 类似unix gdb可以定义自己的变量来保存一些调试程序中的运行数据，用set命令，以$起头
+  第一次使用时创建这个变量，以后则直接对其賦值。变量没有类型，可以定义任意类型。包括结构体和数组。
+show convenience      # 该命令查看当前所设置的所有的环境变量。
+这是一个比较强大的功能，环境变量和程序变量的交互使用，将使得程序调试更为灵活便捷。例如：
+set $i = 0
+print bar[$i++]->contents
+不必，print bar[0]->contents, printbar[1]->contents重复输入。只需回车，重复执行上一条语句，变量会自动累加，完成逐个输出。
+
+
+语言环境
+show language  # 查看当前的语言环境。如果gdb不能识为你所调试的编程语言，那么，C语言被认为是默认的环境。
+set language   # 设置当前的程序语言  不带参数则查看gdb所支持的语言种类
+i frame     # 查看当前函数的程序语言。 测试为显示当前调用栈信息(frame)
+i source    # 查看当前文件的程序语言。
+
+常用显示选项
+set print address on  # 打开地址输出，当程序显示函数信息时，gdb会显出函数的参数地址。默认为打开的，如：
+  (gdb) f
+  #0 set_quotes (lq=0x34c78 "<<",rq=0x34c88 ">>")
+  at input.c:530
+  530 if (lquote != def_lquote)
+set print address off # 关闭函数的参数地址显示，如：
+  (gdb) set print addr off
+  (gdb) f
+  #0 set_quotes (lq="<<",rq=">>") at input.c:530
+  530 if (lquote != def_lquote)
+show print address    # 查看当前地址显示选项是否打开。
+
+set print array on    # 打开数组显示，每个元素占一行。
+set print array off   # 不打开的话，每个元素则以逗号分隔。默认是关闭的。
+show print array
+
+set print elements n  # 设置数组数据显示的最大长度，若数组到达这个长度时，gdb就不再往下显示了。如果设置为0，则表示不限制。
+show print elements   # 查看print elements的选项信息。
+
+set print null-stop on/off # 打开选项，当显示字符串时，遇到结束符则停止显示。这个选项默认为off。
+
+set print pretty on   # 打开选项，那么当gdb显示结构体时会比较漂亮。如：
+  $1 = {
+  next = 0x0,
+  flags = {
+  sweet = 1,
+  sour = 1
+  },
+  meat = 0x54 "Pork"
+  }
+set print pretty off  # 关闭选项，gdb显示结构体时会如下显示：
+  $1 = {next = 0x0, flags = {sweet = 1, sour = 1}, meat = 0x54"Pork"}
+show print pretty     # 查看gdb是如何显示结构体的。
+
+set print sevenbit-strings on/off  # 设置字符是否按“\nnn”的格式显示，打开，则字符串或字符数据按\nnn显示，如“\065”。
+show print sevenbit-strings # 查看字符显示开关是否打开。
+
+set print union on/off  # 设置显示结构体时，是否显式其内的联合体数据。例如有以下数据结构：
+typedef enum {Tree, Bug} Species;
+typedef enum {Big_tree, Acorn, Seedling} Tree_forms;
+typedef enum {Caterpillar, Cocoon, Butterfly} Bug_forms;
+struct thing {
+Species it;
+union {
+Tree_forms tree;
+Bug_forms bug;
+} form;
+};
+struct thing foo = {Tree, {Acorn}};
+$1 = {it = Tree, form = {tree = Acorn, bug = Cocoon}}  # 打开这个开关时，执行 p foo 命令
+$1 = {it = Tree, form = {...}}                         # 关闭这个开关时，执行 p foo 命令
+show print union      # 查看联合体数据的显示方式
+
+set print object on/off   # 在C++中，如果一个对象指针指向其派生类，如果打开这个选项，gdb会自动按照虚方法调用的规则显示输出，如果关闭这个选项的话，gdb就不管虚函数表了。这个选项默认是off。
+show print object         # 查看对象选项的设置。
+
+set print static-members on/off # 当显示一个C++对象中的内容是，是否显示其中的静态数据成员。默认是on。
+show print static-members       # 查看静态数据成员选项设置。
+
+set print vtbl on/off # 当此选项打开时，gdb将用比较规整的格式来显示虚函数表时。其默认是关闭的。
+show print vtbl       # 查看虚函数显示格式的选项。
+
+
+
+list/l  [line][func]  # 查看源码
+  l n                 # 第n行前后5行;  +offset当前行号的正偏移量。 -offset当前行号的负偏移量。
+  l *address          # 程序运行时的语句在内存中的地址。
+  l 4,6               # 行范围  启始和结束行用逗号隔开。两者之一也可以省略 如 list 3,
+  l func              # 查看函数
+  l file              # 看指定文件的源码 默认列出main.c的源码
+  l file:line
+  l file:func
+  l file:1,file:3
+  show listsize       # 每次显示的行数 默认10
+  set listsize 20     # 设置每次显示的行数  为0或者unlimited，表示没有限制
+info line             # 查看源代码在运行时的内存地址。后面可以跟“行号”，“函数名”，“文件名:行号”，“文件名:函数名”
+  info line 30
+  info line file:30
+disassemble func      # 查看源程序的当前执行时的机器码，这个命令会把目前内存中的指令dump出来。如查看函数func的汇编代码。
+dir ./src             # 使用dir命名指定源码路径  同directory   多个路径，UNIX下你可以使用“:”，Windows下你可以使用“;”。
+  directory           # 清除所有的自定义的源文件搜索路径信息。
+  show directories    # 显示定义了的源文件搜索路径。
+set substitute-path oldpath newpat   # 源码新路径替换旧路径  多个路径可以做多个替换 可以对指定文件路径进行替换
+  readelf may_exe -p .debug_str      # 查找oldpath方法
+  show substitute-path               # 显示替换路径
+  unset substitute-path [path]       # 取消替换
+EDITOR=/usr/bin/vim;export EDITOR    # 更换编辑器  因为gdb模式下编辑源码默认使用/bin/ex
+  edit 3                             # 编辑第三行 直接在gdb模式下对源码进行编辑
+  edit printNum                      # 编辑printNum函数
+  edit test.c:5                      # 编辑test.c第五行
+  shell gcc -g -o main main.c test.c # 编辑完保存后，重新编译程序
+  注意，gdb调试模式下执行shell命令，要在命令前加上shell，表明 这是一条shell命令。这样在不用退出gdb调试模式的情况下编译程序。
+search text           # 向前面搜索，显示在当前文件中包含text串的下一行。text为正则表达式 同 forward-search
+reverse-search text   # 全部搜索。
+
+
+
+break/b [line][func]  # 打断点
+  b                   # 下一行停止
+  b n                 # 第n行断点
+  b func              # 函数入口断点
+  b file:n            # 指定文件
+  b file:func
+  b file:23 if b==0   # 条件断点  类似  condition 1 b==0 假设断点号为1
+  b +offset/-offset   # 在当前行前/后offset停止
+  b addr              # 地址处停止
 b where if condition  # 条件断点 如 循环体中break ... if i = 100 设置循环次数
+rbreak printNum*      # 对所有调用printNum函数都设置断点   用法rbreak file:regex
+  rbreak .            # 对所有函数设置断点
+  rbreak file:.       # 对file中的所有函数设置断点
+  rbreak file:^print  # 对以print开头的函数设置断点
+tbreak file:l0        # 在第10行设置临时断点 断点只生效一次
+ignore 1 30           # 跳过多次设置断点 1是要忽略的断点号，30是要跳过的次数，表示会跳过前面30次
 i b                   # 显示断点
-delete/d b_id         # 关闭断点
-disable/enable b_id   # 禁用/启用断点，同时断点信息的 (Enb)域将变为 n、y
-clear                 # 删除刚才停止处的断点
+delete                # 删除所有breakpoints,watchpoints和catchpoints
+  delete/d b_id       # 删除某断点
+disable/enable        # 禁用/启用所有断点
+  disable/enable b_id # 禁用/启用某断点，同时断点信息的 (Enb)域将变为 n、y
+enable delete bnum    # 启动标号为bnum的断点，并且在此之后删除该断点
+clear                 # 删除当前行所有的断点
+  clear func          # 删除函数名为func处的断点
+  clear file:func     # 删除文件file中函数func处的断点
+  clear n             # 删除行号为n处的断点
+  clear file:n        # 删除文件file中行号为n处的断点
 commands              # 命中断点时，列出将要执行的命令
+watch val             # 设置一个监测点(数据断点)观察某个值或表达式 被设置观察点的值发生变化会打印相关内容并暂停
+  watch val != 10     # 当 != 10 这个表达式一旦变化，则停住
+  i watch             # 显示观察点
+rwatch                # 当变量被访问时暂停
+awatch                # 被访问和修改时暂停
 
+
+
+设置与显示 与其他有重复
 set args [arg]        # 设置程序的参数   如 set args 1 2 3
 show args             # 查看程序的参数
-start                 # 运行程序，停在第一执行语句
-restart/r             # 重新运行程序
-run/r [arg]           # 运行程序  run-text 加载文本文件;run-bin 加载二进制文件
 set var=val           # 设置变量  如 print n=1 或 set var n=1 后一种在变量名与gdb预定变量名一样时使用
-print/p               # 显示变量/表达式的值
+print/p               # 显示变量/表达式的值  同inspect
 display               # 程序停止时显示变量和表达时
 undisplay             # 不要显示表达式
 examine/x             # 查看内存
 backtrace/bt          # 显示堆栈
-
-next/n                # 不进入的单步执行
-step/s                # 进入的单步执行
-finish                # 运行程序，直到当前函数完成返回到函数调用点，打印函数返回时的堆栈地址和返回值以及参数信息
-until                 # 退出当前的循环体
-i t                   # 显示线程
-thread/t id           # 进入线程 id从1开始 后面有对应系统的tid 可用top -Hp pid查看当前进程的所有线程
-continue/c            # 继续执行程序
-ctrl+c                # 暂停
-jump                  # 在源程序中的另一点开始运行
-kill                  # 异常终止在gdb 控制下运行的程序
-ptype                 # 显示一个数据结构（如一个结构或C++类）的内容
-signal                # 将一个信号发送到正在运行的进程
-watch                 # 设置一个监测点(数据断点) 被设置观察点的变量发生修改时，打印显示
-i watch               # 显示观察点
-whatis                # 显示变量或函数类型
-
 frame/f               # 切换函数的栈帧
-up                    # 上移栈帧，使另一函数成为当前函数
-down                  # 下移栈帧，使得另一个函数成为当前函数
-
-search text           # 显示在当前文件中包含text串的下一行
-reverse-search text   # 该命令可以显示包含text 的前一行
-call func             # 调用代码函数，显示函数返回值(若不是void) 如 call add(3,5)
-
+whatis                # 显示变量或函数类型
+ptype val             # 显示变量详细的数据结构（如一个结构或C++类）
 path <dir>            # 设定程序的运行路径
 show paths            # 查看程序的运行路径
 set environment varname [=value]  # 设置环境变量 如 set env USER=hchen
@@ -84,17 +217,64 @@ pwd                   # 显示当前的所在目录。
 i terminal            # 显示你程序用到的终端的模式。
 使用重定向控制程序输出  # 如 run > outfile
 tty                   # 可以指写输入输出的终端设备 如 tty /dev/ttyb
+info registers        # 查看寄存器内容（除了浮点寄存器）
+  info all-registers  # 查看所有寄存器的情况。（包括浮点寄存器）
+  info registers xx   # 查看所指定的寄存器的情况。可用print访问寄存器，只需在寄存器名字前加一个$。如：p $eip。
 
-set follow-fork-mode child  # Makefile项目管理：选择跟踪父子进程（fork()）
+
+运行与调试
+start                 # 运行程序，运行至main()函数，停在第一执行语句
+restart/r             # 重新运行程序
+run/r [arg]           # 运行程序  run-text 加载文本文件;run-bin 加载二进制文件
+next/n                # 不进入的单步执行
+ n 3                  # 执行该命令3次，继续执行3行
+step/s                # 进入的单步执行
+  show step-mode      # 显示step模式
+  set step-mode on/off # 当遇到没有调试信息的函数，s命令是否跳过该函数，而执行后面的   off默认
+stepi/si              # 每次执行一条机器指令
+  display/i $pc       # 显示
+finish                # 执行完当前函数，返回到函数调用点，打印函数返回时的堆栈地址和返回值以及参数信息
+until/u               # 执行完当前循环体
+ u 29                 # 运行到29行停住
+i t                   # 显示线程
+thread/t id           # 进入线程 id从1开始 后面有对应系统的tid 可用top -Hp pid查看当前进程的所有线程
+continue/c            # 继续执行程序到下一个断点   或者fg
+  c 3                 # 跳过三次
+skip                  # 在step时跳过一些不想关注的函数或者某个文件的代码
+  skip function add   # step时跳过add函数
+  skip file gdbStep.c # gdbStep.c中的函数都不会进入
+  skip delete [num]   # 删除skip
+  skip enable [num]   # 使能skip
+  skip disable [num]  # 去使能skip
+  info skip           # 查看step情况
+ctrl+c                # 暂停
 
 
+
+kill                  # 异常终止在gdb 控制下运行的程序
+print x=4             # 修改被调试程序运行时的变量值
+  set x=4             # 也可使用set命令
+  set var x=4         # 若变量和gdb中的参数冲突(Invalid syntax inexpression),需要使用这个命令
+jump                  # 跳转执行，一般被调试程序会按照程序代码的运行顺序依次执行
+  jump file:line      # 跳转到指定位置
+  jump n              # 跳转到第 n 行执行完毕之后，如果后面没有断点则继续执行。
+  注意，jump命令不会改变当前的程序栈中的内容，所以，当你从一个函数跳到另一个函数时，当函数运行完返回时进行弹栈操作时必然会发生错误，
+  可能结果还是非常奇怪的，甚至于产生程序Core Dump。所以最好是同一个函数中进行跳转。
+  熟悉汇编的人都知道，程序运行时，有一个寄存器用于保存当前代码所在的内存地址。所以，jump命令也就是改变了这个寄存器中的值。
+  于是，你可以使用“set $pc”来更改跳转执行的地址。如：set $pc = 0x485
+signal                # 通常从1到15，将一个信号发送到正在运行的进程
+  与shell的kill命令不同，系统的kill命令发信号给被调试程序时，是由gdb截获的，而single命令所发出一信号则是直接发给被调试程序的。
+return                # 取消当前函数的执行，立即返回，如果指定表达式，则其值会被认作函数的返回值。
+call func             # 调用代码函数，显示函数返回值(若不是void) 如 call add(3,5)
+  print func          # 与call的不同是，如果函数返回void，call则不显示，print则显示函数返回值，并把该值存入历史数据中。
 
 
 1 查看变量/表达式
 print/p  expr         # 查看变量 或 表达式
-print/p  *array@len   # 查看数组（array是数组指针，len是需要数据长度）
-print/p file::var     # 查看file中的变量var
-print/p func::var     # 查看func中的变量var
+p  *array@len         # 查看数组（array是数组指针，len是需要数据长度）  静态数组可以直接用print数组名
+p file::var           # 查看file中的变量var  若开启了优化选项，可能会发生某些变量不能访问，或是取值错误码的情况
+p func::var           # 查看func中的变量var  只需关闭编译优化，GCC可使用“-gstabs”选项来解决这个问题。
+$n                    # gdb以$1, $2,..方式为每个print命令编号,可以使用这个编号访问以前的表达式
 print [opt --] [/fmt] expr #
 opt            参数        功能
 -address       on默认|off  查看指针变量值时，是否同时打印其内存地址。等同于单独执行 set print address on|off。
@@ -103,32 +283,34 @@ opt            参数        功能
                            等同于单独执行 set print array-indexes on|off。
 -pretty        on|off默认  以便于阅读的格式打印某个结构体变量的值。等同于单独执行 set print pretty on|off。
 /fmt    功 能
-  /x  # 以十六进制的形式打印出整数。
-  /d  # 以有符号、十进制的形式打印出整数。
-  /u  # 以无符号、十进制的形式打印出整数。
-  /o  # 以八进制的形式打印出整数。
-  /t  # 以二进制的形式打印出整数。
+  /x  # 以十六进制格式显示变量。
+  /d  # 以有符号、十进制格式显示变量。
+  /u  # 以无符号、十进制格式显示变量。
+  /o  # 以八进制格式显示变量。
+  /t  # 以二进制格式显示变量。
   /f  # 以浮点数的形式打印变量或表达式的值。
   /c  # 以字符形式打印变量或表达式的值。
+  /a  # 按十六进制格式显示变量。
 opt 参数和 /fmt 或者 expr 之间，必须用--分隔
 print不指定任何opt参数时，print和/fmt之间不用添加空格，如 print/x num # 以十六进制的形式输出num整形变量的值
 
 
-display expr       # 查看变量或表达式的值 每当程序暂停执行时，GDB调试器都会自动帮我们打印出来，print不会
-display/fmt expr   # /fmt 用法同print
+display expr          # 查看变量或表达式的值 每当程序暂停执frame行时，gdb调试器都会自动帮我们打印出来，print不会
+display/fmt expr      # /fmt 用法同print
 display和/fmt之间不要留有空格。以 /x 为例，应写为 display/x expr。
-info display       # 对于使用 display 命令查看的目标变量或表达式，都会被记录在一张列表（称为自动显示列表）中
+info display          # 对于使用 display 命令查看的目标变量或表达式，都会被记录在一张列表（称为自动显示列表）中
   Auto-display expressions now in effect:
   Num Enb Expression
   2:      y      /t result
   1:      y      num
-  Num   # 为各变量或表达式的编号，GDB 调试器为每个变量或表达式都分配有唯一的编号；
+  Num   # 为各变量或表达式的编号，gdb 调试器为每个变量或表达式都分配有唯一的编号；
   Enb   # 当前各个变量/表达式是处于激活状态y还是禁用状态n，每次程序停止执行，y则会打印其值；反之不会。
   Expression # 表示查看的变量或表达式。
-  undisplay num1 num2   # 删除自动显示列表中的变量或表达式 同 delete display num1 num2
-  disable display num1 num2  # 禁用自动显示列表中处于激活状态下的变量或表达式
-  enable display num1 num2   # 激活当前处于禁用状态的变量或表达式
-
+undisplay num1 num2   # 删除自动显示列表中的变量或表达式 同 delete display num1 num2
+undisplay num1-num2   # 删除一个范围内的编号
+disable display num1 num2  # 禁用自动显示列表中处于激活状态下的变量或表达式
+enable display num1 num2   # 激活当前处于禁用状态的变量或表达式
+display/i $pc         # $pc是gdb的环境变量，表示指令的地址，/i表示输出格式为机器指令码，即汇编。停下后，源代码和机器指令码相对应。
 
 2 查看内存
 examine /<n/f/u>  <addr>  # 简写为 x
@@ -141,10 +323,26 @@ examine /<n/f/u>  <addr>  # 简写为 x
 
 3 查看栈信息
 backtrace [-n][n]     # 简写bt
-  n         # 表示只打印栈顶上n层的栈信息
-  -n        # 表示只打印栈底上n层的栈信息
-  无参数     # 表示打印所有栈信息
+  n                   # 表示只打印栈顶上n层的栈信息
+  -n                  # 表示只打印栈底下n层的栈信息
+                      # 无参数 表示打印所有栈信息
+如果你要查看某一层的信息，你需要在切换当前的栈，一般来说，程序停止时，最顶层的栈就是当前栈，
+ 如果你要查看栈下面层的详细信息，首先要做的是切换当前栈。
 
+4 frame/f             # 切换函数的栈帧
+  n                   # n是一个从0开始的整数，是栈中的层编号。比如：frame 0，表示栈顶，frame 1，表示栈的第二层。
+  up                  # 表示向栈的上面移动n层，可以不打n，表示向上移动一层。
+  down                # 表示向栈的下面移动n层，可以不打n，表示向下移动一层。
+                      # 无参数 打印：栈的层编号，当前的函数名，函数参数值，函数所在文件及行号，函数执行到的语句。
+  i f                 # 详细的当前栈层的信息 同 i frame，大多数都是运行时的内存地址。比如：函数地址，调用函数的地址，
+                        被调用函数的地址，目前的函数是由什么样的程序语言写成的、函数参数地址及值、局部变量的地址等等。
+  i args              # 当前函数的参数名及其值。
+  i locals            # 当前函数中所有局部变量及其值。
+  i catch             # 当前的函数中的异常处理信息。
+  上面的命令，都会打印出移动到的栈层的信息。如果你不想让其打出信息。你可以使用这三个命令：
+  select-frame 对应于 frame 命令。
+  up-silently 对应于 up 命令。
+  down-silently 对应于 down 命令。
 
 
 

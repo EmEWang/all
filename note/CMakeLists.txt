@@ -1,5 +1,9 @@
 
-
+https://cmake.org/                                           # 官网
+https://blog.csdn.net/qq_28087491/article/details/127338068  # CMake 官方完整版
+https://blog.csdn.net/irving512/article/details/108362861    # cmake Tutorial 摘要
+https://gavinliu6.github.io/CMake-Practice-zh-CN/            # cmake
+https://blog.csdn.net/irving512/article/details/108318416    # 《Cmake 实践》摘要
 
 https://cmake.org/download/     # 下载cmake源码，如cmake-3.17.1.tar.gz
 tar -zxv -f cmake-3.17.1.tar.gz # 解压
@@ -24,6 +28,8 @@ cmake 调用格式
 2 cmake -i 或 ccmake           # 交互式界面
 3 cmake ctest 在CMakeLists.txt # 增加了add_test 执行单元测试
 4 cmake --trace / --trace-expand  # 详细记录调用过程和处理
+5 cmake -S . -B build          # -S 指定CMakeLists.txt位置 -B指定创建到哪里 若文件夹不存在则创建
+6 cmake --build build          # --build 编译 即运行指定文件夹下的makefile
 
 set(CMAKE_VERBOSE_MAKEFILE TRUE)  # 在 CMakeLists.txt 中 CMAKE_VERBOSE_MAKEFILE 设为 TRUE
   CMAKE_VERBOSE_MAKEFILE 为 True，make 在执行时是 verbose output。
@@ -109,11 +115,12 @@ project (hello_cmake)                   # 设置项目名 还可指定 版本号
   project(myproject VERSION 1.0 DESCRIPTION "My project" HOMEPAGE_URL "https://example.com" LANGUAGES CXX CXX_STANDARD 11)
 add_executable(TARGET_NAME SOURCES)     # 生成可执行程序  如 add_executable(example main.cpp main.h)
 add_library(TARGET_NAME [STATIC | SHARED | MODULE] SOURCES)   # 生成库
-aux_source_directory(. DIR_SRCS)        # 查找当前目录下的所有源文件 并将名称保存到 DIR_SRCS 变量
 add_subdirectory(math)                  # 添加 math 子目录 也就是math下有 子 CMakeLists.txt
 set (EXTRA_LIBS ${EXTRA_LIBS} MathFunctions)  # 设置变量  普通变量，相当于一个局部变量  缓存变量，相当于一个全局变量
   set(MY_GLOBAL_VAR1 "abcdef" CACHE STRING "STRING缓存变量")  # 定义一个STRIING类型缓存变量(不加FORCE选项)
   set(MY_GLOBAL_VAR2 "abc" CACHE STRING "STRING缓存变量" FORCE) # 定义一个STRIING类型缓存变量(加FORCE选项)
+  set(CMAKE_CXX_STANDARD 11)           # 设置C++版本
+  set(CMAKE_CXX_STANDARD_REQUIRED True)
 set_target_properties(mylib PROPERTIES POSITION_INDEPENDENT_CODE ON) # 表示生成位置无关代码 为目标设置编译选项 即-fPIC
 
 target_compile_definitions(TARGET_NAME INTERFACE|PUBLIC|PRIVATE DEFINITION) # 编译 -D 选项
@@ -135,7 +142,7 @@ link_libraries(lib1 <debug | optimized> lib2 ...) # 添加需要链接的库文�
 find_library (<VAR> name1 [path1 path2 ...]) # 在路径中查找库name1
   find_library(mylib rt /usr/lib  /usr/local/lib NO_PATH) # 在目录中查找，若没有，mylib被赋为NO_PATH
 
-OPTION(OPTION_NAME HELP_MESSAGE DEFAULT_VALUE)  # 建立使用者选项参数
+option(OPTION_NAME HELP_MESSAGE DEFAULT_VALUE)  # 建立使用者选项参数
   option(DOWN_M "Download" ON)  # 建立DOWN_M，默认为 ON
 message([MODE] "message to display")  # message 是 CMake 的 print MODE 必須填入 CMake 提供的常熟选项
 execute_process(COMMAND cmd [args...] [ERROR_VARIABLE var])  # 执行子程序
@@ -146,6 +153,14 @@ find_package(<package-name> [version] [EXACT] [QUIET] [MODULE] [REQUIRED] [[COMP
   #QUIET 表示不输出查找信息，MODULE 表示从 CMake 模块路径中查找库，REQUIRED 表示如果找不到库则停止构建，
   #COMPONENTS 表示要查找的库的组件名称。
   find_package(Boost REQUIRED COMPONENTS filesystem system)  # 查找Boost库的依赖关系 要求filesystem和system组件都必须存在
+aux_source_directory(. DIR_SRCS)         # 查找当前目录下的所有源文件 保存到 DIR_SRCS 变量  文件名格式为相对路径
+  aux_source_directory(../src SRC_FILES) # 指定包含某个目录（不会包含指定目录中的子目录）
+file(GLOB val_src module*/src/*.cpp)     # 过滤文件并将文件名保存在val_src 文件名格式为绝对路径
+  file(GLOB_RECURSE val_src  *.cpp)      # 过滤文件并将文件名保存在val_src 迭代的方式进入所有子文件夹
+  file(GLOB_RECURSE val_src  ./*.cpp)    # 只在指定的文件下查找 https://cmake.org/cmake/help/latest/command/file.html#file
+  file(GLOB SOURCES_INC  module*/inc)    # 自动过滤文件夹
+list(REMOVE_ITEM SRC_FILES "cpu3.cpp") # 排除指定的项
+  list(APPEND EXTRA_LIBS MathFunctions)  # 添加
 
 
 例如
