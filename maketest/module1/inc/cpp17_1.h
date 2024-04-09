@@ -65,9 +65,10 @@ void test1_cpp17_1_attribute();
 void test1_cpp17_1_string_convert(); // 新增from_chars函数和to_chars函数
 #include <variant>
 void test1_cpp17_1_variant();
-void test1_cpp17_1_optional();
+void test1_cpp17_1_optional();       // #include <optional>  https://www.cnblogs.com/hwx0000/p/15676495.html
 #include <any>
 void test1_cpp17_1_any();
+void test1_cpp17_1_any_variant_diff(); // https://blog.csdn.net/qq_21438461/article/details/132453206
 void test1_cpp17_1_apply();
 void test1_cpp17_1_make_from_tuple();
 void test1_cpp17_1_as_const();
@@ -77,5 +78,7 @@ void test1_cpp17_1_file_system();
 #include <string_view> // 头文件
 void test1_cpp17_1_string_view();
 
+
+void test1_cpp17_1_lock();   // c++11 c++14 c++17锁的操作 https://blog.csdn.net/liguan1102/article/details/116236702
 
 #endif

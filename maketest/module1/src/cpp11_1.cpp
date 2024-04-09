@@ -233,31 +233,37 @@ void test1_cpp11_1_decltype2()
     void Overloaded(char); // 重载的函数
     int && RvalRef();
     const bool Func(int);
+    const bool& Func2(int);
 
-# define printvar(var)  {std::cout << #var << " ";printtype(var);}
+// # define printvar(var)  {std::cout << #var << " ";printtype(var);}
+# define printvar(var)  {std::cout << #var << " ";print_param_type<decltype(var)>();}
     // 规则一：推导为其类型
-    decltype (arr) var1;              printvar(var1)  //int 标记符表达式
-    decltype (ptr) var2;              printvar(var2)  //int *  标记符表达式
-    decltype (s.d) var3;              printvar(var3)  //doubel 成员访问表达式
+    decltype (arr) var1;              printvar(var1)  //var1 int [5]   标记符表达式
+    decltype (ptr) var2;              printvar(var2)  //var2 int*      标记符表达式
+    decltype (s.d) var3;              printvar(var3)  //var3 double    成员访问表达式
     //d ecltype(Overloaded) var4;//重载函数。编译错误。
 
     // 规则二：将亡值。推导为类型的右值引用。
-    decltype (RvalRef()) var5 = 1;    printvar(var5)  //
+    decltype (RvalRef()) var5 = 1;    printvar(var5)  // var5 int&&
     // std::cout << typeid(var5).name() << std::endl;
 
     // 规则三：左值，推导为类型的引用。
-    decltype ((i))var6 = i;           printvar(var6)  //int&
-    decltype (true ? i : i) var7 = i; printvar(var7)  //int&  条件表达式返回左值。
-    decltype (++i) var8 = i;          printvar(var8)  //int&  ++i返回i的左值。
-    decltype(arr[5]) var9 = i;        printvar(var9)  //int&. []操作返回左值
-    decltype(*ptr)var10 = i;          printvar(var10) //int& *操作返回左值
-    decltype("hello")var11 = "hello"; printvar(var11) //const char(&)[9]  字符串字面常量为左值，且为const左值。
+    decltype ((i))var6 = i;           printvar(var6)  //var6 int&
+    decltype (true ? i : i) var7 = i; printvar(var7)  //var7 int&  条件表达式返回左值
+    decltype (++i) var8 = i;          printvar(var8)  //var8 int&  ++i返回i的左值
+    decltype(arr[5]) var9 = i;        printvar(var9)  //var9 int&  []操作返回左值
+    decltype(*ptr)var10 = i;          printvar(var10) //var10 int& *操作返回左值
+    decltype("hello")var11 = "hello"; printvar(var11) //var11 const char (&)[6]  字符串字面常量为左值，且为const左值。
 
     // 规则四：以上都不是，则推导为本类型
-    decltype(1) var12;                printvar(var12) //const int
-    decltype(Func(1)) var13=true;     printvar(var13) //const bool
-    decltype(i++) var14 = i;          printvar(var14) //int i++返回右值
+    decltype(1) var12;                printvar(var12) //var12 int
+    decltype(Func(1))  var13=true;    printvar(var13) //var13 bool
+    decltype(Func2(1)) var14=true;    printvar(var14) //var14 const bool&   注意这个与上面的差异
+    decltype(i++) var15 = i;          printvar(var15) //var15 int i++返回右值
     // std::cout << (typeid(var6) == typeid(int&)) << std::endl;
+
+    print_param_type<decltype (i),  decltype ((i))>();  //int   int&
+    print_param_type<typename std::enable_if<true>::type>();  //void    std::enable_if默认
 }
 
 class Student{
@@ -271,69 +277,84 @@ public:
 void test1_cpp11_1_decltype3()
 {
     {
-    // 1变量
+    cout << "1---" << endl;
+    // 1.1变量
     int n = 0;
     const int &r = n;
     Student stu;
-    decltype(n) a = n;     //n 为 int 类型，a 被推导为 int 类型
-    decltype(r) b = n;     //r 为 const int& 类型, b 被推导为 const int& 类型
-    decltype(Student::total) c = 0;  //total 为类 Student 的一个 int 类型的成员变量，c 被推导为 int 类型
-    decltype(stu.name) url = "http://c.biancheng.net/cplus/";  //total 为类 Student 的一个 string 类型的成员变量， url 被推导为 string 类型
+    decltype(n) a = n; print_param_type<decltype(n)>();  //int   因为按规则1  n 为 int 类型
+    decltype(r) b = n; print_param_type<decltype(r)>();  //const int&  理由同上
+    // 1.2类成员访问表达式
+    decltype(Student::total) c = 0; print_param_type<decltype(Student::total)>(); //int total为Student 的 int 成员变量
+    decltype(stu.name) url = "www"; print_param_type<decltype(stu.name)>();//std::__cxx11::basic_string<char> 理由同上
     }
 
     {
+    cout << "2---" << endl;
     // 2函数声明
-    int& func_int_r(int, char);  //返回值为 int&
-    int&& func_int_rr(void);  //返回值为 int&&
-    int func_int(double);  //返回值为 int
+    int& func_int_r(int, char);            //返回值为 int&
+    int&& func_int_rr(void);               //返回值为 int&&
+    int func_int(double);                  //返回值为 int
     const int& fun_cint_r(int, int, int);  //返回值为 const int&
-    const int&& func_cint_rr(void);  //返回值为 const int&&
+    const int&& func_cint_rr(void);        //返回值为 const int&&
     //decltype类型推导
     int n = 100;
-    decltype(func_int_r(100, 'A')) a = n;  //a 的类型为 int&
-    decltype(func_int_rr()) b = 0;  //b 的类型为 int&&
-    decltype(func_int(10.5)) c = 0;   //c 的类型为 int
-    decltype(fun_cint_r(1,2,3))  x = n;    //x 的类型为 const int &
-    decltype(func_cint_rr()) y = 0;  // y 的类型为 const int&&
+    decltype(func_int_r(100, 'A')) a = n; print_param_type<decltype(func_int_r(100, 'A'))>(); //int&   规则2
+    decltype(func_int_rr()) b = 0;        print_param_type<decltype(func_int_rr())>();        //int&&
+    decltype(func_int(10.5)) c = 0;       print_param_type<decltype(func_int(10.5))>();       //int
+    decltype(fun_cint_r(1,2,3))  x = n;   print_param_type<decltype(fun_cint_r(1,2,3))>();    //const int &
+    decltype(func_cint_rr()) y = 0;       print_param_type<decltype(func_cint_rr())>();       //const int&&
     }
 
     {
+    cout << "3---" << endl;
     // 3左值或被()包围
     Student obj;
     //带有括号的表达式
-    decltype(obj.x) a = 0;    //obj.x 为类的成员访问表达式，符合推导规则一，a 的类型为 int
-    decltype((obj.x)) b = a;  //obj.x 带有括号，符合推导规则三，b 的类型为 int&。
+    decltype(obj.x) a = 0;   print_param_type<decltype(obj.x)>();   //int   obj.x 为类成员访问表达式，按规则1
+    decltype((obj.x)) b = a; print_param_type<decltype((obj.x))>(); //int&  obj.x 带有括号，按规则3
     //加法表达式
     int n = 0, m = 0;
-    decltype(n + m) c = 0;  //n+m 得到一个右值，符合推导规则一，所以推导结果为 int
-    decltype(n = n + m) d = c;  //n=n+m 得到一个左值，符号推导规则三，所以推导结果为 int&
+    decltype(n + m) c = 0;     print_param_type<decltype(n + m)>(); //int  n+m 得到一个右值，按规则1
+    decltype(n = n + m) d = c; print_param_type<decltype(n = n + m)>(); //int&  n=n+m 得到一个左值，按规则3
     }
 
     {
-    // 4区别 cv限制符
+    cout << "4---" << endl;
+    // 4区别 cv限制符   const 和 volatile 关键字的统称
+    // const 关键字用来表示数据是只读的，也就是不能被修改；
+    // volatile 和 const 是相反的，它用来表示数据是可变的、易变的，目的是不让 CPU 将数据缓存到寄存器，而是从原始的内存中读取。
+    // 推导变量类型时，auto 和 decltype 对 cv 限制符的处理不同。decltype 会保留 cv 限定符，而 auto 有可能会去掉 cv 限定符。
+    // auto 关键字对 cv 限定符的推导规则：
+    //   如果表达式的类型不是指针或者引用，auto 会把 cv 限定符直接抛弃，推导成 non-const 或者 non-volatile 类型。
+    //   如果表达式的类型是指针或者引用，auto 将保留 cv 限定符。
     //非指针非引用类型
     const int n1 = 0;
-    auto n2 = 10;
+    auto n2 = 10;             print_param_type<decltype(n2)>();   // int
     n2 = 99;  //赋值不报错
-    decltype(n1) n3 = 20;
+    decltype(n1) n3 = 20;     print_param_type<decltype(n3)>();   // const int
     // n3 = 5;  //赋值报错
+
     //指针类型
     const int *p1 = &n1;
-    auto p2 = p1;
+    auto p2 = p1;             print_param_type<decltype(p2)>();   // const int*
     // *p2 = 66;  //赋值报错
-    decltype(p1) p3 = p1;
+    decltype(p1) p3 = p1;     print_param_type<decltype(p3)>();   // const int*
     // *p3 = 19;  //赋值报错
     }
     {
-    // 5却别 引用
-        int n = 10;
+    cout << "5---" << endl;
+    // 5区别 引用
+    // 当表达式的类型为引用时，auto 和 decltype 的推导规则也不一样；
+    // decltype 会保留引用类型，而 auto 会抛弃引用类型，直接推导出它的原始类型。
+    int n = 10;
     int &r1 = n;
     //auto推导
-    auto r2 = r1;
+    auto r2 = r1;             print_param_type<decltype(r2)>();   // int
     r2 = 20;
     cout << n << ", " << r1 << ", " << r2 << endl; // 10, 10, 20
     //decltype推导
-    decltype(r1) r3 = n;
+    decltype(r1) r3 = n;      print_param_type<decltype(r3)>();    // int&
     r3 = 99;
     cout << n << ", " << r1 << ", " << r3 << endl; // 99, 99, 99
     }
@@ -367,7 +388,37 @@ void test1_cpp11_1_type()
     // f0:FvvE f1:FiPiiE f2:FPfPiiS0_S_E f3:FPcPfPKiPiS0_S2_E
 }
 
+void test1_cpp11_1_type2()
+{
+    using namespace std;
+    int a = 1;
+    string s = "";
+    cout << GetClearName(typeid(int&)) << endl;          // i -> int
+    cout << GetClearName(typeid(vector<int>&)) << endl;  // St6vectorIiSaIiEE -> std::vector<int, std::allocator<int> >
+    cout << type_name<const int&>() << endl;             // const int&
+    print_param_type(string{"42"});                      // std::__cxx11::basic_string<char>&&
+    print_param_type(s);                                 // std::__cxx11::basic_string<char>&
+    print_param_type(3);                                 // int&&
+    print_param_type(move(a));                           // int&&
+    print_param_type(a);                                 // int&
+    print_param_type<int, float>();                      // int  float
+}
 
+void test1_cpp11_1_type3()
+{
+    using namespace std;
+    int a = 1;
+    int b = 1;
+    int &c = a;
+
+    // typeid 方式
+    typeid(a) == typeid(b)? cout << "yes\n" : cout << "no";   // yes
+    typeid(a) == typeid(c)? cout << "yes\n" : cout << "no";   // yes
+
+    // tmp 方式
+    is_same_v<decltype(a),decltype(b)>?cout << "yes\n" : cout << "no\n";   // yes
+    is_same_v<decltype(a),decltype(c)>?cout << "yes\n" : cout << "no\n";   // no
+}
 
 void test1_cpp11_1_sync_with_stdio()
 {

@@ -17,6 +17,7 @@ using namespace std;
 // *** 函数模板特化2
 // *** 类模版特化
 // *** std::enable_if
+// C++ 禁忌黑魔法 : STMP
 
 // https://blog.51cto.com/waleon/5525989  万字长文 | 最好的 C++ 模板元编程干货！
 // https://sg-first.gitbooks.io/cpp-template-tutorial/content/TMP_ji_chu_md.html 模板元编程基础
@@ -483,7 +484,7 @@ struct add_rvalue_reference2 : decltype(detail::try_add_rvalue_reference<T>(0)) 
 inline void test1_cpp11_3_binary2()   // 需要 -std=c++2a
 {
     std::cout << std::is_same<char&, add_lvalue_reference2<char>::type>::value << std::endl;    // 1
-    std::cout << std::is_same<void,  add_lvalue_reference2<void>::type>::value << std::endl;
+    std::cout << std::is_same<void,  add_lvalue_reference2<void>::type>::value << std::endl;    // 1
 }
 
 namespace json {

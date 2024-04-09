@@ -17,7 +17,21 @@ settings->search explorer.autoReveal->true       # 设置文件目录的自动�
 settings->search Enable Preview->Workbench>Editor:Enable Preview # 打开新文件是否覆盖当前窗口 或 工作区右上->...->Enable Preview Editors
 settings->search update->Update:Mode             # VScode升级设置 none不自动更新 manual手动更新 default自动更新
                          Update:Enable Windows Background Updates  # 后台自动下载安装
-                         Extensions: Auto Update # VSCode是否自动检测升级插件 或 左侧插件栏->右上角...->Disable Auto Updating Extensions
+                         Extensions: Auto Update # 扩展升级 默认All 改为None 或 左侧扩展栏->右上角...->Auto Update Extensions->None
+                         Extensions: Auto Check Updates  # 是否检测扩展升级
+
+c++ F12跳转或鼠标悬停提示 重启后正常 一会又失败 一直loading
+C/C++ IntelliSense, debugging, and code browsing 这个扩展版本的原因
+vscode版本1.86.0(当前最新为1.87.0) IntelliSense版本为v1.19.5(当前最新) 降级为v1.18.5后正常 怀疑是版本不匹配
+降级方法:点开IntelliSense扩展界面->Uninstall旁的V箭头->install another version
+c++跳转需要3个配置 1 安装IntelliSense插件  2 C_Cpp:Intelli Sense Engine开关打开 3 C/C++:Edit Configurations(JSON)创建
+1 IntelliSense->小齿轮->Extension settings->搜索 @ext:ms-vscode.cpptools intell->C_Cpp:Intelli Sense Engine->default
+  若安装了clang 可能无法更改此选项 导致无法配置C/C++:Edit Configurations(JSON) 不能调试跳转  需要卸载掉clangd扩展 重启即可
+2 配置C/C++:Edit Configurations(JSON)  Ctrl+shift+p搜索Configurations即可
+  默认生成 c_cpp_properties.json 可更改 includePath compilerPath cStandard cppStandard   本文后面有这个介绍
+  若还没生效取消掉选项 左下小齿轮->搜索 C_Cpp:Add Node Addon Include Paths
+
+
 
 
 搭配c/c++环境出现“#include errors detected. Please update your includePath...”问题的解决 引用头文件飘红
@@ -446,9 +460,8 @@ Ctrl+Shift+p/F1 -> 输入task -> 选择"Tasks: Configure Default Build Task" -> 
 
 
 launch.json # 调试相关的参数
-设置 VScode 在调试时的基本内容和要求.在配置好 launch.json 文件后, 按 F5 即可进入调试模式。
 Ctrl+Shift+p/F1 -> 输入launch -> 选择"Debug:Open launch.json" -> "C++(GDB/LLDB)" # 打开调试的配置文件 launch.json。
-F5 即可进入调试模式。
+在配置好 launch.json 文件后, 按 F5 即可进入调试模式。
 只有生成可执行程序时加入了编译选项 -g (如 build.json 中的 args 部分包括 -g )，可执行文件才可以通过 gdb 进行调试。
 {
     "version": "0.2.0",
@@ -490,6 +503,21 @@ F5 即可进入调试模式。
 
 
 
+settings.json   # 显示相关参数
+Ctrl+Shift+P/F1 或 左下角齿轮图标，选择命令面板，然后输入 settings.json 来搜索
+1 用户设置User Settings
+  关联用户，即Windows的某个用户下，打开任意VSCode界面都会用此配置，或者说应用于该用户打开的所有工程。
+  使用 Ctrl+, 或左下角齿轮并选择设置。然后在用户的文本编辑器中找到 settings.json 。
+  C:\Users\me\AppData\Roaming\Code\User\settings.json  位置
+2 工作区设置Workspace Settings
+  打开某个文件夹或工作区，在该文件夹下创建一个名为 .vscode 的隐藏文件夹，
+  .vscode/settings.json(可自行决定是否创建)设置仅适用于当前目录下的VSCode，且工作区设置会覆盖用户设置。
+  使用 Ctrl+, 或左下角齿轮并选择设置。然后在工作区的文本编辑器中找到 settings.json 。
+3 defaultsettings.json
+  只读的，没有办法修改。是VScode给的配置项，供程序员进行参考。
+  如果需要修改，就把对应的配置项写在settings.json，settings.json会覆盖defaultsettings.json。
+  可以理解为defaultsettings.json为官方的配置项文档，文档肯定是做参考的，而不是修改，要修改也有地方 settings.json。
+
 项目下建立一个 .vscode 文件夹，里面提供一个 settings.json，可以为项目独立配置，更加灵活。
 {
     // 文件自动保存
@@ -513,6 +541,54 @@ F5 即可进入调试模式。
     }
 }
 
+设置颜色
+https://code.visualstudio.com/api/references/theme-color
+    "workbench.colorCustomizations": {
+        "editor.selectionBackground": "#533ac2",             // 当前选中代码颜色
+        "editor.selectionHighlightBackground" : "#21c753d0", // 其他同选中代码颜色
+        "editor.selectionHighlightBorder": "#ee610fd0",      // 其他同选中代码边框颜色
+        "editor.findMatchBackground": "#7e7e0b",             // 当前搜索匹配颜色
+        "editor.findMatchBorder": "#27c522",                 // 当前搜索匹配边框颜色
+        "editor.findMatchHighlightBackground": "#7e3a7e",    // 其他搜索匹配颜色
+        "editor.findRangeHighlightBackground": "#464544"     // 设置搜索范围时背景颜色
+    }
+
+搜索时排除目录和在文件列表中隐藏的文件类型
+https://blog.csdn.net/xuxuluo/article/details/127547604
+分别是：search.exclude和files.exclude，其中**表示在任意目录下的文件夹。举例如下
+{
+    "files.associations": {
+        "os_task.h": "c",
+        "arch_exception.h": "c",
+        "arch_task.h": "c",
+        "os_safety.h": "c",
+        "arch_interrupt.h": "c"
+    },
+
+    "search.exclude": {
+        "**/.git"           :true,
+        "**/.gitee"         :true,
+        "**/LICENSE"        :true
+        "docs/"             :true,
+        "templates/[!i]*/"  :true,
+        "components/[!d]*"  :true,
+        "user/"             :true,
+        ".clang-format*"    :true,
+        ".gitignore"        :true,
+    },
+
+    "files.exclude": {
+        "**/.git"           :true,
+        "**/.gitee"         :true,
+        "**/LICENSE"        :true
+        "docs/"             :true,
+        "templates/[!i]*/"  :true,
+        "components/[!d]*"  :true,
+        "user/"             :true,
+        ".clang-format*"    :true,
+        ".gitignore"        :true,
+    }
+}
 
 如
 {

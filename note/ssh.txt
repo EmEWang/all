@@ -12,6 +12,10 @@ ssh 服务安装
 3 /etc/init.d/ssh start   # 开启服务 显示sshd说明启动成功
 4 service ssh restart或service sshd restart或/etc/init.d/ssh restart  # 重启服务
 
+windows 重启ssh服务
+控制面板->windows工具->服务->OpenSSH SSH Server->右键->重启   # 方法1
+net stop sshd     net start sshd                  # 方法2 PowerShell或cmd中运行 管理员权限
+sc.exe stop sshd  sc.exe start sshd               # 方法3 sc.exe 命令 在命令行中 管理员权限
 
 
 配置文件
@@ -246,43 +250,6 @@ ssh [选项] [user@]host [command]
 
 
 
-绑定本地端口
-SSH可传送数据，可让不加密的网络连接改走SSH连接
-ssh -D 8080 user@host   # 让8080端口的数据，都通过SSH传向远程主机
-SSH建立一个socket，监听本地的8080端口。一旦有数据传向那个端口，就自动把它转移到SSH连接上面，发往远程主机。
-可以想象，如果8080端口原来是一个不加密端口，现在将变成一个加密端口。
-
-
-本地端口转发(Local forwarding)
-host1本地主机，host2远程主机。两台主机之间无法连通。host3同时连通前面两台主机。
-ssh -L 2121:host2:21 host3  # 在host1执行命令 通过host3，将host1连上host2
-  -L 三个值，分别是本地端口:目标主机:目标主机端口，冒号分隔。
-  意思是SSH绑定本地端口2121，然后指定host3将所有的数据，转发到目标主机host2的21端口。
-  这样只要连接host1的2121端口，就等于连上了host2的21端口。
-ftp localhost:2121  # 假定host2上开启的是ftp服务(默认21端口)
-本地端口转发使得host1和host3之间仿佛形成一个数据传输的秘密隧道，因此又被称为”SSH 隧道”。
-ssh -L 5900:localhost:5900 host3
-  将本机的5900端口绑定host3的5900端口(这里的localhost指的是host3，因为目标主机是相对host3而言的)。
-ssh -L 9001:host2:22 host3  # 通过host3的端口转发，SSH登录host2。
-ssh -p 9001 localhost       # SSH登录本机的9001端口，就相当于登录host2了。 -p 端口
-
-
-远程端口转发(Remote forwarding)
-host1与host2无法连通，借助host3转发。但host3是一台内网机器，它可以连接外网的host1，反之不行。
-本地端口转发就不能用了。解决办法是在host3上建立与host1的SSH连接，然后在host1上使用这条连接。
-ssh -R 2121:host2:21 host1    # 在host3执行  -R三个值，分别是远程主机端口:目标主机:目标主机端口。
-  意思是让host1监听它自己的2121端口，然后将所有数据经由host3，转发到host2的21端口。
-  对于host3，host1是远程主机，所以这种情况就被称为远程端口绑定。绑定之后，在host1就可以连接host2了
-ftp localhost:2121    # host1上执行  远程端口转发的前提条件是，host1和host3都有sshd和ssh客户端。
-
-
-SSH的其他参数
--N 只连接远程主机，不打开远程Shell -T 不为这个连接分配TTY。
-ssh -NT -D 8080 host  # 这个两个参数放在一起，代表这个SSH连接只用来传数据，不执行远程操作。 　
-ssh -f -D 8080 host   # -f SSH连接成功后，转入后台运行。要关闭这个后台连接，只能用kill杀进程。
-  这样一来，就可以在不中断SSH连接的情况下，在本地Shell中执行其他操作。
-
-
 
 SSH1和SSH2的区别
 SSH(Secure SHell)到目前为止有两个不兼容的版本——SSH1和SSH2。
@@ -449,3 +416,352 @@ User  用户名
 IdentityFile 私钥文件
 
 连接服务器 ssh xx 即可
+
+
+
+穿越多个跳板机
+https://blog.51cto.com/u_15214399/2823352
+1 ssh-keygen -t rsa -b 4096 -C "wjg" -f mykey  # 生成公私钥 不指定 -f 则在 ~/.ssh/下 id_rsa id_rsa.pub
+2 cat  ~/.ssh/id_rsa.pub | ssh name@ip 'cat - >> ~/.ssh/authorized_keys' # 公钥放置到每一下一条上
+3 访问起点 client 要额外配置  需要确保ssh client支持ProxyJump语句  >openssh 7.5 mac mojave ubuntu 18.04以后
+  例如 client -> jump1 -> jump2 -> node  则 client的config 配置如下 即 ~/.ssh/config
+  ***特别注意*** 每一步的 jumpX 是指其上一级连接 如 node的上一级是jump2  依赖倒序
+  ProxyJump 方式可写为 ProxyCommand 方式   ssh -v node 展示连接详细情况 ProxyJump 通过 ProxyCommand 建立连接
+# 1级跳转机
+Host jump1
+    HostName ip1
+    User name1
+# 2级跳转机
+Host jump2
+    HostName ip2
+    User name2
+    ProxyJump jump1
+#    ProxyCommand ssh -q -x -W %h:%p jump1
+# 目标主机 node 为 my_node 的简写
+Host my_node node
+    HostName ip3
+    User name3
+    ProxyJump jump2
+#    ProxyCommand ssh -q -x -W %h:%p jump2
+ProxyCommand命令用来指定连接到服务器的命令.  https://cikeblog.com/proxycommand.html
+  其可以是任何的命令,只要能从其标准输入读入数据,然后写出到标准输出即可.这条命令需要连接到sshd服务器上.
+  也就是说,在不使用ProxyCommand的情况下,ssh会自己建立到目标机器22端口的连接.
+  使用了ProxyCommand,则使用指定命令来建立到目标机的连接,ssh直接使用已经建立的连接.在文档里面使用了nc命令来建立连接.
+  nc是外部命令,可能有些机器上没有安装.实际上,ssh命令的-W选项可以完成这个事情
+  -W host:port 将client过来的标准输入和输出forward到host和port指定的地方.这个选项直接就可以搭配上ProxyCommand的需求.
+  -q 安静模式   -x Disables X11 forwarding.
+  %h表示要连接的目标机,也就是Hostname指定的ip或者主机名,%p表示要连接到目标机的端口.
+  这儿可以直接写死固定值,但是使用%h和%p可以保证在Hostname和Port变化的情况下ProxyCommand这行不用跟着变化
+4 ssh node 或 ssh my_node   # 验证
+5 client 设置 ControlMaster 高速复用 ssh 连接
+~/.ssh/config顶部添加如下配置  第一次ssh登录之后再次登录 没有延迟 一段时间内重连不需要认证(密码登录不需要密码)
+Host *
+    ServerAliveInterval 10
+    TCPKeepAlive yes
+    ControlPersist yes
+    ControlMaster auto
+    ControlPath ~/.ssh/master_%r_%h_%p
+6 增量同步远程机器的指定目录
+lftp这个老古董可以利用sftp经由ssh的config跳板通道，进行文件拷贝同步等动作。
+lftp sftp://n1 -e "mirror -R /root/project/" # 把client本地/root/project/下的文件增量同步到远程n1上的/root/project/
+lftp sftp://n1 -e "mirror /root/project/"    # 把远端n1上的/root/project/下的文件增量同步到client本地/root/project/
+# lftp还有多线程参数加速同步或者下载，读者可自行发掘。
+
+
+
+
+端口转发
+https://zhuanlan.zhihu.com/p/148825449
+如无特殊说明，SSH连接都建立在由主机A到主机B间，SSH命令都在主机A上被执行。
+
+1 本地端口转发(Local forwarding)
+是指将应用对于本地主机A指定端口X的访问请求转发给远程主机B，交由B对另一指定主机C的指定端口Z发起访问。
+当A -x-> C.Z，有A→B的SSH连接，且B -> C.Z，本地端口转发就派上用场。
+app_client → hostA端口X   → TCP  → SSH  → TCP  → hostB    → hostC端口Z    # 访问示意图
+             SSH_Client                        SSH_Serve
+访问请求在A一侧发生，可以来自于A自身，也可以是其他与A连接的设备。原理上，C可以是任何能够被B识别到的设备，也可以是B自身。
+本地端口转发使得A和B之间仿佛形成一个数据传输的秘密隧道，因此又被称为”SSH 隧道”。
+
+A$ ssh -L hostA端口X:hostC:C端口Z hostB  # 简单理解为：将对A:X的访问转变成对C:Z的访问
+A$ ssh -L [收听接口:]收听端口:目标主机:目标端口 hostB # 完整格式  -L后四个参数   补充说明
+  参数1可不写，默认值是0.0.0.0(OpenSSH客户端配置文件 ssh_config 中 GatewayPorts 选项的值一般为 yes )。
+    意味着SSH隧道会收听所有接口，接受来自任何地址的应用访问请求并进行转发。
+    而如果在此处填写了绑定地址，SSH隧道连接就会只处理来自绑定地址的应用请求，而对其他地址发来的请求置之不理。
+    例如在此处填写127.0.0.1，即可实现只有来自主机A本机的应用请求才被SSH隧道转发的效果。
+  收听接口是站在A的视角上去规定允许与A连接的设备，解决「能够使用SSH端口转发的应用请求从何处来」的问题，类似防火墙的入站；
+    收听端口则依旧是主机A上的那个端口X，不能够跑到别的主机上去。
+  类似地，远程端口转发和动态端口转发也具有「收听接口」这一可不指明的参数，下文不再赘述。
+
+举例：
+A$ ssh -L 2121:hostC:21 hostB  # 在hostA执行命令 通过hostB，将hostA连上hostC
+  hostA本地主机，hostB远程主机。两台主机之间无法连通。hostC同时连通前面两台主机。
+  -L 三个值，分别是本地端口:目标主机:目标主机端口，冒号分隔。
+  SSH绑定本地端口2121，指定hostB将所有数据，转发到hostC的21端口。即只要连接hostA的2121端口，就等于连上了hostC的21端口。
+
+ssh -p 22 virtual_user@10.0.2.15	  # 在A上访问B上的虚拟机C  A不能直接访问 即这个命令在A不能运行 需要以下2条命令
+  ssh -L 22022:10.0.2.15:22 desktop_user@192.168.1.11	# A运行 cmd-1 通过B建立本地端口转发
+  ssh -p 22022 virtual_user@localhost #  A运行 cmd-2 访问虚拟机
+
+ssh -L 9001:hostC:22 hostB  # 通过hostB的端口转发 SSH登录hostC
+  ssh -p 9001 localhost       # SSH登录本机的9001端口，就相当于登录host2了。 -p 端口
+
+ssh -L 5900:localhost:5900 hostB
+  将本机的5900端口绑定hostB的5900端口(这里的localhost指的是hostB，因为目标主机是相对hostB而言的)。
+
+
+2 远程端口转发(Remote forwarding)
+C在端口Z提供服务，B无法直接访问C或端口Z，有SSH：A→B的连接，且A能直接访问C的端口Z，远程端口转发就派上用场。
+hostC端口Z ← hostA   → TCP  → SSH  → TCP  → hostB端口Y  ← app_client  # 访问示意图
+          SSH_Client                       SSH_Server
+
+ssh -R hostB端口Y:hostC:C端口Z nameB@ipB # 简单理解为：将对B:Y的访问转变成对C:Z的访问  -R表示使用 远程端口转发
+
+仍然以从A对B发起SSH连接为基础。原理上，C可以是任何能够被A识别到的设备，也可以是A自身。
+与本地端口转发的流动方向相反，远程端口转发是将对于远程主机B指定端口Y的访问请求转发给A，交由A对C的指定端口Z发起访问。
+注意，此时访问请求在B一侧发生，而SSH连接的方向却没有变化，仍是由A到B的。
+因此 本地与远程端口转发互为镜像 的说法并不完全准确；严格意义上的镜像，SSH连接也要变为由B到A，那时则应该是在B上采用本地端口转发。
+可以看出，采取哪种端口转发主要取决于SSH连接建立的方向。
+
+举例：
+A上有虚拟机C，B向C传输文件；但B→C，某服务不可直连；A→C，某服务可直连；A→B，SSH可直连；任务目标：B→A→C，某服务的间接连接。
+  ssh -R 22122:10.0.2.16:22 userB@192.168.1.233	# cmd-1  A上执行
+    22122号端口是随便选的一个没被占用的端口；192.168.1.233是B的IP；userB是B上的用户名；
+    10.0.2.16是C在A为其搭建的虚拟网络中的IP；22号端口是默认的SFTP端口。：
+  sftp -P 22122 userC@localhost	# cmd-2  注意，B上执行此命令  userC是C的用户名  此处localhost是B对自己的称呼
+    对B的22122端口的访问被转发至A，A访问C，即10.0.2.16的22端口并将结果返回给B。于是B就通过远程端口转发成功访问了C上的SFTP服务器。
+  sftp -P 22 userC@10.0.2.15	# cmd-3  cmd-1和cmd-2合起来目的是在B上实现cmd-3 但cmd-3不能被直接成功执行
+
+内网的A，公网的B；B→A，某服务不可直连；A→A，某服务可直连；A→B，SSH可直连；任务目标：B→A→A，某服务的间接连接
+  注意：OpenSSH服务器对于远程端口转发的设定，默认只接受远程主机B本机上的应用发起的请求。
+  想要从其他连接到B的设备发起请求，需 /etc/ssh/sshd_config 开启 GatewayPorts yes 默认为 no 并重启ssh服务 。
+  A运行着http服务，但A没有公网IP，其他设备不能使用该服务。服务器B有公网IP。
+  在不将http服务迁移至B的前提下，使用SSH端口转发使其他设备通过访问B的方式访问A上的http服务。
+  ssh -R 80:localhost:80 cloud_user@server.example.com	# cmd.4-1  在A上执行端口转发命令
+  这时C便是A自己（localhost）；80号端口是http默认端口，为简便两个都用默认；
+  cloud_user还是B上的用户名；http://server.example.com还是B的域名。
+  http://server.example.com/  在其他设备上打开浏览器，通过这个地址可以访问本地计算机A提供的http服务。
+
+host1与host2无法连通，借助host3转发。但host3是一台内网机器，它可以连接外网的host1，反之不行。
+  本地端口转发就不能用了。解决办法是在host3上建立与host1的SSH连接，然后在host1上使用这条连接。
+  ssh -R 2121:host2:21 host1    # 在host3执行  -R三个值，分别是远程主机端口:目标主机:目标主机端口。
+    意思是让host1监听它自己的2121端口，然后将所有数据经由host3，转发到host2的21端口。
+    对于host3，host1是远程主机，所以这种情况就被称为远程端口绑定。绑定之后，在host1就可以连接host2了
+  ftp localhost:2121    # host1上执行  远程端口转发的前提条件是，host1和host3都有sshd和ssh客户端。
+
+
+3 动态端口转发 或 绑定本地端口
+可以把本地主机A上运行的SSH客户端转变成一个SOCKS代理服务器；实际上它是一种特殊的本地端口转发，或叫它 动态本地端口转发。
+这个动态，就动在这种转发不规定目标地址(主机C)和目标端口(端口Z)，而是去读取应用发起的请求，从请求中获取目标信息。
+
+ssh -D hostA端口X username@hostname
+有一个问题：之前使用固定的端口转发时，应用的访问请求都是指向被转发的那个端口X的，
+但现在应用的访问请求必须指向目标，以指定动态端口转发的目标。
+可如果不指向端口X，如何让数据走SSH隧道呢？这就要求我们在系统或应用（浏览器等）中设置一个使用SOCKS5协议、
+服务器为localhost、端口为X的代理，利用代理使请求走端口X。
+
+这样应用的请求就从X进入隧道，抵达B后其中的目标信息被解析出来，B访问目标后再将结果通过隧道返回给A。
+比如在开启代理的A上的浏览器中访问http://zhihu.com，经过端口转发，相当于是B在帮A访问http://zhihu.com。
+
+SSH可传送数据，可让不加密的网络连接改走SSH连接
+ssh -D 8080 user@host   # 让8080端口的数据，都通过SSH传向远程主机
+SSH建立一个socket，监听本地的8080端口。一旦有数据传向那个端口，就自动把它转移到SSH连接上面，发往远程主机。
+可以想象，如果8080端口原来是一个不加密端口，现在将变成一个加密端口。
+curl --socks 5 127.0.0.1:8080 http://需要访问的网站   # 测试
+
+举例：
+https://blog.csdn.net/qq_37429313/article/details/121273446
+1 A能上网，B不能，A B能通SSH访问，达到B能通过apt安装包
+ssh -D 127.0.0.1:1080 usernameA@ipA   # B上运行
+apt -o Acquire::http::proxy="socks5h://127.0.0.1:1080" update  # B上运行
+
+2 在1基础上使B应用程序连网下载等(B上操作)，配置tsock代理
+https://woniuxiang.space/blog/post/lightime/tsocks
+工作原理是通过 ssh -D 1080 nameA@ipA, 本地上运行一个 socks server, 其监听端口为 1080,
+socks server 的所有数据都是会转发到 B. 配置 tsocks 的服务器为 12.0.0.1:1080, 即可达到使用 B 作为代理上网的目的.
+apt -o Acquire::http::proxy="socks5h://127.0.0.1:1080" install tsocks -y # 2.1 安装
+tar xzvf tsocks-1.8beta5.tar.gz;cd tsocks-1.8;./configure;make && make install # 源码安装
+vim /etc/tsocks.conf                             # 2.2 修改tsocks配置 如下
+  server = 127.0.0.1
+  # Server type defaults to 4 so we need to speciffy it as 5 for this one
+  server_type = 5
+  # The port defaults to 1080 but I've stated it hhere for clarity
+  server port = 1080
+  # local表示本地的网络，也就是不使用socks代理的网络
+  # 删掉path的所有配置，path中配置的不走代理 建议
+保持1之前ssh连接的终端不断的情况下，再开一个终端使用  # 2.3 使用
+  tsocks wget www.baidu.com   # 使用wget工具
+  tsocks firefox              # 访问网页
+  tsocks apt install xxx      # 安装
+假如提示resolve错误，需要在/etc/hosts中配置对应的IP 域名转换关系  # 2.4 配置host
+  tsocks只能代理tcp，域名解析是udp，ping是icmp，tsocks代理的都不能用。
+  如：112.124.140.210 mirrors.aliyun.co
+  目前还没解决DNS问题，只能通过ip进行访问。
+
+tsocks show            # 当前Shell的tsocks设置    这2个命令测试没啥作用
+source tsocks on/off   # 打开/关闭当前shell的tsocks  设置 LD_PRELOAD="libtsocks.so"
+
+Need a password in tsocks.conf or $TSOCKS_PASSWORD to authenticate withssh: connect to host 151.151.151.151 port 22: Connection refused
+  使用的代理服务器，需要帐号密码进行身份校验，增加default_user及default_pass配置解决
+SOCKS server 211.211.211.211 (211.211.211.211) is not on a local subnet!
+  设置的代理没有与/etc/tsocks.conf文件中的local设置的网络在同一个子网中。配置：local = 211.211.211.0/255.255.255.224解决
+
+5 端口转发的停止
+SSH端口转发完全基于基本的SSH连接，因此，通过在远程终端上执行exit命令、暴力关闭本地终端窗口、
+远程主机B关机、本地主机A关机等可以切断SSH连接的方式，即可停止SSH端口转发。就是这样。
+
+
+6 SSH的其他参数
+-N 只连接远程主机，不打开远程Shell -T 不为这个连接分配TTY。
+ssh -NT -D 8080 host  # 这个两个参数放在一起，代表这个SSH连接只用来传数据，不执行远程操作。 　
+ssh -f -D 8080 host   # -f SSH连接成功后，转入后台运行。要关闭这个后台连接，只能用kill杀进程。
+  这样一来，就可以在不中断SSH连接的情况下，在本地Shell中执行其他操作。
+
+
+
+Linux设置代理
+https://blog.361way.com/linux-proxy/4184.html
+https://chenjiehua.me/linux/socks5_and_http_proxy.html
+0 curl 使用socks5代理
+  curl --socks5 127.0.0.1:1080 baidu.com    # 即使配置了 tsocks 前面也不需要加 tsocks 前缀
+1 wget下的代理设置
+  set "http_proxy=http://[user]:[pass]@host:port/"  # 临时生效 或 export "http_proxy=http://[user]:[pass]@host:port/"
+  wget -e "http_proxy=http://[user]:[pass]@host:port/" http://baidu.com   # 使用wget参数
+  http_proxy=代理主机IP:端口   # 当前用户永久生效 创建~/.wgetrc文件中加入
+  注：如果使用ftp代理，将http_proxy 改为ftp_proxy 即可。
+2 echo "export http_proxy=proxy.361way.com:8888" > ~/.lftp   # lftp下代理设置
+3 yum设置  编辑/etc/yum.conf文件，按如下配置
+  proxy=http://yourproxy:8080/                     #匿名代理
+  proxy=http://username:password@yourproxy:8080/   #需验证代理
+4 全局代理配置  编辑/etc/profile 或~/.bash_profile ，增加如下内容：
+  http_proxy=proxy.361way.com:8080
+  https_proxy=proxy.361way.com:8080
+  ftp_proxy=proxy.361way.com:8080
+  export http_proxy https_proxy ftp_proxy
+5 socket代理配置 这里以两个常见的socket代理软件socks5 和 tsocks 为例：
+  5.1 tsocks代理
+    apt-get install tsocks  # 1 安装
+    /etc/tsocks.conf        # 2 配置
+      local = 192.168.1.0/255.255.255.0 #local表示本地的网络，也就是不使用socks代理的网络
+      server = 127.0.0.1 # SOCKS 服务器的 IP
+      server_type = 5 # SOCKS 服务版本
+      server_port = 9999 ＃SOCKS 服务使用的端口
+    用 tsocks 运行你的软件很简单，在终端中:tsocks 你的软件 ，如tsocks wget url
+  5.2 socks5代理
+    安装socks客户端工具runsocks(正常安装socks5后自带)。在libsocks5.conf文件里加入所要使用的代理服务器。
+    runsocks wget -m [http://site1 | ftp://site2]    # 配置完成，可以通过如下命令运行测试：
+  5.3 proxychains
+    sudo apt install proxychains  # 1 安装
+    /etc/proxychains.conf         # 2 配置
+      strict_chain
+      proxy_dns
+      tcp_read_time_out 15000
+      tcp_connect_time_out 8000
+      [ProxyList]
+      socks5 127.0.0.1 1080
+    在命令行前加上 proxychains 让程序走 socks5 代理  # 3使用
+      sudo proxychains apt install xxx
+      proxychains git clone git@github.com:xxx/xxx.git
+6 Socks转为http代理
+  上面的方式已经解决了大部分的代理问题。但某些特殊场景下只能使用http代理。因此，需要将 socks5 代理转换为 http 代理。
+  这里将通过 privoxy 这个软件来实现该功能
+    sudo apt install privoxy    # 1 安装
+  /etc/privoxy/config           # 2 配置
+    user-manual /usr/share/doc/privoxy/user-manual
+    confdir /etc/privoxy
+    logdir /var/log/privoxy
+    filterfile default.filter
+    logfile logfile
+    actionsfile match-all.action # Actions that are applied to all sites and maybe overruled later on.
+    actionsfile default.action   # Main actions file
+    actionsfile user.action      # User customizations
+
+    # 设置监听端口
+    listen-address  localhost:8118
+    toggle  1
+    enable-remote-toggle  0
+    enable-remote-http-toggle  0
+    enable-edit-actions 0
+    enforce-blocks 0
+    buffer-limit 4096
+    enable-proxy-authentication-forwarding 0
+    forwarded-connect-retries  0
+    accept-intercepted-requests 0
+    allow-cgi-request-crunching 0
+    split-large-forms 0
+    keep-alive-timeout 5
+    tolerate-pipelining 1
+    socket-timeout 300
+
+    # 限制访问权限
+    permit-access src_addr[:port][/src_masklen] [dst_addr[:port][/dst_masklen]]
+
+    # 连接socks5代理，注意最后的 . 不能漏了
+    # 示例: forward-socks5 target_pattern socks_proxy[:port] http_parent[:port]
+    forward-socks5 / 127.0.0.1:1080 .
+  sudo service privoxy restart  # 3 重启
+  这时候已经创建了一个http代理 localhost:8118
+  为 shell 设置 http 代理        # 4 使用
+    export http_proxy=http://127.0.0.1:8118
+    export https_proxy=http://127.0.0.1:8118
+7 Git设置代理
+  假设我们已经通过ssh部署了一个socks5代理（ 127.0.0.1:1080）
+  git config --global http.proxy socks5://127.0.0.1:1080 # 设置全局代理，不必设置https.proxy
+  git config --global http.https://github.com.proxy socks5://127.0.0.1:1080  # 只针对 https://github.com 设置代理
+  git config --global url.https://github.com/.insteadOf git://github.com/ # 如ssh协议无法使用代理，将 ssh 替代为 https
+  执行完上面，可以查看 ~/.gitconfig 的配置：
+    [http "https://github.com"]
+        proxy = socks5://127.0.0.1:1080
+
+    [http]
+        proxy = socks5://127.0.0.1:1080
+
+    [url "https://github.com/"]
+        insteadOf = git://github.com/
+  git config --global --unset http.proxy      # 取消代理
+  对于 socks5 和 socks5h 的区别：
+    socks5h: the hostname is resolved by the SOCKS server (also known as CURLPROXY_SOCKS5_HOSTNAME type);
+    socks5: the hostname is resolved locally;
+
+
+Ubuntu修改DNS方法
+1 永久修改DNS方法
+  /etc/systemd/resolved.conf   # 1 修改
+    DNS=8.8.8.8 114.114.115.115  # 指定 DNS 服务器，以空白分隔，支持 IPv4 或 IPv6 位置
+    FallbackDNS=8.8.8.8          # 备用 DNS 服务器
+    Domains=domain.com           # 设置搜索域名
+    LLMNR=yes                    # 设置 LLMNR 是否激活，可用的选项有 yes、no、resolve
+    MulticastDNS=yes             # 设置 MulticastDNS 是否激活，可用的选项有 yes、no、resolve
+    DNSSEC=yes                   # 设置 DNSSEC 是否激活，可用的选项有 yes、no、allow-downgrade
+    Cache=no-negative            # 设置缓存是否激活，可用的选项有 yes、no、no-negative
+  根据需要修改 resolved.conf 文件中的DNS，然后保存。
+  systemctl restart systemd-resolved   # 2 重启 systemd-resolved 服务
+  systemctl enable systemd-resolved    # 3 置开机启动 systemd-resolved 服务
+  mv /etc/resolv.conf /etc/resolv.conf.bak      # 4 备份
+  ln -s /run/systemd/resolve/resolv.conf /etc/  # 5 软连接
+2 临时修改DNS方法
+  /etc/resolv.conf    # 修改  此方法修改后即刻生效，但重启后失效。
+  nameserver 8.8.8.8  # 加入想要修改的DNS 如果多个DNS，就一行一个，修改之后保存退出即可
+  nameserver 8.8.4.4
+
+
+
+
+
+
+解决git@github.com: Permission denied (publickey)
+https://blog.csdn.net/qq_40047019/article/details/122898308
+1 ssh-keygen -t rsa -C "xx@yemai.com" # 如没有ssh key  一路回车即可，生成ssh key。会覆盖之前的ssh key。
+2 ssh -v git@github.com   # 最后两句会出现
+  No more authentication methods to try.
+  Permission denied (publickey).
+3 ssh-agent -s            # 会提示类似的信息
+  SSH_AUTH_SOCK=/tmp/ssh-OKgCrEhRlqjP/agent.1555733; export SSH_AUTH_SOCK;
+  SSH_AGENT_PID=1555734; export SSH_AGENT_PID;
+  echo Agent pid 1555734;
+4 ssh-add ~/.ssh/id_rsa   # 这时候应该会提示
+  Identity added: /home/liauto/.ssh/id_rsa (liauto@x01-orin1)
+  Could not open a connection to your authentication agent.   # 如果出现错误提示
+    先 eval `ssh-agent -s`，然后 ssh-add ~/.ssh/id_rsa         # 这时候一般OK了
+5 将id_rsa.pub内容复制入你的github账号，settings -> SSH and GPG keys -> new SSH key -> title随便取名 -> Add SSH Key。
+6 ssh -T git@github.com  # 验证Key 提示：如下信息就OK了。
+  Hi XXX! You've successfully authenticated, but GitHub does not provide shell access.

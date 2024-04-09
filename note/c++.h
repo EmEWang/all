@@ -47,6 +47,8 @@ https://zhuanlan.zhihu.com/p/663843832              # 现代C++性能优化
 https://cloud.tencent.com/developer/article/1599283 # 虚函数表深入探索(详细全面)
 https://arangodb.com/2021/02/cpp-memory-model-migrating-from-x86-to-arm/  # C++ Memory Model: Migrating from X86 to ARM
 https://blog.csdn.net/qq_41854911/article/details/119657617 # C++11、C++14、C++17、C++20新特性总结
+https://zhuanlan.zhihu.com/p/142175297              # how? std::function in C++
+
 
 <bits/stdc++.h>  # 包含通用c/c++头文件  不是标准  gcc 支持 msvc不支持
 
@@ -110,16 +112,16 @@ denotes the version of C++ standard that is being used, expands to value 199711L
 https://gcc.gnu.org/onlinedocs/cpp/Standard-Predefined-Macros.html  # gcc
 https://learn.microsoft.com/zh-cn/cpp/build/reference/zc-cplusplus?view=msvc-160 # windows  /Zc:__cplusplus(启用更新的 __cplusplus 宏)
 g++ -dM -E -x c++  /dev/null | grep -F __cplusplus     # #define __cplusplus 201402L  gcc 输出编译器预定义的宏
--dM -E # 输出预定义的宏
-Instead of the normal output, generate a list of ‘#define’ directives for all the macros defined
+-dM # 输出预定义的宏
+Instead of the normal output, generate a list of #define directives for all the macros defined
 during the execution of the preprocessor,including predefined macros.
 This gives you a way of finding out what is predefined in your version of the preprocessor.
-If you use ‘-dM’ without the ‘-E’ option, ‘-dM’ is interpreted as a synonym for ‘-fdump-rtl-mach’
+If you use -dM without the -E option, -dM is interpreted as a synonym for -fdump-rtl-mach.
 
 -E # 预处理之后停止，预处理的结果输出到标准输出
 Stop after the preprocessing stage; do not run the compiler proper.
 The output is in the form of preprocessed source code, which is sent to the standard output.
-Input files that don’t require preprocessing are ignored
+Input files that don’t require preprocessing are ignored.
 
 -x language # 指定语言
 Specify explicitly the language
@@ -133,17 +135,16 @@ react
 
 
 
-system("pause") 相当于从程序里调用"pause"命令，继而暂停。必须"stdlib.h" 或 "cstdlib"头文件。只适合DOS或Windows
-，不合适合Linux，会出现"sh: PAUSE: command not found" ，在Linux可直接调用pause()。
+system("pause") 相当于从程序里调用"pause"命令，继而暂停。必须"stdlib.h" 或 "cstdlib"头文件。
+只适合DOS或Windows，不合适合Linux，会出现"sh: PAUSE: command not found" ，在Linux可直接调用pause()。
 
-调用系统命令system()去实现暂停程序，耗费系统资源。
-C中推荐使用getchar(); C++中使用cin.get();
+调用系统命令system()去实现暂停程序，耗费系统资源。C中推荐使用getchar(); C++中使用cin.get();
 
 #include <unistd.h>
 int pause(void);
-pause() 库函数使调用进程(或线程)睡眠状态，直到接收到信号，要么终止，或导致它调用一个信号捕获函数。
-The pause() function only returns when a signal was caught and the signal-catching function returned.
-  In this case pause() returns -1, and errno is set to EINTR.
+pause()库函数使调用进程(或线程)睡眠状态，直到接收到信号，要么终止，或导致它调用一个信号捕获函数。
+The pause() function only returns when a signal was caught and the signal-catching function returned.
+  In this case pause() returns -1, and errno is set to EINTR.
 
 
 
@@ -200,16 +201,19 @@ label:
 
 
 __asm   # 关键字 用于调用内联汇编程序，并且可在 C 或 C++ 语句合法时出现。   同 __ASM
-语法  __asm后跟一个程序集指令、一组括在大括号中的指令或者至少一对空大括号。
-1、__asm与大括号一起使用，则该关键字表示大括号之间的每一行都是一条汇编语言语句。
-   如：_asm　{　mov al, 2 　mov dx, 0xD007　out al, dx　}
-2、__asm不与大括号一起使用，放在代码行首部，则 __asm 关键字表示此行的其余部分是一条汇编语言语句。
-  如：
+1 __asm 与大括号一起使用，则该关键字表示大括号之间的每一行都是一条汇编语言语句。如：_
+__asm
+{
+mov  al,  2
+mov  dx,  0xD007
+out  al,  dx
+}
+2 __asm 不与大括号一起使用，放在代码行首部，则 __asm 关键字表示此行的其余部分是一条汇编语言语句。如：
 __asm mov al, 2
 __asm mov dx, 0xD007
 __asm out al, dx
-3、__asm做语句分隔符，可将汇编语句放在同一行代码中。
-如：__asm mov al, 2 __asm mov dx, 0xD007 __asm out al, dx
+3 __asm 做语句分隔符，可将汇编语句放在同一行代码中。如：
+__asm mov al, 2 __asm mov dx, 0xD007 __asm out al, dx
 
 
 不同平台下C\C++数值数据类型长度如下：
@@ -233,7 +237,7 @@ string str2 ="abc\
 string str3 =
     "abc"
     "123";
-string str4(
+string str4( // C++11开始支持Raw string literal,格式 R"delimiter(raw_characters)delimiter" delimiter 可省或为任意字符串
     R"EOF(
 <Auto>
 </Auto>
@@ -244,11 +248,6 @@ string str5 =
 </Auto>
 )EOF";
 
-C++ 11开始支持Raw string literal,格式为 R"delimiter(raw_characters)delimiter"   delimiter 可省 也可为任意字符串
-std::string str(
-R"EOF(line1
-line2
-)EOF)"
 
 
 [整数0X01020304]
@@ -270,11 +269,11 @@ const char* const ptr;  # 指针指向固定；指向内容不可改变
 const int a = 2;        # 修饰局部变量，全局变量，成员变量
 3 修饰函数
 在返回之后要么赋值给了其他的变量所以通常不会这么使用。
-const int getNum() {return 3;} // 修饰函数返回值，返回值是一个将亡值，然后其他变量可以继续修改或离开作用域而被释放内存。无意义。
+const int getNum() {return 3;} // 修饰函数返回值，返回值是一个将亡值，其他变量可修改或离开作用域而释放内存。无意义。
 class Student {
 public:
-    void test() const { // 修饰成员函数，通常加在成员函数的末尾，作用声明该成员函数为只读函数，即无法修改任何成员变量的值
-        member = 3;     // 错误，表达式必须是可修改的左值，因为member是成员变量，而test函数被const修饰过后无法修改成员变量
+    void test() const { // 修饰成员函数，通常在末尾，声明该函数为只读函数，即无法修改成员变量的值
+        member = 3;     // 错误，表达式必须是可修改的左值，因为member是成员变量
         int b = 3;
         b = 4;          // 正确
     }
@@ -285,10 +284,10 @@ private:
 class demo {
 public:
     demo(int num):num(num){}
-    int get_num(){return num;}    // 默认对于类中用 public 修饰的成员函数，既可以被左值对象调用，也可以被右值对象调用。
-    int get_num2()&{return num;}  // C++11 新增引用限定符。所谓引用限定符，就是在成员函数的后面添加 “&” 或者 “&&”，
-    int get_num3()&&{return num;} // 从而限制调用者的类型（左值还是右值）。
-    int get_num4()const{return num;};   // const 也可以用于修饰类的成员函数，位于函数的末尾，我们习惯称为常成员函数
+    int get_num(){return num;}          // 默认类中 public 修饰的成员函数，既可被左值对象调用，也可被右值对象调用。
+    int get_num2()&{return num;}        // C++11 新增引用限定符。就是在成员函数后面添加 “&” 或者 “&&”，
+    int get_num3()&&{return num;}       // 从而限制调用者的类型(左值还是右值)。
+    int get_num4()const{return num;};   // const 也可用于修饰类的成员函数，位于函数的末尾，我们习惯称为常成员函数
     int get_num5()const&{return num;};  // C++11 规定，当引用限定符和 const 修饰同一成员函数时，const 必须位于引用限定符前面。
     int get_num6()const&&{return num;}; // const && 修饰类的成员函数时，调用它的对象只能是右值对象；
                                         // const & 调用它的对象既可以是左值对象，也可以是右值对象。
@@ -299,10 +298,10 @@ private:
 demo a(10);
 cout << a.get_num() << endl;
 cout << move(a).get_num() << endl;
-cout << a.get_num2() << endl;          // 正确
-//cout << move(a).get_num2() << endl;  // 错误
-//cout << a.get_num3() << endl;        // 错误
-cout << move(a).get_num3() << endl;    // 正确
+cout << a.get_num2() << endl;            // 正确
+//cout << move(a).get_num2() << endl;    // 错误
+//cout << a.get_num3() << endl;          // 错误
+cout << move(a).get_num3() << endl;      // 正确
 cout << a.get_num5() << endl;            // 正确
 cout << move(a).get_num5() << endl;      // 正确
 //cout << a.get_num6() << endl;          // 错误
@@ -313,7 +312,7 @@ constexpr 关键字
 修饰一些函数和变量，使其成为常量表达式，从而在编译器就可以进行计算，进一步提高程序运行期的效率
 1 修饰变量
 constexpr int n = 2 + 2;          // 正确，2+2是常量表达式，n将会在编译器进行计算
-int arr[n] = {11, 22, 33, 44};   // 正确，n是一个常量表达式
+int arr[n] = {11, 22, 33, 44};    // 正确，n是一个常量表达式
 2 修饰普通函数
 整个函数的函数体中，除了可以包含 using 指令、typedef 语句以及 static_assert 断言外，只能包含一条 return 返回语句。
 该函数必须有返回值，即函数的返回值类型不能是 void。
@@ -375,7 +374,8 @@ char *(* c[10])(int **p); c是一个数组[0..9]，它的元素类型是函数�
 
 
 理解复杂声明可用的“右左法则”：
-从变量名看起，先往右，再往左，碰到一个圆括号就调转阅读的方向；括号内分析完就跳出括号，还是按先右后左的顺序，如此循环，直到整个声明分析完。
+从变量名看起，先往右，再往左，碰到一个圆括号就调转阅读的方向；括号内分析完就跳出括号，还是按先右后左的顺序，
+如此循环，直到整个声明分析完。
 int (*func)(int *p); // 举例
 首先找到变量名func，外面有一对圆括号，而且左边是一个*号，这说明func是一个指针；然后跳出这个圆括号，先看右边，又遇到圆括号，
  这说明(*func)是一个函数，所以func是一个指向这类函数的指针，即函数指针，这类函数具有int*类型的形参，返回值类型是int。
@@ -509,6 +509,75 @@ static 被引入以告知编译器，将变量存储在程序的静态存储区�
 
 
 
+typeof
+typeof() 是GUN C提供的一种特性，可参考C-Extensions，它可以取得变量的类型，或者表达式的类型。
+1 不用知道函数返回什么类型，可以使用typeof()定义一个用于接收该函数返回值的变量
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct apple{
+    int weight;
+    int color;
+};
+
+struct apple *get_apple_info()
+{
+    struct apple *a1;
+    a1 = malloc(sizeof(struct apple));
+    a1->weight = 2;
+    a1->color = 1;
+    return a1;
+}
+
+int main(int argc, char *argv[])
+{
+    typeof(get_apple_info()) r1; // 定义变量r1,类型是：struct apple *。注意，函数不会执行。
+    r1 = get_apple_info();
+    printf("apple weight:%d\n", r1->weight);
+    printf("apple color:%d\n", r1->color);
+    return 0;
+}
+
+2 在宏定义中动态获取相关结构体成员的类型
+#define max(x, y) ({                \
+    typeof(x) _max1 = (x);          \  // 定义一个和变量x相同类型的临时变量_max1
+    typeof(y) _max2 = (y);          \  // 定义一个和变量y相同类型的临时变量_max2
+    (void) (&_max1 == &_max2);      \  // 判断两者类型是否一致，不一致在编译时就会发出警告。
+    _max1 > _max2 ? _max1 : _max2; })  // 最后比较两者
+
+int main(int argc, char *argv[])
+{
+    int a=3;
+    float b = 4.0;
+    int r = max(a, b);                 // 传入的a和b不是同一类型 此时编译就会出现警告
+    printf("r:%d\n", r);
+    return 0;
+}
+
+[root@xx c_base]# gcc test.c
+test.c: 在函数‘main’中:
+test.c:43: 警告：比较不相关的指针时缺少类型转换
+
+3 也可直接取得已知类型
+int a = 2;
+typeof (int *) p;   // 定义了一个int类型的指针p，像这种用法主没什么太大的意义。
+p = &a;
+printf("%d\n", *p);
+
+4 其它用法
+//其它用法1
+char *p1;
+typeof (*p1) ch = 'a';              // ch为char类型，不是char *类型。
+printf("%d, %c\n", sizeof(ch), ch); // 1, a
+
+//其它用法2
+char *p2;
+typeof (p2) p = "hello world";     // 此时的p才是char *类型，由于在64位机器上，所以指针大小为8字节
+printf("%d, %s\n", sizeof(p), p);  // 8, hello world
+
+
+
 typedef
 https://www.cnblogs.com/charley_yang/archive/2010/12/15/1907384.html
 https://zhuanlan.zhihu.com/p/413574268
@@ -519,11 +588,11 @@ https://zhuanlan.zhihu.com/p/413574268
   typedef char* PCHAR;   // 一般用大写
   PCHAR pa, pb;          // 可行，同时声明了两个指向字符变量的指针
 1.2 在旧的C的代码中声明struct新对象时，必须要带上struct，即形式为： struct 结构名 对象名
-  struct tagPOINT1{int x;int y;};               // 结构定义
-  struct tagPOINT1 p1;                          // C声明struct新对象时，必须带上struct，struct 结构名 对象名
-  typedef struct tagPOINT1{int x;int y;}POINT;  // 估计某人觉得经常多写一个struct太麻烦了，于是就发明了
-  POINT p1;                                     // 这样就比原来的方式少写了一个struct，比较省事
-  tagPOINT1 p1; // C++中，可以直接写：结构名 对象名   无需typedef，但理解它，对掌握旧代码有帮助。
+  struct tagPOINT1{int x;int y;};               // C结构定义
+  struct tagPOINT1 p1;                          // C定义新对象时，必须带上struct
+  typedef struct tagPOINT1{int x;int y;}POINT;  // C经常多写一个struct太麻烦，于是就发明了
+  POINT p1;                                     // C这样就比原来的方式省事，少写了一个struct
+  tagPOINT1 p1; // C++中无需typedef，可直接写：结构名 对象名，但理解它，对掌握旧代码有帮助。
   struct Teacher{int age;}Tea;         // C++中，Tea是一个变量
   struct struct Teacher{int age;}Tea;  // C++中，Tea是一个结构体类型 = struct Student
 1.3 定义与平台无关的类型，只要改下 typedef 本身就行，不用对其他源码做任何修改，标准库广泛使用了这个技巧，如size_t。

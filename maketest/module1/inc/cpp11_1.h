@@ -33,7 +33,7 @@ void test1_cpp11_1_decltype2();
 // 1 exp 是一个不被括号()包围的表达式，或是一个类成员访问表达式，或是一个单独的变量，那么 decltype(exp) 的类型就和 exp 一致
 // 2 exp 是函数调用，那么 decltype(exp) 的类型就和函数返回值的类型一致，重载的函数，则会导致编译错误。
 // 3 exp 是一个左值，或者被括号()包围，那么 decltype(exp) 的类型就是 exp 的引用,即 T&
-void test1_cpp11_1_decltype3();
+void test1_cpp11_1_decltype3(); // https://blog.csdn.net/qq_41854911/article/details/119657617
 
 // decltype 与 auto 区别
 // 1 decltype根据exp推导 auto根据初始化推导
@@ -53,6 +53,8 @@ void test1_cpp11_1_decltype3();
 //   typeid操作符的返回结果是名为type_info的标准库类型的对象的引用
 //   （在头文件typeinfo中定义，稍后我们看一下vs和gcc库里面的源码），它的表达式有下图两种形式。
 void test1_cpp11_1_type();
+void test1_cpp11_1_type2();     // 打印变量的类型信息
+void test1_cpp11_1_type3();     // 类型比较
 
 
 // *** 流同步
@@ -101,6 +103,146 @@ void test1_cpp11_1_bind();
 void test1_cpp11_1_placeholders();
 
 
+
+// 打印变量的类型信息
+// 1 g++编译器打印的类型名比较晦涩     使用 abi::__cxa_demangle 显示直观类型
+// https://www.cnblogs.com/zjushuiping/archive/2012/09/07/2675680.html
+// typeid().name()输出格式: [指针][名称空间][类别][模板]    打印的类型不直观  扔掉了cv限定词，引用和左值/右值性。
+    // int a = 100;                  typeid(a).name()       ->   i
+    // const int b = 101;            typeid(b).name()       ->   i
+    // int& lref = a;                typeid(lref).name()    ->   i
+    // int&& rref = std::move(a);    typeid(rref).name()    ->   i
+// [指针]：若是指针则输出P。
+// [名称空间]：若是std则输出St，若是自定义的名称空间则输出字符数及它的名字，并在开头加N，在结尾加E。
+// [类别]：若是自定义的名称空间则输出字符数及它的名字，若内建类型输出如下
+//   bool: b
+//   char: c
+//   signed char: a
+//   unsigned char: h
+//   (signed) short (int): s
+//   unsigned short (int): t
+//   (signed) (int): i
+//   unsigned (int): j
+//   (signed) long (int): l
+//   unsigned long (int): m
+//   (signed) long long (int): x
+//   unsigned long long (int): y
+//   float: f
+//   double: d
+//   long double: e
+// [模板] 类型模板以I开头，以E结尾；常数模板以L开头，以E结尾。只有整型变量(int、char之类的)才能做为常数模板，浮点数不行。
+
+// 相信讲了这么多，楼主一定一头雾水。且让小弟举隅：
+// 类型foo：输出3foo，因为foo有3个字符。
+// 类型A*：输出P1A，因为A有1个字符，而此类型为A的指针。
+// 类型std::complex<long double>：输出St7complexIeE。
+// 类型test::really：输出N4test6reallyE。
+
+// 较复杂的情形：
+// 假设定义了以下的物件
+// template<typename _Scalar, int _Rows, int _Cols, int _Options, int _MaxRows, int _MaxCols>
+// class Matrix
+// 类 型Eigen::Matrix<complex<float>, 3, 3, 0, 3, 3>：输出N5Eigen6MatrixISt7complexIfELi3ELi3ELi0ELi3ELi3EEE，注意int _Rows = 3是输出Li3E。
+// 类型Eigen::Matrix<double, -1, -1, 0, -1, -1>：输出N5Eigen6MatrixIIdELin1ELin1ELi0ELin1ELin1EEE，其中负号是以n输出。
+#include <cxxabi.h>
+inline const  std::string GetClearName( const  char * name) {
+    int  status = -1;
+    char * clearName = abi::__cxa_demangle(name, NULL, NULL, &status);
+    const  char *  const  demangledName = (status==0) ? clearName : name;
+    std::string ret_val(demangledName);
+    free (clearName);
+    return  ret_val;
+}
+
+inline const std::string GetClearName( const std::type_info &t) {
+    int  status = -1;
+    char * clearName = abi::__cxa_demangle(t.name(), NULL, NULL, &status);
+    const  char *  const  demangledName = (status==0) ? clearName : t.name();
+    std::string ret_val(t.name());
+    ret_val += " -> ";
+    ret_val += demangledName;
+    free (clearName);
+    return  ret_val;
+}
+
+
+// https://zhuanlan.zhihu.com/p/492902597
+// www.onlinegdb.com直接运行，需要选择 C++17
+#include <bits/stdc++.h>
+
+template <typename T>
+constexpr auto type_name() {
+    std::string_view name, prefix, suffix;
+#ifdef __clang__
+    name = __PRETTY_FUNCTION__;
+    prefix = "auto type_name() [T = ";
+    suffix = "]";
+#elif defined(__GNUC__)
+    name = __PRETTY_FUNCTION__;
+    prefix = "constexpr auto type_name() [with T = ";
+    suffix = "]";
+#elif defined(_MSC_VER)
+    name = __FUNCSIG__;
+    prefix = "auto __cdecl type_name<";
+    suffix = ">(void)";
+#endif
+    name.remove_prefix(prefix.size());
+    name.remove_suffix(suffix.size());
+    return name;
+}
+
+#define PRINT_TYPE(X) std::cout << type_name<decltype(X)>() << std::endl; // 变量为参数
+
+template<typename T>
+void print_param_type(T&& t) { PRINT_TYPE(t); }
+
+template<typename T, typename... Ts>
+void print_param_type(T&& t, Ts&&... ts) {
+    PRINT_TYPE(t);
+    print_param_type(ts...);
+}
+
+
+#define PRINT_TYPE2(X) std::cout << type_name<X>() << std::endl;          // 类型为参数
+
+template<typename T>
+void print_param_type() { PRINT_TYPE2(T); }
+
+template<typename T1, typename T2, typename... Ts>
+void print_param_type() {
+    if (sizeof...(Ts) == 0) {
+        PRINT_TYPE2(T1);
+        PRINT_TYPE2(T2);
+    }
+    else {
+        PRINT_TYPE2(T1);
+        print_param_type<T2, Ts...>();
+    }
+}
+
+// ! print_param_type<param>() 比 print_param_type(param) 准确 后者多个引用符
+// 如 int a = 1;print_param_type<decltype(a)>();为int     print_param_type(a); 为int&
+// 原因分析 一个普通变量 函数传参是左值 引用折叠后是左值引用 即 & && -> &
+
+
+// 3 使用boost库中type_id_with_cvr函数（末尾的cvr代表const, variable, reference）
+// 这个方法打印出来的结果就比较优雅了，如下所示：
+// #include <iostream>
+// #include <boost/type_index.hpp>
+// int a = 100;
+// const int b = 101;
+// int& lref = a;
+// int&& rref = std::move(a);
+// std::cout << "int a: type is "       << boost::typeindex::type_id_with_cvr<decltype(a)>().pretty_name()    << std::endl;
+// std::cout << "const int b: type is " << boost::typeindex::type_id_with_cvr<decltype(b)>().pretty_name()    << std::endl;
+// std::cout << "int& lref: type is "   << boost::typeindex::type_id_with_cvr<decltype(lref)>().pretty_name() << std::endl;
+// std::cout << "int&& rref: type is "  << boost::typeindex::type_id_with_cvr<decltype(rref)>().pretty_name() << std::endl;
+
+// 输出结果：
+// int a: type is int
+// const int b: type is int const
+// int& lref: type is int&
+// int&& rref: type is int&&
 
 
 #endif

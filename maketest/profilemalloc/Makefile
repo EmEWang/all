@@ -29,6 +29,7 @@ dir_tcmalloc_o2_256=/home/lixiang/code/gperftools/out_x64_O2_page256
 dir_tcmalloc_o3=/home/lixiang/code/gperftools/out_x64_O3
 dir_mimalloc=/home/lixiang/code/mimalloc/build
 dir_jemalloc=/home/lixiang/code/jemalloc/out_x64
+dir_jemalloc_inc=/home/lixiang/code/jemalloc/include
 
 page=8
 cache=16777216
@@ -91,6 +92,11 @@ leakpprof:
 	${pprof} ./${tar_leak} "./${tar_leak}.0001.heap" --inuse_objects --lines --heapcheck  --edgefraction=1e-10 --nodefraction=1e-10 --svg > ${tar_leak}.svg
 
 
+# https://github.com/jemalloc/jemalloc/wiki/Use-Case:-Basic-Allocator-Statistics
+ex=ex_stats_print
+ex:
+	gcc ${ex}.c -o ${ex} -I${dir_jemalloc_inc} -L${dir_jemalloc} -Wl,-rpath,${dir_jemalloc} -ljemalloc
+	MALLOC_CONF="prof:true,lg_prof_sample:1,prof_accum:false,prof_prefix:jeprof.out" ./${ex}
 
 
 all_tc1:
@@ -432,4 +438,4 @@ testtcall:testtc testtc2 testtc3 testtc4
 
 
 clean:
-	rm -rf ${target_normal} ${target_tcmalloc} ${target_mimalloc} ./a.out ${tar_leak} ${tar_leak}.svg ${tar_leak}.0001.heap ${tar_pmr} ./perf*
+	rm -rf ${target_normal} ${target_tcmalloc} ${target_mimalloc} ${ex} ./a.out ${tar_leak} ${tar_leak}.svg ${tar_leak}.0001.heap ${tar_pmr} ./perf*

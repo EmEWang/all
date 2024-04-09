@@ -1,7 +1,6 @@
 
 https://zhuanlan.zhihu.com/p/655099766     # 深入讲解内存分配函数 malloc 原理及实现
 https://zhuanlan.zhihu.com/p/657696118     # C语言 内存管理
-https://mp.weixin.qq.com/s/tim50z93e-E-Jbl08rDY2A  # Linux内核中常用的C语言技巧
 
 
 
@@ -185,6 +184,8 @@ uint32_t get_cycle_count() {
 这段代码使用了嵌入式处理器的内置指令来获取时钟周期计数。通过读取处理器的计数寄存器，可以精确测量代码段的执行时间，用于性能优化和调试。
 
 
+
+https://mp.weixin.qq.com/s/tim50z93e-E-Jbl08rDY2A  # Linux内核中常用的C语言技巧
 GUN C
 1 typeof
 #define max(a,b) ((a) > (b) ? (a) : (b))  # 比较两个数大小返回最大值的经典宏写法
@@ -425,23 +426,28 @@ UL：表示无符号长整型数字1
 
 
 
-
-概述
-一般来说c/c++ 程序的编译过程分为如下几个阶段：预处理、编译、汇编、链接。其中预处理阶段，读取c源程序，对其中的伪指令（以#开头的指令）和特殊符号进行处理。或者说是扫描源代码，对其进行初步的整理和转换，产生新的源代码（还是文本文件）提供给编译器。预处理过程先于编译器对源代码进行处理。目前绝大多数编译器都包含了预处理程序，但通常认为它们是独立于编译器的。预处理过程读入源代码，检查包含预处理指令的语句和宏定义，并对源代码进行相应的转换。预处理过程还会删除程序中的注释和多余的空白字符。
+https://juejin.cn/post/7113553874962776095  # c/c++中，预编译指令用法汇总
+https://www.cnblogs.com/limanjihe/p/10155100.html # C/C++中的预编译指令
+1 概述
+一般来说c/c++ 程序的编译过程分为如下几个阶段：预处理、编译、汇编、链接。
+其中预处理阶段，读取c源程序，对其中的伪指令（以#开头的指令）和特殊符号进行处理。
+或者说是扫描源代码，对其进行初步的整理和转换，产生新的源代码（还是文本文件）提供给编译器。
+预处理过程先于编译器对源代码进行处理。目前绝大多数编译器都包含了预处理程序，但通常认为它们是独立于编译器的。
+预处理过程读入源代码，检查包含预处理指令的语句和宏定义，并对源代码进行相应的转换。预处理过程还会删除程序中的注释和多余的空白字符。
                                                          printf.o
  hello.c             hello.i           hello.s           hello.o           hello
 —————————> 预处理器 —————————> 编译器 —————————> 汇编器 —————————> 连接器 ———————>
 文本源文件         预处理后文本      汇编程序文本    可重定位程序二进制  可执行程序二进制
 
 预处理过程由独立的程序执行，与 c/c++语言无关，故而遵循与c/c++不同的语法规则。预处理语句遵循以下几个语法规则：
-预处理指令必须为所在行的第一个非空白字符；
-一条完整的预处理指令必须处于同一行中；
-预处理指令与 c/c++ 语句不同，在指令末尾不应该加入分号( ';' )。
-预处理程序依次扫描源文件，并对遇到的预处理指令进行处理，直到扫描完所有源文件内容，完成预处理过程，经过预处理过程的文件一般使用 .i 作为后缀。
+  预处理指令必须为所在行的第一个非空白字符；
+  一条完整的预处理指令必须处于同一行中；
+  预处理指令与 c/c++ 语句不同，在指令末尾不应该加入分号( ';' )。
+预处理程序依次扫描源文件，并对遇到的预处理指令进行处理，直到扫描完所有源文件内容，完成预处理过程，
+ 经过预处理过程的文件一般使用 .i 作为后缀。
 
 
-预编译指令
-
+2 预编译指令
 #define   //宏定义命名，定义一个标识符来表示一个常量
 #include  //文件包含命令，用来引入对应的头文件或其他文件
 #undef    //来将前面定义的宏标识符取消定义
@@ -460,32 +466,38 @@ __LINE__  //这会包含当前行号，一个十进制常量。
 __STDC__  //当编译器以 ANSI 标准编译时，则定义为 1；判断该文件是不是标准 C 程序。
 
 
+2.1 #define
+#define又称宏定义，标识符为所定义的宏名，简称宏。
+#define指令可以认为是给表达式"起"一个别名,在预处理器进行处理时,会将所有出现别名的地方替换为对应的表达式,
+表达式可以是数字、字符串、计算表达式。其特点是定义的标识符不占内存，只是一个临时的符号，预编译后这个符号就不存在了。
+其一般用法如下：
 
-
-#define
-#define又称宏定义，标识符为所定义的宏名，简称宏。#define指令可以认为是给表达式"起"一个别名,在预处理器进行处理时,会将所有出现别名的地方替换为对应的表达式,表达式可以是数字、字符串、计算表达式。其特点是定义的标识符不占内存，只是一个临时的符号，预编译后这个符号就不存在了
 #define  标识符  表达式   //注意, 最后没有分号
-
 /*例子*/
 #define MACRO EXPRESSION  //预处理在源程序中遇到MACRO时,会将其替换为EXPRESSION
 
 在使用#define语句时,有几个地方需要注意:
 
-预处理程序仅进行字符对象的替换,即将字符串MACRO替换为字符串EXPRESSION，并不会对替换的内容进行语义解析，故而在使用#define定义常量的别名时应该注意直接替换是否会造成潜在的语义改变；
-#define指令将MACRO后的第一个空白字符作为MACRO与 EXPRESSION的分界,EXPRESSION部分对应为自MACRO后第一个空白字符开始到行尾换行符的所有内容。例如在#define后面加上错误的分号(;)，也会被宏替换进去；
+预处理程序仅进行字符对象的替换,即将字符串MACRO替换为字符串EXPRESSION，并不会对替换的内容进行语义解析，
+ 故而在使用#define定义常量的别名时应该注意直接替换是否会造成潜在的语义改变；
+#define指令将MACRO后的第一个空白字符作为MACRO与EXPRESSION的分界,EXPRESSION部分对应为自MACRO后
+ 第一个空白字符开始到行尾换行符的所有内容。例如在#define后面加上错误的分号(;)，也会被宏替换进去；
 #define指令还可以定义接收参数的宏，用于定义某些重复使用但又比较简单的计算流程，比如进行两个数大小的比较。
 
 
-#include
-#include叫做文件包含命令，用来引入对应的头文件(.h文件)或其他文件。其一般有两种形式，#include <stdio,h>和#include "stdio.h"。当预处理器遇到#include指令时，会将该指令指定的头文件内容复制到源文件 #include指令所在的位置，即使用指定头文件的内容替换#include指令所在行。
+2.2 #include
+#include叫做文件包含命令，用来引入对应的头文件(.h文件)或其他文件。其一般有两种形式，#include <stdio,h>和#include "stdio.h"。
+当预处理器遇到#include指令时，会将该指令指定的头文件内容复制到源文件 #include指令所在的位置，
+ 即使用指定头文件的内容替换#include指令所在行。
 使用尖括号< >和双引号" "的区别在于头文件的搜索路径不同：
-使用尖括号< >，编译器会到系统路径下查找头文件；
-而使用双引号" "，编译器首先在当前目录下查找头文件，如果没有找到，再到系统路径下查找；
-使用双引号比使用尖括号多了一个查找路径，它的功能更为强大。
+  使用尖括号< >，编译器会到系统路径下查找头文件；
+  而使用双引号" "，编译器首先在当前目录下查找头文件，如果没有找到，再到系统路径下查找；
+  使用双引号比使用尖括号多了一个查找路径，它的功能更为强大。
 
 
-#undef
-#undef移除（取消定义）之前使用#define创建的标识符(宏)。因此，后续出现的标识符(宏)被预处理器忽略。若要使用#undef删除带参数标识符（带参数宏），请仅#undef 标识符，不用带参数列表。如下代码示例：
+2.3 #undef
+#undef移除（取消定义）之前使用#define创建的标识符(宏)。因此，后续出现的标识符(宏)被预处理器忽略。
+若要使用#undef删除带参数标识符（带参数宏），请仅#undef 标识符，不用带参数列表。如下代码示例：
 
 #define WIDTH 80
 #define ADD( X, Y ) ((X) + (Y))
@@ -496,23 +508,24 @@ __STDC__  //当编译器以 ANSI 标准编译时，则定义为 1；判断该文
 #undef ADD
 
 
-条件编译（一）
-该#if指令包含#elif、#else和#endif指令，控制源文件部分编译。当某个条件表达式的值为真时，则预处理器会将对应的代码片段包含进源文件中，而其他部分则被直接忽略。在源文件中，每个#if指令都必须由结束的#endif指令匹配。在#if指令和#endif指令之间可以有任意数目的#elif指令，但最多只允许有一个#else指令。如果存在#else指令，然后其后面只能接上#endif指令，如下代码所示。要强调的一点是，预处理指令均由预处理器进行处理，所以其支持的判断表达式与 c/c++ 本身支持的表达式有所区别。预处理指令中条件判断中的条件表达式仅可以包括 #define定义的常量、整型、以及这些量构成的算数和逻辑表达式 （可以看到 c/c++ 程序中定义的变量是不被支持的，同时也不支持对浮点型的判断 ）。
+2.4 条件编译（一）
+该#if指令包含#elif、#else和#endif指令，控制源文件部分编译。
+当某个条件表达式的值为真时，则预处理器会将对应的代码片段包含进源文件中，而其他部分则被直接忽略。
+在源文件中，每个#if指令都必须由结束的#endif指令匹配。
+在#if指令和#endif指令之间可以有任意数目的#elif指令，但最多只允许有一个#else指令。
+如果存在#else指令，然后其后面只能接上#endif指令，如下代码所示。
+要强调的一点是，预处理指令均由预处理器进行处理，所以其支持的判断表达式与 c/c++ 本身支持的表达式有所区别。
+预处理指令中条件判断中的条件表达式仅可以包括 #define定义的常量、整型、以及这些量构成的算数和逻辑表达式
+（可以看到 c/c++ 程序中定义的变量是不被支持的，同时也不支持对浮点型的判断 ）。
 
 注意如果要完成多个宏定义控制同一代码分支的功能，可以使用如下例子2的写法，#if defined TEST1 || defined TEST2。
 
 #if 条件表达式1
-
     code1
-
 #elif 条件表达式2
-
     code2
-
 #elif 条件表达式3
-
     code3
-
 #else
     code4
 #endif
@@ -544,44 +557,102 @@ cout << "Option: Illegal" << endl;
 #endif
 
 
-条件编译（二）
-预处理指令#ifndef、#ifdef的效果等价于指令#if与defined运算符一同使用的场合。如下代码所示，例子1展示了两种等价的写法。但是如果要完成多个宏定义控制同一代码分支的功能，还是需要用#if defined TEST1 || defined TEST2的写法，如条件编译（一） 章节所述。
+2.5 条件编译（二）
+预处理指令#ifndef、#ifdef的效果等价于指令#if与defined运算符一同使用的场合。如下代码所示，例子1展示了两种等价的写法。
+但是如果要完成多个宏定义控制同一代码分支的功能，还是需要用#if defined TEST1 || defined TEST2的写法，如条件编译（一） 章节所述。
+/*上面两个的写法等价于下面的两个写法*/
+#ifdef 宏定义
+#ifndef 宏定义
+
+#if defined 宏定义
+#if !defined 宏定义
+
+/*例子1*/
+#if defined( TEST )
+    code
+#endif
+
+#ifdef TEST
+    code
+#endif
+
+#if !defined( TEST )
+    code
+#endif
+
+#ifndef TEST
+    code
+#endif
 
 
-#error
-#error指令将使编译器显示一条错误信息，然后停止编译，用法如下。在代码分支较多时，无法判断编译哪一个代码分支，可以用#error指令进行标记。当然在实际工作中，很多时候是写一段乱代码在分支中，看是否有编译报错来判断。但最好是使用已经设计好的#error指令，其可以显示一条自定义报错信息。
+2.6 #error
+#error指令将使编译器显示一条错误信息，然后停止编译，用法如下。
+在代码分支较多时，无法判断编译哪一个代码分支，可以用#error指令进行标记。
+当然在实际工作中，很多时候是写一段乱代码在分支中，看是否有编译报错来判断。
+但最好是使用已经设计好的#error指令，其可以显示一条自定义报错信息。
 
 #if !defined(__cplusplus)
 #error C++ compiler required.
 #endif
 
+#error指令在编译时输出编译错误信息，可以方便程序员检查出现的错误。
+void test5()
+{
+#define OPTION 3
+#if OPTION == 1
+    cout << "Option： 1" << endl;
+#elif OPTION == 2
+    cout << "Option: 2" << endl;
+#else
+#error ILLEGAL OPTION! //fatal error C1189: #error :  ILLEGAL OPTION!
+#endif
+}
 
 
-特殊符号
-预编译程序可以识别一些特殊符号。预编译程序对于在源程序中出现的这些特殊符号将用合适的值进行替换。这些特殊符号包括：__DATE__、 __TIME__、__FILE__、 __LINE__、 __STDC__。注意，是双下划线，而不是单下划线 ：
+2.7 特殊符号
+预编译程序可以识别一些特殊符号。预编译程序对于在源程序中出现的这些特殊符号将用合适的值进行替换。
+这些特殊符号包括：__DATE__、 __TIME__、__FILE__、 __LINE__、 __STDC__。注意，是双下划线，而不是单下划线 ：
 
 __FILE__包含当前程序文件名的字符串；
 __LINE__表示当前行号的整数；
 __DATE__包含当前日期的字符串；
 __STDC__如果编译器遵循ANSI C标准，它就是个非零值；
 __TIME__包含当前时间的字符串。
+
 #include<stdio.h>
 
 int main()
 {
- printf("Hello World!\n");
- printf("%s\n", __FILE__);
- printf("%d\n", __LINE__);
- printf("%s\n", __DATE__);
- printf("%d\n", __TIME__);
- printf("%d\n", __STDC__);
+    printf("Hello World!\n");
+    printf("%s\n", __FILE__);
+    printf("%d\n", __LINE__);
+    printf("%s\n", __DATE__);
+    printf("%d\n", __TIME__);
+    printf("%d\n", __STDC__);
 
  return 0;
 }
 
+2.7.1 #line指令
+C语言中可以使用__FILE__表示本行语句所在源文件的文件名，使用__LINE__表示本行语句在源文件中的位置信息。
+#line指令可以重新设定这两个变量的值，其语法格式为
+#line number["filename"]
+其中第二个参数文件名是可省略的，并且其指定的行号在实际的下一行语句才会发生作用。
+void test4()
+{
+    cout << "Current File: " << __FILE__ << endl; //Current File: d:\test.cpp
+    cout << "Current Line: " << __LINE__ << endl; //Current Line: 48
+    #line 1000 "wrongfile"
+    cout << "Current File: " << __FILE__ << endl; //Current File: d:\wrongfile
+    cout << "Current Line: " << __LINE__ << endl; //Current Line: 1001
+}
 
-讨论#和##
-字符串化运算符#将宏参数转换为字符串文本；标记粘贴运算符##把两个参数粘贴在一起，其含义就是粘贴之后所形成标识符的定义。如下例子1，定义了一个带参数的宏paster(n)，在调用paster(9);后，宏展开为printf_s( "token" #9 " = %d", token##9 );，#9的含义为字符串"9"，token##9的含义为token9，其是一个标识符，类型为int，值为9。如下例子2#define STR(s) #s，利用#可以很轻松定义出一个字符串转换函数。
+
+2.8 讨论#和##
+字符串化运算符#将宏参数转换为字符串文本；标记粘贴运算符##把两个参数粘贴在一起，其含义就是粘贴之后所形成标识符的定义。
+如下例子1，定义了一个带参数的宏paster(n)，在调用paster(9);后，宏展开为printf_s( "token" #9 " = %d", token##9 );，
+#9的含义为字符串"9"，token##9的含义为token9，其是一个标识符，类型为int，值为9。
+如下例子2#define STR(s) #s，利用#可以很轻松定义出一个字符串转换函数。
 
 /*例子1*/
 #include <stdio.h>
@@ -597,9 +668,10 @@ int main()
 #define STR(s)     #s
 
 
-杂项
-多行宏定义的使用
-\是续行操作符，也就是宏定义一行写不完，需要多行写，就需要在每一行的后面加上续行操作符，注意字符\后要紧跟回车键，中间不能有空格或其他字符。
+2.9 杂项
+2.9.1 多行宏定义的使用
+\是续行操作符，也就是宏定义一行写不完，需要多行写，就需要在每一行的后面加上续行操作符，
+注意字符\后要紧跟回车键，中间不能有空格或其他字符。
 
 #define __HAL_RCC_GPIOC_CLK_ENABLE()   do { \
                                         __IO uint32_t tmpreg; \
@@ -609,7 +681,71 @@ int main()
                                         UNUSED(tmpreg); \
                                       } while(0)
 
-总结
+
+2.10 #pragma指令
+设定编译器的状态或者是指示编译器完成一些特定的动作，它有许多不同的参数。
+
+2.10.1 #pragma once
+在头文件的最开始加入这条指令可以保证头文件只被编译一次。
+它可以实现上述使用#ifndef实现不重复包含头文件同样的功能，但可能会有部分编译系统不支持。
+
+2.10.2 #pragma message
+该指令能够让编译器遇到这条指令时就在编译输出窗口中将消息文本打印出来。
+其使用方法为：#pragma message(“消息文本”)，通过这条指令我们可以方便地记录在是否在源代码中定义过某个宏，如
+#define ISPC
+#ifdef ISPC
+#pragma message("Macro ISPC is defined") //编译输出：Macro ISPC is defined
+#endif
+
+2.10.3 #pragma warning
+该指令能够控制编译器发出警告的方式，其用法举例如：#pragma warning(disable : 4507 34; once : 4385; error : 164)
+这个指令有三部分组成，其中disable部分表示忽略编号为4507和34的警告信息，once部分表示编号为4385的警告信息只显示一次，error部分表示把编号为164的警告信息当做错误。
+另外，其还有两个用法
+#pragma warning(push [, n])：保存所有警告信息的现有的警告状态，后面n是可选的，表示把全局警告等级设为n。
+#pragma warning(pop)：弹出最后一个警告信息，取消在入栈和出栈之间所作的一切改动。
+具体例如如下：
+void test6()
+{
+#pragma warning(push) //保存编译器警告状态
+#pragma warning(disable:4305) //取消4305的警告
+    bool a = 5; //无警告信息
+#pragma warning(pop) //恢复之前的警告
+    bool b = 5; // warning C4305: 'initializing' : truncation from 'int' to 'bool'
+}
+
+2.10.4 #pragma comment
+该指令将一个注释记录放入一个对象文件或可执行文件中。其使用方法为：
+#pragma comment(comment-type ,["commentstring"])
+comment-type ：是一个预定义的标识符，指定注释的类型，应该是compiler，exestr，lib，linker之一。
+#pragma comment(lib, "my.lib")  // lib关键字，可以帮我们连入一个库文件
+
+2.10.5 #pragma hdrstop
+该指令表示预编译头文件到此为止，后面的头文件不进行预编译。
+
+2.10.6 #pragma resource
+该指令表示把指定文件中的资源加入工程，如
+#pragma resource "*.dfm"
+
+2.10.7 #pragma code_seg
+该指令能够设置程序中函数代码存放的代码段，开发驱动程序的时候会使用到。使用方法为：
+#pragma code_seg(["section-name" [,"section-class"] ])。
+
+2.10.8 #pragma data_seg
+该指令建立一个新的数据段并定义共享数据。一般用于DLL中，在DLL中定义一个共享的有名字的数据段，
+这个数据段中的全局变量可以被多个进程共享，否则多个进程之间无法共享DLL中的全局变量。其使用方法为：
+#pragma data_seg("MyData")
+int value; //共享数据
+#pragma data_seg()
+
+2.10.9 #pragma pack
+该指令规定数据在内存中的对齐长度，具体可以参考这里。
+
+#pragma pack(1)
+struct S{char a; int b; };
+void test7(){ cout << sizeof(S) << endl; }
+
+
+3 总结
 c/c++ 程序的编译过程分为如下几个阶段：预处理、编译、汇编、链接；
 预处理过程由独立的程序执行，与c/c++语言无关，故而遵循与c/c++不同的语法规则；
 如果要完成多个宏定义控制同一代码分支的功能，可以使用如下的写法，#if defined TEST1 || defined TEST2；
@@ -618,88 +754,8 @@ c/c++ 程序的编译过程分为如下几个阶段：预处理、编译、汇�
 
 
 
-其他
-六 #line指令
-     C语言中可以使用__FILE__表示本行语句所在源文件的文件名，使用__LINE__表示本行语句在源文件中的位置信息。#line指令可以重新设定这两个变量的值，其语法格式为
-#line number["filename"]
-其中第二个参数文件名是可省略的，并且其指定的行号在实际的下一行语句才会发生作用。
-void test4()
-{
-    cout << "Current File: " << __FILE__ << endl; //Current File: d:\test.cpp
-    cout << "Current Line: " << __LINE__ << endl; //Current Line: 48
-    #line 1000 "wrongfile"
-    cout << "Current File: " << __FILE__ << endl; //Current File: d:\wrongfile
-    cout << "Current Line: " << __LINE__ << endl; //Current Line: 1001
-}
-七 #error指令
-#error指令在编译时输出编译错误信息，可以方便程序员检查出现的错误。
-void test5()
-{
-#define OPTION 3
-#if OPTION == 1
-    cout << "Option： 1" << endl;
-#elif OPTION == 2
-    cout << "Option: 2" << endl;
-#else
-#error ILLEGAL OPTION! //fatal error C1189: #error :  ILLEGAL OPTION!
-#endif
-}
 
-八 #pragma指令
-      设定编译器的状态或者是指示编译器完成一些特定的动作，它有许多不同的参数。
-1. #pragma once
-     在头文件的最开始加入这条指令可以保证头文件只被编译一次。它可以实现上述使用#ifndef实现不重复包含头文件同样的功能，但可能会有部分编译系统不支持。
 
-2. #pragma message
-    该指令能够让编译器遇到这条指令时就在编译输出窗口中将消息文本打印出来。其使用方法为：#pragma message(“消息文本”)，通过这条指令我们可以方便地记录在是否在源代码中定义过某个宏，如
-#define ISPC
-#ifdef ISPC
-#pragma message("Macro ISPC is defined") //编译输出：Macro ISPC is defined
-#endif
-
-3. #pragma warning
-     该指令能够控制编译器发出警告的方式，其用法举例如：#pragma warning(disable : 4507 34; once : 4385; error : 164)
-这个指令有三部分组成，其中disable部分表示忽略编号为4507和34的警告信息，once部分表示编号为4385的警告信息只显示一次，error部分表示把编号为164的警告信息当做错误。
-    另外，其还有两个用法
-#pragma warning(push [, n])：保存所有警告信息的现有的警告状态，后面n是可选的，表示把全局警告等级设为n。
-#pragma warning(pop)：弹出最后一个警告信息，取消在入栈和出栈之间所作的一切改动。
-   具体例如如下：
-void test6()
-{
-#pragma warning(push) //保存编译器警告状态
-#pragma warning(disable:4305) //取消4305的警告
-     bool a = 5; //无警告信息
-#pragma warning(pop) //恢复之前的警告
-bool b = 5; // warning C4305: 'initializing' : truncation from 'int' to 'bool'
-}
-4. #pragma comment
-该指令将一个注释记录放入一个对象文件或可执行文件中。其使用方法为：
-
-        #pragma comment(comment-type ,["commentstring"])
-        comment-type ：是一个预定义的标识符，指定注释的类型，应该是compiler，exestr，lib，linker之一。
-       #pragma comment(lib, "my.lib")  // lib关键字，可以帮我们连入一个库文件
-5. #pragma hdrstop
-      该指令表示预编译头文件到此为止，后面的头文件不进行预编译。
-6. #pragma resource
-     该指令表示把指定文件中的资源加入工程，如
-     #pragma resource "*.dfm"
-7. #pragma code_seg
-     该指令能够设置程序中函数代码存放的代码段，开发驱动程序的时候会使用到。使用方法为：
-
-  #pragma code_seg(["section-name" [,"section-class"] ])。
-
-8. #pragma data_seg
-   该指令建立一个新的数据段并定义共享数据。一般用于DLL中，在DLL中定义一个共享的有名字的数据段，这个数据段中的全局变量可以被多个进程共享，否则多个进程之间无法共享DLL中的全局变量。其使用方法为：
-   #pragma data_seg("MyData")
-   int value; //共享数据
-   #pragma data_seg()
-9. #pragma pack
-  该指令规定数据在内存中的对齐长度，具体可以参考这里。
-
-  #pragma pack(1)
-  struct S{char a; int b; };
-  void test7(){ cout << sizeof(S) << endl; }
-————————————————
 
 
 

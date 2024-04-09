@@ -8,6 +8,17 @@ https://www.zhihu.com/question/47528537/answer/2770074755 # linux的内存管理
 https://zhuanlan.zhihu.com/p/488123510   # 一篇长文叙述Linux内核虚拟地址空间的基本概括
 https://zhuanlan.zhihu.com/p/676385200   # 一口气搞懂【Linux内存管理】，就靠这60张图、59个问题了
 https://gityuan.com/2015/12/20/signal/   # Linux信号(signal)机制
+https://pkgs.org/                        # Packages for Linux and Unix   !!!
+https://packages.ubuntu.com/             # Ubuntu Packages Search        !!!
+https://mirrors.tuna.tsinghua.edu.cn/    # 清华大学开源软件镜像站
+http://ports.ubuntu.com/                 # Apache/2.4.29 (Ubuntu) Server at ports.ubuntu.com Port 80
+https://developer.aliyun.com/mirror/     # 阿里巴巴开源镜像站
+http://demangler.com/                    # 符号表编译解析
+https://www.zhihu.com/question/439231062/answer/2835832244  # 动态链接库与静态链接库有什么区别
+https://conan.io/center                  # 柯南
+https://zhuanlan.zhihu.com/p/680402263   # C/C++堆栈详细分析，新老程序员必会
+https://www.ruanyifeng.com/blog/developer/ # 阮一峰的网络日志
+https://blog.csdn.net/sinat_38816924/category_10907321.html  # 编译工具
 
 Linux版本
   内核版本

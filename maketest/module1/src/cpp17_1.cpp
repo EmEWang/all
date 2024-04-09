@@ -214,7 +214,7 @@ void test1_cpp17_1_variant()
     // C++17增加std::variant实现类似union的功能，但却比union更高级，举个例子union里面不能有string这种类型，
     // 但std::variant却可以，还可以支持更多复杂类型，如map等
     std::variant<int, double, std::string> var("hello");
-    std::cout << var.index() << std::endl;  // 1
+    std::cout << var.index() << std::endl;  // 2
     var = 123;
     std::cout << var.index() << std::endl;  // 0
 
@@ -321,8 +321,50 @@ void test1_cpp17_1_any()
     if (a.has_value()) {std::cout << a.type().name() << std::endl;} // f
     a.reset();
     if (a.has_value()) {std::cout << a.type().name() << std::endl;}
+    else {std::cout << "none" << std::endl;}                        // none
     a = std::string("a");
     std::cout << a.type().name() << " " << std::any_cast<std::string>(a) << std::endl; // NSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE a
+}
+
+void test1_cpp17_1_any_variant_diff()
+{
+    // C++是一种静态类型的语言。每个变量和对象在编译时都有一个明确的类型，编译器会对类型进行检查以确保它们的正确使用。
+    // 好比说，我们不能将一个字符串（std::string）赋值给一个整数（int）变量。
+    std::string str = "Hello, World!";
+    // int num = str; // 编译错误！
+    // 这种静态类型检查非常有用，因为它能够在编译阶段捕获许多可能的错误，从而防止它们在运行时发生。
+    // 然而，有时我们可能需要在运行时处理各种类型的数据，这时候我们就需要一种能够安全地存储和处理任意类型数据的机制。
+    // C++17 引入了两个新的类型：std::any 和 std::variant，都可以存储和处理各种类型的数据，使用方式和适用场景有所不同。
+
+    // 特性        std::any                          std::variant
+    // 存储类型    任意类型                           指定的类型列表中的任意类型
+    // 类型检查    运行时                             编译时和运行时
+    // 类型转换    std::any_cast<xx>(val)显式转换     std::get<xx>(val)显式转换
+    // 异常处理    std::bad_any_cast                  std::bad_variant_access
+    // 性能        可能较慢                           通常比std::any快
+
+    // std::any
+    // std::any（任意类型）是一种可以存储任意类型值的容器，只要这个类型是可复制或可移动的。
+    // 它的设计目标是为了提供一种安全、易用的方式来在运行时处理各种类型的数据。
+    // 然而，std::any 并不知道它存储的数据的具体类型，所以在访问 std::any 中的数据时，我们需要显式地将其转换回正确的类型。
+    std::any a = 42;
+    std::cout << std::any_cast<int>(a) << '\n'; // 输出 42
+    a = std::string("Hello, World!");
+    a = std::vector<int>{1, 2, 3, 4, 5};
+    try {std::cout << std::any_cast<std::string>(a) << '\n';}  // 访问 std::any 对象中的值
+    catch (const std::bad_any_cast& e) {std::cout << e.what() << '\n';}  // 输出：bad any_cast
+
+    // std::variant
+    // std::variant（变体类型）可以看作是一个类型安全的联合体（union）。
+    // 它可以存储其类型列表中的任何类型的值，并在任何时候都知道当前存储的是哪种类型的值。
+    // std::variant 在访问其存储的数据时提供了更强的类型安全性，因为它知道当前存储的是哪种类型的值。
+    // 如果我们试图以错误的类型访问 std::variant 中的值，它将抛出一个 std::bad_variant_access 异常。
+    std::variant<int, std::string> v = "Hello, World!";
+    std::cout << std::get<std::string>(v) << '\n'; // 输出 "Hello, World!"
+    try {std::cout << std::get<int>(v) << '\n';}  // 访问 std::variant 对象中的值
+    catch (const std::bad_variant_access& e) {std::cout << e.what() << '\n';}  // 输出：bad variant access
+    v = 42;
+    // v = std::vector<int>{1, 2, 3, 4, 5};  // 编译错误！
 }
 
 int add(int first, int second) { return first + second; }
@@ -554,3 +596,50 @@ void test1_cpp17_1_string_view()
 // constexpr size_type find_last_not_of(const CharT* s, size_type pos = npos) const;
 }
 
+void test1_cpp17_1_lock()
+{
+    // C++版本提供了以下锁：
+    // mutex(C++11)         recursive_mutex(C++11)         shared_mutex(C++17)
+    // timed_mutex(C++11)   recursive_timed_mutex(C++11)   shared_timed_mutex(C++14)
+    // 上述有timed字面值的锁对应没有timed的锁多了两种操作 1.可以指定请求锁等待的超时时间 2.可以指定请求锁一直到某一个时刻
+    // 超时时间类型为std::chrono::duration
+    // 时刻时间类型为std::chrono::time_point
+    // lock_guard、unique_lock、scoped_lock、std::lock、std::try_lock 可使用 全部的锁
+    // shared_lock 可使用 shared_mutex、shared_timed_mutex
+    // mutex、timed_mutex不可循环锁
+    // recursive_mutex、recursive_timed_mutex可循环锁
+    // shared_mutex、shared_timed_mutex为读写锁
+
+    // 提供了以下范围锁：
+    // lock_guard(C++11)   unique_lock(C++11)   shared_lock(C++14)   scoped_lock(C++17)
+    // lock_guard范围锁，简单，只有上锁和解锁两个操作，构造函数上锁，析构函数解锁
+    // unique_lock范围锁，功能多一些，提供上锁，解锁，尝试取得锁，超时请求锁，同时也用来做写锁
+    // scoped_lock范围锁，可同时锁住多个锁
+    // shared_lock范围锁，读锁，读锁之间无互斥关系，不需要等待。常与unique_lock（作写锁）配合使用。
+    //     只能用于shared_mutex和shared_timed_mutex
+    //     shared_lock只有在没有写锁的情况下才能获得锁，unique_lock只有在没有读锁的情况下才能获得锁
+    //     std::shared_mutex::unlock_shared 将互斥从调用方线程的共享所有权释放
+
+    // 提供了以下同时锁多个锁（不造成死锁）：
+    // lock(C++11)   try_lock(C++11)  unlock(C++11)
+    // std::lock: 同时给多个锁上锁
+    // std::try_lock：尝试同时给多个锁上锁
+    // 注意：这两个方法并不会去释放锁，需要自己主动去释放
+    // unlock解锁
+
+    // 提供了以下结构体指明要对锁做的操作：
+    // defer_lock_t(C++11)   try_to_lock_t(C++11)   adopt_lock_t(C++11)
+    // 以下分别是上面的常量实例化
+    // defer_lock(C++11)   try_to_lock(C++11)   adopt_lock(C++11)
+    // 它们用于指定std::lock_guard, std::unique_lock和std::shared_lock的锁定策略。
+    // std::defer_lock: 不进行上锁操作
+    // std::try_to_lock: 会尝试去获得锁，不一定会获得锁，会立即返回
+    // std::adopt_lock: 会认为锁已经是上锁状态了。
+
+    // 还提供了整个程序中只调用一次的接口：
+    // once_flag(C++11)   call_once(C++11)
+    // once_flag用于call_once，once_flag标记是否被调用过。
+    //     若被调用的函数执行过了，那么这个标记就会标记为已调用；
+    //     若在调用的函数执行过程中抛出了异常，那么这个标记仍标记为未调用。
+    // call_once指定只需要调用一次的函数入口
+}

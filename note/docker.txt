@@ -100,24 +100,44 @@ docker rm [opt] 容器        # 删除一个或多个 容器
   docker rm -v my-nginx     # 删除容器 my-nginx，并删除容器挂载的数据卷  -v 删除与容器关联的卷
   docker rm $(docker ps -a | grep "Exited" | awk '{print $1 }')      # 删除容器
 
-docker container prune      # 删除 所有停止运行的容器
-docker volume prune         # 删除 所有未被挂载的卷
-docker network prune        # 删除 所有网络
-docker system prune         # 删除 docker 所有资源
-
 docker stop $(docker ps -a | grep "Exited" | awk '{print $1 }')    # 停止容器
 
 docker logs [opt] 容器 # -f 跟踪日志输出  --since 显示某个开始时间的所有日志  -t 显示时间戳  --tail 最新N条容器日志
   docker logs --since="2016-07-01" --tail=10 mynginx
+
+本机与容器传输文件
+docker ps       # 1 查询 CONTAINER ID 或 NAMES 两者任意之一   或 docker ps -a
+docker inspect -f '{{.Id}}' xxx   # 2 根据1的结果查询 ID长长全称
+docker cp 本地文件路径 ID全称:容器路径  # 传文件到容器
+docker cp ID全称:容器文件路径 本地路径  # 从容器拉文件
+
+
+# system
+docker system df      # 显示镜像、容器、数据卷所占用的空间
+  docker system df -v # 使用verbose选项 -v 获得更多信息
+docker system prune      # 清理大部分docker资源，保留有标签的镜像 只删除悬空的镜像，是没有标记的镜像，与其他镜像没有关系
+  docker system prune -a # 尽可能地清理，不包括正在使用的组件 -a 包括未使用的和悬空的容器
+
+docker image prune       #  清理未使用和悬空的镜像
+  docker image prune -a  #  只清理悬空的镜像
+docker container prune   #  清理停止运行的容器   删除所有停止运行的容器
+docker volume prune      #  清理不再使用的卷   删除所有未被挂载的卷
+docker network prune        # 删除 所有网络
+
+http://blog.51yip.com/cloud/1859.html  # 删除none镜像
+docker stop $(docker ps -a | grep "Exited" | awk '{print $1 }')   // 1 停止容器
+docker rm   $(docker ps -a | grep "Exited" | awk '{print $1 }')   // 2 删除容器
+docker rmi  $(docker images | grep "none"  | awk '{print $3}')    // 3 删除镜像
+
 
 
 docker目录挂载的总结
 https://www.cnblogs.com/ivictor/p/4834864.html
 docker run -it -v /test:/soft centos /bin/bash # 启动centos容器 主机的/test目录挂载到容器的/soft目录
 1 主机目录:容器目录
-1.1 主机目录若不存在，则会自动生成；容器目录必须是绝对路径
-1.2 主机目录若为相对路径 其相对路径指的是/var/lib/docker/volumes/，与宿主机的当前目录无关。
-  通过docker inspect命令，查看容器“Mounts”那一部分 有 "Source": "/var/lib/docker/volumes/test1/_data"
+  1.1 主机目录若不存在，则会自动生成；容器目录必须是绝对路径
+  1.2 主机目录若为相对路径 其相对路径指的是/var/lib/docker/volumes/，与宿主机的当前目录无关。
+    通过docker inspect命令，查看容器“Mounts”那一部分 有 "Source": "/var/lib/docker/volumes/test1/_data"
 2 若只指定一个目录 即 -v dir1
   2.1 dir1 代表容器目录/dir  绝对目录 相对目录 都可以
   2.2 主机目录为/var/lib/docker/volumes/xxx/_data # xxx随机目录名 查询同1.2
@@ -129,24 +149,22 @@ docker run -it -v /test:/soft centos /bin/bash # 启动centos容器 主机的/te
 5 挂载宿主机已存在目录后，在容器内对其进行操作，报“Permission denied”。
   可通过两种方式解决：
   5.1 关闭selinux。
-  临时关闭：# setenforce 0
-  永久关闭：修改/etc/sysconfig/selinux文件，将SELINUX的值设置为disabled。
+    临时关闭：# setenforce 0
+    永久关闭：修改/etc/sysconfig/selinux文件，将SELINUX的值设置为disabled。
   5.2 以特权方式启动容器
-  指定--privileged参数
-  如：# docker run -it --privileged=true -v /test:/soft centos /bin/bash
+    指定--privileged参数
+    如：# docker run -it --privileged=true -v /test:/soft centos /bin/bash
 
 
+Docker容器中安装软件并在退出容器后保留更改
+docker run -it <image_name> bash      # 1 启动一个Docker容器
+docker exec -it <container_id> bash   # 2 这个命令将会以交互模式进入到<container_id>对应的容器中
+apt-get update                        # 3 安装需要的软件
+apt-get install -y vim
+exit                                  # 4 退出容器
+docker ps -a                          # 5 查找容器的ID  要保留软件安装的更改，需要创建一个新的镜像，以保存容器的状态。
+docker commit <container_id> <new_image_name>:<tag>  # 6 创建一个新的镜像，它基于<container_id>对应的容器，并且命名为<new_image_name>，并且可以选择添加一个标签<tag>来区分不同的版本。
 
-# system
-docker system df      # 显示镜像、容器、数据卷所占用的空间
-  docker system df -v # 使用verbose选项 -v 获得更多信息
-docker system prune      # 清理大部分docker资源，保留有标签的镜像 只删除悬空的镜像，是没有标记的镜像，与其他镜像没有关系
-  docker system prune -a # 尽可能地清理，不包括正在使用的组件 -a 包括未使用的和悬空的容器
-
-docker image prune       #  清理未使用和悬空的镜像
-  docker image prune -a  #  只清理悬空的镜像
-docker container prune   #  清理停止运行的容器
-docker volume prune      #  清理不再使用的卷
 
 
 docker build -f ./dockertest2/Dockerfile_  -t wjg:1 ./dockertest  # 指定构造文件和指定目录去构造镜像
@@ -186,26 +204,17 @@ CMD ["/hello"]
 
 
 
-http://blog.51yip.com/cloud/1859.html  # 删除none镜像
-docker stop $(docker ps -a | grep "Exited" | awk '{print $1 }')   // 1 停止容器
-docker rm   $(docker ps -a | grep "Exited" | awk '{print $1 }')   // 2 删除容器
-docker rmi  $(docker images | grep "none"  | awk '{print $3}')    // 3 删除镜像
-
-
 基本概念
 https://www.freecodecamp.org/chinese/news/where-are-docker-images-stored-docker-container-paths-explained/
 
 容器 Containers
-容器只是处于运行状态的镜像。当从互联网上获取镜像并使用该镜像运行容器时，实际上是在先前的只读层之上创建了另一个临时可写层。
-
+  只是处于运行状态的镜像。使用镜像运行容器时，实际上是在先前的只读层之上创建了另一个临时可写层。
 镜像 Images
-镜像是分层的自包含文件，充当创建容器的模板。它们就像容器的冻结只读副本。 镜像可以通过仓库进行共享。
-
+  是分层的自包含文件，充当创建容器的模板。它们就像容器的冻结只读副本。镜像可以通过仓库进行共享。
 仓库 Registry
-镜像仓库是一个集中式的位置，可以在其中上传镜像，也可以下载其他人创建的镜像。
-
+  镜像仓库是一个集中式的位置，可以在其中上传镜像，也可以下载其他人创建的镜像。
 dockerfile
-镜像的源代码，指定需要哪些程序、依赖什么样的配置；docker就是"编译器"，使用docker build命令，生成的可执行程序就是镜像。
+  镜像的源代码，指定需要哪些程序、依赖什么样的配置；docker就是"编译器"，使用docker build命令，生成的可执行程序就是镜像。
 
 docker是cs架构，docker client负责处理用户输入的各种命令，如docker build、docker run，真正工作是docker demon。
 docker client   ------>   docker daemon         ------>   registry
@@ -215,16 +224,16 @@ docker client   ------>   docker daemon         ------>   registry
   docker push
 
 
-docker的底层实现
-docker基于Linux内核提供这样几项功能实现的：
-NameSpace
-Linux中的PID、IPC、网络等资源是全局的，而NameSpace机制是一种资源隔离方案，在该机制下这些资源就不再是全局的了，
-而是属于某个特定的NameSpace，各个NameSpace下的资源互不干扰，这就使得每个NameSpace看上去就像一个独立的操作系统一样，
-但是只有NameSpace是不够。
-Control groups
-虽然有了NameSpace技术可以实现资源隔离，但进程还是可以不受控的访问系统资源，比如CPU、内存、磁盘、网络等，
-为了控制容器中进程对资源的访问，Docker采用control groups技术(也就是cgroup)，有了cgroup就可以控制容器中进程对系统资源的消耗了，
-比如你可以限制某个容器使用内存的上限、可以在哪些CPU上运行等等。
+
+docker的底层实现是基于Linux内核提供这样几项功能
+1 NameSpace
+  Linux中的PID、IPC、网络等资源是全局的，而NameSpace机制是一种资源隔离方案，在该机制下这些资源就不再是全局的了，
+  而是属于某个特定的NameSpace，各个NameSpace下的资源互不干扰，这就使得每个NameSpace看上去就像一个独立的操作系统一样，
+  但是只有NameSpace是不够。
+2 Control groups
+  虽然有了NameSpace技术可以实现资源隔离，但进程还是可以不受控的访问系统资源，比如CPU、内存、磁盘、网络等，
+  为了控制容器中进程对资源的访问，Docker采用control groups技术(cgroup)，有了cgroup就可以控制容器中进程对系统资源的消耗了，
+  比如你可以限制某个容器使用内存的上限、可以在哪些CPU上运行等等。
 有了这两项技术，容器看起来就真的像是独立的操作系统了。
 
 

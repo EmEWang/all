@@ -11,6 +11,8 @@ MobaXterm 主目录 /home/mobaxterm 输入 powershell 查看实际位置
   C:\Users\userX\AppData\Local\Temp\Mxt221\tmp\userX  # 位置 重启删除Mxt221文件夹
    settings->configuration->General # 设置永久文件夹
 
+ln -s /drives/c/Users/wangjingang202_55893/.ssh .ssh   # 建立软连接 使得ssh可以使用windows下的config
+
 可以直接命令登陆远程服务器，并且使用scp命令传输文件
 可以直接apt-get安装vim等常用功能(或者官网下载插件)，实现在windows下模拟linux环境，
   这样就可以使用vi命令准备INCAR文件，也可以使用Gnuplot进行绘图。

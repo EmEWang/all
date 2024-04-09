@@ -280,19 +280,25 @@ Linux Story 更新服务器  http://mirrors.linuxstory.org/ubuntu/   X
 
 apt和apt-get区别
 https://itlanyan.com/apt-vs-apt-get-difference/
-  apt是新出的工具，用于取代apt-get和apt-cache，目的是更友好、易用的包管理工具；
-  apt-get没有被废弃也没有过时，依然可以放心使用，但普通用户建议转向apt。
+https://www.debian.org/doc/manuals/debian-faq/pkgtools.zh-cn.html#dpkg
+apt 工具整合了 apt-get 和 apt-cache 的功能，并且默认具有更漂亮的彩色输出格式；
+apt-get没有过时，如果要用于脚本或者需要使用高级用法，则仍然建议或必须使用 apt-get。
 
 apt command       the command it replaces    function of the command
-apt install       apt-get install            Installs a package
-apt remove        apt-get remove             Removes a package
+apt install 软件包 apt-get install 软件包      Installs a package and its all depends
+apt remove 软件包  apt-get remove 软件包       Removes a package
 apt purge         apt-get purge              Removes package with configuration
-apt update        apt-get update             Refreshes repository index
-apt upgrade       apt-get upgrade            Upgrades all upgradable packages
 apt autoremove    apt-get autoremove         Removes unwanted packages
-apt full-upgrade  apt-get dist-upgrade       Upgrades packages with auto-handling of dependencies
-apt search        apt-cache search           Searches for the program
-apt show          apt-cache show             Shows package details
+apt update        apt-get update             Refreshes repository index
+apt upgrade       apt-get upgrade            Upgrades all upgradable packages 但不安装额外的软件包或卸载软件包
+apt full-upgrade  apt-get dist-upgrade       Upgrades packages with auto-handling of dependencies 在必要的时候安装额外的软件包或卸载软件包
+apt search 软件包  apt-cache search 软件包    Searches for the program
+apt show 软件包    apt-cache show  软件包      Shows package details
+apt depends       apt-cache depends          Shows package depends
+apt show -a 软件包 apt-cache showpkg 软件包    打印软件包的详细信息
+apt list -a 软件包 apt-cache policy 软件包
+apt list --upgradable                         列出所有可以更新到新版本的软件包
+                   apt-cache showpkg 软件包    打印软件包各可用版本的详细信息，以及反向依赖它的软件包
 
 apt has a few commands of its own as well.
 new apt command   function of the command
@@ -305,6 +311,50 @@ apt install cmake           # Ubuntu中安装Cmake
 apt install g++             # 安装 g++    g++ --version  验证是否安装完成
 apt install gcc             # 安装 gcc    gcc --version
 apt-get install build-essential  # gcc,g++,make的安装。build-essential是一整套工具,gcc,libc等 未测
+  注:Ubuntu缺省情况下，没有提供C/C++的编译环境，需要手动安装。但如果单独安装gcc以及g++比较麻烦，故提供了build-essential
+  apt-cache depends build-essential   # build-essential软件包。查看该软件包的依赖关系：
+    build-essential
+     |Depends: libc6-dev
+      Depends: <libc-dev>
+        libc6-dev
+      Depends: gcc
+      Depends: g++
+      Depends: make
+        make-guile
+      Depends: dpkg-dev
+  也就是说，安装了该软件包，编译c/c++所需要的软件包也都会被安装。因此如果想在Ubuntu中编译c/c++程序,只需要安装该软件包就可以了。
+
+apt list --upgradable      # 查看可升级软件包列表
+sudo apt upgrade           # 升级所有的软件
+sudo apt install --only-upgrade package_name1 package_name2  # 只升级指定的软件包
+sudo apt install --download-only package_name                # 只下载包以及依赖包 不安装
+sudo rm -rf /var/cache/apt/archives               # 清空当前 APT 缓存
+sudo vi /etc/apt/apt.conf.d/02nocache 写入下2行    # 关闭 APT 缓存，下载的软件包不保留
+  Dir::Cache "";
+  Dir::Cache::archives "";
+apt-get clean              # 清除 /var/cache/apt/archives/ 和 /var/cache/apt/archives/partial/ 下所有deb文件
+apt-get autoclean          # 类似 clean  它只会删除不会再下载且几乎无用的文件。它有助于防止缓存过大。
+apt-get remove XX          # 删除指定的软件XX
+apt-get autoremove XX      # 除了删除指定软件XX 还将删除所有不在使用的依赖项
+apt --fix-broken install   # 出现依赖错误时修复
+
+
+sudo apt install apt-rdepends         # 安装 apt-rdepends
+sudo apt-cache depends postgresql-client-common  # 获取所有依赖
+
+sudo dpkg --print-architecture        # 显示本机的architecture
+sudo dpkg --add-architecture amd64    # 设置系统架构  可以是arm64  armhf   amd64等
+sudo dpkg --print-foreign-architectures #
+sudo dpkg --remove-architecture architecture # 去除architecture
+# 下载所有依赖
+for i in $(apt-cache depends postgresql-client-common:amd64 | grep -E 'Depends|Recommends|Suggests' | cut -d ':' -f 2,3 | sed -e s/'<'/''/ -e s/'>'/''/); do sudo apt-get download $i 2>>errors.txt; done
+dpkg -i *.deb                          # 安装包
+dpkg -r package.deb                    # 删除包
+dpkg -l                                # 列出当前已安装的包
+dpkg -c package.deb                    # 列出deb包的内容
+dpkg --configure package               # 配置
+dpkg -P package                        # 到移除软件包时，清除掉配置文件
+dpkg-query -s packagecpu-name          # 查询已安装的软件包的状态
 
 
 dpkg介绍
@@ -665,7 +715,8 @@ sudo apt-get update                       # 更新源
 sudo apt-get install xxx                  # 安装
 
 sudo add-apt-repository -r ppa:wiznote-team   # 删除源
-/etc/apt/sources.list.d/                  #进入这个文件夹删除对应的源文件
+  /etc/apt/sources.list.d/                  # 进入这个文件夹删除对应的源文件
+sudo apt-get install software-properties-common   # add-apt-repository command not found 解决方法
 
 sudo add-apt-repository ppa:pee-developers/stable  # 录屏软件
 sudo apt-get update
@@ -941,6 +992,34 @@ parse_arg() {
 parse_arg "$@"
 
 
+LD_LIBRARY_PATH=${ID_LIBRARY_PATH}:./heaptrack_x64/x64/lib ./heaptrack_x64/x64/bin/heaptrack_gui
+https://forum.qt.io/topic/93247/qt-qpa-plugin-could-not-load-the-qt-platform-plugin-xcb-in-even-though-it-was-found/3
+1 问题
+qt.qpa.plugin: Could not load the Qt platform plugin "xcb" in "" even though it was found.
+This application failed to start because no Qt platform plugin could be initialized. Reinstalling the application may fix this problem.
+Available platform plugins are: eglfs, linuxfb, minimal, minimalegl, offscreen, vnc, wayland-egl, wayland, wayland-xcomposite-egl, wayland-xcomposite-glx, xcb.
+已放弃 (核心已转储)
+2 结论
+so版本不一致到导致
+当时在编译hotspot时 连接出错，导致编译不过去，将qt5.15.5版本冒充5.12.8
+即将/usr/lib/x86_64-linux-gnu/libQt5DBus.so.5.12.8 替换为 /opt/qt515/lib/libQt5DBus.so.5.15.4 且名字依然为5.12.8
+替换回来则解决 且需要下/etc/ld/so.conf中用#注掉或删掉/opt/qt515/lib 且 ldconfig 执行一次
+3 定位过程
+  3.1 QT_DEBUG_PLUGINS=1 DISPLAY=:0 LD_LIBRARY_PATH=$LD_LIBRARY_PATH:./lib ./bin/heaptrack_gui  # QT_DEBUG_PLUGINS=1 显示QT加载详细过程 其最后如下错误 (https://github.com/NVlabs/instant-ngp/discussions/300说DISPLAY=:0能解决 本人测试没用)
+    Got keys from plugin meta data ("xcb")
+    QFactoryLoader::QFactoryLoader() checking directory path "/home/lixiang/heaptrack_x64/x64/bin/platforms" ...
+    Cannot load library /usr/lib/x86_64-linux-gnu/qt5/plugins/platforms/libqxcb.so: (./lib/libQt5Core.so.5: version `Qt_5.  15' not found (required by /opt/qt515/lib/libQt5XcbQpa.so.5))
+    QLibraryPrivate::loadPlugin failed on "/usr/lib/x86_64-linux-gnu/qt5/plugins/platforms/libqxcb.so" : "Cannot load   library /usr/lib/x86_64-linux-gnu/qt5/plugins/platforms/libqxcb.so: (./lib/libQt5Core.so.5: version `Qt_5.15' not found   (required by /opt/qt515/lib/libQt5XcbQpa.so.5))"
+    qt.qpa.plugin: Could not load the Qt platform plugin "xcb" in "" even though it was found.
+    This application failed to start because no Qt platform plugin could be initialized. Reinstalling the application may   fix this problem.
+
+    Available platform plugins are: eglfs, linuxfb, minimal, minimalegl, offscreen, vnc, wayland-egl, wayland,   wayland-xcomposite-egl, wayland-xcomposite-glx, xcb.
+
+    已放弃 (核心已转储)
+  3.2 ldd ./heaptrack_x64/x64/bin/heaptrack_gui
+    ./heaptrack_x64/x64/bin/heaptrack_gui: /lib/x86_64-linux-gnu/libQt5Core.so.5: version `Qt_5.15' not found (required by /lib/x86_64-linux-gnu/libQt5DBus.so.5)
+    libKChart.so.2 => not found
+    等之类的错误 由此得知时动态库不一致
 
 
 

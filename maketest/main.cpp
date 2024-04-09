@@ -41,7 +41,7 @@ int main()
     // test1_cpp_1_file();
     // test1_cpp_1_time();
     // test1_cpp_1_class();
-    // test1_cpp_1_float_int();
+    test1_cpp_1_float_int();
     // test1_cpp_1_paramowner();
     // test1_cpp_1_static();
     // test1_cpp_1_memory();
@@ -77,6 +77,8 @@ int main()
     // test1_cpp11_1_decltype2();
     // test1_cpp11_1_decltype3();
     // test1_cpp11_1_type();
+    // test1_cpp11_1_type2();
+    // test1_cpp11_1_type3();
     // test1_cpp11_1_sync_with_stdio();
     // test1_cpp11_1_demo();
     // test1_cpp11_1_demo2();
@@ -124,7 +126,7 @@ int main()
     // test1_cpp11_3_binary2();
     // test1_cpp11_3_adl();
     // test1_cpp11_3_tmp_explicit();
-    test1_cpp11_3_tmp_arg_lambda();
+    // test1_cpp11_3_tmp_arg_lambda();
     // test1_cpp11_3_private();
 
     // test1_cpp14_1_return_deduction();
@@ -148,11 +150,13 @@ int main()
     // test1_cpp17_1_variant();
     // test1_cpp17_1_optional();
     // test1_cpp17_1_any();
+    // test1_cpp17_1_any_variant_diff();
     // test1_cpp17_1_apply();
     // test1_cpp17_1_make_from_tuple();
     // test1_cpp17_1_as_const();
     // test1_cpp17_1_file_system();
     // test1_cpp17_1_string_view();
+    // test1_cpp17_1_lock();
 
     // test1_linux1_backtrace();
 

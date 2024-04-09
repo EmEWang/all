@@ -1,0 +1,10 @@
+{
+    "name": "mylibrary",
+    "description": "My D language shared library",
+    "authors": ["Your Name"],
+    "targetType": "dynamicLibrary",
+    "targetName": "libmylibrary.so",
+    "dependencies": {
+        "": ">=0.0.0"
+    }
+}

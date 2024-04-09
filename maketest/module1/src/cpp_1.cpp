@@ -75,23 +75,27 @@ void test1_cpp_1_float_int()
     double d1 = 1.1;
     double d2 = -1.1;
     double d3 = DBL_MAX;
-    double d4 = DBL_MAX + DBL_MAX + DBL_MAX;
+    double d4 = DBL_MAX + DBL_MAX;
+    double d5 = DBL_MAX + 1.0e+292;
+    double d6 = DBL_MAX + 1.0e+291;
 
     int i1 = _finite(d1);
     int i2 = _finite(d2);
     int i3 = _finite(d3);
     int i4 = _finite(d4);
+    int i5 = _finite(d5);
+    int i6 = _finite(d6);
 
     printf("i1 %d d1 = %f\n", i1, d1);
     printf("i2 %d d2 = %f\n", i2, d2);
     printf("i3 %d d3 = %f\n", i3, d3);
-    printf("i4 %d d4 = %f\n", i4, d4);
-    printf("i4 %d d4 = %p\n", i4, &d4);
+    printf("i4 %d d4 = %f %p\n", i4, d4,  &d4);
+    printf("i5 %d d5 = %f\n", i5, d5);
+    printf("i6 %d d6 = %f\n", i6, d6);
 // i1 1 d1 = 1.100000
 // i2 1 d2 = -1.100000
 // i3 1 d3 = 179769313486231570814527423731704356798070567525844996598917476803157260780028538760589558632766878171540458953514382464234321326889464182768467546703537516986049910576551282076245490090389328944075868508455133942304583236903222948165808559332123348274797826204144723168738177180919299881250404026184124858368.000000
-// i4 0 d4 = inf
-// i4 0 d4 = 0x7ffe86267488
+// i4 0 d4 = inf 0x7ffe86267488
 
 
     // 整数超过最大值
@@ -119,9 +123,7 @@ void test1_cpp_1_float_int()
 class MyInt_t{
 public:
     explicit MyInt_t(int val) :m_t(val) {}
-    ~MyInt_t(){
-        std::cout << m_t << '\n';
-    }
+    ~MyInt_t() {std::cout << m_t << '\n';}
 private:
     int m_t;
 };
@@ -132,30 +134,24 @@ void funcUniqPtr(std::unique_ptr<MyInt_t>t) {}
 void funcSharedPtr(std::shared_ptr<MyInt_t>t){}
 void test1_cpp_1_paramowner()
 {
-    // func(value)              func 是资源所有者          F.16
-    // func(pointer*)           func 借用了资源            I.11 和 F.7
-    // func(reference&)         func 借用了资源            I.11 和 F.7
-    // func(std::unique_ptr)    func 是资源的独占所有者     F.26
-    // func(std::shared_ptr)    func 是资源的共享所有者     F.27
-    //   func(value):          函数 func 自己有一份 value 的拷贝并且就是其所有者。func 会自动释放该资源。
-    //   func(pointer*):       func 借用了资源，所以无权删除该资源。func 在每次使用前都必须检查该指针是否为空指针。
-    //   func(reference&):     func 借用了资源。与指针不同，引用的值总是合法的。
-    //   func(std::unique_ptr):func 是资源的新所有者。func 的调用方显式地把资源的所有权传给了被调用方。func 会自动释放该资源。
-    //   func(std::shared_ptr):func 是资源的额外所有者。func 会延长资源的生存期。在 func 结束时，它也会结束对资源的所有权。如果 func 是资源的最后一个所有者，那么它的结束会导致资源的释放。
-    // 传统 C++ 编写的，只能使用原始指针来表达指针、引用、std::unique_ptr 或 std::shared_ptr 这四种传参方式的所有权语义。
+    // f(value)      f 是资源所有者 即有一份 value 的拷贝。f 会自动释放该资源。                           F.16
+    // f(pointer*)   f 借用了资源 故无权删除该资源。f 在每次使用前都必须检查该指针是否为空指针。            I.11 和 F.7
+    // f(reference&) f 借用了资源 与指针不同，引用的值总是合法的。                                        I.11 和 F.7
+    // f(unique_ptr) f 是资源的独占所有者 调用方显式地把资源的所有权传给了被调用方。f 会自动释放该资源。     F.26
+    // f(shared_ptr) f 是资源的共享所有者 延长资源的生存期 。若是资源的最后一个所有者，结束会导致资源的释放。 F.27
+    // 传统 C++，只能使用原始指针来表达指针、引用、std::unique_ptr 或 std::shared_ptr 这四种传参方式的所有权语义。
     // 下面的代码说明了我的观点：
-    //   void func(double* ptr){  ...}
+    //   void f(double* ptr){...}
     //   double* ptr = new double[5];
-    //   func(ptr);
-    // 1 传统 C++ 的关键问题是，谁是所有者？是使用该数组的 func 中的被调用方，还是创建该数组的 func 的调用方？并不明确
+    //   f(ptr);
+    // 1 传统 C++ 的关键问题是，谁是所有者？是使用该数组的 f 中的被调用方，还是创建该数组的的调用方？并不明确
     // 2 所以在应用层面使用 std::move 的意图并不在于移动，而是所有权的转移。
     //   举例来说，若对 std::unique_ptr 应用 std::move，会将内存的所有权转移到另一个 std::unique_ptr。
-    //   智能指针 uniquePtr1 是原来的所有者，而 uniquePtr2 将成为新的所有者。
-    //   auto uniquePtr1 = std::make_unique<int>(2011);
-    //   std::unique_ptr<int> uniquePtr2{ std::move(uniquePtr1) };
+    //   auto uniquePtr1 = std::make_unique<int>(2011);              uniquePtr1 是原来的所有者
+    //   std::unique_ptr<int> uniquePtr2{ std::move(uniquePtr1) };   uniquePtr2 将成为新的所有者
     std::cout << "--- test1_cpp_1_paramowner Begin" << '\n';
 
-    MyInt_t myInt{ 2000 };
+    MyInt_t myInt{ 1998 };
     MyInt_t* myIntPtr = &myInt;
     MyInt_t& myIntRef = myInt;
     auto uniqPtr = std::make_unique<MyInt_t>(2011);
@@ -169,19 +165,18 @@ void test1_cpp_1_paramowner()
 
     std::cout << "--- test1_cpp_1_paramowner End" << '\n';
 // --- test1_cpp_1_paramowner Begin
-// 2000
+// 1998
 // 2011
 // --- test1_cpp_1_paramowner End
 // 2014
-// 2000
+// 1998
 
 // 运行结果显示，有两个析构函数在 main 函数结束之前被调用，还有两个析构函数在 main 函数结束的地方被调用。
-// 在 main 函数结束之前析构的是 被拷贝到函数中（funcCopy(myInt)），以及被移动到函数中 （funcUniqPtr(std::move(uniqPtr))）。
-// 拷贝拷贝了一份新的 MyInt 到函数 func 中，func 结束的时候，自然进行析构，打印 1998。
-// 移动转移了智能指针资源的所有权，所以在 func 结束的时候，RAII 释放了内存，打印 2011。
-// shared_ptr 对象的资源并没有转移，它是共享的，有两个对象共享资源，分别是 main 函数局部的，以及 func 函数中的，
-//  所以当 func 结束的时候，只是引用计数减一，不会释放资源。只能等到 main 函数也结束的时候才会析构，释放内存，打印 2014 。
-// MyInt myInt 析构，打印 1998。其实你可以注意到，打印了两次 1998，因为第一次析构的是复制到函数中的。
+// main 函数结束之前析构的是 funcCopy(被拷贝到函数中)，funcUniqPtr(被移动到函数中)。
+// funcCopy拷贝拷贝了一份新的 MyInt 到函数中，结束时析构，打印 1998。
+// funcUniqPtr移动转移了智能指针资源的所有权，结束时，RAII 释放了内存，打印 2011。
+// funcSharedPtr资源没转移，两对象共享(main中和函数中)，结束时引用计数减一不释放。main 结束时析构，打印 2014 。
+// myInt 析构，打印 1998。注意到，打印了两次 1998，因为第一次析构的是复制到函数中的。
 }
 
 

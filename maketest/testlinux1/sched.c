@@ -7,6 +7,9 @@
 // #define __USE_GNU  不能使用这个
 // #define _GNU_SOURCE    # 用这个代替之 目前用编译-D指定
 
+// int i = sched_getcpu();  // 当前线程运行的cpu
+// taskset -c 0,10 ./bind_core  // 让bind_core执行于0和10号逻辑核心上
+
 // 设置进程调度策略和优先级
 // sched_setscheduler 设置实时进程 需要root权限
 // sched_setscheduler 设置普通进程 不需要root权限

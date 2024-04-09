@@ -16,22 +16,25 @@ gcc -m32 -o testByteAlign testByteAlign.c   # 编译程序
 
 g++ test.cpp -I../base/include/chen -L../base/lib/c7 -lchen     # test.cpp
 
-gcc -posix -E -dM - </dev/null       # 查看GCC宏定义
-touch dummy.hxx;cpp -dM ./dummy.hxx  # 查看linux系统宏定义  (ubuntu20.04下 2这一样)
 
 从#pragma GCC system_header 开始到文件尾的代码被看作是系统头文件的一部分。所有警告信息都不显示(除了#warnings 指示字)
 
 #pragma GCC diagnostic push                 # 记录当前的诊断状态
 #pragma GCC diagnostic pop                  # 恢复到之前的诊断状态
 #pragma GCC diagnostic ignored "XXX"        # 关闭/屏蔽/忽略某个警告
-
-示例
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wformat"
-//code                                      # 屏蔽局部代码中的格式转化警告
-#pragma GCC diagnostic pop
+  #pragma GCC diagnostic push               # 举例
+  #pragma GCC diagnostic ignored "-Wformat"
+  //code                                    # 屏蔽局部代码中的格式转化警告
+  #pragma GCC diagnostic pop
 
 
+echo | g++ -v -x c++ -E -     # 查询gcc编译时查找的头文件目录，库文件目录
+g++ -v -x c++ -E 1.cpp        # 类似于上句 但是 1.cpp为空文件
+gcc -posix -E -dM - </dev/null       # 查看GCC宏定义
+touch dummy.hxx;cpp -dM ./dummy.hxx  # 查看linux系统宏定义  (ubuntu20.04下 2这一样)
+
+gcc参数-L > gcc的环境变量LIBRARY_PATH > 内定目录/lib /usr/lib /usr/local/lib  # 编译时查找顺序
+LD_PRELOAD > LD_LIBRARY_PATH > /etc/ld.so.cache > /lib > /usr/lib   # ld-linux.so加载动态链接库的顺序
 
 gcc头文件和库文件搜寻路径
 1 直接在gcc中添加头文件库文件路径参数
@@ -54,6 +57,119 @@ gcc头文件和库文件搜寻路径
   /usr/lib              # 标准C语言的库文件目录
   /usr/local/lib        # 开源库的库文件目录
   /usr/local/include    # 开源库的头文件目录
+
+
+
+gcc编译过程
+hello.c
+    ↓    预处理 cpp  gcc hello.c -o hello.i -E      # 预处理指令 删除注释 添加必要的调试信息(如行信息)
+hello.i
+    ↓    编译 ccl    gcc hello.i -o hello.s -S      # 词法和语法的分析 生成对应硬件平台的汇编语言
+hello.s
+    ↓    汇编 as     gcc hello.s -o hello.o -c      # 调用汇编器as将汇编源程序翻译成可重定位文件
+hello.o      可重定位指该文件已经包含可以让处理器直接运行的指令流，但是程序中的所有的全局符号(函数和全局变量)尚未定位。
+    ↓    链接 ld     gcc hello.o -o hello -lc -lgcc # 重定位 合并相同权限的段 (标准c库和gcc库内置，-lc和-lgcc默认)
+hello
+
+
+
+gcc/g++ 编译选项
+  -M      # 生成文件关联的信息。包含目标文件所依赖的所有原始码你能用 gcc -M hello.c
+  -MD     # 和-M相同，不过输出将导入到.d的文件里面
+  -MM     # 和-M基本相同，不过将忽略由 系统库 造成的依赖关系
+  -MMD    # 和-MM相同，不过输出将导入到.d的文件里面
+
+  -Ox     # 优化等级 -O0 不优化 -O 同 -O1 优化 -O2 进一步优化 -O3 更进一步优化，包括 inline 函数。
+  -o file # 指定输出文件名   gcc a.c -o a
+  -C      # 预处理不删除注释信息,一般和-E使用,分析程序非常方便
+  -c      # 只激活预处理、编译和汇编,把程序做成目标文件(.o文件)
+  -E      # 预处理(默认输出到屏幕)   gcc a.c -o a.i -E
+  -S      # 输出编译后的汇编代码文件   gcc a.c -o a.s -S
+  -ggdb   # 尽可能的生成gdb可以使用的调试信息
+  -g      # 在编译结果中增加调试信息   gcc a.c -o a -g
+  -I      # 指定头文件所在目录 可用相对路径   gcc a.c -o a -I./include
+  -include # 包含头文件，很少用，一般情况下在源码中都有指定头文件
+  -L      # 链接库所在的目录   gcc a.c -o a -L./lib
+  -rpath-link  # 指定链接时依赖库目录 运行时无效
+  -rpath       # 指定链接时依赖库目录 运行时有效 目录信息写入 ELF 文件
+  -l      # 需要链接库的名称  libtest.so 使用 -ltest
+  -Wall   # 打开所有警告信息
+  -shared # 生成共享库格式
+  -static # 指定生成静态链接库   gcc a.c -o a -lxxx -static
+  -fpic   # 生成位置无关目标码.适用于共享库(shared library).
+  -fPIC   # 输出位置无关目标码.适用于动态连接(dynamic linking),即使分支需要大范围转移.优于-fpic
+
+  -v      # 显示详细的编译、汇编、连接命令  Display the programs invoked by the compiler
+  -x      # 指定语言  如  -x c++
+  -std=c++98  # 使用标准 c++11 c++14 c++17 c++2a
+
+  -D_GNU_SOURCE  # 以GNU规范标准编译，如果不加上这个参数会报RTLD_NEXT未定义的错误
+  -Wl,options    # 把参数(options)传递给链接器ld。若options中有逗号,就将options分成多个选项传递给链接程序
+  -fno-builtin-malloc -fno-builtin-calloc -fno-builtin-realloc -fno-builtin-free #
+    阻止编译器优化时使用内置版本的malloc,calloc,realloc,free函数
+  -fno-exceptions           # 禁用异常 对所有使用"throw"抛出异常的地方，替换为std::abrot()调用
+  -flto                     # 链接时优化，包括内联优化、程序间分析（IPA）和程序间优化（IPO）等
+  -fprofiling-generate=dir  # 编译工程 运行程序生成profiling文件
+  -fprofiling-use           # 基于profiling文件进行编译优化
+
+  -lz     # 是link libz，链接压缩库(Z)
+  -lrt    # 实时库(real time)：shm_open系列
+  -lm     # 是link libm，链接数学库(math)
+  -lc     # 是link libc，链接标准C库(C lib)
+  -ldl    # 显示方式加载动态库，使用dlopen、dlsym、dlclose、dlerror
+  -lnsl   # 需要链接libnsl.so， libnsl.so是C网络服务的库
+  -lclntsh   # 需要链接libclntsh.so,是orcale客户端编译的时候需要用到的一个库，可以扒一扒
+  -lpthread  # 线程库
+  -lsnmp++   # 网络管理库
+  -locci  #  是指Oracle C++ Call Interface对应的动态库,(OCCI)驱动程序
+  -lCOS4
+  -lCOSDynamic4
+  -lomniCodeSets4
+  -lomniDynamic4
+  -lomniORB4
+  -lomnithread
+
+-D_GNU_SOURCE -D__USE_GNU 2个宏的区别
+__USE_GNU   是内部定义的宏 自己手动定义会引起问题 其开关位于 features.h 中
+_GNU_SOURCE 是面向用户使用的宏 如果要用 其应该放在头文件的第一行  gcc默认没开此选项 g++默认打开
+见maketest/testlinux1/sched.c测试 gcc与g++会有不同的编译选项
+/usr/include/features.h 中
+  #undef	__USE_GNU    先取消定义
+
+  #ifdef	_GNU_SOURCE  再这样打开
+  # define __USE_GNU	1
+  #endif
+
+
+
+-g 编译生成的目标文件中加入源码信息。有3个等级。把目标文件中的机器指令与源代码的行数对应起来。
+  并不是将整个源码都添嵌入到目标文件中，而只是添加对应的行数信息，因此debug时，必须保证gdb可以找到源文件。
+  -g0 等于不加-g；即不包含任何信息
+  -g1 不包含局部变量和与行号有关的调试信息，因此只能够用于回溯跟踪和堆栈存储和函数的调用等等。
+  -g2 默认的级别，此时产生的调试信息包括扩展的符号表、行号、局部或外部变量信息
+  -g3 包含级别2中的所有调试信息，以及源代码中定义的宏
+
+-O 编译优化 有4个等级
+  -O0 不优化，如果指定了多个-o选项，不管带不带数字，最后一个选项才是生效的选项
+  -O1 最基本的优化。编译器会在不花费太多编译时间的同时试图生成更快更小的代码。
+  -O2 推荐的优化。O2比O1启用多一些标记。O2编译器会试图提高代码性能而不会增大体积和大量占用的编译时间。
+  -O3 最高优化。延长编译代码时间,结果体积更大积更耗内存。gcc3.x只比O2快一点点,gcc4.x中还未必更快,不应全局启用。
+  -Os 优化代码尺寸。启用了O2中不增加磁盘占用的选项。对磁盘紧张或CPU缓存较小非常有用。
+
+
+gcc编译选项-lpthread和-pthread的区别
+1、-lpthread是较为老式的解决方法，pthread新加了对于宏D_REENTRANT的定义，-pthread会被展开为“-D_REENTRANT -lpthread”，
+  它不仅可以链接pthread库，还可以打开系统头文件中的各种多线程支持分支，比如，我们常常使用的错误码标志errno，
+  如果没有定义_REENTRANT，则实现为一个全局变量；若是定义了_REENTRANT，则会实现为每线程独有，从而避免线程竞争错误。
+2、-pthread可移植性较强：在Linux中，pthread是作为一个单独的库存在的(libpthread.so)，但是在其他Unix变种中却不一定，
+  比如在FreeBSD中是没有单独的pthread库的，因此在FreeBSD中不能使用-lpthread来链接pthread，
+  而使用-pthread则不会存在这个问题，因为FreeBSD的编译器能正确将-pthread展开为该系统下的依赖参数。
+  同样道理，其他不同的变种也会有这样那样的区别，如果使用-lpthread，则可能在移植到其他Unix变种中时会出现问题，
+  为了保持较高的可移植性，我们最好还是使用-pthread(尽管这种做法未被接纳成为C标准，但已基本是事实标准)。
+结论用-pthread 如：gcc -pthread -o test test.c
+
+https://www.zhihu.com/question/497962877/answer/3249942822  #   GCC使不使用-fPIC编译的区别在哪里
+
 
 
 常见错误/警告
@@ -109,16 +225,36 @@ In file included from test.c:18:
    void指针加法运算 if(addr >= start && addr < ((const char*)start + len)) ok
 
 
+/mnt/hgfs/share/msg_test/lib/libcommon.so：对‘sem_unlink’未定义的引用
+/mnt/hgfs/share/msg_test/lib/libcommon.so：对‘sem_close’未定义的引用
+/mnt/hgfs/share/msg_test/lib/libcommon.so：对‘sem_post’未定义的引用
+/mnt/hgfs/share/msg_test/lib/libcommon.so：对‘sem_open’未定义的引用
+/mnt/hgfs/share/msg_test/lib/libcommon.so：对‘sem_getvalue’未定义的引用
+/mnt/hgfs/share/msg_test/lib/libcommon.so：对‘sem_wait’未定义的引用
+解决：在编译的时候加上：-pthread
 
-符号的可见性(visibility)
-gcc中的visibility属性用于控制符号的可见性，决定符号是否可被外部程序访问和使用。默认gcc编译的符号(函数、变量等)是全局可见的。
-使用此属性可将符号的可见性限制在本地(即仅当前编译单元中可见)或特定的可共享对象文件中可见，以便在链接时进行符号的隐藏和重定位。
+/mnt/hgfs/share/msg_test/lib/libcommon.so：对‘mq_unlink’未定义的引用
+/mnt/hgfs/share/msg_test/lib/libcommon.so：对‘mq_getattr’未定义的引用
+/mnt/hgfs/share/msg_test/lib/libcommon.so：对‘mq_receive’未定义的引用
+/mnt/hgfs/share/msg_test/lib/libcommon.so：对‘mq_open’未定义的引用
+/mnt/hgfs/share/msg_test/lib/libcommon.so：对‘mq_notify’未定义的引用
+/mnt/hgfs/share/msg_test/lib/libcommon.so：对‘mq_send’未定义的引用
+/mnt/hgfs/share/msg_test/lib/libcommon.so：对‘mq_close’未定义的引用
+解决：在编译的时候加上：-lrt
 
-1 编译器选项 -fvisibility
--fvisibility=xxx 用于设置源文件中符号的缺省可见性，值为default(缺省)或者hidden(隐藏)。
-  设置为default时，没有显式标识为hidden的符号都处理为可见。
-  设置为hidden时，没有显式标识为可见的符号都处理为隐藏。
-  如果在编译中没有指定-fvisibility选项，编译器会自行处理为缺省的可见性。
+
+
+visibility(符号可见性)
+readelf -s  xxx  # 查看可见性属性 vis列
+
+默认方式下，如程序调用函数F，F存在于两个动态链接库liba.so,libb.so中，程序执行要链接这两个库，链接顺序是先链接liba.so，
+ 这时候通过liba.so的导出符号表就可以找到函数F的定义，并加入到符号表中；
+ 再链接libb.so的时候，符号表中已经存在函数F，就不会再更新符号表，所以调用的始终是liba.so中的F函数。
+
+1 -fvisibility=xxx 编译器选项
+  用于设置源文件中符号的可见性，决定符号是否可被外部程序访问和使用。.so中，可以控制共享文件导出符号。
+  default  # 可见(默认) 编译的符号(函数、变量等)全局可见，可被导出
+  hidden   # 隐藏       符号不被导出到动态符号表(但还被留在符号表中用于静态链接)，其他模块不可见，不可使用，动态库函数隐藏。
 注意：default设置不是指编译器缺省的处理方式。和hidden设置一样，default来自ELF格式定义的可见性名称。
   具有default可见性的符号和所有不使用特殊机制的符号具有相同的可见性类型;也就是说，它将作为公共接口的一部分输出。
 编译器还支持-fvisibility-inlines-hidden选项，用于强制隐藏所有的嵌入函数。
@@ -147,57 +283,37 @@ push和pop两个关键字标识这个pragma可以被嵌套。
 
 
 
-
-
 __attribute__机制
 __attribute__((attribute-list))   # 语法格式  其位置约束为：放于声明的尾部“；”之前。
 GNU C的一大特色就是attribute机制。它可以设置函数属性(Function Attribute )、变量属性(Variable)和类型属性(Type)。
 
 
-__attribute__((visibility("default")))  // 默认方式  外面的链接可见
-__attribute__((visibility("hideen")))   // 隐藏方式  则该符号仅在本so中可见，在其他库中则不可见
-
-默认方式下，如程序调用函数F，F存在于两个动态链接库liba.so,libb.so中，程序执行要链接这两个库，链接顺序是先链接liba.so，
- 这时候通过liba.so的导出符号表就可以找到函数F的定义，并加入到符号表中；
- 再链接libb.so的时候，符号表中已经存在函数F，就不会再更新符号表，所以调用的始终是liba.so中的F函数。
-
-g++编译时，可用参数-fvisibility指定所有符号的可见性(不加此参数时默认外部可见)；
- 若需要对特定函数的可见性进行设置，需在代码中使用attribute设置visibility属性。
- 编写大型程序时，可用-fvisibility=hidden设置符号默认隐藏，针对特定变量和函数，
- 在代码中使用attribute ((visibility("default")))另该符号外部可见，这种方法可用有效避免so之间的符号冲突。
-
-在Linux下动态库(.so)中，通过GCC的C++ visibility属性可以控制共享文件导出符号。
- 在GCC 4.0及以上版本中，有个visibility属性，可见属性可以应用到函数、变量、模板以及C++类。
- "default"：用它定义的符号将被导出，动态库中的函数默认是可见的。意味着该方法对其它模块是可见的。
- "hidden"：用它定义的符号将不被导出，并且不能从其它对象进行使用，动态库中的函数是被隐藏的。
- 而hidden表示该方法符号不会被放到动态符号表里，所以其它模块(可执行文件或者动态库)不可以通过符号表访问该方法。
-将符号的可见性指定为visibility("hidden")，这将不允许它们在库中被导出，但是可以在源文件之间共享。
- 实际上，隐藏的符号将不会出现在动态符号表中，但是还被留在符号表中用于静态链接。
+__attribute__((visibility("default"))) xxx # 单一指定 默认方式  外面的链接可见
+__attribute__((visibility("hideen")))  xxx # 单一指定 隐藏方式  则该符号仅在本so中可见，在其他库中则不可见
+-fvisibility=default/hideen    # g++编译时参数 指定所有符号的可见性(不加此参数时默认default) 优先级低于单一指定
 
 
 __attribute__((noreturn))  # 函数声明中，告诉编译器这个函数不会返回给调用者，以便编译器在优化时去掉不必要的函数返回代码。
 
 
 __attribute__((packed)) 的作用就是告诉编译器取消结构在编译过程中的优化对齐,按照实际占用字节数进行对齐，是GCC特有的语法。
- 这个功能是跟操作系统没关系，跟编译器有关，gcc编译器不是紧凑模式的，windows下vc的编译器也不是紧凑的，用tc的编译器就是紧凑的。
-在TC下：struct my{ char ch; int a;} sizeof(int)=2;sizeof(my)=3;(紧凑模式)
-在GCC下：struct my{ char ch; int a;} sizeof(int)=4;sizeof(my)=8;(非紧凑模式)
-在GCC下：struct my{ char ch; int a;}__attrubte__ ((packed)) sizeof(int)=4;sizeof(my)=5
-GNU CC需要使用 –Wall编译器来击活该功能，这是控制警告信息的一个很好的方式。
+  这个功能是跟操作系统没关系，跟编译器有关，gcc编译器不是紧凑模式的，windows下vc的编译器也不是紧凑的，用tc的编译器就是紧凑的。
+  struct my{ char ch; int a;} sizeof(int)=2;sizeof(my)=3;(紧凑模式)                # TC下
+  struct my{ char ch; int a;} sizeof(int)=4;sizeof(my)=8;(非紧凑模式)              # GCC下
+  struct my{ char ch; int a;}__attrubte__ ((packed)) sizeof(int)=4;sizeof(my)=5    # GCC下
+  GNU CC需要使用 –Wall编译器来击活该功能，这是控制警告信息的一个很好的方式。
 
 packed属性使得变量或者结构体成员使用最小的对齐方式，即对变量是一字节对齐，对域(field)是位对齐，减小对象占用的空间。
 attribute属性的效力与你的连接器也有关，如果你的连接器最大只支持16字节对齐，那么你此时定义32字节对齐也是无济于事的。
 使用该属性对struct或者union类型进行定义，设定其类型的每一个变量的内存约束。当用在enum类型定义时，暗示了应该使用最小完整的类型。
 
-struct student
-{
+struct student{
     char name[7];
     uint32_t id;
     char subject[5];
 } __attribute__ ((aligned(4))); // 对齐到4字节，同样可指定对齐到8字节。
 
-struct student
-{
+struct student{
     char name[7];
     uint32_t id;
     char subject[5];
@@ -206,156 +322,16 @@ struct student
 
 __attribute__((constructor))  # 修饰的函数在main函数之前执行
 __attribute__((destructor))   # 修饰的函数在main函数之后或调用exit()之后执行
+  int mait(int argc, char* argv[]){printf("mainfunc\n");}
+  __attribute__((constructor)) static void beforefunc(){printf("beforefunc\n");}
+  运行打印如下:
+  beforefunc
+  mainfunc
 
-int mait(int argc, char* argv[]){printf("mainfunc\n");}
-__attribute__((constructor)) static void beforefunc(){printf("beforefunc\n");}
-运行打印如下:
-beforefunc
-mainfunc
-
-带有优先级的参数
-__attribute__((constructor(101))) static void beforefunc1(){printf("beforefunc1\n");}
+__attribute__((constructor(101))) static void beforefunc1(){printf("beforefunc1\n");}  # 带有优先级的参数
 __attribute__((constructor(102))) static void beforefunc1(){printf("beforefunc2\n");}
 __attribute__((constructor(103))) static void beforefunc1(){printf("beforefunc3\n");}
-以上三个函数会依照优先级的顺序调用.1-100是保留的,最好从100之后开始用.(但是实际上,自己测试100以内的,也没有得到警告)
-
-
-
-
-
-
-/mnt/hgfs/share/msg_test/lib/libcommon.so：对‘sem_unlink’未定义的引用
-/mnt/hgfs/share/msg_test/lib/libcommon.so：对‘sem_close’未定义的引用
-/mnt/hgfs/share/msg_test/lib/libcommon.so：对‘sem_post’未定义的引用
-/mnt/hgfs/share/msg_test/lib/libcommon.so：对‘sem_open’未定义的引用
-/mnt/hgfs/share/msg_test/lib/libcommon.so：对‘sem_getvalue’未定义的引用
-/mnt/hgfs/share/msg_test/lib/libcommon.so：对‘sem_wait’未定义的引用
-解决：在编译的时候加上：-pthread
-
-/mnt/hgfs/share/msg_test/lib/libcommon.so：对‘mq_unlink’未定义的引用
-/mnt/hgfs/share/msg_test/lib/libcommon.so：对‘mq_getattr’未定义的引用
-/mnt/hgfs/share/msg_test/lib/libcommon.so：对‘mq_receive’未定义的引用
-/mnt/hgfs/share/msg_test/lib/libcommon.so：对‘mq_open’未定义的引用
-/mnt/hgfs/share/msg_test/lib/libcommon.so：对‘mq_notify’未定义的引用
-/mnt/hgfs/share/msg_test/lib/libcommon.so：对‘mq_send’未定义的引用
-/mnt/hgfs/share/msg_test/lib/libcommon.so：对‘mq_close’未定义的引用
-解决：在编译的时候加上：-lrt
-
-
-
-
-gcc编译选项-lpthread和-pthread的区别
-1、-lpthread是较为老式的解决方法，pthread新加了对于宏D_REENTRANT的定义，-pthread会被展开为“-D_REENTRANT -lpthread”，
-  它不仅可以链接pthread库，还可以打开系统头文件中的各种多线程支持分支，比如，我们常常使用的错误码标志errno，
-  如果没有定义_REENTRANT，则实现为一个全局变量；若是定义了_REENTRANT，则会实现为每线程独有，从而避免线程竞争错误。
-2、-pthread可移植性较强：在Linux中，pthread是作为一个单独的库存在的(libpthread.so)，但是在其他Unix变种中却不一定，
-  比如在FreeBSD中是没有单独的pthread库的，因此在FreeBSD中不能使用-lpthread来链接pthread，
-  而使用-pthread则不会存在这个问题，因为FreeBSD的编译器能正确将-pthread展开为该系统下的依赖参数。
-  同样道理，其他不同的变种也会有这样那样的区别，如果使用-lpthread，则可能在移植到其他Unix变种中时会出现问题，
-  为了保持较高的可移植性，我们最好还是使用-pthread(尽管这种做法未被接纳成为C标准，但已基本是事实标准)。
-结论用-pthread 如：gcc -pthread -o test test.c
-
-https://www.zhihu.com/question/497962877/answer/3249942822  #   GCC使不使用-fPIC编译的区别在哪里
-
-gcc编译过程
-hello.c
-    ↓    预处理 cpp  gcc hello.c -o hello.i -E      # 预处理指令 删除注释 添加必要的调试信息(如行信息)
-hello.i
-    ↓    编译 ccl    gcc hello.i -o hello.s -S      # 词法和语法的分析 生成对应硬件平台的汇编语言
-hello.s
-    ↓    汇编 as     gcc hello.s -o hello.o -c      # 调用汇编器as将汇编源程序翻译成可重定位文件
-hello.o      可重定位指该文件已经包含可以让处理器直接运行的指令流，但是程序中的所有的全局符号(函数和全局变量)尚未定位。
-    ↓    链接 ld     gcc hello.o -o hello -lc -lgcc # 重定位 合并相同权限的段 (标准c库和gcc库内置，-lc和-lgcc默认)
-hello
-
-
-
-gcc/g++ 编译选项
-  -M      # 生成文件关联的信息。包含目标文件所依赖的所有原始码你能用 gcc -M hello.c
-  -MD     # 和-M相同，不过输出将导入到.d的文件里面
-  -MM     # 和-M基本相同，不过将忽略由 系统库 造成的依赖关系
-  -MMD    # 和-MM相同，不过输出将导入到.d的文件里面
-
-  -Ox     # 优化等级 -O0 不优化 -O 同 -O1 优化 -O2 进一步优化 -O3 更进一步优化，包括 inline 函数。
-  -o file # 指定输出文件名   gcc a.c -o a
-  -C      # 预处理不删除注释信息,一般和-E使用,分析程序非常方便
-  -c      # 只激活预处理、编译和汇编,把程序做成目标文件(.o文件)
-  -E      # 预处理(默认输出到屏幕)   gcc a.c -o a.i -E
-  -S      # 输出编译后的汇编代码文件   gcc a.c -o a.s -S
-  -ggdb   # 尽可能的生成gdb可以使用的调试信息
-  -g      # 在编译结果中增加调试信息   gcc a.c -o a -g
-  -I      # 指定头文件所在目录 可用相对路径   gcc a.c -o a -I./include
-  -include # 包含头文件，很少用，一般情况下在源码中都有指定头文件
-  -L      # 链接库所在的目录   gcc a.c -o a -L./lib
-  -l      # 需要链接库的名称  libtest.so 使用 -ltest
-  -Wall   # 打开所有警告信息
-  -shared # 生成共享库格式
-  -static # 指定生成静态链接库   gcc a.c -o a -lxxx -static
-  -fpic   # 生成位置无关目标码.适用于共享库(shared library).
-  -fPIC   # 输出位置无关目标码.适用于动态连接(dynamic linking),即使分支需要大范围转移.优于-fpic
-
-  -v      # 显示详细的编译、汇编、连接命令  Display the programs invoked by the compiler
-  -x      # 指定语言  如  -x c++
-  -std=c++98  # 使用标准 c++11 c++14 c++17 c++2a
-
-  -D_GNU_SOURCE  # 以GNU规范标准编译，如果不加上这个参数会报RTLD_NEXT未定义的错误
-  -Wl,options    # 把参数(options)传递给链接器ld。若options中有逗号,就将options分成多个选项传递给链接程序
-  -fno-builtin-malloc -fno-builtin-calloc -fno-builtin-realloc -fno-builtin-free #
-    阻止编译器优化时使用内置版本的malloc,calloc,realloc,free函数
-  -fno-exceptions  # 禁用异常 对所有使用"throw"抛出异常的地方，替换为std::abrot()调用
-  -flto          # 链接时优化，包括内联优化、程序间分析（IPA）和程序间优化（IPO）等
-  -fprofiling-generate=dir   # 编译工程 运行程序生成profiling文件
-  -fprofiling-use            # 基于profiling文件进行编译优化
-
-  -lz     # 是link libz，链接压缩库(Z)
-  -lrt    # 实时库(real time)：shm_open系列
-  -lm     # 是link libm，链接数学库(math)
-  -lc     # 是link libc，链接标准C库(C lib)
-  -ldl    # 显示方式加载动态库，使用dlopen、dlsym、dlclose、dlerror
-  -lnsl   # 需要链接libnsl.so， libnsl.so是C网络服务的库
-  -lclntsh   # 需要链接libclntsh.so,是orcale客户端编译的时候需要用到的一个库，可以扒一扒
-  -lpthread  # 线程库
-  -lsnmp++   # 网络管理库
-  -locci  #  是指Oracle C++ Call Interface对应的动态库,(OCCI)驱动程序
-  -lCOS4
-  -lCOSDynamic4
-  -lomniCodeSets4
-  -lomniDynamic4
-  -lomniORB4
-  -lomnithread
-
--D_GNU_SOURCE -D__USE_GNU 2个宏的区别
-__USE_GNU   是内部定义的宏 自己手动定义会引起问题 其开关位于 features.h 中
-_GNU_SOURCE 是面向用户使用的宏 如果要用 其应该放在头文件的第一行  gcc默认没开此选项 g++默认打开
-见maketest/testlinux1/sched.c测试 gcc与g++会有不同的编译选项
-/usr/include/features.h 中
-  #undef	__USE_GNU    先取消定义
-
-  #ifdef	_GNU_SOURCE  再这样打开
-  # define __USE_GNU	1
-  #endif
-
-
-echo | g++ -v -x c++ -E -     # 查询gcc编译时查找的头文件目录，库文件目录
-g++ -v -x c++ -E 1.cpp        # 类似于上句 但是 1.cpp为空文件
-
-
-
--g 编译生成的目标文件中加入源码信息。把目标文件中的机器指令与源代码的行数对应起来。
-  这里并不是将整个源码都添嵌入到目标文件中，而只是添加对应的行数信息，因此debug时，必须保证gdb可以找到源文件。
--g  有3个等级
--g0 等于不加-g；即不包含任何信息
--g1 不包含局部变量和与行号有关的调试信息，因此只能够用于回溯跟踪和堆栈存储和函数的调用等等。
--g2 默认的级别，此时产生的调试信息包括扩展的符号表、行号、局部或外部变量信息
--g3 包含级别2中的所有调试信息，以及源代码中定义的宏
-
--O 编译优化 有4个等级
- -O0 不优化，如果指定了多个-o选项，不管带不带数字，最后一个选项才是生效的选项
- -O1 最基本的优化。编译器会在不花费太多编译时间的同时试图生成更快更小的代码。
- -O2 推荐的优化。O2比O1启用多一些标记。O2编译器会试图提高代码性能而不会增大体积和大量占用的编译时间。
- -O3 最高优化。延长编译代码时间,结果体积更大积更耗内存。gcc3.x只比O2快一点点,gcc4.x中还未必更快,不应全局启用。
- -Os 优化代码尺寸。启用了O2中不增加磁盘占用的选项。对磁盘紧张或CPU缓存较小非常有用。
-
+以上三个函数会依照优先级的顺序调用.1-100是保留的,最好从100之后开始用.(自己测试100以内的,没有得到警告)
 
 
 

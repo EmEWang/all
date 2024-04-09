@@ -12,9 +12,9 @@ file my_exe                  #  最后是stripped不能使用gdb调试；但not 
   gdb -> exec-file my_exe # 同上 先进入gdb 然后指定程序 也可使用file my_exe
 2 gdb ./my_exe core1  # 同时调试程序和core文件
 3 gdb ./my_exe pid    # attach 到运行中的进程 或  gdb ./my_exe --pid pid
-4 gdb -p pid          # 调试正在运行的程序 同 gdb attach pid 或 gdb -> attach pid
-kernel.yama.ptrace_scope = 0 # 若attach出错 用root将/etc/sysctl.d/10-ptrace.conf该改 1 -> 0
-gdb -> file my_exe2 -> attach pid # 调试已经运行的没有调试信息的程序，再编译出一个带调试信息的版本，先file再attach
+4 gdb -p pid          # 调试正在运行的程序 同 gdb --pid pid 或 gdb attach pid 或 gdb -> attach pid
+  kernel.yama.ptrace_scope = 0 # 若attach出错 用root将/etc/sysctl.d/10-ptrace.conf 改 1 -> 0
+  gdb -> file my_exe2 -> attach pid   # 已运行的程序没有调试信息，编译出一个带调试信息的版本，先file再attach
 4 env e1=x1 e2=x2 gdb ./my_exe        # 带环境变量启动程序   env 可省
   show environment [envname]          # 指定某个或所有   environment可简写为env
   set environment envname [=value]    # 修改环境变量
@@ -45,15 +45,16 @@ help/h [cmd]          # 帮助
 info/i                # 查看各种信息
 quit/q                # 退出gdb
 set follow-fork-mode child  # Makefile项目管理：选择跟踪父子进程（fork()
+shell xxx             # 执行shell命令xxx
 
 变量
 set $foo = *obj_ptr   # 类似unix gdb可以定义自己的变量来保存一些调试程序中的运行数据，用set命令，以$起头
   第一次使用时创建这个变量，以后则直接对其賦值。变量没有类型，可以定义任意类型。包括结构体和数组。
 show convenience      # 该命令查看当前所设置的所有的环境变量。
 这是一个比较强大的功能，环境变量和程序变量的交互使用，将使得程序调试更为灵活便捷。例如：
-set $i = 0
-print bar[$i++]->contents
-不必，print bar[0]->contents, printbar[1]->contents重复输入。只需回车，重复执行上一条语句，变量会自动累加，完成逐个输出。
+  set $i = 0
+  print bar[$i++]->contents
+  不必，print bar[0]->contents, print bar[1]->contents重复输入。只需回车，重复执行上一条语句，变量会自动累加，完成逐个输出。
 
 
 语言环境

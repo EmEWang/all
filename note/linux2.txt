@@ -19,6 +19,13 @@ size           # 显示目标文件中的 section 大小及目标文件大小
 ar             # 将目标文件链接为静态库
 addr2line      # 将地址转换为文件、行号
 
+查看动态库.so导出函数列表
+objdump -tT xxx.so
+nm -D xxx.so
+
+sudo date -s “月/日/年 10:15    # 一次性修改时间与日期
+sudo date -s 月/日/年           # 日期  分开修改
+sudo date -s 10:15              #  时间
 
 /usr/bin/time -v xxx          # 用于测量命令的运行时间，还可以测量内存、I/O等的详细使用情况。
 /usr/local/time -v xxx        # 运行xxx 的资源时间统计
@@ -391,6 +398,7 @@ ps               # 进程
 top              # 实时显示进程状态用户
   top -Hp pid  # 某个进程的线程信息 -H线程模式 -p指定pid -d每隔几秒刷新默认5 -c显示命令行参数
   top -Hp   ` ps -ef | grep gvfs-goa  | awk 'NR==3 {print $2}' `  # 过滤某个进程ID并top显示 用管道不行
+htop             # cpu 图形显示
 lsof  [-aUu] [+d] # list open files 通过进程去找它开启或使用的文件与装置  -a 与 -U 仅列出 Unix like 系统的 socket 文件类型
   -u 接 username，列出该使用者相关进程所开启的文件 +d 接目录，找出某个目录下已经被开启的文件
   lsof                    # 列出目前系统上所有已经被开启的文件与装置
@@ -453,7 +461,12 @@ kill不能杀死进程原因
 
 
 网络
-scp -r lixiang@10.248.14.215:~/code/llvm/foo_html/* d:/tmp/       # 远程复制文件夹
+scp [opt] src dst    # 远程拷贝文件(secure copy) -r遍历文件夹 -P 端口 -v显示进度 -4强制用ipv4地址 -6强制用ipv6地址
+  由于使用ssh，登录之后的本机地址是不需要给出的。但是也可以不登录直接跨主机拷贝文件，可能会需要用户名及密码。
+  $scp l_fole r_user@r_ip:r_folder[/r_file]  # 复制文件 若指定文件则会改名
+  $scp -r l_folder r_user@r_ip:r_folder      # 复制文件夹
+  $scp a@192.168.0.200:~/b.txt b@192.168.0.100:~/from_b.txt  # 直接指定两个主机拷贝
+  scp -r lixiang@10.248.14.215:~/code/llvm/foo_html/* d:/tmp/       # 远程复制文件夹
 测试端口通不通
   telnet ip port    # telnet是windows标准服务，可以直接用；如果是linux机器，需要安装telnet
   ssh -v -p port username@ip  # -v 调试模式(会打印日志) -p 指定端口 username可以随意
@@ -475,15 +488,6 @@ netstat             # -a 所有 -t tcp包 -u udp包 -n 显示端口号 -l listen
   netstat -s        # 网络统计信息进程
 
 net.ipv4.tcp_tw_reuse = 1
-
-
-
-scp(secure copy)  # 远程拷贝文件
-由于使用ssh，登录之后的本机地址是不需要给出的。但是也可以不登录直接跨主机拷贝文件，可能会需要用户名及密码。
-scp [opt] src dst    # -r遍历文件夹 -P 端口 -v显示进度 -4强制用ipv4地址 -6强制用ipv6地址
-  $scp l_fole r_user@r_ip:r_folder[/r_file]  # 复制文件 若指定文件则会改名
-  $scp -r l_folder r_user@r_ip:r_folder      # 复制文件夹
-  $scp a@192.168.0.200:~/b.txt b@192.168.0.100:~/from_b.txt  # 直接指定两个主机拷贝
 
 
 

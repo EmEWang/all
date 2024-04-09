@@ -21,23 +21,55 @@ sudo apt-get remove cmake  # 卸载cmake
 cmake --version   # 验证安装版本
 
 
+cmake的语法支持大小，只有系统指令是不区分大小写的，但是变量和字符串是区分大小写的。
 
-cmake 调用格式
-1 cmake -DCMAKE_CXX_COMPILER="clang++" -DCMAKE_CXX_FLAGS="-std=c++11 -stdlib=libc++" ../source # -D 配置或编译参数
-  c++编译器为clang c++编译参数为-std=c++11 -stdlib=libc++  CMakeLists.txt 位置在 ../source
-2 cmake -i 或 ccmake           # 交互式界面
-3 cmake ctest 在CMakeLists.txt # 增加了add_test 执行单元测试
-4 cmake --trace / --trace-expand  # 详细记录调用过程和处理
-5 cmake -S . -B build          # -S 指定CMakeLists.txt位置 -B指定创建到哪里 若文件夹不存在则创建
-6 cmake --build build          # --build 编译 即运行指定文件夹下的makefile
+
+cmake 命令行参数
+cmake -DCMAKE_CXX_COMPILER="clang++" -DCMAKE_CXX_FLAGS="-std=c++11 -stdlib=libc++" ../source # -D 设置CMake变量。定义变量并设置其值，例如：-DVAR_NAME=VALUE。定义布尔类型的变量，其值为ON，例如：-DVAR_NAME。定义路径类型的变量，例如：-DVAR_NAME:PATH=/path/to/dir。定义配置变量（缓存变量），例如：-DVAR_NAME:STRING=VALUE。c++编译器为clang c++编译参数为-std=c++11 -stdlib=libc++  CMakeLists.txt 位置在 ../source
+cmake -S . -B build          # -S 指定源代码目录,项目根目录，包含CMakeLists.txt -B指定构建目录，即输出目录 若文件夹不存在则创建
+cmake -G "Unix Makefiles" .. # -G 指定生成器，生成哪种类型的构建系统文件。"Unix Makefiles"，生成适用于Unix/Linux系统的Makefile文件。"Visual Studio 16",生成Visual Studio 2019项目文件。Ninja，Ninja构建系统的项目文件。"Xcode"，生成适用于Xcode IDE的项目文件。
+cmake --build build          # --build 编译 即运行指定文件夹下的makefile
+cmake --build build --config Release # 指定构建类型，如 Debug 或 Release。
+cmake --build build --target install
+cmake -i 或 ccmake           # 交互式界面
+cmake ctest 在CMakeLists.txt # 增加了add_test 执行单元测试
+cmake --trace / --trace-expand  # 详细记录调用过程和处理
+
+-E 调用CMake内置命令。执行与构建无关的命令，如创建目录、复制/压缩文件等。这些命令不会生成Makefile或项目文件，而是在构建之外执行。
+  cmake -E make_directory build     # 在当前目录下创建一个名为build的目录。
+  cmake -E remove_directory build   # 递归删除build目录及其所有子目录和文件。
+  cmake -E copy 1.txt build/1.txt   # 将1.txt文件从当前目录复制到build目录中。
+  cmake -E tar my.tar 1.txt 2.txt   # 创建一个名为my.tar的归档文件，包含1.txt和2.txt。-E tar [...]：压缩指定文件为tar格式。
+
+其他常用参数
+  -DCMAKE_BUILD_TYPE     # 指定构建类型。使用该参数可以指定构建类型，例如Debug、Release等。
+  -DCMAKE_C_COMPILER     # 指定C编译器。使用该参数可以指定使用的C编译器，例如gcc、clang等。
+  -DCMAKE_CXX_COMPILER   # 指定C++编译器。使用该参数可以指定使用的C++编译器，例如g++、clang++等。
+  -DCMAKE_TOOLCHAIN_FILE # 指定交叉编译工具链。使用该参数可以指定交叉编译工具链，例如Android NDK、iOS SDK等。
+  -DCMAKE_SYSTEM_NAME    # 指定目标系统名称。使用该参数可以指定目标系统的名称，例如Linux、Windows、Android、iOS等。
+  -DCMAKE_INSTALL_RPATH  # 指定运行时动态链接库搜索路径。使用该参数可以指定运行时动态链接库搜索路径，使得程序在运行时可以找到所需的动态链接库。
+  -DCMAKE_C_FLAGS        # 指定C编译器选项。使用该参数可以指定C编译器的选项，例如-O0、-O2等。
+  -DCMAKE_CXX_FLAGS      # 指定C++编译器选项。使用该参数可以指定C++编译器的选项，例如-std=c++11、-stdlib=libc++等。
+  -DBUILD_SHARED_LIBS    # 指定是否构建共享库。使用该参数可以指定是否构建共享库，如果指定为ON，则生成共享库，否则生成静态库。
+  -DCMAKE_VERBOSE_MAKEFILE  # 指定生成Makefile时是否显示详细信息。使用该参数可以指定是否显示详细的构建信息。
+  -DCMAKE_MODULE_PATH    # 指定CMake模块路径。使用该参数可以指定CMake的模块路径，以便CMake可以找到所需的模块。
+  -DCMAKE_EXPORT_COMPILE_COMMANDS  # 指定是否导出编译命令。使用该参数可以指定是否导出编译命令，以便其他工具可以使用编译命令。
+  -DCMAKE_PREFIX_PATH    # 指定第三方库安装路径。使用该参数可以指定第三方库的安装路径，以便CMake可以找到所需的库文件。
+  -DCMAKE_INSTALL_PREFIX # 指定安装目录。使用该参数可以指定安装目录，使得在执行make install命令时，生成的可执行文件、库文件、头文件等可以被安装到指定的目录下。
+
+
+
 
 set(CMAKE_VERBOSE_MAKEFILE TRUE)  # 在 CMakeLists.txt 中 CMAKE_VERBOSE_MAKEFILE 设为 TRUE
   CMAKE_VERBOSE_MAKEFILE 为 True，make 在执行时是 verbose output。
 
 
+return([PROPAGATE <var-name>...])  # 用于从文件、目录或函数返回
+
 内置变量
 https://www.cnblogs.com/Braveliu/p/15827857.html
 https://cmake.org/cmake/help/latest/manual/cmake-variables.7.html#variables-for-languages
+${val_x}                         # 使用变量
 
 信息变量
 CMAKE_SYSTEM                     # 系统名称，例如 Linux-2.6.22、FreeBSD-5.4-RELEASE、Windows 5.1
@@ -100,7 +132,7 @@ endif()
 if(${mainname} MATCHES "draw")   # 字符串匹配
 
 字符串变量有无定义
-if(DEFINED string1)  或  if(string1)
+if(DEFINED string1)  或  if(string1)           if(NOT DEFINED string1)
 else()
 endif()
 
@@ -116,9 +148,10 @@ project (hello_cmake)                   # 设置项目名 还可指定 版本号
 add_executable(TARGET_NAME SOURCES)     # 生成可执行程序  如 add_executable(example main.cpp main.h)
 add_library(TARGET_NAME [STATIC | SHARED | MODULE] SOURCES)   # 生成库
 add_subdirectory(math)                  # 添加 math 子目录 也就是math下有 子 CMakeLists.txt
-set (EXTRA_LIBS ${EXTRA_LIBS} MathFunctions)  # 设置变量  普通变量，相当于一个局部变量  缓存变量，相当于一个全局变量
+set(<variable> <value>... CACHE <type> <docstring> [FORCE]) # 格式 https://www.jianshu.com/p/c2c71d5a09e9
+  set (EXTRA_LIBS ${EXTRA_LIBS} MathFunctions)  # 设置变量  普通变量，相当于一个局部变量  缓存变量，相当于一个全局变量
   set(MY_GLOBAL_VAR1 "abcdef" CACHE STRING "STRING缓存变量")  # 定义一个STRIING类型缓存变量(不加FORCE选项)
-  set(MY_GLOBAL_VAR2 "abc" CACHE STRING "STRING缓存变量" FORCE) # 定义一个STRIING类型缓存变量(加FORCE选项)
+  set(MY_GLOBAL_VAR2 "abc" CACHE STRING "STRING缓存变量" FORCE) # 定义一个STRIING类型缓存变量(加FORCE选项)  直接覆盖
   set(CMAKE_CXX_STANDARD 11)           # 设置C++版本
   set(CMAKE_CXX_STANDARD_REQUIRED True)
 set_target_properties(mylib PROPERTIES POSITION_INDEPENDENT_CODE ON) # 表示生成位置无关代码 为目标设置编译选项 即-fPIC
@@ -452,4 +485,44 @@ while(condition)
   COMMAND2(ARGS ...)
   ...
 endwhile(condition)
+
+
+
+
+find_package()
+https://zhuanlan.zhihu.com/p/97369704
+1 查找库路径的方式，先Module模式，再Config模式。
+  1.1 Module模式
+    cmake安装目录下的share/cmake-<version>/Modules/Find<LibraryName>.cmake
+    另一个使我们指定的CMAKE_MODULE_PATH的所在目录
+  1.2 Config模式
+    /usr/local/lib/cmake/<LibraryName>/<LibraryName>Config.cmake or <lower-case-package-name>-config.cmake
+2 使用
+  2.1官方库，以curl库为例，假设需要引入这个库，已经定义好了FindCURL.cmake。
+    find_package(CURL)
+    add_executable(curltest curltest.cc)
+    if(CURL_FOUND)
+        target_include_directories(clib PRIVATE ${CURL_INCLUDE_DIR})
+        target_link_libraries(curltest ${CURL_LIBRARY})
+    else(CURL_FOUND)
+        message(FATAL_ERROR ”CURL library not found”)
+    endif(CURL_FOUND)
+  2.2 非官方的库（该方式只对支持cmake编译安装的库有效）
+  2.3每一个模块都会定义以下几个变量
+    <LibaryName>_FOUND
+    <LibaryName>_INCLUDE_DIR or <LibaryName>_INCLUDES
+    <LibaryName>_LIBRARY     or <LibaryName>_LIBRARIES
+3 编写自己的Find<LibraryName>.cmake模块
+  3.1 当前目录下新建一个ModuleMode的文件夹，在里面编写自己的函数库。如add
+    库函数以手写Makefile的方式进行安装，库文件安装在/usr/lib目录下，头文件放在/usr/include目录下
+  3.2 cmake文件夹下新建一个FindAdd.cmake的文件。目标是找到库的头文件所在目录和共享库文件的所在位置。
+    # 在指定目录下寻找头文件和动态库文件的位置，可以指定多个目标路径
+    find_path(ADD_INCLUDE_DIR libadd.h /usr/include/ /usr/local/include ${CMAKE_SOURCE_DIR}/ModuleMode)
+    find_library(ADD_LIBRARY NAMES add PATHS /usr/lib/add /usr/local/lib/add ${CMAKE_SOURCE_DIR}/ModuleMode)
+
+    if (ADD_INCLUDE_DIR AND ADD_LIBRARY)
+        set(ADD_FOUND TRUE)
+    endif (ADD_INCLUDE_DIR AND ADD_LIBRARY)
+  3.3 这时我们便可以像引用curl一样引入我们自定义的库了。
+    find_package(ADD)
 

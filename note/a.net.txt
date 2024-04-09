@@ -1,10 +1,14 @@
 
 
-https://zz123.com/                                # 好歌网
-https://tonzhon.com/                              # 铜钟网
 https://www.zhihu.com                             # 知乎
+https://chat.openai.com/                          # chatgpt
+https://wangpan.baidu.com/                        # 百度网盘
+
+https://www.tianqi24.com/beijing/history.html     # 北京气温
 
 https://claude.ai/login?returnTo=%2F              # ai
+
+https://nandgame.com/
 
 https://stackoverflow.com/                        # 查错经典网站
 https://github.com/                               # github
@@ -22,6 +26,7 @@ https://c.biancheng.net/sitemap/                  # C语言中文网
 https://book.itheima.net/course/223               # 黑马教程
 https://www.nowcoder.com/                         # 牛客网
 https://www.junmajinlong.com/categories/          # 骏马金龙
+https://zhuanlan.zhihu.com/p/680476423            # 计算机组成原理(万字爆肝整理)
 
 https://share.pkemb.com/books                     # pkemb共享网盘 book
 https://chartcube.alipay.com/upload               # ChartCube - 在线图表制作工具

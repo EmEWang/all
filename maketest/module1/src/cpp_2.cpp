@@ -602,9 +602,10 @@ void test1_cpp_2_string(){
     using std::string;
     #define valname(val) (#val)
     #define valprint(val) std::cout << valname(val) << ":" << val << std::endl;
-    // 1 定义
-    // 定义的字符串过长自动截断 str=...large...
+
     {
+    // 定义
+    // 定义的字符串过长自动截断 str=...large...
     string str1 = "abc";  // 简单定义
     string str2 =         // 分行定义
         "abc\
@@ -647,35 +648,97 @@ void test1_cpp_2_string(){
     len = (cstr1+1) - (cstr1);   valprint(len)                  // 1
     }
 
-    // 字符串 数字
     {
-        string str1;
+        // 字符串中按照规定的格式选择字符 直到不匹配的字符停止 贪婪算法尽可能的多读
+        char tmp[100] = {0};
+        string s = "ccu_1 - 1#123";             printf("%%origin:%s\n", s.c_str());
+        sscanf(s.c_str(), "%[a-z]", tmp);       printf("%%[a-z]:%s\n", tmp); //字符串中按照 a-z 范围选择字符
+        sscanf(s.c_str(), "%[abcdefgu_]", tmp); printf("%%[abcdefgu_]:%s\n", tmp);//字符串中按照 abcdefgu_ 范围选择字符
+        sscanf(s.c_str(), "%[^#]", tmp);        printf("%%[^#]:%s\n", tmp);//字符串中 直到第一个 # 字符 停止  不包含 #
+        sscanf(s.c_str(), "%[a-z_1]", tmp);     printf("%%[a-z_1]:%s\n", tmp);//字符串中按照 a-z以及_1 范围选择字符
+    }
+
+    {
+        // 字符串 <--> 数字
+        // itoa函数头文件是stdio.h, 它不是一个标准的C函数，而是Windows特有的，如果在linux系统使用itoa函数，编译会通不过。
+        // printf("%s\n", std::iota(123, tmp, 10));
+        string s;
         char tmp[100] = {0};
         int i = atoi("123");  valprint(i)
         int i2,i3;
-        str1="123 456"; sscanf(str1.c_str(), "%d %d", &i2, &i3);  valprint(i2)  valprint(i3)
-        str1="1234567891234"; long long l1 = atoll(str1.c_str()); valprint(l1)
+        s="123 456"; sscanf(s.c_str(), "%d %d", &i2, &i3);  valprint(i2)  valprint(i3)
+        s="1234567891234"; long long l1 = atoll(s.c_str()); valprint(l1)
 
-        // itoa函数头文件是stdio.h, 它不是一个标准的C函数，而是Windows特有的，如果在linux系统使用itoa函数，编译会通不过。
-        // printf("%s\n", std::iota(123, tmp, 10));
+        // Convert from strings
+        // std::stoi    Convert string to integer (function template)
+        // std::stol    Convert string to long int (function template)
+        // std::stoul   Convert string to unsigned integer (function template)
+        // std::stoll   Convert string to long long (function template)
+        // std::stoull  Convert string to unsigned long long (function template)
+        // std::stof    Convert string to float (function template)
+        // std::stod    Convert string to double (function template)
+        // std::stold   Convert string to long double (function template)
+        std::string str_dec = "2001, A Space Odyssey";
+        std::string str_hex = "40c3";
+        std::string str_bin = "-10010110001";
+        std::string str_auto = "0x7f";
 
+        std::string::size_type sz;   // alias of size_t
 
-        // 字符串中按照规定的格式选择字符 直到不匹配的字符停止 贪婪算法尽可能的多读
-        str1 = "ccu_1 - 1#123";                    printf("%%origin:%s\n", str1.c_str());
-        sscanf(str1.c_str(), "%[a-z]", tmp);       printf("%%[a-z]:%s\n", tmp); //字符串中按照 a-z 范围选择字符
-        sscanf(str1.c_str(), "%[abcdefgu_]", tmp); printf("%%[abcdefgu_]:%s\n", tmp);//字符串中按照 abcdefgu_ 范围选择字符
-        sscanf(str1.c_str(), "%[^#]", tmp);        printf("%%[^#]:%s\n", tmp);//字符串中 直到第一个 # 字符 停止  不包含 #
-        sscanf(str1.c_str(), "%[a-z_1]", tmp);     printf("%%[a-z_1]:%s\n", tmp);//字符串中按照 a-z以及_1 范围选择字符
+        int i_dec = std::stoi (str_dec,&sz);          valprint(i_dec)  valprint(sz)  // i_dec:2001  sz:4
+        valprint(str_dec.substr(sz))               // str_dec.substr(sz):, A Space Odyssey
+        int i_hex = std::stoi (str_hex,nullptr,16);   valprint(i_hex)    // i_hex:16579
+        int i_bin = std::stoi (str_bin,nullptr,2);    valprint(i_bin)    // i_bin:-1201
+        int i_auto = std::stoi (str_auto,nullptr,0);  valprint(i_auto)   // i_auto:127
+
+        // Convert to strings
+        // std::to_string    Convert numerical value to string (function)
+        // std::to_wstring    Convert numerical value to wide string (function)
+        s = std::to_string(3.1415926);          valprint(s)     // s:3.141593
     }
     // 比较
     {
         string s1= "1";
         string s2 = "2";
-        std::cout << "s1.compare(s2):" << s1.compare(s2) << std::endl;
+        valprint(s1.compare(s2))
         if (s1 == s2)
             std::cout << "equl" << std::endl;
         else
             std::cout << "no equl" << std::endl;
+    }
+
+    {
+        // 查找
+        string s = "abc123dedf";
+        string sub = "23d";
+        size_t l0 = s.find("d");              valprint(l0) // l0:6  Find content in string
+        size_t l_ = s.rfind("d");             valprint(l_) // l_:8  Find last occurrence of content in string
+        size_t l1 = s.find_first_of(sub);     valprint(l1) // l1:4  Find character in string
+        size_t l2 = s.find_first_not_of(sub); valprint(l2) // l2:0  Find character in string from the end
+        size_t l3 = s.find_last_of(sub);      valprint(l3) // l3:8  Find absence of character in string
+        size_t l4 = s.find_last_not_of(sub);  valprint(l4) // l4:9  Find non-matching character in string from the end
+    }
+
+    {
+        // 替换
+        string s = "abc123 abc123";
+        s.replace(s.find("123"), 2, "qazx");  valprint(s)   // s:abcqazx3 abc123
+        // s = "abc abc"; s.replace(s.find("123"), 2, "qazx");  // 没找到则挂掉 string::npos
+
+        // 删除
+        s = "abc fopen 123";
+        if (s.find("fopen") != string::npos) {s.erase(s.find("fopen"), 1);}  // 删除一个字符
+        valprint(s)   // s:abc open 123
+    }
+
+    {
+        // 迭代器
+        string s = "abc123def";
+        string::iterator it = s.begin();                   // 基本迭代器
+         string::const_iterator cit = s.cbegin();          // 常基本迭代器
+        string::reverse_iterator rit = s.rbegin();         // 反向迭代器
+        string::const_reverse_iterator crit = s.crbegin(); // 常反向迭代器
+        string::iterator it2 = rit.base();                 // 反向迭代器 -> 基本迭代器
     }
 
     {
@@ -693,11 +756,9 @@ void test1_cpp_2_string(){
         return m_szSrc;
         };
 
-        string str, str2;
-        str = "abc def  ";       str2 = funcTrim(str, " ");  valprint(str)
-        str = "abc11def112211 "; str2 = funcTrim(str, "11"); valprint(str)
-        str = "abc11def112211";  str2 = funcTrim(str, "11"); valprint(str)
-        str = "11abcdef11";      str2 = funcTrim(str, "11"); valprint(str)
+        string str;
+        str = funcTrim("1123a23211", "12");    valprint(str)   // str:3a23
+        str = funcTrim("abc", "12");           valprint(str)   // str:abc
     }
 
     {
@@ -738,24 +799,7 @@ void test1_cpp_2_string(){
         ret3 = tmp.substr(tmp.length() - ii2 + 1);
         ret4.assign(it.base(), tmp.end());
         printf("ret:%s\n", ret.c_str());
-    }
-
-    {
-        string str1 = "abc123 abc123";
-        string str2 = "abc abc";
-        string str3 = "";
-
-        str3 = str1.replace(str1.find("123"), 2, "qazx");
-        std::cout << str3 << std::endl;    // abcqazx3 abc123
-        // str3 = str2.replace(str2.find("123"), 2, "qazx");  // 没找到则挂掉 string::npos
-    }
-    {
-        string str = "abc fopen 123";
-        if (str.find("fopen") != string::npos)
-        {
-            str.erase(str.find("fopen"), 1);        // 删除一个字符
-        }
-        std::cout << str << std::endl;     // abc open 123
+        printf("ret_base:%s\n", tmp.substr(it.base()-tmp.begin()+1).c_str()); // 转化为普通迭代器 +1因为其指向.
     }
 }
 int compareLongs(const void* a, const void* b){return (*(long*)a-*(long*)b);}

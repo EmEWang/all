@@ -2,15 +2,70 @@
 https://blog.csdn.net/cfanzp/article/details/105745176  # Vim实用技巧(第2版) 学习笔记：汇总
 https://tszv.vercel.app/pages/09561a/                   # Vim 技巧 - 说明
 
+:set nu                # 显示行号
+:set nonu              # 不显示行号
+
 vim搜索高亮关键字
 :set hlsearch          # 临时设置
 set hlsearch           # 永久设置  ~/.vimrc新加一行
 :set nohlsearch        # 取消搜索高亮 或简写的:noh
+:set invlist           # 显示不可见的字符 ^I表示tab $表示回车    :set nolist回到正常的模式
+自己定义不可见字符的显示方式
+  set listchars=eol:$,tab:>-,trail:~,extends:>,precedes:<
+  set list
+
 
 截取部分内容保存到其他文件
   打开data.csv文件，按esc，切换到命令模式
   : 2, 200 w /tmp/data_copy.csv      # 截取第2到200行到新文件data_copy.csv中
   ：201,380 w >> /tmp/data_copy.csv  # 追加到原有文件中 加上 >> 表示追加而不覆盖
+
+简单替换
+:s/old/new/  # 将当前行模式为old的第一次匹配修改为new。  /为分隔符 若/为最后一个字符时，可不写  模式中有/用\/转义
+:s/old/new/g # 把当前行所有模式为old的匹配修改为new。:s命令允许替换串后面带有选项，g代表全局影响一行中的每个模式，不要把它与影响文件中所有行的：g命令混淆
+:50,100s /old/new/g  # s命令前加上地址前缀，表示处理的行范围。即把50行到100行的old的每次出现都改为new。
+:1,$s/old/new/g      # 把整个文件中的old的每次出现都改为new
+:%s/old/new/g        # %等价于1，$，所以上行命令也可以这样写
+:1,30s/old/new/gc    # 尾部加c(confirm确认)，在替换每个old前都会提示并确认，将会出现提示replace with hehe (y/n/a/q/l/^E/^Y)?。
+  y替换，n不替换，a替换所有，q放弃，l替换第一个并进入插入模式，^E和^Y是提示你用Ctrl+e或Ctrl+y来滚动屏幕的。
+
+上下文相关替换
+除了直接使用一个单词（或短语）替换另一个，还有稍微复杂的全局替换语法。这些语法可以对一个模式进行搜索，
+一旦找到含有模式的行，就可以使用不同与模式的串进行替换，把这种替换叫做上下文相关替换。
+:g/pattern/s/old/new/g    # 将会把包含pattern的行中，把所有old替换为new
+  第一个g表示是在文件的所有行上执行的命令，在包含模式pattern的行上，将把old替换为new。最后的g表示在该行上进行全部替换。
+:g/string/s//new/g        # 如果用来进行搜索的模式与想要修改的模式相同，那么就不必重复它
+   等价于 :g/string/s/string/new/g  也等价于 :%s/string/new/g
+
+
+VIM语法 https://www.zhihu.com/question/437735833/answer/1733228460
+1 动词
+  动词代表了打算对文本进行什么操作。
+  如 d 删除 delete  r 替换 replace  c 修改 change  y 复制 yank  v 选取 visual select
+2 名词
+  名词代表了我们即将处理的文本。Vim 中有一个专门的术语叫做文本对象text object，
+  如 w 单词word  s sentence  p 段落paragraph  t HTML标签tag  引号或者各种括号所包含的文本称作一个文本块。
+3 介词
+  介词界定了待编辑文本的范围或者位置。
+  如 i “在…之内”insidea  a “环绕…”around  t “到…位置前”to  f “到…位置上”forward
+4 组词为句
+  文本编辑命令的基本语法如下：动词+介词+名词
+  如:删除一个段落 delete inside paragraph: dip
+    选取一个句子 visual select inside sentence: vis
+    修改一个单词 change inside word: ciw
+    修改一个单词 change around word: caw
+    删除文本直到字符“x”（不包括字符“x”）delete to x: dtx
+    删除文本直到字符“x”（包括字符“x”）delete forward x: dfx
+5 数词
+  数词指定了待编辑文本对象的数量, 语法就成了这样：动词+介词/数词+名词
+  如 修改三个单词 change three words: c3w
+    删除两个单词 delete two words: d2w
+  另外，数词也可以修饰动词，表示将操作执行 n 次。语法：数词+动词+名词
+  如 两次删除单词（等价于删除两个单词） twice delete word: 2dw
+    三次删除字符（等价于删除三个字符）three times delete character: 3x
+
+
+
 
 vim中 E212：无法打开并写入文件
 1 将文件保存到用户目录下，再改变所有者，然后移动到配置目录下

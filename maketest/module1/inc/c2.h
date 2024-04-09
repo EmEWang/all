@@ -21,6 +21,7 @@
 // 对于单个结构体
 // __attribute__((aligned (n)))，让结构成员对齐在n字节自然边界上。如果结构中有成员的长度大于n，则按照最大成员的长度来对齐。
 // __attribute__ ((packed))，取消结构在编译过程中的优化对齐，也可以认为是1字节对齐。
+// 测试 ubuntu 20.04 gcc9 默认 __attribute__((以aligned(1))) 对齐
 
 #pragma pack(1)
 struct stdataA{
@@ -52,7 +53,30 @@ struct structD{
 };
 // }__attribute__ ((aligned (1)));
 // }__attribute__ ((packed));
-
+struct structE{
+  short int a;
+  char b;
+  short int c;
+  char d;
+};
+// }__attribute__ ((aligned (1)));
+// }__attribute__ ((packed));
+struct structF{
+  short int a;
+  char b;
+  int c;
+  char d;
+// };
+}__attribute__ ((aligned(8)));
+// }__attribute__ ((packed));
+struct structG{
+//   short int a;
+  char b;
+//   short int c;
+//   char d;
+};
+// }__attribute__ ((aligned (1)));
+// }__attribute__ ((packed));
 
 // test
 #include <stdio.h>
@@ -92,8 +116,11 @@ inline void test1_c2_bytealign()
     // stdata:8 0x7ffdbf47f180 2
 
 
-    printf("size of struct1 %lu\n", sizeof(structC));   // aligned (1)-> 24  packed-> 14 都不写->24
-    printf("size of struct1 %lu\n", sizeof(structD));   // aligned (1)-> 16  packed-> 10 都不写->16
+    printf("size of structC %lu\n", sizeof(structC)); // aligned(1)->24 packed->14 都不写->24
+    printf("size of structD %lu\n", sizeof(structD)); // aligned(1)->16 packed->10 都不写->16
+    printf("size of structE %lu\n", sizeof(structE)); // aligned(1)->8  packed->6  都不写->8
+    printf("size of structF %lu\n", sizeof(structF)); // aligned(1)->12 packed->8  都不写->12
+    printf("size of structG %lu\n", sizeof(structG)); // aligned(1)->1  packed->1  都不写->1  aligned(8)-> 8
 }
 
 

@@ -210,9 +210,9 @@ echo 0 > /proc/sys/vm/overcommit_memory
       生成的文件 server.0001.heap  server.0002.heap 等
     HEAP_PROFILE_ALLOCATION_INTERVAL # 每分配多少字节的内存统计一次. 默认为 1073741824 (1 GB).
       Dump heap profiling information each time the specified number of bytes has been allocated by the program.
-    HEAP_PROFILE_INUSE_INTERVAL # 每占用多少字节的内存统计一次. 默认为 104857600 (100 MB).
+    HEAP_PROFILE_INUSE_INTERVAL # 每占用多少字节的内存统计一次. 默认为 104857600 (100 MB). 设为0关掉它
       Dump heap profiling information whenever the high-water memory usage mark increases by the specified number of bytes.
-    HEAP_PROFILE_TIME_INTERVAL # 每隔多少秒统计一次. 默认为 0.
+    HEAP_PROFILE_TIME_INTERVAL # 每隔多少秒统计一次. 默认为 0即不开启.
       Dump heap profiling information each time the specified number of seconds has elapsed.
     HEAPPROFILESIGNAL # 每当收到指定信号统计一次. 默认为 disabled.
       Dump heap profiling information whenever the specified signal is sent to the process.

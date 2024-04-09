@@ -1,5 +1,186 @@
 
 
+docker交叉环境
+https://github.com/multiarch/qemu-user-static
+1 docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+2 docker run --rm -t arm64v8/ubuntu uname -m    # aarch64  ubuntu20.04
+3 docker run --rm -t arm64v8/ubuntu:jammy uname -m  # ubuntu22.04
+
+
+
+C++编译—在x86下搭建arm64编译环境
+https://blog.yanjingang.com/?p=7673
+
+1 安装qemu
+  1.1 sudo apt install -y qemu qemu-system qemu-user samba # apt方式 安装指定平台 qemu-system-aarch64
+  1.2 源码方式
+    sudo apt install -y ninja-build libpixman-1-dev libcap-ng-dev libattr1-dev
+    wget https://download.qemu.org/qemu-6.2.0.tar.xz
+    tar xvJf qemu-6.2.0.tar.xz
+    cd qemu-6.2.0
+    ./configure --enable-kvm --enable-virtfs  # 安装指定平台 --target-list=aarch64-softmmu
+    make && make install
+  1.3 qemu-system-aarch64 --version  # 查看版本号
+    QEMU emulator version 6.2.0 (Debian 1:6.2+dfsg-2ubuntu6.8)
+    Copyright (c) 2003-2021 Fabrice Bellard and the QEMU Project developers
+2 构建arm系统
+  2.1 下载ubuntu20.04 arm镜像
+    mkdir qemu
+    wget http://cdimage.ubuntu.com/ubuntu-legacy-server/releases/20.04/release/ubuntu-20.04.1-legacy-server-arm64.iso
+  2.2 下载uefi驱动
+    wget http://releases.linaro.org/components/kernel/uefi-linaro/latest/release/qemu64/QEMU_EFI.fd
+  2.3 格式化出一个系统盘
+    qemu-img create -f raw ubuntu20.04.4-arm64.img 30g
+  2.4 安装arm虚拟系统(需要ssh登录的话，记得最后步骤选装下sshd server)
+    qemu-system-aarch64 -m 8096 -cpu cortex-a57 -smp 8 -M virt -bios QEMU_EFI.fd -nographic -drive if=none,file=ubuntu-20.04.1-legacy-server-arm64.iso,id=cdrom,media=cdrom -device virtio-scsi-device -device scsi-cd,drive=cdrom -drive if=none,file=ubuntu20.04.4-arm64.img,id=hd0 -device virtio-blk-device,drive=hd0
+    qemu-img info ubuntu20.04.4-arm64.img
+  2.5 关闭后重新启动并进入系统
+    qemu-system-aarch64 -m 8096 -cpu cortex-a57 -smp 8 -M virt -bios QEMU_EFI.fd -nographic -drive if=none,format=raw,file=ubuntu20.04.4-arm64.img,id=hd0 -device virtio-blk-device,drive=hd0 -netdev user,hostfwd=tcp::2222-:22,id=netdev0, -device e1000,netdev=netdev0
+  2.6 参数：9p协议挂载磁盘
+    -fsdev local,security_model=passthrough,id=fsdev0,path=/home/work -device virtio-9p-pci,id=fs0,fsdev=fsdev0,mount_tag=qemu_share
+    sudo mount -t 9p -o trans=virtio,version=9p2000.L qemu_share /mnt
+  2.7 参数：smb协议挂载磁盘
+    -net nic -net user,smb=/home/work
+    apt update && apt install cifs-utils  # arm虚拟机运行
+    sudo mount -t cifs //10.0.2.4/qemu/ /mnt  # 别修改ip，原样执行即可把smb参数的路径挂载到虚拟机的/mnt目录(注意这里要输入两次密码，一次是sudo需要的当前登陆密码，一次是mount需要的root密码；ubuntu系统的默认密码为ubuntu)
+    #sudo umount -a -t cifs -l  #卸载挂载
+    # 镜像格式转换(qcow2格式不占空间但性能较低，磁盘大的话建议raw)
+    #qemu-img convert -f raw ubuntu20.04.4-arm64.img -O qcow2 ubuntu20.04.4-arm64.qcow2.img
+qemu-system-aarch64命令参数解释如下：
+    -m 内存大小（这里为8G）
+    -cpu cpu型号（最新的a78e型号模拟不了）
+    -smp 核数目（最大模拟8核）
+    -nographic 不使用图形界面
+    -drive 驱动器映像文件
+    -device 设备
+    -netdev 网络设备（hostfwd:端口映射；smb磁盘挂载）
+    -fsdev 使用9p virtio支持virtfs共享，其中path参数为Host主机中共享目录的路径
+3 arm编译
+  3.1 通过ssh进入系统
+    ssh work@127.0.0.1 -p 2222
+  3.2 安装编译依赖
+    sudo apt install -y cmake build-essential net-tools libprotobuf-dev protobuf-compiler libjsoncpp-dev libzmq3-dev libgtest-dev libgflags-dev libglog-dev
+  3.3 编译
+    cd project/xxx
+    cmake ..
+    make
+    make install
+4 kvm加速
+  裸使用qemu明显感觉到速度有点慢，这是因为qemu自己用软件模拟了整套的虚拟机实现，包括处理器虚拟化、内存虚拟化以及I/O设备的虚拟化等，
+  而linux内核有很好用的kvm来硬件模拟CPU和内存，性能要更好些，所以如果你的宿主机支持kvm，我们可以使用它来代替qemu的cpu/mem模拟功能，
+  以提升虚拟机的性能。
+  所以简单直接的理解就是：QEMU是个计算机模拟器，而KVM为计算机的模拟提供加速功能。
+  检查宿主机是否支持kvm：
+  $ grep -E 'vmx|svm' /proc/cpuinfo    #如果有输出则表示硬件有虚拟化支持
+  $ lsmod | grep kvm      # 如果kvm_intel/kvm_amd、kvm模块被显示出来，则kvm模块已经加载
+      kvm_intel             142999  0
+      kvm                   444314  1 kvm_intel
+  创建镜像时指定参数：
+  qemu-img create -f raw ubuntu20.04.4-arm64.kvm.img 30g
+  qemu-system-aarch64 -enable-kvm -m 8096 -cpu cortex-a57 -smp 8 -M virt -bios QEMU_EFI.fd -nographic -drive if=none,file=ubuntu-20.04.1-legacy-server-arm64.iso,id=cdrom,media=cdrom -device virtio-scsi-device -device scsi-cd,drive=cdrom -drive if=none,file=ubuntu20.04.4-arm64.kvm.img,id=hd0 -device virtio-blk-device,drive=hd0 -fsdev local,security_model=passthrough,id=fsdev0,path=/home/work -device virtio-9p-pci,id=fs0,fsdev=fsdev0,mount_tag=qemu_share
+  其他同上。
+5 使用gcc-aarch64交叉编译
+  除了使用qemu以外，我们也可以在x86系统里安装arrch64版本的gcc，并在x86下编译出arm的产出。
+  可以通过命令”apt-cache search aarch64″ 查看系统源中有哪些安装包可供安装：
+    apt-cache search aarch64
+    ... ...
+    gcc-9-aarch64-linux-gnu - GNU C compiler (cross compiler for arm64 architecture)
+    gcc-10-aarch64-linux-gnu - GNU C compiler (cross compiler for arm64 architecture)
+    gcc-11-aarch64-linux-gnu - GNU C compiler (cross compiler for arm64 architecture)
+    gcc-12-aarch64-linux-gnu - GNU C compiler (cross compiler for arm64 architecture)
+    ... ...
+  为了确保跟arm硬件上的gcc保持一直，这里选择”gcc-9-aarch64-linux-gnu”进行安装：
+    sudo apt-get install gcc-9-aarch64-linux-gnu g++-9-aarch64-linux-gnu  # apt安装版本为gcc9.5+glibc2.34，需要与自己arm硬件上的glibc版本匹配
+    # 为方便使用可以软连接
+    sudo ln -s /usr/bin/aarch64-linux-gnu-gcc-9 /usr/bin/aarch64-linux-gnu-gcc
+    sudo ln -s /usr/bin/aarch64-linux-gnu-g++-9 /usr/bin/aarch64-linux-gnu-g++
+    /usr/bin/aarch64-linux-gnu-gcc --version
+  测试代码：
+    vim /home/work/test/test.c
+    #include <stdio.h>
+    int main(int argc, char **argv){
+        printf("build arm succ!\n");
+        return 0;
+    }
+  编译：
+    aarch64-linux-gnu-gcc test.c -o test
+  到arm对应挂载磁盘下运行：
+    work@qemu-ubuntu-arm:/mnt/test$ ./test
+    build arm succ!
+  使用cmake编译时的参数：
+    # arch
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=armv8-a -mtune=cortex-a72 -mcpu=cortex-a72")
+    set(CMAKE_C_COMPILER   /usr/bin/aarch64-linux-gnu-gcc CACHE FILEPATH "")
+    set(CMAKE_CXX_COMPILER /usr/bin/aarch64-linux-gnu-g++ CACHE FILEPATH "")
+    set(CMAKE_STRIP        /usr/bin/aarch64-linux-gnu-strip CACHE FILEPATH "")
+    set(CMAKE_RANLIB       /usr/bin/aarch64-linux-gnu-ranlib CACHE FILEPATH "")
+    set(CMAKE_AR           /usr/bin/aarch64-linux-gnu-ar CACHE FILEPATH "")
+
+    include_directories(
+        /usr/aarch64-linux-gnu/include/
+    )
+    link_directories(
+        /usr/aarch64-linux-gnu/lib/
+    )
+6 总结
+  至此，我们尝试了通过qemu搭建虚拟arm系统，也尝试了直接在x86下交叉编译arm产出。如果需要编译其他操作系统的话也可以采用本文的方法，
+  只需要替换其中的操作系统类型即可。
+
+
+
+
+
+
+windows上安装X86和ARM虚拟机
+https://blog.csdn.net/qq_36849711/article/details/121695519
+
+1 下载工具
+https://www.vmware.com/                                                        # vwware
+https://releases.ubuntu.com/20.04.3/ubuntu-20.04.3-live-server-amd64.iso       # X86 ubuntu镜像
+https://releases.ubuntu.com/20.04.3/ubuntu-20.04.3-live-server-arm64.iso       # ARM ubuntu镜像
+
+https://qemu.weilnetz.de/w64/2021/qemu-w64-setup-20210505.exe                              # QEMU  模拟ARM
+http://releases.linaro.org/components/kernel/uefi-linaro/16.02/release/qemu64/QEMU_EFI.fd  # UEFI(BIOS的替代方案)
+
+https://swupdate.openvpn.org/community/releases/openvpn-install-2.4.9-I601-Win10.exe  # openvpn
+
+2 安装arm版虚拟机
+  2.1 安装QEMU (qemu-w64-setup-20210505.exe)  如 D:\Program Files\qemu    # qemu 安装目录
+  2.2 .\qemu-img.exe create -f qcow2 D:\vmware\arm64\kylindisk.qcow2 20G  # 生成一个硬盘文件 qemu目录下运行 指定目录需存在
+  2.3 安装虚拟机 注意路径不能有中文 路径要对应上 会很慢
+    .\qemu-system-aarch64.exe -m 8192 -cpu cortex-a72 -smp 8,sockets=4,cores=2 -M virt -bios D:\wangjingang202_55893\Desktop\windows_Install_ARM_vm\QEMU_EFI.fd -device VGA -device nec-usb-xhci -device usb-mouse -device usb-kbd -drive if=none,file=D:\vmware\arm64\kylindisk.qcow2,id=hd0 -device virtio-blk-device,drive=hd0 -drive if=none,file=D:\wangjingang202_55893\Desktop\windows_Install_ARM_vm\ubuntu-20.04.3-live-server-arm64.iso,id=cdrom,media=cdrom -device virtio-scsi-device -device scsi-cd,drive=cdrom  -net nic -net user,hostfwd=tcp::2222-:22
+  2.4 启动虚拟机  安装好后，需要再次启动（无需指定iso文件启动），进入到qemu所在位置，使用cmd命令行，执行以下命令
+    .\qemu-system-aarch64.exe -m 8192 -cpu cortex-a72 -smp 8,sockets=4,cores=2 -M virt -bios D:\wangjingang202_55893\Desktop\windows_Install_ARM_vm\QEMU_EFI.fd -device VGA -device nec-usb-xhci -device usb-mouse -device usb-kbd -drive if=none,file=D:\vmware\arm64\kylindisk.qcow2,id=hd0 -device virtio-blk-device,drive=hd0 -drive if=none,file=,id=cdrom,media=cdrom -device virtio-scsi-device -device scsi-cd,drive=cdrom -net nic -net user,hostfwd=tcp::2222-:22
+  2.5 利用shell工具连接：
+    ssh -p 2222 my@127.0.0.1    # 建立好虚拟机后，shell工具进行文件的传输或者远程交互。宿主访问虚拟机需要访问本机2222
+  2.6
+    网络配置属于NAT模式，此模式下虚拟机可以访问外网但虚拟机与宿主机之间的网络是不通的，若需要宿主机和虚拟机之间互通，需添加
+    2.6.1 宿主机安装openvpn，之后“控制面板->网络和internet 网络连接”会产生一个网络适配器，然后将其重命名为tap0
+    2.6.2 将宿主机的网络和tap0做桥接，即选中tap0和当前使用的局域网 右键 桥接
+    2.6.3 会重新产生一个设备，但注意此时tap0是“网络电缆被拔出”的状态，因此此时QEMU还没有启动。
+    2.6.4 启动qemu命令(命令中网卡参数需要修改为如下)
+    qemu-system-aarch64.exe -m 8192 -cpu cortex-a72 -smp 8,sockets=4,cores=2 -M virt -bios H:\vm\arm64\QEMU_EFI.fd -device VGA -device nec-usb-xhci -device usb-mouse -device usb-kbd -drive if=none,file=H:\vm\arm64\kylindisk.qcow2,id=hd0 -device virtio-blk-device,drive=hd0 -drive if=none,file=,id=cdrom,media=cdrom -device virtio-scsi-device -device scsi-cd,drive=cdrom -net nic -net tap,ifname=tap0
+    其中-net nic -net tap,ifname=tap0是新增的，QEMU使用的就是这个虚拟网卡tap0。此时可以看到tap0已经连接了
+    2.6.5 系统启动之后，使用ping命令让宿主机和虚拟机能互相ping通即可
+
+备注
+  ip address show   # ip显示
+  10.0.2.15/24
+  ctrl+alt+g # qemu 释放捕获鼠标
+  wjg/vmarm  my/1 # 名称/机器 账户/密码
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 交叉编译环境   项目链接目录>> ~/code/base/lib/uos/
     1 解压 file=飞腾ARM\gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnu.tar.xz -> tar -xvf [file] -C /opt/
@@ -64,3 +245,865 @@ collect2: 错误：ld 返回 1
 make[1]: *** [../linux_bin64/Release/libMXTranslate.so] 错误 1
 make[1]: 离开目录“/home/wangjingang/code/webwork_new/mxTranslateDll”
 make: *** [mxTranslateDll] 错误 2
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+编译开源库
+
+hotspot编译说明
+cmake -S hotspot/ -B build/
+
+rm /lib/x86_64-linux-gnu/libQt5DBus.so.5         #/opt/qt515下有
+rm /lib/x86_64-linux-gnu/libQt5DBus.so.5.15
+/lib/x86_64-linux-gnu//wjg/libQt5DBus.so.5.15
+
+apt-get install software-properties-common       # ubuntu add-apt-repository command not found解决方法
+
+E: Release file for http://ports.ubuntu.com/ubuntu-ports/dists/focal-backports/InRelease is not valid yet (invalid for another 642d 13h 15min 2s). Updates for this repository will not be applied.
+可能是本机时间与服务器不一样  需要修改
+date   查看本地时间
+sudo date -s MM/DD/YY //修改日期
+sudo date -s hh:mm:ss //修改时间
+Tue Feb 15 17:34:54 CST 2022                     #  orin1b2 修改时间
+Thu Mar 28 12:01:00 CST 2024
+
+apt install graphviz-dev                         # orin少的程序安装库
+apt install -y hotspot                           # ubuntu20.04 为 1.1.0 版本
+dpkg -i /data/wjg/111/libqt5qml5_5.12.8-0ubuntu1_arm64.deb
+
+cp libgcc.a /usr/lib/gcc/aarch64-linux-gnu/9/    # orin上少2个
+cp libc_nonshared.a /usr/lib/aarch64-linux-gnu/
+
+mkdir /etc/apt/sources.list.d/                   # orin上 否则 add-apt-repository 可能失败
+add-apt-repository ppa:beineri/opt-qt-5.15.2-focal # orin上 qt5
+
+set(CMAKE_CXX_STANDARD 17)                       # hotspot主CMakeList.txt 1.4以后不用更改
+
+cd ~/code/111
+
+https://github.com/KDAB/hotspot
+https://github.com/KDAB/hotspot/issues/228
+git clone --recurse-submodules https://github.com/KDAB/hotspot.git  # 下载hotspot
+mkdir build-hotspot
+cd build-hotspot
+cmake ../hotspot
+make
+# now you can run hotspot from the build folder: ./bin/hotspot
+# or `make install` it and launch it from your $PATH
+
+
+hotspot cmake编译前需要安装
+1 安装基本库和kf5
+add-apt-repository ppa:kubuntu-ppa/backports
+apt-get update
+apt-get install libkf5threadweaver-dev libkf5i18n-dev libkf5configwidgets-dev libkf5syntaxhighlighting-dev \
+    libkf5coreaddons-dev libkf5itemviews-dev libkf5itemmodels-dev libkf5kio-dev libkf5parts-dev \
+    libkf5solid-dev libkf5windowsystem-dev libkf5notifications-dev libkf5iconthemes-dev libelf-dev \
+    libdw-dev cmake extra-cmake-modules gettext libqt5svg5-dev
+
+2 安装qt5.15.4    !!! 没有arm版 详见后面自编译qt库  下x86版的有
+sudo add-apt-repository ppa:beineri/opt-qt-5.15.4-focal
+sudo apt-get update
+sudo apt-get install -y qt515base qt515svg qt515x11extras libqt5x11extras5-dev
+# this one is optional for Hotspot, but required for KDDockWidgets
+
+
+3 基本上 1 2已经够用 这个仅供参考 也可能有一些 1 2中没有的库
+sudo apt install cmake extra-cmake-modules qtdeclarative5-dev libqt5x11extras5-dev \
+libkf5iconthemes-dev libkf5plasma-dev libkf5windowsystem-dev libkf5declarative-dev libkf5xmlgui-dev \
+libkf5activities-dev build-essential libxcb-util-dev libkf5wayland-dev git gettext libkf5archive-dev \
+libkf5notifications-dev libxcb-util0-dev libsm-dev libkf5crash-dev libkf5newstuff-dev libxcb-shape0-dev \
+libxcb-randr0-dev libx11-dev libx11-xcb-dev kirigami2-dev
+
+4 没使用 基本上是1 2的综合体
+RUN apt-get update && \
+    apt-get -y upgrade && \
+    apt-get install -y software-properties-common && \
+    add-apt-repository ppa:beineri/opt-qt-5.15.4-focal -y && \
+    add-apt-repository ppa:kubuntu-ppa/backports && \
+    apt-get update && \
+    apt-get -y upgrade && \
+    apt-get install -y qt515base qt515svg qt515x11extras cmake libdwarf-dev mesa-common-dev \
+        libboost-iostreams-dev libboost-program-options-dev libboost-system-dev libboost-filesystem-dev \
+        build-essential curl git wget autotools-dev autoconf libtool liblzma-dev libz-dev gettext cmake \
+        libzstd-dev ninja-build libdw-dev libelf-dev extra-cmake-modules \
+        libkf5archive-dev libkf5threadweaver-dev libkf5i18n-dev libkf5configwidgets-dev \
+        libkf5coreaddons-dev libkf5itemviews-dev libkf5itemmodels-dev libkf5kio-dev libkf5parts-dev \
+        libkf5solid-dev libkf5windowsystem-dev libkf5notifications-dev libkf5iconthemes-dev libkf5syntaxhighlighting-dev \
+        libqt5svg5-dev libqcustomplot-dev
+
+5 没使用 主要是xcb库
+sudo apt-get update
+sudo apt-get install build-essential libgl1-mesa-dev libglu1-mesa-dev freeglut3-dev gdb cmake libxcb-xinerama0-dev libfontconfig1-dev libfreetype6-dev '^libxcb.*-dev' libx11-xcb-dev libglu1-mesa-dev libxrender-dev libxi-dev libxkbcommon-dev libxkbcommon-x11-dev
+
+
+
+hotspot cmake出现的错误
+Could NOT find Zstd (missing: Zstd_LIBRARY Zstd_INCLUDE_DIR)           -> apt install -y libzstd-dev
+Could NOT find LibRustcDemangle (missing: LIBRUSTC_DEMANGLE_LIBRARIES) -> V2 (apt install -y librust-rustc-demangle-dev)不行
+Could NOT find LibDDemangle (missing: LIBD_DEMANGLE_LIBRARIES)         -> 没处理 V5 运行时需要
+Could NOT find KF5Archive (missing: KF5Archive_DIR)                    -> apt install -y libkf5archive-dev 版本低
+Could NOT find KDDockWidgets (missing: KDDockWidgets_DIR)              -> V4
+Could NOT find QCustomPlot (missing: QCustomPlot_LIBRARIES QCustomPlot_INCLUDE_DIRS) -> V5 apt install -y libqcustomplot-dev  apt install -y libqcustomplot2.0
+Could NOT find KGraphViewerPart (missing: KGraphViewerPart_DIR)        -> V3  sudo snap install kgraphviewer https://snapcraft.io/install/kgraphviewer/ubuntu 不行
+
+
+Could NOT find QCustomPlot (missing: QCustomPlot_LIBRARIES QCustomPlot_INCLUDE_DIRS)  # V5 libqcustomplot2.0_2.0.1+dfsg1-1build1_arm64.deb  libqcustomplot-dev_2.0.1+dfsg1-1build1_arm64.deb
+Installing in /usr. Run /data/wjg/111/build/prefix.sh to set the environment for hotspot.
+
+
+hotspot cmake时 输出 LibDDemangle 貌似不用解决
+-- Could NOT find LibDDemangle (missing: LIBD_DEMANGLE_LIBRARIES)
+CMake Warning at CMakeLists.txt:111 (find_package):
+  Could not find a configuration file for package "KF5Archive" that is
+  compatible with requested version "5.85.0".
+
+  The following configuration files were considered but not accepted:
+
+    /usr/lib/aarch64-linux-gnu/cmake/KF5Archive/KF5ArchiveConfig.cmake, version: 5.68.0
+    /lib/aarch64-linux-gnu/cmake/KF5Archive/KF5ArchiveConfig.cmake, version: 5.68.0
+
+
+V2 LibRustcDemangle
+https://github.com/rust-lang/rustc-demangle            # src
+git clone git@github.com:rust-lang/rustc-demangle.git
+sudo apt install -y cargo                              # 编译器
+cd rustc-demangle
+cargo build -p rustc-demangle-capi --release           # 编译
+sudo cp target/release/librustc_demangle.so /usr/lib/  # 拷贝
+
+
+V3 KGraphViewerPart   kgraphviewer-2.4.3a.tar.xz
+https://download.kde.org/stable/kgraphviewer/2.4.3/             https://invent.kde.org/graphics/kgraphviewer
+sudo apt install -y libkf5doctools-dev
+sudo apt install -y libboost-dev
+apt install -y  graphviz
+mkdir build
+cd build
+cmake ..
+make
+make install
+sudo cp ./src/part/kgraphviewerpart.so /usr/lib
+apt install pkg-config             # Could NOT find PkgConfig (missing: PKG_CONFIG_EXECUTABLE)
+apt install appstream              # Could not set up the appstream test. appstreamcli is missing    https://www.linuxquestions.org/questions/centos-111/compiling-error-centos-7-a-4175688703/
+apt-get install graphviz-dev       # -- Could NOT find GraphViz (missing: graphviz_LIBRARIES graphviz_INCLUDE_DIRECTORIES)
+                                     -- Checking for modules 'libgvc;libcdt;libcgraph;libpathplan'
+                                     --   No package 'libgvc' found
+                                     --   No package 'libcdt' found
+                                     --   No package 'libcgraph' found
+                                     --   No package 'libpathplan' found
+                                     --
+
+
+V4 KDDockWidgets
+https://github.com/KDAB/KDDockWidgets
+git clone git@github.com:KDAB/KDDockWidgets.git
+git checkout 1.7.0         # 切换到1.7.0版本
+mkdir build
+cd build
+cmake ..
+make
+make install
+sudo mv /usr/local/KDAB/KDDockWidgets-1.7.0 /usr/
+apt install libqt5x11extras5-dev   # 若 Could NOT find Qt5X11Extras (missing: Qt5X11Extras_DIR)  CMAKE中找不到Qt5X11Extras
+
+
+hotspot make时 出现错误 需要更改一个头文件的路径 用的是绝对路径
+In file included from /data/wjg/111/build/3rdparty/libhotspot-perfparser_autogen/6F7ISLN55V/moc_perfdata.cpp:10,
+                 from /data/wjg/111/build/3rdparty/libhotspot-perfparser_autogen/mocs_compilation.cpp:2:
+/data/wjg/111/hotspot/3rdparty/perfparser/app/perfdata.h:27:10: fatal error: /home/lixiang/code/111/build/3rdparty/perfparser/app/config-perfparser.h: No such file or directory
+   27 | #include "/home/lixiang/code/111/build/3rdparty/perfparser/app/config-perfparser.h" // generated by cmake
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
+
+vim /home/lixiang/code/111/hotspot/3rdparty/perfparser/app/perfsymboltable.cpp +39
+
+
+hotspot ld时 用5.15.4冒名顶替 5.12.8
+sudo cp /opt/qt515/lib/libQt5DBus.so.5.15.4 /usr/lib/x86_64-linux-gnu/libQt5DBus.so.5.12.8
+
+# LINK_LIBRARIES("/opt/qt515/lib/libQt5DBus.so")       # CMakeList.txt中
+message(WARNING "~~~~~~~~~~~~~:" ${CMAKE_BUILD_TYPE})
+return()
+
+hotspot ld时 错误 orin上
+libc.musl-aarch64.so.1: cannot open shared object file: No such file or directory
+ln -s /usr/lib/aarch64-linux-gnu/libc.so.6 /usr/lib/aarch64-linux-gnu/libc.musl-aarch64.so.1  # 解决方法
+
+
+
+V5 LibDDemangle
+https://github.com/lievenhey/d_demangler/tree/master  # 编译时提示的库
+https://dlang.org/download.html                       # Dlang官网 下载编译器  没给arm版的编译器
+https://www.dushibaiyu.com/2023/09/dlang_arm.html     # Dlang（D语言）下ARM嵌入式板子开发
+https://wiki.dlang.org/Cross-compiling_with_LDC       # Cross-compiling with LDC
+https://dlang.org/dmd-linux.html                      # dmd
+https://blog.csdn.net/fqbqrr/article/details/127890422 # d的dub构建配置
+https://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports/pool/main/libi/libiberty/ # 有说 libd_demangle.lib 是 libiberty的一部分 https://packages.ubuntu.com/jammy/s390x/libiberty-dev/download
+https://github.com/gcc-mirror/gcc/blob/master/libiberty/d-demangle.c # 有说 libd_demangle.lib 是gcc的一部分
+https://github.com/dlang/tools                        # https://code.dlang.org/packages/dtools%3Addemangle
+apt-get install dub              # 安装gub apt-get remove dub
+dpkg -i dmd_2.108.0-0_amd64.deb  # 安装官网下载的编译器 与上一个有冲突  dpkg -r dmd_2.108.0-0_amd64.deb
+
+
+
+
+
+build/src/CMakeFiles/hotspot.dir/link.txt         # hotspot 连接命令文件 命令如下
+/usr/bin/c++   -fno-operator-names -fno-exceptions -Wall -Wextra -Wcast-align -Wchar-subscripts -Wformat-security -Wno-long-long -Wpointer-arith -Wundef -Wnon-virtual-dtor -Woverloaded-virtual -Werror=return-type -Wvla -Wdate-time -Wsuggest-override -Wlogical-op -pedantic -Wzero-as-null-pointer-constant -O3 -DNDEBUG  -Wl,--enable-new-dtags  \
+CMakeFiles/hotspot.dir/hotspot_autogen/mocs_compilation.cpp.o CMakeFiles/hotspot.dir/main.cpp.o CMakeFiles/hotspot.dir/parsers/perf/perfparser.cpp.o CMakeFiles/hotspot.dir/perfrecord.cpp.o CMakeFiles/hotspot.dir/mainwindow.cpp.o CMakeFiles/hotspot.dir/flamegraph.cpp.o CMakeFiles/hotspot.dir/aboutdialog.cpp.o CMakeFiles/hotspot.dir/startpage.cpp.o CMakeFiles/hotspot.dir/recordpage.cpp.o CMakeFiles/hotspot.dir/resultspage.cpp.o CMakeFiles/hotspot.dir/resultssummarypage.cpp.o CMakeFiles/hotspot.dir/resultstopdownpage.cpp.o CMakeFiles/hotspot.dir/resultsbottomuppage.cpp.o CMakeFiles/hotspot.dir/resultsflamegraphpage.cpp.o CMakeFiles/hotspot.dir/resultscallercalleepage.cpp.o CMakeFiles/hotspot.dir/resultsdisassemblypage.cpp.o CMakeFiles/hotspot.dir/resultsutil.cpp.o CMakeFiles/hotspot.dir/costheaderview.cpp.o CMakeFiles/hotspot.dir/timelinewidget.cpp.o CMakeFiles/hotspot.dir/dockwidgetsetup.cpp.o CMakeFiles/hotspot.dir/settingsdialog.cpp.o CMakeFiles/hotspot.dir/multiconfigwidget.cpp.o CMakeFiles/hotspot.dir/perfoutputwidget.cpp.o CMakeFiles/hotspot.dir/perfoutputwidgettext.cpp.o CMakeFiles/hotspot.dir/perfoutputwidgetkonsole.cpp.o CMakeFiles/hotspot.dir/costcontextmenu.cpp.o CMakeFiles/hotspot.dir/initiallystoppedprocess.cpp.o CMakeFiles/hotspot.dir/perfcontrolfifowrapper.cpp.o CMakeFiles/hotspot.dir/errnoutil.cpp.o CMakeFiles/hotspot.dir/recordhost.cpp.o CMakeFiles/hotspot.dir/copyabletreeview.cpp.o CMakeFiles/hotspot.dir/callgraphwidget.cpp.o CMakeFiles/hotspot.dir/callgraphgenerator.cpp.o CMakeFiles/hotspot.dir/frequencypage.cpp.o CMakeFiles/hotspot.dir/hotspot_autogen/EWIEGA46WW/qrc_resources.cpp.o  \
+-o ../bin/hotspot  \
+-Wl,-rpath,/usr/KDDockWidgets-1.7.0/lib:/opt/qt515/lib: \
+/usr/lib/aarch64-linux-gnu/libKF5ThreadWeaver.so.5.68.0 \
+/usr/lib/aarch64-linux-gnu/libKF5KIOFileWidgets.so.5.68.0 \
+/usr/lib/aarch64-linux-gnu/libKF5Solid.so.5.68.0 \
+/usr/lib/aarch64-linux-gnu/libKF5Notifications.so.5.68.0 models/libmodels.a \
+../3rdparty/libPrefixTickLabels.a \
+/usr/KDDockWidgets-1.7.0/lib/libkddockwidgets.so.1.7.0 \
+/usr/lib/aarch64-linux-gnu/libqcustomplot.so \
+/usr/lib/aarch64-linux-gnu/libKF5Bookmarks.so.5.68.0 \
+/usr/lib/aarch64-linux-gnu/libKF5ItemModels.so.5.68.0 \
+/usr/lib/aarch64-linux-gnu/libKF5Parts.so.5.68.0 \
+/usr/lib/aarch64-linux-gnu/libKF5KIOWidgets.so.5.68.0 \
+/usr/lib/aarch64-linux-gnu/libKF5KIOCore.so.5.68.0 \
+/usr/lib/aarch64-linux-gnu/libKF5Service.so.5.68.0 \
+/usr/lib/aarch64-linux-gnu/libQt5Concurrent.so.5.12.8 \
+/usr/lib/aarch64-linux-gnu/libKF5JobWidgets.so.5.68.0 \
+/usr/lib/aarch64-linux-gnu/libKF5XmlGui.so.5.68.0 \
+/usr/lib/aarch64-linux-gnu/libKF5WindowSystem.so.5.68.0 \
+/usr/lib/aarch64-linux-gnu/libKF5IconThemes.so.5.68.0 \
+/usr/lib/aarch64-linux-gnu/libKF5ItemViews.so.5.68.0 \
+/opt/qt515/lib/libQt5Svg.so.5.15.4 \
+/usr/lib/aarch64-linux-gnu/libKF5TextWidgets.so.5.68.0 \
+/usr/lib/aarch64-linux-gnu/libKF5ConfigWidgets.so.5.68.0 \
+/usr/lib/aarch64-linux-gnu/libKF5Codecs.so.5.68.0 \
+/usr/lib/aarch64-linux-gnu/libKF5Auth.so.5.68.0 \
+/usr/lib/aarch64-linux-gnu/libKF5AuthCore.so.5.68.0 \
+/usr/lib/aarch64-linux-gnu/libKF5CoreAddons.so.5.68.0 \
+/usr/lib/aarch64-linux-gnu/libKF5I18n.so.5.68.0 \
+/usr/lib/aarch64-linux-gnu/libKF5Completion.so.5.68.0 \
+/usr/lib/aarch64-linux-gnu/libKF5WidgetsAddons.so.5.68.0 \
+/usr/lib/aarch64-linux-gnu/libKF5ConfigGui.so.5.68.0 \
+/usr/lib/aarch64-linux-gnu/libQt5Xml.so.5.12.8 \
+/usr/lib/aarch64-linux-gnu/libKF5ConfigCore.so.5.68.0 \
+/usr/lib/aarch64-linux-gnu/libQt5DBus.so.5.12.8 \
+/usr/lib/aarch64-linux-gnu/libKF5SonnetUi.so.5.68.0 \
+/usr/lib/aarch64-linux-gnu/libKF5SyntaxHighlighting.so.5.68.0 \
+/opt/qt515/lib/libQt5Network.so.5.15.4 \
+/opt/qt515/lib/libQt5Widgets.so.5.15.4 \
+/usr/lib/aarch64-linux-gnu/libQt5X11Extras.so.5.12.8 \
+/opt/qt515/lib/libQt5Gui.so.5.15.4 \
+/opt/qt515/lib/libQt5Core.so.5.15.4
+
+
+# hotspot 手动安装及其依赖包  orin上 版本为1.1.0
+dpkg -i linux-tools-common_5.4.0-26.30_all.deb
+dpkg -i libqt5widgets5_5.12.8+dfsg-0ubuntu1_arm64.deb
+dpkg -i libqt5x11extras5_5.12.8-0ubuntu1_arm64.deb
+dpkg -i libkf5windowsystem-data_5.68.0-0ubuntu1_all.deb
+dpkg -i libkf5windowsystem5_5.68.0-0ubuntu1_arm64.deb
+dpkg -i libkf5widgetsaddons-data_5.68.0-0ubuntu1_all.deb
+dpkg -i libkf5widgetsaddons5_5.68.0-0ubuntu1_arm64.deb
+dpkg -i libkf5threadweaver5_5.68.0-0ubuntu1_arm64.deb
+dpkg -i libkf5solid5-data_5.68.0-0ubuntu1_all.deb
+dpkg -i libqt5xml5_5.12.8+dfsg-0ubuntu1_arm64.deb
+dpkg -i libkf5solid5_5.68.0-0ubuntu1_arm64.deb
+dpkg -i libkf5itemviews-data_5.68.0-0ubuntu1_all.deb
+dpkg -i libkf5itemviews5_5.68.0-0ubuntu1_arm64.deb
+dpkg -i libkf5itemmodels5_5.68.0-0ubuntu1_arm64.deb
+dpkg -i libkf5i18n-data_5.68.0-0ubuntu1_all.deb
+dpkg -i libkf5i18n5_5.68.0-0ubuntu1_arm64.deb
+dpkg -i libkf5coreaddons-data_5.68.0-0ubuntu1_all.deb
+dpkg -i libfam0_2.7.0-17.3build2_arm64.deb
+dpkg -i libkf5coreaddons5_5.68.0-0ubuntu1_arm64.deb
+dpkg -i libkf5config-data_5.68.0-0ubuntu1_all.deb
+dpkg -i libkf5configcore5_5.68.0-0ubuntu1_arm64.deb
+dpkg -i libkf5completion-data_5.68.0-0ubuntu1_all.deb
+dpkg -i libkf5configgui5_5.68.0-0ubuntu1_arm64.deb
+dpkg -i libkf5completion5_5.68.0-0ubuntu1_arm64.deb
+dpkg -i libkf5configwidgets-data_5.68.0-0ubuntu1_all.deb
+dpkg -i libkf5auth-data_5.68.0-0ubuntu1_all.deb
+dpkg -i libpolkit-qt5-1-1_0.113.0-0ubuntu2_arm64.deb
+dpkg -i libkf5authcore5_5.68.0-0ubuntu1_arm64.deb
+dpkg -i libkf5codecs-data_5.68.0-0ubuntu1_all.deb
+dpkg -i libkf5codecs5_5.68.0-0ubuntu1_arm64.deb
+dpkg -i libkf5guiaddons5_5.68.0-0ubuntu1_arm64.deb
+dpkg -i libkf5configwidgets5_5.68.0-0ubuntu1_arm64.deb
+dpkg -i libkf5archive5_5.68.0-0ubuntu1_arm64.deb
+dpkg -i libqt5svg5_5.12.8-0ubuntu1_arm64.deb
+dpkg -i libkf5iconthemes-data_5.68.0-0ubuntu1_all.deb
+dpkg -i libkf5iconthemes5_5.68.0-0ubuntu1_arm64.deb
+dpkg -i libkf5jobwidgets-data_5.68.0-0ubuntu1_all.deb
+dpkg -i libkf5jobwidgets5_5.68.0-0ubuntu1_arm64.deb
+dpkg -i libkf5crash5_5.68.0-0ubuntu1_arm64.deb
+dpkg -i libkf5service-data_5.68.0-0ubuntu1_all.deb
+dpkg -i libkf5dbusaddons-data_5.68.0-0ubuntu1_all.deb
+dpkg -i libkf5dbusaddons5_5.68.0-0ubuntu1_arm64.deb
+dpkg -i libkf5service5_5.68.0-0ubuntu1_arm64.deb
+dpkg -i libkf5service-bin_5.68.0-0ubuntu1_arm64.deb
+dpkg -i libkf5kiocore5_5.68.0-0ubuntu1_arm64.deb
+dpkg -i libkf5kiowidgets5_5.68.0-0ubuntu1_arm64.deb
+dpkg -i libdw1_0.176-1.1build1_arm64.deb
+dpkg -i libkf5doctools5_5.68.0-0ubuntu1_arm64.deb
+dpkg -i libkf5kiontlm5_5.68.0-0ubuntu1_arm64.deb
+dpkg -i libkf5notifications-data_5.68.0-0ubuntu1_all.deb
+dpkg -i libdbusmenu-qt5-2_0.9.3+16.04.20160218-2build1_arm64.deb
+dpkg -i libqt5texttospeech5_5.12.8-0ubuntu1_arm64.deb
+dpkg -i libkf5notifications5_5.68.0-0ubuntu1_arm64.deb
+dpkg -i libkf5textwidgets-data_5.68.0-0ubuntu1_all.deb
+dpkg -i libkf5sonnet5-data_5.68.0-0ubuntu1_all.deb
+dpkg -i libkf5sonnetcore5_5.68.0-0ubuntu1_arm64.deb
+dpkg -i libkf5sonnetui5_5.68.0-0ubuntu1_arm64.deb
+dpkg -i libkf5textwidgets5_5.68.0-0ubuntu1_arm64.deb
+dpkg -i libkf5wallet-data_5.68.0-0ubuntu2_all.deb
+dpkg -i libgpgme11_1.13.1-7ubuntu2_arm64.deb
+dpkg -i libgpgmepp6_1.13.1-7ubuntu2_arm64.deb
+dpkg -i libkwalletbackend5-5_5.68.0-0ubuntu2_arm64.deb
+dpkg -i libkf5wallet-bin_5.68.0-0ubuntu2_arm64.deb
+dpkg -i libkf5wallet5_5.68.0-0ubuntu2_arm64.deb
+dpkg -i kio_5.68.0-0ubuntu1_arm64.deb
+dpkg -i hotspot_1.1.0+git20190211-1ubuntu2_arm64.deb
+
+dpkg -i libqt5gui5_5.12.8+dfsg-0ubuntu1_arm64.deb
+dpkg -i libqt5core5a_5.12.8+dfsg-0ubuntu1_arm64.deb
+dpkg -i libqt5network5_5.12.8+dfsg-0ubuntu1_arm64.deb
+dpkg -i libqt5dbus5_5.12.8+dfsg-0ubuntu1_arm64.deb
+
+dpkg -i libqt5gui5-gles_5.12.8+dfsg-0ubuntu1_arm64.deb   X
+
+
+编译qt5.15.4
+https://download.qt.io/archive/qt/      # qt 下载 5.15后只有源码  !!!
+https://www.cnblogs.com/JeffreyLi75/p/8639230.html      # qt交叉编译   !!!
+https://juejin.cn/post/7153439829789769735#heading-1    # Ubuntu 搭建qt arm64编译环境
+https://landv.cn/p/2c336b43.html        # QT 源码编译_静态编译      !!!
+https://doc.embedfire.com/linux/rk356x/Qt/zh/latest/lubancat_qt/install/install_arm_2.html  # 交叉编译Qt库(Qt5)
+https://juejin.cn/post/7300569624236359718  # 飞腾ARM架构 UOS系统编译Qt 5.15.2源码及Qt Creator
+https://blog.csdn.net/qq_42288262/article/details/121280062 # 交叉编译Qt5.15.2并移植到GEC6818
+
+-dbus -syslog -sqlite -tslib -fontconfig -pkg-config -skip qtscript -skip qtwebengine  -no-use-gold-linker  -v
+
+./configure -device linux-arm-amlogic-8726M-g++ -device-option CROSS_COMPILE=aarch64-linux-gnu- -release  -opensource -nomake tests -make libs -opengl es2 -eglfs -xcb -dbus -syslog -sqlite -tslib -fontconfig -pkg-config -skip qtscript -skip qtwebengine  -no-use-gold-linker  -v
+
+./configure -v -device linux-arm-amlogic-8726M-g++ -device-option CROSS_COMPILE=aarch64-linux-gnu- \
+-release  -opensource -nomake tests -make libs -opengl es2 -eglfs -xcb -dbus -syslog -sqlite -tslib -fontconfig -pkg-config \
+-skip qtscript -skip qtwebengine -no-use-gold-linker
+
+没使用 device方式
+
+cd qt-5.15-build
+./../qt-everywhere-src-5.15.11/configure -prefix /opt/qt5.15 -shared -sql-sqlite -xcb -xcb-xlib -bundled-xcb-xinput -qt-zlib -qt-libpng -qt-libjpeg -no-fontconfig -iconv \
+-nomake tests -nomake examples -skip qt3d   -nomake tools
+
+./configure -release -opensource -xplatform linux-aarch64-gnu-g++ -sysroot /usr/bin   # 本机架构方式编译 -sysroot /usr/bin可不指定
+./configure -release -opensource -xplatform linux-aarch64-gnu-g++ -sysroot /usr/bin -nomake tests -v
+
+#交叉编译
+./configure -xplatform linux-aarch64-gnu-g++ -release --rpath=no -make libs \
+-qt-zlib -qt-libpng -qt-libjpeg -nomake examples -nomake tests -no-opengl -opensource -confirm-license \
+-openssl-linked OPENSSL_PREFIX=/usr/lib/x86_64-linux-gnu \
+-skip qt3d -skip qtactiveqt -skip qtandroidextras -skip qtcharts -skip qtconnectivity \
+-skip qtdatavis3d -skip qtdeclarative -skip qtdoc -skip qtgamepad -skip qtgraphicaleffects -skip qtimageformats \
+-skip qtlocation -skip qtlottie -skip qtmacextras -skip qtmultimedia -skip qtnetworkauth -skip qtpurchasing \
+-skip qtquick3d -skip qtquickcontrols -skip qtquickcontrols2 -skip qtquicktimeline -skip qtremoteobjects \
+-skip qtscript -skip qtscxml -skip qtsensors -skip qtserialbus -skip qtserialport -skip qtspeech \
+-skip qttools -skip qttranslations -skip qtvirtualkeyboard -skip qtwayland \
+-skip qtwebchannel -skip qtwebengine -skip qtwebglplugin -skip qtwebsockets -skip qtwebview \
+-skip qtwinextras -skip qtxmlpatterns \
+-prefix /opt/qt515
+注意：交叉编译出的时对应架构的so库 但是 qtbase/bin下的那个工具还是当前架构的 因为需要它们生成中间文件 如qmake等
+它们若要生成对应架构的文件，则需要在对应架构下编译，本人没有交叉模式下生成。
+qtx11extras    # 没有跳过依然没有生成库 拉取了22.04下的arm版本 结果是5.15.3版本
+
+x86_64编译
+./configure -static -release \
+-qt-zlib -qt-libpng -qt-libjpeg -nomake examples -nomake tests -no-opengl \
+-skip qt3d -skip qtactiveqt -skip qtandroidextras -skip qtcharts -skip qtconnectivity \
+-skip qtdatavis3d -skip qtdeclarative -skip qtdoc -skip qtgamepad -skip qtgraphicaleffects -skip qtimageformats \
+-skip qtlocation -skip qtlottie -skip qtmacextras -skip qtmultimedia -skip qtnetworkauth -skip qtpurchasing \
+-skip qtquick3d -skip qtquickcontrols -skip qtquickcontrols2 -skip qtquicktimeline -skip qtremoteobjects \
+-skip qtscript -skip qtscxml -skip qtsensors -skip qtserialbus -skip qtserialport -skip qtspeech \
+-skip qttools -skip qttranslations -skip qtvirtualkeyboard -skip qtwayland \
+-skip qtwebchannel -skip qtwebengine -skip qtwebglplugin -skip qtwebsockets -skip qtwebview \
+-skip qtwinextras -skip qtxmlpatterns \
+-prefix /home/landv/QT5.15.3/qt-static
+
+-xplatform 指定目标平台
+-skip qtsvg   需要
+-skip qtx11extras
+-static  表示编译成静态库选项
+-skip qtcanvas3d     5.15.4 无
+-prefix 后面跟的地址，是用来安装的路径，后面执行nmake install时才有用。
+-opensource 是使用开源协议
+-confirm-license 是自动确认协议 （configure过程中关于协议的询问，自动填入上面的opensource）
+-opengl dynamic 指定opengl库的使用方式为动态
+-skip qtwebengine 跳过了webengine模块
+-nomake tests -nomake examples 这两个跳过了tests和examples模块
+-mp 是多进程编译
+-release 是只编译release模式
+-optimize-size 和-strip 优化、裁剪生成的文件尺寸
+- qt-zlib -qt-libpng -qt-libjpeg 是更好确定 Qt 编译出的程序能在目前不知的系统下运行【可要可不要】
+- nomake demos -nomake examples 指的是不编译 demos 和 examples
+qmake xxx.pro 或 qmake xxx.pro -o Makefile    # 生成 Makefile
+
+
+
+hotspot ld时 出现连接错误
+undefined reference to `QSslSocket::QSslSocket(QObject*)'   # libQt5Network.so 缺少ssl特性
+
+编译qt network.so 添加ssl特性
+ERROR: Feature 'openssl-linked' was enabled, but the pre-condition '!features.securetransport && !features.schannel && libs.openssl' failed.
+https://stackoverflow.com/questions/41988625/building-qt-with-openssl-on-ubuntu-16-04-1-fails
+/home/someuser/Qt/5.8/Src/configure -c++std c++11 -static -release -platform linux-g++-64 -prefix /home/someuser/Qt/StaticRelease58 -qt-zlib -qt-pcre -qt-libpng -qt-libjpeg -qt-freetype -qt-xcb -make libs -openssl-linked -nomake tools -nomake examples -nomake tests -opensource -confirm-license -skip qtwayland -skip qtwebview -skip qtwebengine -skip qtwebchannel -no-qml-debug
+https://blog.csdn.net/hknaruto/article/details/114999275
+./configure -opensource -confirm-license -prefix /opt/Qt5.15.2-static -static -static-runtime -openssl-linked OPENSSL_INCDIR=/opt/openssl/include OPENSSL_LIBDIR=/opt/openssl/lib
+orin上编译
+1 apt install libssl-dev
+2 /data/wjg/111/qtbase-everywhere-src-5.15.4$ ./configure -release -make libs -openssl-linked -opensource -confirm-license OPENSSL_INCDIR=/usr/include OPENSSL_LIBDIR=/usr/lib/aarch64-linux-gnu -recheck
+注 PENSSL_INCDIR=头文件 OPENSSL_LIBDIR=链接库 -recheck重新检测 有时候配置对了依然检测失败 就需要用到它
+
+Qt Network:
+  getifaddrs() ........................... yes
+  IPv6 ifname ............................ yes
+  libproxy ............................... no
+  Linux AF_NETLINK ....................... yes
+  OpenSSL ................................ yes
+    Qt directly linked to OpenSSL ........ yes
+  OpenSSL 1.1 ............................ yes
+  DTLS ................................... yes
+  OCSP-stapling .......................... yes
+  SCTP ................................... no
+  Use system proxies ..................... yes
+  GSSAPI ................................. no
+
+Note: Also available for Linux: linux-clang linux-icc
+
+Note: When linking against OpenSSL, you can override the default
+library names through OPENSSL_LIBS.
+For example:
+    OPENSSL_LIBS='-L/opt/ssl/lib -lssl -lcrypto' ./configure -openssl-linked
+
+Qt is now configured for building. Just run 'make'.
+Once everything is built, you must run 'make install'.
+Qt will be installed into '/usr/local/Qt-5.15.4'.
+
+Prior to reconfiguration, make sure you remove any leftovers from
+the previous build.
+
+
+Qt5.15默认使用OpenSSL 1.1.1系列版本。
+在Windows、macOS和Linux系统上，Qt5.15都已经将OpenSSL 1.1.1库打包进了安装包中，您可以直接使用Qt的API对SSL/TLS进行开发。
+如要使用其他版本的OpenSSL库，可在Qt构建时手动指定OpenSSL版本。即configure中添加"-openssl-linked"选项，并指定OpenSSL库的路径。
+./configure -openssl-linked OPENSSL_PREFIX=/usr/lib/x86_64-linux-gnu/  # Linux 使用系统安装的OpenSSL库 Qt构建命令
+make
+sudo make install
+OPENSSL_PREFIX指定了OpenSSL库的路径，如/usr/lib/x86_64-linux-gnu/。Windows和macOS上，您需要指定对应的OpenSSL库的路径。
+注意，构建Qt使用自定义的OpenSSL库，需要确保该库与Qt的其他模块兼容。否则，在使用Qt的API时可能会出现链接错误或运行时错误。
+
+
+
+
+liauto@x01-orin1:/data/wjg/111/KDDockWidgets/build$ sudo make install
+[  1%] Automatic MOC for target kddockwidgets
+[  1%] Built target kddockwidgets_autogen
+[ 64%] Built target kddockwidgets
+[ 65%] Automatic MOC for target kddockwidgets_example
+[ 65%] Built target kddockwidgets_example_autogen
+[ 75%] Built target kddockwidgets_example
+[ 76%] Automatic MOC for target kddockwidgets_minimal_example
+[ 76%] Built target kddockwidgets_minimal_example_autogen
+[ 83%] Built target kddockwidgets_minimal_example
+[ 84%] Automatic MOC for target kddockwidgets_minimal_mdi_example
+[ 84%] Built target kddockwidgets_minimal_mdi_example_autogen
+[ 91%] Built target kddockwidgets_minimal_mdi_example
+[ 92%] Automatic MOC for target kddockwidgets_mdi_with_docking_example
+[ 92%] Built target kddockwidgets_mdi_with_docking_example_autogen
+[100%] Built target kddockwidgets_mdi_with_docking_example
+Install the project...
+-- Install configuration: "Debug"
+-- Installing: /usr/local/KDAB/KDDockWidgets-1.7.0/share/doc/KDDockWidgets/LICENSE.txt
+-- Installing: /usr/local/KDAB/KDDockWidgets-1.7.0/share/doc/KDDockWidgets/README.md
+-- Installing: /usr/local/KDAB/KDDockWidgets-1.7.0/share/doc/KDDockWidgets/LICENSES
+-- Installing: /usr/local/KDAB/KDDockWidgets-1.7.0/share/doc/KDDockWidgets/LICENSES/BSD-3-Clause.txt
+-- Installing: /usr/local/KDAB/KDDockWidgets-1.7.0/share/doc/KDDockWidgets/LICENSES/GPL-3.0-only.txt
+-- Installing: /usr/local/KDAB/KDDockWidgets-1.7.0/share/doc/KDDockWidgets/LICENSES/GPL-2.0-only.txt
+-- Installing: /usr/local/KDAB/KDDockWidgets-1.7.0/mkspecs/modules/qt_KDDockWidgets.pri
+-- Installing: /usr/local/KDAB/KDDockWidgets-1.7.0/lib/libkddockwidgets.so.1.7.0
+-- Installing: /usr/local/KDAB/KDDockWidgets-1.7.0/lib/libkddockwidgets.so.1.7
+-- Set runtime path of "/usr/local/KDAB/KDDockWidgets-1.7.0/lib/libkddockwidgets.so.1.7.0" to "$ORIGIN/../lib:/opt/qt515/lib"
+-- Installing: /usr/local/KDAB/KDDockWidgets-1.7.0/lib/libkddockwidgets.so
+-- Installing: /usr/local/KDAB/KDDockWidgets-1.7.0/include/kddockwidgets/Config
+-- Installing: /usr/local/KDAB/KDDockWidgets-1.7.0/include/kddockwidgets/DockWidget
+-- Installing: /usr/local/KDAB/KDDockWidgets-1.7.0/include/kddockwidgets/DockWidgetBase
+-- Installing: /usr/local/KDAB/KDDockWidgets-1.7.0/include/kddockwidgets/FocusScope
+-- Installing: /usr/local/KDAB/KDDockWidgets-1.7.0/include/kddockwidgets/FrameworkWidgetFactory
+-- Installing: /usr/local/KDAB/KDDockWidgets-1.7.0/include/kddockwidgets/DefaultWidgetFactory
+-- Installing: /usr/local/KDAB/KDDockWidgets-1.7.0/include/kddockwidgets/LayoutSaver
+-- Installing: /usr/local/KDAB/KDDockWidgets-1.7.0/include/kddockwidgets/MainWindow
+-- Installing: /usr/local/KDAB/KDDockWidgets-1.7.0/include/kddockwidgets/MainWindowBase
+-- Installing: /usr/local/KDAB/KDDockWidgets-1.7.0/include/kddockwidgets/MainWindowMDI
+-- Installing: /usr/local/KDAB/KDDockWidgets-1.7.0/include/kddockwidgets/docks_export.h
+-- Installing: /usr/local/KDAB/KDDockWidgets-1.7.0/include/kddockwidgets/Config.h
+-- Installing: /usr/local/KDAB/KDDockWidgets-1.7.0/include/kddockwidgets/FrameworkWidgetFactory.h
+-- Installing: /usr/local/KDAB/KDDockWidgets-1.7.0/include/kddockwidgets/DockWidgetBase.h
+-- Installing: /usr/local/KDAB/KDDockWidgets-1.7.0/include/kddockwidgets/KDDockWidgets.h
+-- Installing: /usr/local/KDAB/KDDockWidgets-1.7.0/include/kddockwidgets/Qt5Qt6Compat_p.h
+-- Installing: /usr/local/KDAB/KDDockWidgets-1.7.0/include/kddockwidgets/FocusScope.h
+-- Installing: /usr/local/KDAB/KDDockWidgets-1.7.0/include/kddockwidgets/QWidgetAdapter.h
+-- Installing: /usr/local/KDAB/KDDockWidgets-1.7.0/include/kddockwidgets/LayoutSaver.h
+-- Installing: /usr/local/KDAB/KDDockWidgets-1.7.0/include/kddockwidgets/MainWindowMDI.h
+-- Installing: /usr/local/KDAB/KDDockWidgets-1.7.0/include/kddockwidgets/MainWindowBase.h
+-- Installing: /usr/local/KDAB/KDDockWidgets-1.7.0/include/kddockwidgets/MainWindow.h
+-- Installing: /usr/local/KDAB/KDDockWidgets-1.7.0/include/kddockwidgets/DockWidget.h
+-- Installing: /usr/local/KDAB/KDDockWidgets-1.7.0/include/kddockwidgets/MDIArea.h
+-- Installing: /usr/local/KDAB/KDDockWidgets-1.7.0/include/kddockwidgets/private/DragController_p.h
+-- Installing: /usr/local/KDAB/KDDockWidgets-1.7.0/include/kddockwidgets/private/Draggable_p.h
+-- Installing: /usr/local/KDAB/KDDockWidgets-1.7.0/include/kddockwidgets/private/DropArea_p.h
+-- Installing: /usr/local/KDAB/KDDockWidgets-1.7.0/include/kddockwidgets/private/DropAreaWithCentralFrame_p.h
+-- Installing: /usr/local/KDAB/KDDockWidgets-1.7.0/include/kddockwidgets/private/DropIndicatorOverlayInterface_p.h
+-- Installing: /usr/local/KDAB/KDDockWidgets-1.7.0/include/kddockwidgets/private/FloatingWindow_p.h
+-- Installing: /usr/local/KDAB/KDDockWidgets-1.7.0/include/kddockwidgets/private/Frame_p.h
+-- Installing: /usr/local/KDAB/KDDockWidgets-1.7.0/include/kddockwidgets/private/LayoutSaver_p.h
+-- Installing: /usr/local/KDAB/KDDockWidgets-1.7.0/include/kddockwidgets/private/MultiSplitter_p.h
+-- Installing: /usr/local/KDAB/KDDockWidgets-1.7.0/include/kddockwidgets/private/LayoutWidget_p.h
+-- Installing: /usr/local/KDAB/KDDockWidgets-1.7.0/include/kddockwidgets/private/SideBar_p.h
+-- Installing: /usr/local/KDAB/KDDockWidgets-1.7.0/include/kddockwidgets/private/TitleBar_p.h
+-- Installing: /usr/local/KDAB/KDDockWidgets-1.7.0/include/kddockwidgets/private/WindowBeingDragged_p.h
+-- Installing: /usr/local/KDAB/KDDockWidgets-1.7.0/include/kddockwidgets/private/WidgetResizeHandler_p.h
+-- Installing: /usr/local/KDAB/KDDockWidgets-1.7.0/include/kddockwidgets/private/DockRegistry_p.h
+-- Installing: /usr/local/KDAB/KDDockWidgets-1.7.0/include/kddockwidgets/private/TabWidget_p.h
+-- Installing: /usr/local/KDAB/KDDockWidgets-1.7.0/include/kddockwidgets/private/MDILayoutWidget_p.h
+-- Installing: /usr/local/KDAB/KDDockWidgets-1.7.0/include/kddockwidgets/private/multisplitter/Item_p.h
+-- Installing: /usr/local/KDAB/KDDockWidgets-1.7.0/include/kddockwidgets/private/multisplitter/Widget.h
+-- Installing: /usr/local/KDAB/KDDockWidgets-1.7.0/include/kddockwidgets/private/multisplitter/Separator_p.h
+-- Installing: /usr/local/KDAB/KDDockWidgets-1.7.0/include/kddockwidgets/private/indicators/ClassicIndicators_p.h
+-- Installing: /usr/local/KDAB/KDDockWidgets-1.7.0/include/kddockwidgets/private/indicators/SegmentedIndicators_p.h
+-- Installing: /usr/local/KDAB/KDDockWidgets-1.7.0/include/kddockwidgets/private/widgets/QWidgetAdapter_widgets_p.h
+-- Installing: /usr/local/KDAB/KDDockWidgets-1.7.0/include/kddockwidgets/private/widgets/TitleBarWidget_p.h
+-- Installing: /usr/local/KDAB/KDDockWidgets-1.7.0/include/kddockwidgets/private/widgets/SideBarWidget_p.h
+-- Installing: /usr/local/KDAB/KDDockWidgets-1.7.0/include/kddockwidgets/private/widgets/FloatingWindowWidget_p.h
+-- Installing: /usr/local/KDAB/KDDockWidgets-1.7.0/include/kddockwidgets/private/widgets/FrameWidget_p.h
+-- Installing: /usr/local/KDAB/KDDockWidgets-1.7.0/include/kddockwidgets/private/widgets/TabBarWidget_p.h
+-- Installing: /usr/local/KDAB/KDDockWidgets-1.7.0/include/kddockwidgets/private/widgets/TabWidgetWidget_p.h
+-- Installing: /usr/local/KDAB/KDDockWidgets-1.7.0/include/kddockwidgets/private/multisplitter/Separator_qwidget.h
+-- Installing: /usr/local/KDAB/KDDockWidgets-1.7.0/include/kddockwidgets/private/multisplitter/Widget_qwidget.h
+-- Installing: /usr/local/KDAB/KDDockWidgets-1.7.0/include/kddockwidgets/kddockwidgets_version.h
+-- Installing: /usr/local/KDAB/KDDockWidgets-1.7.0/lib/cmake/KDDockWidgets/KDDockWidgetsTargets.cmake
+-- Installing: /usr/local/KDAB/KDDockWidgets-1.7.0/lib/cmake/KDDockWidgets/KDDockWidgetsTargets-debug.cmake
+-- Installing: /usr/local/KDAB/KDDockWidgets-1.7.0/lib/cmake/KDDockWidgets/KDDockWidgetsConfig.cmake
+-- Installing: /usr/local/KDAB/KDDockWidgets-1.7.0/lib/cmake/KDDockWidgets/KDDockWidgetsConfigVersion.cmake
+
+
+
+
+liauto@x01-orin1:/data/wjg/111/kgraphviewer-2.4.3/build$ sudo make install
+[  1%] Built target po-uk-docs-kgraphviewer-index-cache-bz2
+[  2%] Built target po-sv-docs-kgraphviewer-index-cache-bz2
+[  4%] Built target po-pt-BR-docs-kgraphviewer-index-cache-bz2
+[  5%] Generating mo...
+[  5%] Built target pofiles-abbb9d665dfbd06ad48c8c4b50844839
+[  6%] Built target po-pt-docs-kgraphviewer-index-cache-bz2
+[  8%] Generating ts...
+[  8%] Built target tsfiles-abbb9d665dfbd06ad48c8c4b50844839
+[  9%] Built target po-it-docs-kgraphviewer-index-cache-bz2
+[ 10%] Built target po-de-docs-kgraphviewer-index-cache-bz2
+[ 12%] Built target po-et-docs-kgraphviewer-index-cache-bz2
+[ 13%] Built target po-nl-docs-kgraphviewer-index-cache-bz2
+[ 14%] Automatic MOC for target kgraphviewer
+[ 14%] Built target kgraphviewer_autogen
+[ 36%] Built target kgraphviewer
+[ 37%] Automatic MOC for target kgraphviewerlib
+[ 37%] Built target kgraphviewerlib_autogen
+[ 90%] Built target kgraphviewerlib
+[ 92%] Automatic MOC for target kgraphviewerpart
+[ 93%] Built target kgraphviewerpart_autogen
+[ 98%] Built target kgraphviewerpart
+[100%] Built target doc-en-US-index-cache-bz2
+Install the project...
+-- Install configuration: ""
+-- Installing: /etc/xdg/kgraphviewer.categories
+-- Up-to-date: /usr/share/locale
+-- Up-to-date: /usr/share/locale/vi
+-- Up-to-date: /usr/share/locale/vi/LC_MESSAGES
+-- Installing: /usr/share/locale/vi/LC_MESSAGES/kgraphviewer.mo
+-- Up-to-date: /usr/share/locale/pt_BR
+-- Up-to-date: /usr/share/locale/pt_BR/LC_MESSAGES
+-- Installing: /usr/share/locale/pt_BR/LC_MESSAGES/kgraphviewer.mo
+-- Up-to-date: /usr/share/locale/ar
+-- Up-to-date: /usr/share/locale/ar/LC_MESSAGES
+-- Installing: /usr/share/locale/ar/LC_MESSAGES/kgraphviewer.mo
+-- Up-to-date: /usr/share/locale/fi
+-- Up-to-date: /usr/share/locale/fi/LC_MESSAGES
+-- Installing: /usr/share/locale/fi/LC_MESSAGES/kgraphviewer.mo
+-- Up-to-date: /usr/share/locale/zh_TW
+-- Up-to-date: /usr/share/locale/zh_TW/LC_MESSAGES
+-- Installing: /usr/share/locale/zh_TW/LC_MESSAGES/kgraphviewer.mo
+-- Up-to-date: /usr/share/locale/th
+-- Up-to-date: /usr/share/locale/th/LC_MESSAGES
+-- Installing: /usr/share/locale/th/LC_MESSAGES/kgraphviewer.mo
+-- Up-to-date: /usr/share/locale/es
+-- Up-to-date: /usr/share/locale/es/LC_MESSAGES
+-- Installing: /usr/share/locale/es/LC_MESSAGES/kgraphviewer.mo
+-- Up-to-date: /usr/share/locale/nl
+-- Up-to-date: /usr/share/locale/nl/LC_MESSAGES
+-- Installing: /usr/share/locale/nl/LC_MESSAGES/kgraphviewer.mo
+-- Up-to-date: /usr/share/locale/cs
+-- Up-to-date: /usr/share/locale/cs/LC_MESSAGES
+-- Installing: /usr/share/locale/cs/LC_MESSAGES/kgraphviewer.mo
+-- Up-to-date: /usr/share/locale/eo
+-- Up-to-date: /usr/share/locale/eo/LC_MESSAGES
+-- Installing: /usr/share/locale/eo/LC_MESSAGES/kgraphviewer.mo
+-- Up-to-date: /usr/share/locale/ast
+-- Up-to-date: /usr/share/locale/ast/LC_MESSAGES
+-- Installing: /usr/share/locale/ast/LC_MESSAGES/kgraphviewer.mo
+-- Up-to-date: /usr/share/locale/gl
+-- Up-to-date: /usr/share/locale/gl/LC_MESSAGES
+-- Installing: /usr/share/locale/gl/LC_MESSAGES/kgraphviewer.mo
+-- Up-to-date: /usr/share/locale/ku
+-- Up-to-date: /usr/share/locale/ku/LC_MESSAGES
+-- Installing: /usr/share/locale/ku/LC_MESSAGES/kgraphviewer.mo
+-- Up-to-date: /usr/share/locale/sk
+-- Up-to-date: /usr/share/locale/sk/LC_MESSAGES
+-- Installing: /usr/share/locale/sk/LC_MESSAGES/kgraphviewer.mo
+-- Up-to-date: /usr/share/locale/uk
+-- Up-to-date: /usr/share/locale/uk/LC_MESSAGES
+-- Installing: /usr/share/locale/uk/LC_MESSAGES/kgraphviewer.mo
+-- Up-to-date: /usr/share/locale/hne
+-- Up-to-date: /usr/share/locale/hne/LC_MESSAGES
+-- Installing: /usr/share/locale/hne/LC_MESSAGES/kgraphviewer.mo
+-- Up-to-date: /usr/share/locale/ja
+-- Up-to-date: /usr/share/locale/ja/LC_MESSAGES
+-- Installing: /usr/share/locale/ja/LC_MESSAGES/kgraphviewer.mo
+-- Up-to-date: /usr/share/locale/hi
+-- Up-to-date: /usr/share/locale/hi/LC_MESSAGES
+-- Installing: /usr/share/locale/hi/LC_MESSAGES/kgraphviewer.mo
+-- Up-to-date: /usr/share/locale/eu
+-- Up-to-date: /usr/share/locale/eu/LC_MESSAGES
+-- Installing: /usr/share/locale/eu/LC_MESSAGES/kgraphviewer.mo
+-- Up-to-date: /usr/share/locale/tr
+-- Up-to-date: /usr/share/locale/tr/LC_MESSAGES
+-- Installing: /usr/share/locale/tr/LC_MESSAGES/kgraphviewer.mo
+-- Up-to-date: /usr/share/locale/se
+-- Up-to-date: /usr/share/locale/se/LC_MESSAGES
+-- Installing: /usr/share/locale/se/LC_MESSAGES/kgraphviewer.mo
+-- Up-to-date: /usr/share/locale/km
+-- Up-to-date: /usr/share/locale/km/LC_MESSAGES
+-- Installing: /usr/share/locale/km/LC_MESSAGES/kgraphviewer.mo
+-- Up-to-date: /usr/share/locale/ro
+-- Up-to-date: /usr/share/locale/ro/LC_MESSAGES
+-- Installing: /usr/share/locale/ro/LC_MESSAGES/kgraphviewer.mo
+-- Up-to-date: /usr/share/locale/hu
+-- Up-to-date: /usr/share/locale/hu/LC_MESSAGES
+-- Installing: /usr/share/locale/hu/LC_MESSAGES/kgraphviewer.mo
+-- Up-to-date: /usr/share/locale/nb
+-- Up-to-date: /usr/share/locale/nb/LC_MESSAGES
+-- Installing: /usr/share/locale/nb/LC_MESSAGES/kgraphviewer.mo
+-- Up-to-date: /usr/share/locale/lt
+-- Up-to-date: /usr/share/locale/lt/LC_MESSAGES
+-- Installing: /usr/share/locale/lt/LC_MESSAGES/kgraphviewer.mo
+-- Up-to-date: /usr/share/locale/fr
+-- Up-to-date: /usr/share/locale/fr/LC_MESSAGES
+-- Installing: /usr/share/locale/fr/LC_MESSAGES/kgraphviewer.mo
+-- Up-to-date: /usr/share/locale/ca
+-- Up-to-date: /usr/share/locale/ca/LC_MESSAGES
+-- Installing: /usr/share/locale/ca/LC_MESSAGES/kgraphviewer.mo
+-- Up-to-date: /usr/share/locale/ca@valencia
+-- Up-to-date: /usr/share/locale/ca@valencia/LC_MESSAGES
+-- Installing: /usr/share/locale/ca@valencia/LC_MESSAGES/kgraphviewer.mo
+-- Up-to-date: /usr/share/locale/is
+-- Up-to-date: /usr/share/locale/is/LC_MESSAGES
+-- Installing: /usr/share/locale/is/LC_MESSAGES/kgraphviewer.mo
+-- Up-to-date: /usr/share/locale/mai
+-- Up-to-date: /usr/share/locale/mai/LC_MESSAGES
+-- Installing: /usr/share/locale/mai/LC_MESSAGES/kgraphviewer.mo
+-- Up-to-date: /usr/share/locale/sv
+-- Up-to-date: /usr/share/locale/sv/LC_MESSAGES
+-- Installing: /usr/share/locale/sv/LC_MESSAGES/kgraphviewer.mo
+-- Up-to-date: /usr/share/locale/el
+-- Up-to-date: /usr/share/locale/el/LC_MESSAGES
+-- Installing: /usr/share/locale/el/LC_MESSAGES/kgraphviewer.mo
+-- Up-to-date: /usr/share/locale/pt
+-- Up-to-date: /usr/share/locale/pt/LC_MESSAGES
+-- Installing: /usr/share/locale/pt/LC_MESSAGES/kgraphviewer.mo
+-- Up-to-date: /usr/share/locale/bs
+-- Up-to-date: /usr/share/locale/bs/LC_MESSAGES
+-- Installing: /usr/share/locale/bs/LC_MESSAGES/kgraphviewer.mo
+-- Up-to-date: /usr/share/locale/mr
+-- Up-to-date: /usr/share/locale/mr/LC_MESSAGES
+-- Installing: /usr/share/locale/mr/LC_MESSAGES/kgraphviewer.mo
+-- Up-to-date: /usr/share/locale/nds
+-- Up-to-date: /usr/share/locale/nds/LC_MESSAGES
+-- Installing: /usr/share/locale/nds/LC_MESSAGES/kgraphviewer.mo
+-- Up-to-date: /usr/share/locale/it
+-- Up-to-date: /usr/share/locale/it/LC_MESSAGES
+-- Installing: /usr/share/locale/it/LC_MESSAGES/kgraphviewer.mo
+-- Up-to-date: /usr/share/locale/be
+-- Up-to-date: /usr/share/locale/be/LC_MESSAGES
+-- Installing: /usr/share/locale/be/LC_MESSAGES/kgraphviewer.mo
+-- Up-to-date: /usr/share/locale/de
+-- Up-to-date: /usr/share/locale/de/LC_MESSAGES
+-- Installing: /usr/share/locale/de/LC_MESSAGES/kgraphviewer.mo
+-- Up-to-date: /usr/share/locale/en_GB
+-- Up-to-date: /usr/share/locale/en_GB/LC_MESSAGES
+-- Installing: /usr/share/locale/en_GB/LC_MESSAGES/kgraphviewer.mo
+-- Up-to-date: /usr/share/locale/nn
+-- Up-to-date: /usr/share/locale/nn/LC_MESSAGES
+-- Installing: /usr/share/locale/nn/LC_MESSAGES/kgraphviewer.mo
+-- Up-to-date: /usr/share/locale/ug
+-- Up-to-date: /usr/share/locale/ug/LC_MESSAGES
+-- Installing: /usr/share/locale/ug/LC_MESSAGES/kgraphviewer.mo
+-- Up-to-date: /usr/share/locale/et
+-- Up-to-date: /usr/share/locale/et/LC_MESSAGES
+-- Installing: /usr/share/locale/et/LC_MESSAGES/kgraphviewer.mo
+-- Up-to-date: /usr/share/locale/da
+-- Up-to-date: /usr/share/locale/da/LC_MESSAGES
+-- Installing: /usr/share/locale/da/LC_MESSAGES/kgraphviewer.mo
+-- Up-to-date: /usr/share/locale/ga
+-- Up-to-date: /usr/share/locale/ga/LC_MESSAGES
+-- Installing: /usr/share/locale/ga/LC_MESSAGES/kgraphviewer.mo
+-- Up-to-date: /usr/share/locale/pl
+-- Up-to-date: /usr/share/locale/pl/LC_MESSAGES
+-- Installing: /usr/share/locale/pl/LC_MESSAGES/kgraphviewer.mo
+-- Up-to-date: /usr/share/locale/bg
+-- Up-to-date: /usr/share/locale/bg/LC_MESSAGES
+-- Installing: /usr/share/locale/bg/LC_MESSAGES/kgraphviewer.mo
+-- Up-to-date: /usr/share/locale/ru
+-- Up-to-date: /usr/share/locale/ru/LC_MESSAGES
+-- Installing: /usr/share/locale/ru/LC_MESSAGES/kgraphviewer.mo
+-- Up-to-date: /usr/share/locale/zh_CN
+-- Up-to-date: /usr/share/locale/zh_CN/LC_MESSAGES
+-- Installing: /usr/share/locale/zh_CN/LC_MESSAGES/kgraphviewer.mo
+-- Up-to-date: /usr/share/locale/pa
+-- Up-to-date: /usr/share/locale/pa/LC_MESSAGES
+-- Installing: /usr/share/locale/pa/LC_MESSAGES/kgraphviewer.mo
+-- Up-to-date: /usr/share/locale/hr
+-- Up-to-date: /usr/share/locale/hr/LC_MESSAGES
+-- Installing: /usr/share/locale/hr/LC_MESSAGES/kgraphviewer.mo
+-- Installing: /usr/share/doc/HTML/de/kgraphviewer/index.cache.bz2
+-- Installing: /usr/share/doc/HTML/de/kgraphviewer/index.docbook
+-- Installing: /usr/share/doc/HTML/de/kgraphviewer/kgraphviewer-snap-ask2.png
+-- Installing: /usr/share/doc/HTML/de/kgraphviewer/kgraphviewer-snap-ask3.png
+-- Installing: /usr/share/doc/HTML/de/kgraphviewer/kgraphviewer-snap-config1.png
+-- Installing: /usr/share/doc/HTML/de/kgraphviewer/kgraphviewer-snap-config2.png
+-- Installing: /usr/share/doc/HTML/de/kgraphviewer/kgraphviewer-snap-config3.png
+-- Installing: /usr/share/doc/HTML/de/kgraphviewer/kgraphviewer-snap-init.png
+-- Installing: /usr/share/doc/HTML/de/kgraphviewer/kgraphviewer-snap-main.png
+-- Installing: /usr/share/doc/HTML/de/kgraphviewer/kgraphviewer-snap-pagesmarges.png
+-- Installing: /usr/share/doc/HTML/de/kgraphviewer/kgraphviewer-snap-ppview1.png
+-- Installing: /usr/share/doc/HTML/de/kgraphviewer/kgraphviewer-snap-ppview2.png
+-- Installing: /usr/share/doc/HTML/de/kgraphviewer/kgraphviewer-snap-ppview3.png
+-- Installing: /usr/share/doc/HTML/de/kgraphviewer/kgraphviewer-snap-psetup1.png
+-- Installing: /usr/share/doc/HTML/de/kgraphviewer/kgraphviewer-snap-zmax.png
+-- Installing: /usr/share/doc/HTML/de/kgraphviewer/kgraphviewer-snap-zmin.png
+-- Installing: /usr/share/doc/HTML/et/kgraphviewer/index.cache.bz2
+-- Installing: /usr/share/doc/HTML/et/kgraphviewer/index.docbook
+-- Installing: /usr/share/doc/HTML/it/kgraphviewer/index.cache.bz2
+-- Installing: /usr/share/doc/HTML/it/kgraphviewer/index.docbook
+-- Installing: /usr/share/doc/HTML/nl/kgraphviewer/index.cache.bz2
+-- Installing: /usr/share/doc/HTML/nl/kgraphviewer/index.docbook
+-- Installing: /usr/share/doc/HTML/pt/kgraphviewer/index.cache.bz2
+-- Installing: /usr/share/doc/HTML/pt/kgraphviewer/index.docbook
+-- Installing: /usr/share/doc/HTML/pt_BR/kgraphviewer/index.cache.bz2
+-- Installing: /usr/share/doc/HTML/pt_BR/kgraphviewer/index.docbook
+-- Installing: /usr/share/doc/HTML/sv/kgraphviewer/index.cache.bz2
+-- Installing: /usr/share/doc/HTML/sv/kgraphviewer/index.docbook
+-- Installing: /usr/share/doc/HTML/sv/kgraphviewer/kgraphviewer-snap-ask1.png
+-- Installing: /usr/share/doc/HTML/sv/kgraphviewer/kgraphviewer-snap-ask2.png
+-- Installing: /usr/share/doc/HTML/sv/kgraphviewer/kgraphviewer-snap-ask3.png
+-- Installing: /usr/share/doc/HTML/sv/kgraphviewer/kgraphviewer-snap-config1.png
+-- Installing: /usr/share/doc/HTML/sv/kgraphviewer/kgraphviewer-snap-config2.png
+-- Installing: /usr/share/doc/HTML/sv/kgraphviewer/kgraphviewer-snap-config3.png
+-- Installing: /usr/share/doc/HTML/sv/kgraphviewer/kgraphviewer-snap-init.png
+-- Installing: /usr/share/doc/HTML/sv/kgraphviewer/kgraphviewer-snap-main.png
+-- Installing: /usr/share/doc/HTML/sv/kgraphviewer/kgraphviewer-snap-pagesmarges.png
+-- Installing: /usr/share/doc/HTML/sv/kgraphviewer/kgraphviewer-snap-ppview1.png
+-- Installing: /usr/share/doc/HTML/sv/kgraphviewer/kgraphviewer-snap-ppview2.png
+-- Installing: /usr/share/doc/HTML/sv/kgraphviewer/kgraphviewer-snap-ppview3.png
+-- Installing: /usr/share/doc/HTML/sv/kgraphviewer/kgraphviewer-snap-psetup1.png
+-- Installing: /usr/share/doc/HTML/sv/kgraphviewer/kgraphviewer-snap-zmax.png
+-- Installing: /usr/share/doc/HTML/sv/kgraphviewer/kgraphviewer-snap-zmin.png
+-- Installing: /usr/share/doc/HTML/uk/kgraphviewer/index.cache.bz2
+-- Installing: /usr/share/doc/HTML/uk/kgraphviewer/index.docbook
+-- Installing: /usr/bin/kgraphviewer
+-- Installing: /usr/share/icons/hicolor/16x16/apps/kgraphviewer.png
+-- Installing: /usr/share/icons/hicolor/32x32/apps/kgraphviewer.png
+-- Installing: /usr/share/config.kcfg/kgraphviewersettings.kcfg
+-- Installing: /usr/share/kxmlgui5/kgraphviewer/kgraphviewerui.rc
+-- Installing: /usr/share/applications/org.kde.kgraphviewer.desktop
+-- Installing: /usr/share/metainfo/org.kde.kgraphviewer.appdata.xml
+-- Installing: /usr/lib/aarch64-linux-gnu/libkgraphviewer.so.2.4.3
+-- Installing: /usr/lib/aarch64-linux-gnu/libkgraphviewer.so.3
+-- Installing: /usr/lib/aarch64-linux-gnu/libkgraphviewer.so
+-- Installing: /usr/lib/aarch64-linux-gnu/qt5/plugins/kgraphviewerpart.so
+-- Set runtime path of "/usr/lib/aarch64-linux-gnu/qt5/plugins/kgraphviewerpart.so" to ""
+-- Installing: /usr/share/config.kcfg/kgraphviewer_partsettings.kcfg
+-- Installing: /usr/share/kxmlgui5/kgraphviewer/kgraphviewer_part.rc
+-- Installing: /usr/share/kservices5/kgraphviewer_part.desktop
+-- Installing: /usr/share/kgraphviewerpart/pics/chain.png
+-- Installing: /usr/share/kgraphviewerpart/pics/chain-broken.png
+-- Installing: /usr/share/kgraphviewerpart/pics/kgraphviewer-bev.png
+-- Installing: /usr/share/kgraphviewerpart/pics/kgraphviewer-newnode.png
+-- Installing: /usr/share/kgraphviewerpart/pics/kgraphviewer-newedge.png
+-- Installing: /usr/share/metainfo/org.kde.libkgraphviewer.metainfo.xml
+-- Installing: /usr/include/kgraphviewer/kgraphviewer_interface.h
+-- Installing: /usr/lib/aarch64-linux-gnu/cmake/KGraphViewerPart/KGraphViewerPartConfig.cmake
+-- Installing: /usr/lib/aarch64-linux-gnu/cmake/KGraphViewerPart/KGraphViewerPartConfigVersion.cmake
+-- Installing: /usr/share/doc/HTML/en/kgraphviewer/index.cache.bz2
+-- Installing: /usr/share/doc/HTML/en/kgraphviewer/index.docbook
+-- Installing: /usr/share/doc/HTML/en/kgraphviewer/kgraphviewer-but-layout.png
+-- Installing: /usr/share/doc/HTML/en/kgraphviewer/kgraphviewer-but-open.png
+-- Installing: /usr/share/doc/HTML/en/kgraphviewer/kgraphviewer-but-prev.png
+-- Installing: /usr/share/doc/HTML/en/kgraphviewer/kgraphviewer-but-preview.png
+-- Installing: /usr/share/doc/HTML/en/kgraphviewer/kgraphviewer-but-print.png
+-- Installing: /usr/share/doc/HTML/en/kgraphviewer/kgraphviewer-but-psetup.png
+-- Installing: /usr/share/doc/HTML/en/kgraphviewer/kgraphviewer-but-reload.png
+-- Installing: /usr/share/doc/HTML/en/kgraphviewer/kgraphviewer-but-whatsthis.png
+-- Installing: /usr/share/doc/HTML/en/kgraphviewer/kgraphviewer-but-zoomin.png
+-- Installing: /usr/share/doc/HTML/en/kgraphviewer/kgraphviewer-but-zoomout.png
+-- Installing: /usr/share/doc/HTML/en/kgraphviewer/kgraphviewer-snap-ask1.png
+-- Installing: /usr/share/doc/HTML/en/kgraphviewer/kgraphviewer-snap-ask2.png
+-- Installing: /usr/share/doc/HTML/en/kgraphviewer/kgraphviewer-snap-ask3.png
+-- Installing: /usr/share/doc/HTML/en/kgraphviewer/kgraphviewer-snap-config-appearance.png
+-- Installing: /usr/share/doc/HTML/en/kgraphviewer/kgraphviewer-snap-config-parsing.png
+-- Installing: /usr/share/doc/HTML/en/kgraphviewer/kgraphviewer-snap-config1.png
+-- Installing: /usr/share/doc/HTML/en/kgraphviewer/kgraphviewer-snap-config2.png
+-- Installing: /usr/share/doc/HTML/en/kgraphviewer/kgraphviewer-snap-config3.png
+-- Installing: /usr/share/doc/HTML/en/kgraphviewer/kgraphviewer-snap-init.png
+-- Installing: /usr/share/doc/HTML/en/kgraphviewer/kgraphviewer-snap-main.png
+-- Installing: /usr/share/doc/HTML/en/kgraphviewer/kgraphviewer-snap-pagesmarges.png
+-- Installing: /usr/share/doc/HTML/en/kgraphviewer/kgraphviewer-snap-ppview1.png
+-- Installing: /usr/share/doc/HTML/en/kgraphviewer/kgraphviewer-snap-ppview2.png
+-- Installing: /usr/share/doc/HTML/en/kgraphviewer/kgraphviewer-snap-ppview3.png
+-- Installing: /usr/share/doc/HTML/en/kgraphviewer/kgraphviewer-snap-psetup1.png
+-- Installing: /usr/share/doc/HTML/en/kgraphviewer/kgraphviewer-snap-zmax.png
+-- Installing: /usr/share/doc/HTML/en/kgraphviewer/kgraphviewer-snap-zmin.png
+liauto@x01-orin1:/data/wjg/111/kgraphviewer-2.4.3/build$
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
