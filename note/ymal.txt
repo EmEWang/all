@@ -1,0 +1,122 @@
+
+https://github.com/jbeder/yaml-cpp.git                           #
+https://www.yamllint.com/                                        # yaml格式验证
+https://blog.csdn.net/sinat_38602176/article/details/105640629   # windows下yaml-cpp从配置环境到使用
+https://blog.csdn.net/xhtchina/article/details/113868147         # yaml-cpp介绍
+
+
+yaml-cpp vs2019编译完 使用时连接错误
+https://blog.csdn.net/weixin_36196023/article/details/140498587
+遇到__declspec(dllimport) const YAML::BadSubscript::vftable 错误，在CMAKE时勾选YAML_BUILD_SHARED_LIBS，否则只有lib没有dll。
+
+windows11 编译yaml
+使用cmake-gui.ext->Configure -> Generate -> Open project -> 编译   若出错则查看cmake.txt
+默认生成静态库，若要生成动态库 cmake-gui 中 勾选 YAML_BUILD_SHARED_LIBS
+注意 动态库可以正常使用静态库则链接失败。
+
+
+linux 编译yaml
+mkdir build -> cmake .. -> make    默认生成静态库
+cmake -DBUILD_SHARED_LIBS=ON ..    生成动态库
+
+
+正在尝试使用新版本的libyaml-cpp，使用动态库libyaml-cpp.so，并遇到了链接器问题
+https://cloud.tencent.com/developer/ask/sof/219444
+undefined reference to 'YAML::LoadFile(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)'
+原因: GCC的命令行逻辑
+g++ -L/usr/local/lib -I/usr/local/include -lyaml-cpp -std=c++0x -o testymal  testymal.cpp    改为
+g++ -L/usr/local/lib -I/usr/local/include -std=c++0x -o testymal  testymal.cpp -lyaml-cpp    // OK
+
+
+
+windows cmake-gui中指定MingGW编译
+https://blog.csdn.net/iiinoname/article/details/125344979  # Qt5.14.2配置yaml-cpp
+https://www.cnblogs.com/tamapchn/p/18183405                # Windows平台使用CMake+MinGW64编译OpenCV
+https://blog.csdn.net/lsfreeing/article/details/85859050   # C++ Qt: undefined reference to `_imp___ZN12QApplicationC1ERiPPci'
+1 camke-gui 配置源文件路径
+    # Where is the source code: D:/code/yaml-cpp
+    # Where to build the binaries: D:/code/yaml-cpp/build2
+2 点击configure 然后选择 MingGW Makefiles -> Specify native compiles
+    # C    D:/tool/qt/Qt5.12.12/Tools/mingw730_32/bin/gcc.exe
+    # C++  D:/tool/qt/Qt5.12.12/Tools/mingw730_32/bin/g++.exe
+3 点击Finish -> Generating done就可以把cmake-gui关掉了。
+4 编译 进入创建的build文件夹中，打开Powershell
+    mingw32-make -j 8    # -j 8是为了让CPU进行多任务处理，可以加快编译速度。
+    编译完 就可以在build文件夹中看到libyaml-cpp.a，这是我们后面需要用到的文件。
+5 用Qt测试
+    在Qt Create中新建一个test项目，按照正常流程新建即可，在选择kits的时候要注意选择MinGw 64
+    移动 libyaml-cpp.a 文件 到 Qt的工程目录下新建的一个lib文件夹
+    在 test.pro 中 添加以下内容，根据你自己的实际情况修改
+    INCLUDEPATH += H:\google_download\yaml-cpp-master\include    # INCLUDEPATH  头文件位置
+    LIBS += $$PWD/lib/libyaml-cpp.a                              # 库文件
+    菜单构建(或右键项目)->执行qmake
+6   测试
+    首先准备一个yaml文件，test.yaml内容是
+        name: Hunzi
+        num: 123
+    在mainwindow.cpp中导入头文件
+        #include "yaml-cpp/yaml.h"
+        using namespace YAML;
+    在构造函数中写：
+        Node config;
+        try{
+            config = LoadFile("H:/TempFiles/test.yaml");
+        } catch(BadFile &e) {
+            qDebug() <<"read error!";
+        }
+        qDebug() << "name:" << QString::fromStdString(config["name"].as<std::string>()) << endl;
+        qDebug() << "num:" << config["num"].as<int>() << endl;
+    检查kit
+        构建套件是 Desktop Qt 5.12.12 MinGW 64-bit  构建是 Debug
+    运行
+        name  "Hunzi"
+        num  123
+问题
+    1 如果kit不是MingGW 64的话，如这里选MSVC2017 64，提示 error: undefined reference to `_imp___ZN4YAML8LoadFileERKNSt7__cxx1112...'
+        此时你只要改回MingGW 64即可。至此，Qt5.14.2配置yaml-cpp完成。
+    2 CMake编译时提示：由于找不到 libwinpthread-1.dll，无法继续执行代码。重新安装程序可能会解决此问题。
+        2.1.到QT按照的对应目录：…QT/QTx.xx/Tools/mingwxxx_xx/bin/下找到该文件;
+        2.2.复制到C://Windows/System32下;
+        2.3.重启CMake-GUI即可。
+        D:\tool\qt\Qt5.12.12\5.12.12\mingw73_32\bin (这个路径在qt目录搜索出来的) # 本没有用上面的方法，通过在PATH中添加路径
+    3 cmake-gui configure 时中 Error in configuration process, project files may be invalid
+        CMake Error: CMake was unable to find a build program corresponding to "MinGW Makefiles".  CMAKE_MAKE_PROGRAM is not set.  You probably need to select a different build tool.
+        Configuring incomplete, errors occurred!
+        3.1 file->delete cache     Configure 重新选择
+        3.2 将CMAKE_MAKE_PROGRAM(cmake-gui中这个变量右侧的 ...)的值改为D:/tool/qt/Qt5.12.12/Tools/mingw730_32/bin/mingw32-make.exe，configure即可。
+    4 若 powershell中 提示 mingw32-make 不是命令
+        D:\tool\qt\Qt5.12.12\5.12.12\mingw73_32\bin   # PATH中添加
+    5 报错:cc1plus.exe程序无法正常启动(0xc000007b),请单击确定关闭应用程序  win10_x64+qt5.12(mingw_x64)+cmake+opencv
+        D:\tool\qt\Qt5.12.12\Tools\mingw730_64\bin   # 解决办法:把mingw的bin目录加到环境变量path里面去.
+
+
+
+
+
+
+
+
+YAML规语法则
+大小写敏感
+使用缩进表示层级关系
+缩进时不允许使用Tab键，只允许使用空格。
+缩进的空格数目不重要，只要相同层级的元素左侧对齐即可
+# 表示注释，从这个字符一直到行尾，都会被解析器忽略。
+字符串默认不使用引号表示。如果字符串之中包含空格或特殊字符，需要放在引号之中。
+单引号和双引号都可以使用，双引号不会对特殊字符转义。
+单引号之中如果还有单引号，必须连续使用两个单引号转义。
+字符串可以写成多行，从第二行开始，必须有一个单空格缩进。换行符会被转为空格。
+
+YAML支持的数据结构有三种。
+对象：键值对的集合，又称为映射（mapping）/ 哈希（hashes） / 字典（dictionary）   key: value；kv之间有空格 k: v
+数组：一组按次序排列的值，又称为序列（sequence） / 列表（list）
+纯量（scalars）：单个的、不可再分的值
+
+
+
+
+
+
+
+
+

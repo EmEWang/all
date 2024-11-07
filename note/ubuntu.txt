@@ -17,6 +17,23 @@ Ubuntu 20.4版本镜像下载国内地址 http://mirrors.aliyun.com/ubuntu-relea
 ubuntu/debian    apt-get   #软件包管理工具
 
 
+怎么禁止/开启Ubuntu自动更新升级
+system setting齿轮->Software & Updates->Update->自动检查更新下拉框->从不
+
+
+Ubuntu 16.04 /mnt/hgfs/下不显示共享文件夹的处理办法
+  1.apt-get install open-vm-tools
+  2.vmhgfs-fuse .host:/ /mnt/hgfs
+    sudo chmod o+w /mnt/hgfs  若失败 添加权限
+    sudo mkdir /mnt/hgfs      若没有这个文件夹
+但重启之后会失效，需要重新执行vmhgfs-fuse .host:/ /mnt/hgfs
+
+解决重启后共享文件夹失效
+vmhgfs-fuse .host:/ /mnt/hgfs -o allow_other -o uid=1000 -o gid=1000 -o umask=022   # sudo vi /etc/rc.local 文件尾部插入
+                                                                                    sudo chmod +x /etc/rc.local 加上权限
+.host:/ /mnt/hgfs  fuse.vmhgfs-fuse allow_other 0 2     # sudo vi /etc/fstab 文件尾部插入
+
+
 ubuntu关闭和开启图形界面
 图像界面的关闭和开启是安装显卡驱动的条件之一
 关闭图形界面

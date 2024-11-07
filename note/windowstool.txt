@@ -39,6 +39,11 @@ set desk=%%j)
 wmic /output:%desk%\重命名为中心部门+姓名+电脑SN码.txt product get name,version,__path
 
 
+Edge可在 Win10 / Win11 桌面添加搜索栏  右上角... -> 更多工具  -> 启动搜索栏
+
+Windows 11 任务栏图标对齐方式
+右击任务栏空白处-任务栏设置-任务栏行为-任务栏对齐方式 更改为 靠左
+
 
 控制面板 切换成小图标 -> 凭据管理器   # Win11凭证管理
 

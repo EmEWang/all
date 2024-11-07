@@ -1,4 +1,78 @@
 
+VS2019产品密钥
+NYWVH-HT4XC-R2WYW-9Y3CM-X4V3Y       # Visual Studio 2019 Professional
+BF8Y8-GN2QH-T84XB-QVY3B-RC4DF       # Visual Studio 2019 Enterprise
+
+
+RGB（204、232、207）  # 工具->选项->环境->字体和颜色，显示项为“纯文本”   背景设置为绿豆沙色
+工具->选项->字体和颜色，显示项为“纯文本”，设置项背景色：色调=85，饱和度=123，亮度=205，或者 rgb为199，238，206。字体设置成consolas,这是等宽字体
+设置之后，发现字体颜色不够协调，原因是颜色主题为深色，要先将颜色主题设置为浅色(工具->选项->环境->常规，)，确定之后，再重复上述操作，
+VS工程->属性->配置属性->调试->环境中设置为  PATH=$(QTDIR)\bin%3b$(PATH)  其中%3b是分号(;)的16进制编码。
+
+
+xxx.vcxproj.user        # 工程下的这个文件为自己配置文件 删除掉便于移植 会自动生成
+
+
+Visual Assist安装后vs界面看不到菜单和按钮问题解决
+https://blog.csdn.net/henysugar/article/details/131722970
+就是删除vs的一个配置文件，然后重新打开vs再把va插件启用，然后重新打开vs就可以了。
+vs2019：C:\Users\???\AppData\Local\Microsoft\VisualStudio\16.0_??????
+vs2022：C:\Users\???\AppData\Local\Microsoft\VisualStudio\17.0_??????
+删除文件：privateregistry.bin
+然后重新打开vs，进入菜单扩展里面点击va插件的“启用”，然后重启就可以了。
+不过，注意，这样后，vs的相关配置例如快捷方式啥的都会重置了，所以有需要的话，在执行操作前，建议点击vs菜单先把配置给导出，后面再导入。
+
+
+Microsoft Visual Studio 2008中文语言包
+msdn.itellyou.cn 依次打开：开发人员工具→Visual Studio 2008→中文（简体），选择你要下载的ISO包，。
+
+
+
+win10安装visualAssistX无反应的一种情况
+https://blog.csdn.net/No_21name/article/details/135392409
+案例：vs2008，安装va_X_2366，运行后没反应，界面不出来，还以为闪退了，查看任务管理器发现有进程在，只是内存占用48K后没动静了。
+解决：结束安装进程，关闭vs2008，右键va_X_2366->属性->兼容性->选择以兼容模式运行这个程序，兼容性选win7->确定，再次双击运行正常显示安装界面。
+本人用win11安装vs2010的Visual Assist X 10.9.2210也是这么解决的。
+或者再勾选 以管理员身份运行此程序
+
+
+Microsoft Visual Studio 2010 Tools for Office 语言包（4.0 版运行库）
+https://www.microsoft.com/zh-cn/download/details.aspx?id=105523
+
+
+vs2010自动展开选中当前代码所在的文件位置的功能
+tool>>options>>projects and solutions>> 勾上track active item in solution explorer>>OK 保存即可
+工具-选项-项目和解决方案-常规-在解决方案资源管理器中跟踪活动项
+
+
+
+vs2010工程中定义附加库目录，头文件目录；也就是项目中继承的值
+https://www.cnblogs.com/haomiao/p/5812860.html
+XXXRelease/Debug.props  中能看到
+
+
+
+stdafx.h 预编译头文件的作用
+微软搞的预编译机制中的一个默认文件，里面填写代码用到的h文件。
+vs在编译代码时，会把 stdafx.h 里面的h进行预先编译，缓存起来，当不更改stdafx.h 时,则不重新编译这些h，更加高效地进行的run/debug操作。当你把vs工程设置成 [不使用预编译机制]时，可能会导致每次调试运行的时候，编译速度变慢。
+常见的使用场景就是 stdafx.h 中包含常用的系统头文件，因为这些头文件不经常改变，会给很多.cpp文件使用，
+这样只需要让别的 .cpp 文件去包含 stdafx.h 头文件就行了；如果随意改动 stdafx.h 文件的话，整个程序就会重新编译一遍。编译时 stdafx.h 尽管被多个 .cpp 包含，但只会编译一次，这样就加快了编译速度。
+stdafx.cpp 专门用来生成预编译文件，stdafx.cpp 里只有一行代码 #include “stdafx.h”, 编译 stdafx.cpp 会产生一个 .pch 文件。别的 .cpp 文件编译的时候就会使用这个 .pch 文件。
+fatal error C1083: 无法打开包括文件:“stdafx.h”: No such file or directory    #.cpp文件和stdafx.h头文件不在同一级目录下，只需要修改#include "stdafx.h"的路径为相对路径即可。
+warning C4627: “#include “…\stdafx.h””: 在查找预编译头使用时跳过              # 打开编译错误的.cpp文件，将#include "stdafx.h"添加到第一行（必须是第一行）。
+fatal error C1010: 在查找预编译头时遇到意外的文件结尾。                        # 因为工程中的每个cpp文件属性默认都是使用预编译头（/YU）的(选择了使用,就要在源文件中显式写上#include)，但是添加的第三方文件并没有 #include “stdafx.h” 预编译指示头，所以编译器在此cpp文件中一直到末尾都没有找到它。
+预编译头的使用方法
+  创建预编译头文件 stdafx.h, 在这个头文件中包含希望包含的头文件，注意不要包含自己的头文件，只包含系统头文件，不会发生变动。
+  创建 stdafx.cpp ，在这个文件中包含 stdafx.h
+  我们要让编译器知道， stdafx.cpp 文件是用来创建 .pch 文件的。在 stdafx.cpp 文件上面右键 --> 属性 --> 所有配置 --> C/C++ --> 预编译头 --> 选择 : 创建预编译头(/Yc)
+  我们要让编译器知道，哪些 .cpp 文件需要使用 .pch 文件。在需要使用 .pch 文件的 .cpp 中添加 #include “stdafx.h”, 然后在 .cpp 文件上右键 --> 属性 --> 所有配置 --> C/C++ --> 预编译头 --> 选择 : 使用预编译头(/Yu)
+  单独编译 stdafx.cpp 就会产生 .pch 文件了，如果以后不小心删除了 .pch 文件，可以单独编译一下 stdafx.cpp 文件。
+  注意：
+    并不是所有的 .cpp 文件都要包含 stdafx.h ，是否使用预编译头是可以在配置项中修改的。
+    如果一个 .cpp 文件使用了预编译头文件，那么要在 .cpp 文件的最开头去包含 stdafx.h 文件，否则会跳过 #include “stdafx.h” 之前的 #include 代码。
+
+
+
 
 windows查找dll  1环境变量 2工作目录 3当前目录
 $(ProjectDir)
@@ -41,7 +115,7 @@ C4996 'itoa': The POSIX name for this item is deprecated. Instead, use the ISO C
   0.项目->属性->配置属性->C/C++ ->常规->SDL检查 选择否
   1.改成错误提示后面所建议使用的函数
   2.在最头部添加宏定义： #define _CRT_SECURE_NO_DEPRECATE
-  3.更改预处理定义： 项目->属性->配置属性->C/C++ -> 预处理器 -> 预处理器定义，增加 _CRT_SECURE_NO_DEPRECATE _CRT_NONSTDC_NO_DEPRECATE _CRT_SECURE_NO_WARNINGS
+  3.更改预处理定义： 项目->属性->配置属性->C/C++->预处理器->预处理器定义，增加 _CRT_SECURE_NO_DEPRECATE _CRT_NONSTDC_NO_DEPRECATE _CRT_SECURE_NO_WARNINGS
 
 C2664 VS2019项目出现"const char *" 类型的实参与 “char *” 类型的形参不兼容错误的解决方法
   项目->project 属性->配置属性->高级->字符集 双击字符集后面，改成使用多字节字符集
@@ -55,9 +129,7 @@ E0167	"const char *" 类型的实参与 "char *" 类型的形参不兼容
   项目->project 属性->配置属性->连接器->调试->生成调试信息
 
 代码文件路径追踪:工具 选项 项目和解决方案 常规 在解决方案资源管理器中追踪活动项
-vs2019护眼编程背景色
-工具 -> 选项 -> -> 字体和颜色，显示项为“纯文本”，设置项背景色：色调=85，饱和度=123，亮度=205，或者 rgb为199，238，206。字体设置成consolas,这是等宽字体
-设置之后，发现字体颜色不够协调，原因是颜色主题为深色，要先将颜色主题设置为浅色(工具 -> 选项 -> 环境 -> 常规，)，确定之后，再重复上述操作，
+
 
 alt+鼠标 列模式选取快
 alt+shift 列模式
@@ -101,16 +173,16 @@ C4996
         2.(你的项目)-->右键 --> 属性， 进去以后，在C++  --> 预处理器  -->  预处理器定义  中添加：_CRT_SECURE_NO_WARNINGS
 
 visual studio中指定dll存放目录的几种方法
-（1）选择当前工程，右击"属性" -> "配置属性" -> "调试"，在"工作目录"设置dll的路径
+（1）选择当前工程，右击"属性"->"配置属性"->"调试"，在"工作目录"设置dll的路径
 优点：跨平台（拷贝到其他平台不用改动）
 缺点：目录不能很干净，因为生成的文件会自动放到这个目录下
-（2）创建一个文件夹lib，里面放入所有需要的dll文件,右击"属性" -> "生成事件" -> "预先生成事件"，输入命令xcopy $(SolutionDir)httpclient/bin $(OutDir) /a /F /I /Y /C",在预处理的时候把dll文件拷贝到Debug目录下。
+（2）创建一个文件夹lib，里面放入所有需要的dll文件,右击"属性"->"生成事件"->"预先生成事件"，输入命令xcopy $(SolutionDir)httpclient/bin $(OutDir) /a /F /I /Y /C",在预处理的时候把dll文件拷贝到Debug目录下。
 优点：跨平台（拷贝到其他平台不用改动）
 缺点：dll文件太多，文件太大的情况下，拷贝会很费时。
 （3）把dll文件目录设置到环境变量或者把dll文件拷贝到system32目录下(64位系统好像是拷贝到system64中)
 优点：项目无需太多改动
 缺点：不能跨平台，系统侵入
-（4）设置项目的环境变量，选择当前工程，右击"属性" -> "配置属性" -> "调试"，在"环境"添加dll路径，如：path=%path%;../httpclient/bin
+（4）设置项目的环境变量，选择当前工程，右击"属性"->"配置属性"->"调试"，在"环境"添加dll路径，如：path=%path%;../httpclient/bin
 
 
 
@@ -213,7 +285,7 @@ name: _strupr. See online help for details.
 VS2015解决 error C4996: 'strdup': The POSIX name for this item is deprecated.
 
 
-在 工程属性 -> c/c++ -> 预处理器 -> 预处理器定义 中添加：
+在 工程属性->c/c++->预处理器->预处理器定义 中添加：
 
  DEBUG模式下：
 _CRT_SECURE_NO_DEPRECATE

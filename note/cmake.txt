@@ -1,0 +1,104 @@
+
+https://cmake.org/download/                   # 官网下载  若下载免安装的自己配下PATH就行
+https://paddledetection.readthedocs.io/advanced_tutorials/deploy/docs/windows_vs2019_build.html  # vs 2019 Community CMake 编译指南
+
+
+windows下编译 一般用cmake-gui.exe
+1 配置 where is the source code 和 where to build the binaries
+2 Configure -> Generate -> Open project
+3 编译
+
+
+CMake-gui 配置Configure 出错，Error in configuration process，preject files may be invalid
+file->delete cache     Configure 重新选择
+
+
+
+vs2019使用cmake编译需要添加的组件
+工具->获取工具和功能
+                   > 使用c++的Linux开发 勾选 适用于Linux的C++ CMake工具
+                   > 使用c++的桌面开发 默认勾选
+
+vs2017使用cmake编译需要添加的组件
+https://blog.csdn.net/zhaitianbao/article/details/120223689
+工具->获取工具和功能  (勾选所有的v141工具集和CMake相关的)
+                   > 使用c++的Linux开发  勾选   适用于Linux的 C++ CMake工具
+                   > 使用c++的桌面开发   勾选   用于CMake的 Visual C++工具
+
+
+问题CMake编译出错
+    CMake Error at CMakeLists.txt:3 (project):
+        Running
+        'nmake' '-?'
+        failed with:
+        系统找不到指定的文件。
+        CMake Error: CMAKE_C_COMPILER not set, after EnableLanguage
+        CMake Error: CMAKE_CXX_COMPILER not set, after EnableLanguage
+        -- Configuring incomplete, errors occurred!
+背景：在windows终端上使用cmake构建nats.c库。（编译器MinGW）
+解决 cmake -G "MinGW Makefiles" ..
+
+
+
+cmake_symlink_library: System Error: Operation not supported
+创建链接不成功，要确认当前帐户下是否有权限在编译的目录中有创建链接的权限
+使用vmware，在windows机器的共享目录中编译，无法创建链接，就会提示上面的错误。
+解决办法是，把源码复制到linux的本地目录中
+另外，从linux中拷贝符号链接到windows机器的共享目录时，也会提示错误导致无法拷贝，也是这个原因。你可以使用xshell等将符号链接拷贝出来。
+
+
+
+https://cmake.org/cmake/help/latest/variable/BUILD_SHARED_LIBS.html
+https://blog.csdn.net/qq_33154343/article/details/125928773
+BUILD_SHARED_LIBS  编译动态库开关
+是 add_library() 的一个全局标志，当 add_library() 没有指定 [STATIC | SHARED | MODULE] 是哪一个时，可以决定为生成 动态库 还是 静态库。
+cmake -DBUILD_SHARED_LIBS=ON ..     # 命令行中使用表示生成动态库   OFF 则为静态库
+
+set(BUILD_SHARED_LIBS ON)                 # default is OFF  CMakeList.txt中
+add_library(${PROJECT_NAME} ${SRCS_MAIN})
+
+CMAKE_BUILD_TYPE  指定 生成产物 的构建类型。其值如下
+Debug：详细调试信息
+Release：无调试信息
+RelWithDebInfo：带有调试信息的 Release，依旧可能又略微优化
+MinSizeRel：没使用过
+
+编译生成的文件如下，若目标xxx
+xxx.dll xxx.exp xxx.lib              # release dll
+xxx.lib                              # release lib
+xxx.dll xxx.exp xxx.lib xxx.pdb      # debug   dll
+xxx.lib xxx.pdb                      # debug   lib
+
+
+
+
+将CMake项目转换为Visual Studio C++解决方案
+1 使用CMake命令生成
+  在CMakeLists.txt所在的目录下，打开命令行（或终端），然后运行以下命令来生成Visual Studio解决方案和项目文件：
+  cmake -G "Visual Studio 16 2019"-A x64   # 对于Visual Studio 2019，x64架构
+  cmake -G "Visual Studio 17 2022"-A x64   # 对于Visual Studio 2022，x64架构
+  # 注意：'-G' 参数指定了生成器，'-A' 参数指定了目标架构（x86, x64, ARM等）。
+  # '..' 表示CMakeLists.txt的父目录，这通常是源代码的根目录。
+这将生成一个Visual      Studio解决方案文件（.sln）和一系列项目文件（.vcxproj）。
+2 使用CMake-gui生成
+  使用主界面下的 Configure 和 Generate 按钮
+
+
+在Visual Studio中直接打开CMake项目并调试
+打开CMake项目：
+  在Visual Studio中，选择“文件” > “打开” > “CMake”，然后选择你的CMakeLists.txt文件。
+  Visual Studio会解析CMakeLists.txt文件并生成解决方案和项目文件。
+配置CMake设置（如果需要）：
+  在“解决方案资源管理器”中，右键点击CMakeLists.txt文件，然后选择“CMake设置”。在这里，可以设置生成器、生成器平台、变量等。
+生成项目：
+在菜单栏上，选择“生成” > “生成解决方案”或按Ctrl+Shift+B。这将触发CMake来配置和生成你的项目。
+设置调试：
+  在“解决方案资源管理器”中，找到你想要调试的目标（通常是可执行文件或库）。
+  右键点击它，然后选择“设为启动项目”。
+  在菜单栏上，选择“调试” > “开始调试”或按F5来启动调试会话。
+附加到进程（如果需要）：
+  如果你的CMake项目生成了一个后台进程或服务器，并且你想要调试它，而不是直接启动它，你可以使用“调试” > “附加到进程”来附加到正在运行的进程。
+
+
+
+

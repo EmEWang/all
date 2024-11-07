@@ -1,0 +1,7 @@
+
+
+
+
+Beyond Compare 中文乱码解决
+Tools=>File Formats=>Conversion=>encoding，选ANSI，应用。
+工具=>文件格式=>转换=>编码=>选择ANSI，应用，即可解决中文注释乱码问题。

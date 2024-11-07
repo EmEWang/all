@@ -16,6 +16,122 @@ wmic bios get serialnumber #查看主机序列号
 3 FreeLibrary         使用完 释放dll句柄
 
 
+WIN32，_WIN32，_WIN64介绍使用
+WIN32
+  定义在 minwindef.h 下第 37 行
+  在vs中“项目属性-C/C++-预处理器-预处理器定义”声明了，而在 x64 配置下，这个常量并不在项目预定义列表中。
+  即是说，只要包含了 Windows.h，那么 WIN32 是肯定定义了的，但不能用于判断平台环境(32位还是64位环境)。
+  但是如果在预处理定义里删掉 WIN32，又不包含 Windows.h，那么 WIN32 未定义
+_WIN32，_WIN64
+  这两个比较特别，没有任何显式定义。在 Windows.h 里没有，在“项目属性-C/C++-预处理器-预处理器定义”下也没有。
+  根据 MSDN，这是由编译器（ml.exe/ml64.exe）内部定义的。具体描述是
+    _WIN32：Defined for applications for Win32 and Win64. Always defined.
+    _WIN64：Defined for applications for Win64.
+总结
+  WIN32宏  只要包含了 Windows.h，那么 WIN32 常量是肯定定义了的，所以不能用于判断平台环境
+  _WIN32   32位和64位程序都有，且总是定义的.
+  _WIN64   只有64位程序才有
+使用
+  WIN32/_WIN32 可以用来判断是否 Windows 系统（对于跨平台程序），而 _WIN64 用来判断编译环境是 x86 还是 x64
+判断是不是windows平台
+  #if _WIN32 || WIN32  //windows平台
+  ...
+  #else
+  ...
+  #endif
+判断是不是64位环境还是32位
+  #ifdef _WIN64
+
+  #ifdef _DEBUG
+  #pragma comment(lib, "*x64d.lib")
+
+  #else
+  #pragma comment(lib, "*x64r.lib")
+  #endif
+
+  #else
+
+  #ifdef _DEBUG
+  #pragma comment(lib, "*x86d.lib")
+  #else
+  #pragma comment(lib, "*x86r.lib")
+  #endif
+
+  #endif
+易犯错误案例(容易使用WIN32进行判断，但是是错误的
+#ifdef WIN32
+
+#ifdef _DEBUG
+#pragma comment(lib, "*x86d.lib")
+#else
+#pragma comment(lib, "*x86r.lib")
+#endif
+
+#else
+
+#ifdef _DEBUG
+#pragma comment(lib, "*x64d.lib")
+
+#else
+#pragma comment(lib, "*x64r.lib")
+#endif
+
+#endif
+
+
+
+
+DLL查找顺序
+https://www.cnblogs.com/tocy/p/windows_dll_searth_path.html
+1. DLL查找路径基础
+应用程序可以通过以下方式控制一个DLL的加载路径：使用全路径加载、使用DLL重定向、使用manifest文件。
+如果上述三种方式均未指定，系统查找DLL的顺序将按照本部分描述的顺序进行。
+对于以下两种情况的DLL，系统将不会查找，而是直接加载：
+  a. 对于已经加载到内存中的同名DLL，系统使用已经加载的DLL，并且忽略待加载DLL的路径。（注意对某个进程而言，系统已经加载的DLL一定是唯一的存在于某个目录下。）
+  b. 如果该DLL存在于某个Windows版本的已知DLL列表（unkown DLL）中，系统使用已知DLL的拷贝（包括已知DLL的依赖项）。已知DLL列表可以从如下注册表项看到：HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\KnownDLLs。
+这里有个比较坑的地方，对于有依赖项的DLL（即使使用全路径指定DLL位置），系统查找其所依赖DLL的方法是按照实际的模块名称来的，因此如果加载的DLL不在系统查找顺序目录下，那么动态加载该DLL（LoadLibrary）会返回一个"找不到模块"的错误。
+
+2. 系统标准DLL查找顺序
+系统使用的标准DLL查找顺序依赖于是否设置了"安全DLL查找模式"（safe DLL search mode）。"安全DLL查找模式"会将用户当前目录置于查找顺序的后边。
+"安全DLL查找模式"默认是启用的，禁用的话，可以将注册表项HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\SafeDllSearchMode设为0。调用SetDllDirectory函数可以禁用"安全DLL查找模式"，并修改DLL查找顺序。
+Windows XP下，"安全DLL查找模式"默认是禁用的，需要启用该项的话，在注册表中新建一个SafeDllSearchMode子项，并赋值为1即可。"安全DLL查找模式"从Windows XP SP2开始，默认是启用的。
+启用"安全DLL查找模式"时，查找顺序如下：
+  a. 应用程序所在目录；
+  b. 系统目录。GetSystemDirectory返回的目录，通常是系统盘\Windows\System32；
+  c. 16位系统目录。该项只是为了向前兼容的处理，可以不考虑；
+  d. Windows目录。GetWindowsDirectory返回的目录，通常是系统盘\Windows；
+  e. 当前目录。GetCurrentDirectory返回的目录；
+  f. 环境变量PATH中所有目录。
+
+如果"安全DLL查找模式"被禁用，查找顺序如下：
+  a. 应用程序所在目录；
+  b. 当前目录。GetCurrentDirectory返回的目录；
+  c. 系统目录。GetSystemDirectory返回的目录，通常是系统盘\Windows\System32；
+  d. 16位系统目录。该项只是为了向前兼容的处理，可以不考虑；
+  e. Windows目录。GetWindowsDirectory返回的目录，通常是系统盘\Windows；
+  f. 环境变量PATH中所有目录。
+
+3. 修改系统DLL查找顺序
+系统使用的标准DLL查找顺序可以通过以下两种方式调整：
+  3.1 使用LOAD_WITH_ALTERED_SEARCH_PATH标志调用LoadLibraryEx函数；
+  这种方式调用LoadLibraryEx函数，需要设置lpFileName参数（绝对路径）。与标准查找策略不同的是，使用LOAD_WITH_ALTERED_SEARCH_PATH标志调用LoadLibraryEx函数的DLL查找顺序将"查找应用程序所在目录"修改为lpFileName指定的目录。
+  3.2 调用SetDllDirectory函数。
+  注意：SetDllDirectory函数在Windows XP SP1开始支持的。
+  函数SetDllDirectory在调用参数lpPathName是一个路径时，可支持修改DLL搜索路径。修改之后的搜索顺序如下：
+  a. 应用程序所在目录；
+  b. 函数SetDllDirectory参数lpPathName给定的目录；
+  c. 系统目录。GetSystemDirectory返回的目录，通常是系统盘\Windows\System32；
+  d. 16位系统目录。该项只是为了向前兼容的处理，可以不考虑；
+  e. Windows目录。GetWindowsDirectory返回的目录，通常是系统盘\Windows；
+  f. 环境变量PATH中所有目录。
+  如果lpPathName参数为空字符串，这样就会把当前目录从DLL搜索路径中去掉。
+  如果用NULL参数调用SetDllDirectory函数，可以恢复按照系统注册表的"安全DLL查找模式"来查找DLL。
+
+当然win8或者windows server 2012提供更多的可定制方法，这个可以参考MSDN上介绍。比如：SetDefaultDllDirectories、 AddDllDirectory、RemoveDllDirectory。
+
+
+
+
 
 SetUnhandledExceptionFilter()  函数让程序优雅崩溃
 
