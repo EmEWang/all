@@ -222,18 +222,22 @@ str = "42"; int value = str.toInt();    // 返回 42
 str = "a";  int value = str.toUInt(nullptr,16); // 返回 10
 str = QString::number(color.rgb(),16)   // QColor color; 16进制字符串
 str = "Hello, World!"; QString upperStr = str.toUpper();        // 返回 "HELLO, WORLD!"   toLower()返回 "hello, world!"
-QString QString::trimmed() const
-  返回值为去除了开头和结尾的空白字符串，这里的空白指QChar::isSpace()返回值为true，比如'\t','\n','\v','\f','\r'和' ';
-  str = "  Hello, world!  "; QString trimmedStr = str.trimmed();  // 返回 "Hello, world!"
-QString QString::simplified() const
-  返回字符串开头和结尾除去空白的字符串，并且内部的空白字符也去掉，这里的空白字符和上面的一样。
-QString QString::arg(int a, int fieldWidth = 0, int base = 10, QChar fillChar = QLatin1Char(' ')) const // 格式化
-QString QString::arg(long a, int fieldWidth = 0, int base = 10, QChar fillChar = QLatin1Char(' ')) const
-QString QString::arg(double a, int fieldWidth = 0, char format = 'g', int precision = -1, QChar fillChar = QLatin1Char(' ')) const
+QString trimmed() const     // 去除开头和结尾的空白字符串，指QChar::isSpace()返回值为true，如'\t','\n','\v','\f','\r'和' ';
+QString simplified() const  // 去除开头，结尾和内部的空白字符串，空白字符同上。
+QString arg(int a, int fieldWidth = 0, int base = 10, QChar fillChar = QLatin1Char(' ')) const // 格式化
+QString arg(long a, int fieldWidth = 0, int base = 10, QChar fillChar = QLatin1Char(' ')) const
+QString arg(double a, int fieldWidth = 0, char format = 'g', int precision = -1, QChar fillChar = QLatin1Char(' ')) const // 参数3 格式  参数4 小数点后位数
 QString str2=QString::number(num2,'f',2);   // 数字转QString，并保留小数点位数
 QString::asprintf("%d", xx);                // 数字转QString，使用asprintf
 QString::asprintf("%.3f",yy);
 
+static QString number(int, int base=10);
+static QString number(uint, int base=10);
+static QString number(long, int base=10);
+static QString number(ulong, int base=10);
+static QString number(qlonglong, int base=10);
+static QString number(qulonglong, int base=10);
+static QString number(double, char f='g', int prec=6); // 参数2 f简单方式表示，g科学计数法表示   参数3 保留小数位数
 
 
 QStringList

@@ -8,14 +8,14 @@ void resizeEvent(QResizeEvent *rsize);     // protected:  重写这个方法处�
 
 void setWindowModality(Qt::WindowModality modify)   // 设置窗口模态
   Qt::WindowModality windowModality()const;         // 返回窗口模态
-  Qt::NonModal         : 0 表示该窗口不是模态窗口，不会阻止其他窗口的输入。
-  Qt::WindowModal      : 1 表示该窗口是单个窗口层次结构的模态，会阻止输入到其父窗口、所有祖父窗口以及其父窗口和祖父窗口的所有同级窗口。（说人话就是这个模态窗口对象树上的输入型事件都被阻止了，除了自己，对象树的意思就是这个模态框得设置 parent，不然是阻塞不了别的窗口的）。你得设置 parent， 不然你也阻塞不了谁啊
-  Qt::ApplicationModal : 2 表示该窗口是应用程序的模态窗口，会阻止本应用所有窗口的输入。（WindowModal 多个不在同一对象树的窗口还可以切换，ApplicationModal 就没有对象树的限制了，除了自己谁也不听使唤）
+  Qt::NonModal         : 0 默认，不是模态窗口，不会阻止其他窗口的输入。
+  Qt::WindowModal      : 1 是单个窗口层次结构的模态，阻止输入到其父/祖父等所有同级窗口。得设置 parent， 不然阻塞不了。
+  Qt::ApplicationModal : 2 是应用程序的模态窗口，阻止本应用所有窗口的输入。(WindowModal 多个不在同一对象树的窗口可切换)。
 QDialog 模态
-  QDialog 是 QWidget 的派生类，不同于 QWidget 的默认无模态，QDialog 有三种情况：
-  调用 show() 显示：此时的模态属性是根据你 setWindowModality 设置的模式来决定的。或者你可以设置 QDialog::setModal(bool model) ，为 false（默认 false）则表示 Qt::NonModal ，为 true 则表示 Qt::ApplicationModal 。
-  调用 exec() 显示：此时会忽略你设置的模态属性，默认以 Qt::ApplicationModal 显示，阻塞整个应用的窗口交互，并且会同步等待返回值。
-  调用 open() 显示：此时会忽略你设置的模态属性，默认以 Qt::WindowModal 显示，但是是异步处理，立即返回的。
+  QDialog 是 QWidget 的派生类，不同于 QWidget 的默认无模态，QDialog 有三种调用情况显示：
+  show()：模态属性由 setWindowModality 设置的模式决定。亦可设置 QDialog::setModal(bool model) ，false(默认)表示 Qt::NonModal ，true 表示 Qt::ApplicationModal 。
+  exec()：忽略你设置的模态属性，默认以 Qt::ApplicationModal 显示，阻塞整个应用的窗口交互，并且会同步等待返回值。
+  open()：忽略你设置的模态属性，默认以 Qt::WindowModal 显示，但是是异步处理，立即返回的。
 
 setWindowFlags(windowFlags()&~Qt::WindowCloseButtonHint&~Qt::WindowContextHelpButtonHint);  // 去掉关闭按钮，去掉帮助按钮
   Qt::FrameWindowHint          // 没有边框的窗口
@@ -27,6 +27,8 @@ setWindowFlags(windowFlags()&~Qt::WindowCloseButtonHint&~Qt::WindowContextHelpBu
   Qt::WindowMaximizeButtonHint // 显示最大化按钮
   Qt::WindowMinMaxButtonsHint  // 显示最小化按钮和最大化按钮
   Qt::WindowCloseButtonHint    // 显示关闭按钮
+  Qt::Dialog                   // 独立窗口
+
 一个控件放在另外一个控件或窗体的前面或者后面
   1 通过stackOver和stackUnder去控制
     button->stackUnder(label);   // 将button控件置于label控件的下方
@@ -36,12 +38,9 @@ setWindowFlags(windowFlags()&~Qt::WindowCloseButtonHint&~Qt::WindowContextHelpBu
     button->lower();
   3 可以通过右键窗体放到后面或者前面，内部写代码在窗体缩放时，实现控制窗体显示的具体位置。
 
-setStatusTip()    状态栏提示    窗口的左下角出现                                      只有MainWindow
-setToolTip()      工具提示      鼠标放到控件上，浮动出一个小黄框                        MainWindow、Dialog和QWdiget都有作用
-setWhatsThis()    帮助功能      标题栏上有一个?按钮，先点按钮鼠标变问号，再点控件才出现   只有QDialog起作用
-setStatusTip用于MainWindow的状态栏提示；
-setToolTip用于控件的提示；
-setWhatsThis用于Dialog上的帮助信息。
+setStatusTip()   // 状态栏提示  窗口的左下角出现                             MainWindow的状态栏提示  只有MainWindow
+setToolTip()     // 工具提示    鼠标放到控件上，浮动出一个小黄框              控件的提示       MainWindow、Dialog和QWdiget都有作用
+setWhatsThis()   // 帮助功能    标题栏上?按钮，先点鼠标变问号，再点控件才出现  Dialog上的帮助信息  只有QDialog起作用
 
 添加工具栏
 给主窗口（QMainWindow类）添加工具栏非常方便，直接使用addToolBar 即可，如下所示：
@@ -77,19 +76,18 @@ Qt::FindChildOptions是一个QFlags<FindChildOption>类型定义，它存储一�
 可能情况
   返回NULL
     不能转换为类型T - 与Qt::FindChildOption取值无关。
-      QPushButton *button = parentWidget->findChild<QPushButton *>(); // parentWidget所有子孙部件中没有QPushButton，无论是否递归搜索，均返回NULL。
+      QCheckBox *checkBox = parent->findChild<QCheckBox *>();     // 所有子孙中没有QCheckBox，是否递归搜索，均返回NULL。
     可以转换为类型T，但是对应的name不存在 - 与Qt::FindChildOption取值无关。
-        QCheckBox *checkBox = parentWidget->findChild<QCheckBox *>("Qt"); // parentWidget上有QCheckBox，但没有名为“Qt”的，所以无论是否递归搜索，均返回NULL。
+      QCheckBox *checkBox = parent->findChild<QCheckBox *>("Qt"); // 没有名为“Qt”的QCheckBox，是否递归搜索，均返回NULL。
     可以转换为类型T，对应的name也存在（非直接孩子） - Qt::FindChildOption取值为Qt::FindDirectChildrenOnly。
-        QCheckBox *checkBox = parentWidget->findChild<QCheckBox *>("name2", Qt::FindDirectChildrenOnly); // 查找直接孩子，而直接孩子中没有名为“name2”的QCheckBox，所以返回NULL。
+      QCheckBox *checkBox = parent->findChild<QCheckBox *>("name2", Qt::FindDirectChildrenOnly); // 直接孩子没有名为“name2”的QCheckBox，返回NULL。
   返回非NULL
-    1 可以转换为类型T；2  对应的name存在（如果name为空字符串，此条件可忽略，只需要参考1）. // 条件
-    理解直接与非直接孩子的区别与关系（可以想象一下血缘关系）。name是按照objectName()来查找的，并不是text()，切勿搞错。 //注意
+    1 可以转换为类型T；2 对应的name存在（如果name为空字符串，此条件可忽略，只需要参考1）. // 条件
+    直接与非直接孩子的关类似于血缘关系。name是按照objectName()来查找的，并不是text()，切勿搞错。 //注意
 
-  QPushButton *button = parentWidget->findChild<QPushButton *>("button1");  // 返回parentWidget中一个名为“button1”的QPushButton孩子，即使按钮不是父亲的直接孩子
-  QListWidget *list = parentWidget->findChild<QListWidget *>(); // 返回parentWidget中的一个QListWidget孩子
-  QPushButton *button = parentWidget->findChild<QPushButton *>("button1", Qt::FindDirectChildrenOnly);  // 返回parentWidget（它的直接父亲）中一个名为“button1”的QPushButton孩子
-  QListWidget *list = parentWidget->findChild<QListWidget *>(QString(), Qt::FindDirectChildrenOnly);  // 返回parentWidget（它的直接父亲）中的一个QListWidget孩子
+  QListWidget *list = parent->findChild<QListWidget*>();         // 返回parent中的一个QListWidget孩子
+  QListWidget *list = parent->findChild<QListWidget*>("list");   // 返回parent中的一个名为"list"的QListWidget孩子
+  QListWidget *list = parent->findChild<QListWidget*>(QString(), Qt::FindDirectChildrenOnly);  // 返回parent中的一个直接QListWidget孩子
 
 
 

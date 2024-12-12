@@ -66,6 +66,8 @@ fgetc() reads the next character from stream and returns it as an unsigned char 
 "unsigned char cast to an int",unsigned char 转换成的 int 是不会出现 负数 的，所以 EOF 可以和文件里面的字符区别开来。
 
 
+int len = sizeof(array)/sizeof(array[1]);  // 数组的长度 = 数组所占的大小/单个数组元素所占的大小
+
 
 1 位操作代码
 #define SET_BIT(reg, bit)    ((reg) |= (1 << (bit)))       // 设置某个位为1

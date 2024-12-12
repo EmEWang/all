@@ -13,7 +13,7 @@ https://packages.ubuntu.com/             # Ubuntu Packages Search        !!!
 https://mirrors.tuna.tsinghua.edu.cn/    # 清华大学开源软件镜像站
 http://ports.ubuntu.com/                 # Apache/2.4.29 (Ubuntu) Server at ports.ubuntu.com Port 80
 https://developer.aliyun.com/mirror/     # 阿里巴巴开源镜像站
-http://demangler.com/                    # 符号表编译解析
+http://demangler.com/                    # 符号表编译解析 https://demangler.com/
 https://www.zhihu.com/question/439231062/answer/2835832244  # 动态链接库与静态链接库有什么区别
 https://conan.io/center                  # 柯南
 https://zhuanlan.zhihu.com/p/680402263   # C/C++堆栈详细分析，新老程序员必会

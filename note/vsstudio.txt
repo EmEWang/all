@@ -46,9 +46,120 @@ tool>>options>>projects and solutions>> 勾上track active item in solution expl
 
 
 
-vs2010工程中定义附加库目录，头文件目录；也就是项目中继承的值
+vs2010 “未能创建此平台，因为已存在同名的解决方案平台”
+1 现象 解决方案中，存在32/64位两种平台，项目a只有32位平台，在配置管理器窗口中，项目a->平台->新建64位，则出现此错误。
+2 解决 在新建项目平台 窗口中 去掉 创建新的解决方案平台 复选框
+3 原因 解决方案中有一个同名的平台
+
+
+
+vs2010编译处理
+可根据调试需要设置output窗口输出内容的详细程度，这对于bug或warning的解决具有很大帮助。
+Tools->Options->Projects and Solutions->Build and Run->MSBuild project build output verbosity，选择合适的冗余度。默认是"Minimal"。
+
+
+查看vs2010的编译, 链接命令 (默认不显示编译命令)
+对于链接器:
+  项目属性->配置属性->链接器->常规->显示进度->设为 "/VERBOSE"
+  项目属性->配置属性->链接器->常规->取消显示启动版权标志->设为 "否"
+对于编译器:
+  1 Open the project properties dialog, then choose  Configuration Properties->C/C++->General
+  2 Change the setting for Suppress Startup Banner to No
+  3 The cl command line(s) will be shown in the output window.
+
+
+
+vs2010工程中定义附加库目录，头文件目录中继承的值
 https://www.cnblogs.com/haomiao/p/5812860.html
-XXXRelease/Debug.props  中能看到
+AdditionalIncludeDirectories  附加包含目录  表示当前project的附加包含目录需要继承使用其父亲的配置。
+AdditionalLibaryDirectories   附加库目录
+AdditionalDependencies        附加依赖库
+  把鼠标停留在附加包含目录后面的参数内容中查看，也可props文件查看(<ItemDefinitionGroup>下<AdditionalIncludeDirectories>)。
+props/vsprops：工程属性表文件（project property sheet）
+  后者为vs2008，前者为vs2010及以后版本，含工程属性配置相关，可单独提取出来供不同工程项目公共使用；
+  不同项目可追加、修改该继承(加载)的属性表，其他引用了该公共属性表的工程不受到影响；
+创建新的/使用现存的工程属性表
+  1 菜单栏View(视图)->Property Manager(属性管理器)，出现属性管理器面板属性页；
+  2 展开项目，选择Debug、Release及Win32和x64版本，右键->添加新项目属性表/添加现有的，并设置属性表名称、位置等；
+  3 双击属性表，可编辑该属性表的工程设置；如输入输出、编译器相关、链接器相关、清单工具、库管理以及事件、自定义生成工具等，与普通工程的属性配置类似；
+  4 保存该配置的属性表即可。
+重定义自己的工程属性
+  若该属性表为其他工程项目共享，修改属性表，会影响其他工程的属性表配置，故若某工程特殊需要，则只需要修改当前工程属性即可而不是属性表。
+props/vsprops异同点：
+  相同点：均为属性表文件，内部为工程属性配置相关信息，节省配置时间开销、减少配置错误率，减少工程重复设置，只设置一次即可；
+  不同点：添加前者，属性表信息被直接写入工程属性中；后者未写入工程属性，工程属性“常规”下会有“继承项目属性表”项，内容为该添加的属性表路径；
+  此外后者若修改工程属性后可能会出现重新加载工程文件时工程属性配置信息丢失或异常的可能性(有待验证)；而前者不会出现此类问题。
+低版本可直接将自动vsprops转化为props格式，不过不同版本转化后可能出现某些不兼容的情况；这也是不同VS IDE版本下实现移植可能出现的各种问题之一。
+
+
+
+关于dll和so的区别 windows下动态库和linux下动态库的区别。
+基本机制差不多，linux下的动态库*.so隐式链接的时候不需要符号表，而windows下的动态库*.dll却需要呢？
+其实从文件格式上来说就知道，dll是PE格式（Portable Executable）；而so是ELF格式（Executable and Linkable Format）。
+
+https://blog.shengbin.me/posts/windows-dll-with-lib   为何Windows下的动态库总伴随一个静态库
+
+
+
+
+vs2010中只有dll文件，手动生成lib文件
+https://www.cnblogs.com/tocy/p/export-lib-from-dll-in-windows.html   如何从dll文件导出对应的lib文件?
+https://blog.csdn.net/qq_33757398/article/details/81570004
+1 dumpbin /exports target.dll > target.def           # 导出def文件
+2 编辑target.def 文件，使之格式与.def文件格式一致 。
+3 lib /def:target.def /machine:x64 /out:target.lib   # 导出lib文件   x86为32位
+注意：
+1 导出的def文件格式如下
+Microsoft (R) COFF/PE Dumper Version 10.00.40219.01
+Copyright (C) Microsoft Corporation.  All rights reserved.
+
+
+Dump of file export.dll
+
+File Type: DLL
+
+  Section contains the following exports for export.dll
+
+    00000000 characteristics
+    5732C473 time date stamp Wed May 11 13:34:43 2016
+        0.00 version
+           1 ordinal base
+           2 number of functions
+           2 number of names
+
+    ordinal hint RVA      name
+
+          1    0 00001280 get_version_string
+          2    1 0000128A select_mode
+
+  Summary
+
+        1000 .CRT
+        1000 .bss
+        1000 .data
+        1000 .edata
+        1000 .eh_fram
+        1000 .idata
+        1000 .rdata
+        1000 .reloc
+        1000 .text
+        1000 .tls
+
+2 将其修改为标准的def文件格式，如下：
+LIBRARY	target       <-- 注意这个名字
+
+EXPORTS
+get_version_string
+select_mode
+
+
+
+vs2010使用qt4.8.6
+https://blog.csdn.net/dragoo1/article/details/141925677
+LNK2019 "__declspec(dllimport) public: static class QString __cdecl QString::fromWCharArray(wchar_t const *,int)"
+明明引入了QtCore4.lib 并且使用可 预处理器宏 UNICODE
+解决：项目属性 -> 配置属性 -> c/c++ -> 语言 -> 将WChar_t视为内置类型 -> 改为 否 (/Zc:wchar_t-)
+原因：msvc2008之前，wchar_t 是作为 unsigned short 来处理的，从vs2008开始，默认将其作为内置类型来处理。
 
 
 

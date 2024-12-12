@@ -31,6 +31,7 @@ listWidget->setText('dsds')                   // 设置item的内容为dsds item
 connect(musicList,SIGNAL(currentRowChanged(int)),this,SLOT(musicListRowNum(int)));  //信号 与槽函数的链接  获取listWidget 的当前行行号
 
 listWidget->removeItemWidget(QListWidgetItem *item);   // 删除该item对应的widget  (测试不是括号这样的而是会删除4.8  不删除该item,若item有Qstring，该qstring会保留下来)
+  listWidget->takeItem(listWidget->currentRow());      // 删除当前行
 listWidget->setFocusPolicy(Qt::NoFocus);      // 去掉item选中的虚线框 或  QListWidget{outline:0px;}
 listWidget->setAlternatingRowColors(true);    // item颜色交替
     QListWidget {background:gray; alternate-background-color: black;} // 设置颜色 算上背景色有两种颜色
@@ -96,7 +97,7 @@ Qt::ItemFlags QListWidgetItem::flags() const
     Qt::ItemNeverHasChildren    128    条目不能有子条目（指树形控件）。
     上表中的 Qt::ItemFlags 也适用于后面 8.2 节的表格控件条目和 8.3 节的树形控件条目，表格条目和树形条目也都有一样的条目标志位设置函数，功能与本节列表条目一样，参数也一样。
     Qt::ItemIsSelectable | Qt::ItemIsUserCheckable | Qt::ItemIsEnabled | Qt::ItemIsDragEnabled   列表控件条目默认的特性标志为同时启用四个
-    item->setFlags( (item->flags()) | Qt::ItemIsEditable ); //双击条目会自动 开启文本编辑器
+    item->setFlags( item->flags() | Qt::ItemIsEditable ); //双击条目会自动 开启文本编辑器
 
 QListWidgetItem *item = new QListWidgetItem("test", listWidget);    // 新建条目
 QListWidgetItem *item = listWidget->takeItem(listWidget->count() - 1 );  // 获取最后一条item  delete item;// 删除
@@ -109,6 +110,7 @@ ui->treeWidget->setCurrentItem(item);                              // item为当
 QTreeWidget
 https://blog.csdn.net/wzz953200463/article/details/109996501
 QTreeWidgetItem *topItem1 = new QTreeWidgetItem(ui->treeWidget);
+topItem1->setCheckState(0, Qt::Unchecked);      // 条目是否可选 Qt::Checked 选中  Qt::Unchecked 不选中  选中变化触发itemChanged
 topItem1->setText(0,"baidu");                   // setFlags()
 topItem1->setIcon(0,QIcon(":/new/prefix1/picture/Down.png")); // 图标
 topItem1->setFont(0,font);                      // 字体  QFont font("黑体",16);

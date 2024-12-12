@@ -192,6 +192,7 @@ itemForm::itemForm(QWidget *parent) :
 
 
 QComboBox
+ui.comboBox->setCurrentIndex(ui.comboBox->findText("xxx")); // 根据字符定位当前选项
 除了显示可见下拉列表外，每个项（item，或称列表项）还可以关联一个 QVariant 类型的变量，用于存储一些不可见数据。
 void addItem(const QIcon &icon, const QString &text, const QVariant &userData = QVariant())
 void insertItem(int index, const QIcon &icon, const QString &text, const QVariant &userData = QVariant())
@@ -241,8 +242,15 @@ void highlighted(const QString &text)
 
 
 
-
-
+QSpinBox/QDoubleSpinBox
+前者处理整数和离散值集(如月份名称)；后者处理浮点值。
+上/下按钮或键盘上/下键，增加/减少当前显示的值，以singleStep()为步长，更改此行为，则重写stepBy()。也可以手动输入值。
+旋转框支持整数值，但可以扩展为使用带有validate()，textFromValue()和valueFromText()的不同字符串。
+值更改时，发出两个valueChanged()信号，一个提供整数，一个供QString(带有数值及其前后缀)。value()获取当前值，setValue()进行设置。
+setWrapping(true)        // 循环行为  用作圆形旋转框，如范围为0-9，当前值为9，则单击“上”将给出0。
+setPrefix()/setSuffix()  // 在显示的值之前/后附加任意字符串，例如货币或度量单位。
+旋转框中的文本使用text()（包括任何prefix()和suffix()）或cleanText()（没有prefix()，suffix()且没有前导或尾随空格）检索。
+setSpecialValueText()  // 提供特殊的选择（通常是默认设置）
 
 
 
